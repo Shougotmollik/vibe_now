@@ -17,8 +17,42 @@ import 'package:vector_graphics/vector_graphics.dart' as _vg;
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
+  /// File path: assets/icons/Basketball-color.svg
+  SvgGenImage get basketballColor =>
+      const SvgGenImage('assets/icons/Basketball-color.svg');
+
+  /// File path: assets/icons/Calendar-color.svg
+  SvgGenImage get calendarColor =>
+      const SvgGenImage('assets/icons/Calendar-color.svg');
+
+  /// File path: assets/icons/Color Palette-color.svg
+  SvgGenImage get colorPaletteColor =>
+      const SvgGenImage('assets/icons/Color Palette-color.svg');
+
+  /// File path: assets/icons/Location-color.svg
+  SvgGenImage get locationColor =>
+      const SvgGenImage('assets/icons/Location-color.svg');
+
   /// File path: assets/icons/Location.svg
   SvgGenImage get location => const SvgGenImage('assets/icons/Location.svg');
+
+  /// File path: assets/icons/Logout-color.svg
+  SvgGenImage get logoutColor =>
+      const SvgGenImage('assets/icons/Logout-color.svg');
+
+  /// File path: assets/icons/Message circle-color.svg
+  SvgGenImage get messageCircleColor =>
+      const SvgGenImage('assets/icons/Message circle-color.svg');
+
+  /// File path: assets/icons/Shield-color.svg
+  SvgGenImage get shieldColor =>
+      const SvgGenImage('assets/icons/Shield-color.svg');
+
+  /// File path: assets/icons/User-color.svg
+  SvgGenImage get userColor => const SvgGenImage('assets/icons/User-color.svg');
+
+  /// File path: assets/icons/add.svg
+  SvgGenImage get add => const SvgGenImage('assets/icons/add.svg');
 
   /// File path: assets/icons/ai-game.svg
   SvgGenImage get aiGame => const SvgGenImage('assets/icons/ai-game.svg');
@@ -29,8 +63,17 @@ class $AssetsIconsGen {
   /// File path: assets/icons/calender.svg
   SvgGenImage get calender => const SvgGenImage('assets/icons/calender.svg');
 
+  /// File path: assets/icons/calender2.svg
+  SvgGenImage get calender2 => const SvgGenImage('assets/icons/calender2.svg');
+
+  /// File path: assets/icons/calender3.svg
+  SvgGenImage get calender3 => const SvgGenImage('assets/icons/calender3.svg');
+
   /// File path: assets/icons/camera.svg
   SvgGenImage get camera => const SvgGenImage('assets/icons/camera.svg');
+
+  /// File path: assets/icons/camera2.svg
+  SvgGenImage get camera2 => const SvgGenImage('assets/icons/camera2.svg');
 
   /// File path: assets/icons/chatting.svg
   SvgGenImage get chatting => const SvgGenImage('assets/icons/chatting.svg');
@@ -47,6 +90,17 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/community.svg
   SvgGenImage get community => const SvgGenImage('assets/icons/community.svg');
+
+  /// File path: assets/icons/creation_star.svg
+  SvgGenImage get creationStar =>
+      const SvgGenImage('assets/icons/creation_star.svg');
+
+  /// File path: assets/icons/dialog-icon.svg
+  SvgGenImage get dialogIcon =>
+      const SvgGenImage('assets/icons/dialog-icon.svg');
+
+  /// File path: assets/icons/down.svg
+  SvgGenImage get down => const SvgGenImage('assets/icons/down.svg');
 
   /// File path: assets/icons/dumbbell-2.svg
   SvgGenImage get dumbbell2 => const SvgGenImage('assets/icons/dumbbell-2.svg');
@@ -67,8 +121,14 @@ class $AssetsIconsGen {
   SvgGenImage get gradientCheck =>
       const SvgGenImage('assets/icons/gradient-check.svg');
 
+  /// File path: assets/icons/grid-color.svg
+  SvgGenImage get gridColor => const SvgGenImage('assets/icons/grid-color.svg');
+
   /// File path: assets/icons/group.svg
   SvgGenImage get group => const SvgGenImage('assets/icons/group.svg');
+
+  /// File path: assets/icons/group2.svg
+  SvgGenImage get group2 => const SvgGenImage('assets/icons/group2.svg');
 
   /// File path: assets/icons/ice-cream.svg
   SvgGenImage get iceCream => const SvgGenImage('assets/icons/ice-cream.svg');
@@ -94,6 +154,10 @@ class $AssetsIconsGen {
   SvgGenImage get nanoTechnology =>
       const SvgGenImage('assets/icons/nano-technology.svg');
 
+  /// File path: assets/icons/notification-color.svg
+  SvgGenImage get notificationColor =>
+      const SvgGenImage('assets/icons/notification-color.svg');
+
   /// File path: assets/icons/organic-food.svg
   SvgGenImage get organicFood =>
       const SvgGenImage('assets/icons/organic-food.svg');
@@ -102,29 +166,52 @@ class $AssetsIconsGen {
   SvgGenImage get paintBoard =>
       const SvgGenImage('assets/icons/paint-board.svg');
 
+  /// File path: assets/icons/scan.svg
+  SvgGenImage get scan => const SvgGenImage('assets/icons/scan.svg');
+
   /// File path: assets/icons/unchecked-circle.svg
   SvgGenImage get uncheckedCircle =>
       const SvgGenImage('assets/icons/unchecked-circle.svg');
 
+  /// File path: assets/icons/users.svg
+  SvgGenImage get users => const SvgGenImage('assets/icons/users.svg');
+
   /// List of all assets
   List<SvgGenImage> get values => [
+    basketballColor,
+    calendarColor,
+    colorPaletteColor,
+    locationColor,
     location,
+    logoutColor,
+    messageCircleColor,
+    shieldColor,
+    userColor,
+    add,
     aiGame,
     book,
     calender,
+    calender2,
+    calender3,
     camera,
+    camera2,
     chatting,
     coffeeMug,
     coffee,
     coffeeColor,
     community,
+    creationStar,
+    dialogIcon,
+    down,
     dumbbell2,
     dumbbell,
     earth,
     filmWheel,
     gift,
     gradientCheck,
+    gridColor,
     group,
+    group2,
     iceCream,
     kitty,
     makeUpBrash,
@@ -132,14 +219,20 @@ class $AssetsIconsGen {
     music,
     musicColor,
     nanoTechnology,
+    notificationColor,
     organicFood,
     paintBoard,
+    scan,
     uncheckedCircle,
+    users,
   ];
 }
 
 class $AssetsImagesGen {
   const $AssetsImagesGen();
+
+  /// File path: assets/images/dialog.svg
+  SvgGenImage get dialog => const SvgGenImage('assets/images/dialog.svg');
 
   /// File path: assets/images/open_for_coffee.png
   AssetGenImage get openForCoffee =>
@@ -150,7 +243,7 @@ class $AssetsImagesGen {
       const AssetGenImage('assets/images/profile_picture.jpg');
 
   /// List of all assets
-  List<AssetGenImage> get values => [openForCoffee, profilePicture];
+  List<dynamic> get values => [dialog, openForCoffee, profilePicture];
 }
 
 class Assets {

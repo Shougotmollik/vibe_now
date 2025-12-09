@@ -70,29 +70,68 @@ class _UnlockedProfileScreenState extends State<UnlockedProfileScreen>
             Column(
               children: [
                 // Profile Picture
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [Colors.grey.shade300, Colors.grey.shade400],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.shade400,
-                        blurRadius: 10,
-                        offset: const Offset(0, 4),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                        gradient: LinearGradient(
+                          colors: [Colors.grey.shade300, Colors.grey.shade400],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade400,
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: const Icon(
-                    Icons.person,
-                    size: 60,
-                    color: Colors.white,
-                  ),
+                      // child: const Icon(
+                      //   Icons.person,
+                      //   size: 60,
+                      //   color: Colors.white,
+                      // ),
+                    ),
+                    Positioned(
+                      top: -26,
+                      left: -6,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            child: Text('Open for coffee'),
+                          ),
+                          Positioned(
+                            left: 20,
+                            top: 30,
+                            child: Assets.icons.dialogIcon.svg(
+                              width: 24.h,
+                              height: 24.h,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
 
                 SizedBox(height: 10.h),
@@ -119,6 +158,44 @@ class _UnlockedProfileScreenState extends State<UnlockedProfileScreen>
                   ],
                 ),
                 SizedBox(height: 16.h),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Assets.icons.coffeeColor.svg(),
+                    SizedBox(width: 4.w),
+                    Text(
+                      'Coffee enthusiast',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Color(0xFF908F90),
+                      ),
+                    ),
+
+                    SizedBox(width: 8.w),
+
+                    Text(
+                      '|',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Color(0xFF908F90),
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+
+                    Assets.icons.musicColor.svg(),
+                    SizedBox(width: 4.w),
+                    Text(
+                      'Music lover',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Color(0xFF908F90),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 16.h),
                 // Interest Tags
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 40),
@@ -140,25 +217,6 @@ class _UnlockedProfileScreenState extends State<UnlockedProfileScreen>
               ],
             ),
             //-------------
-
-            // Container(
-            //   padding: const EdgeInsets.symmetric(horizontal: 16),
-            //   color: Colors.white,
-            //   child: TabBar(
-            //     controller: _tabController,
-            //     labelColor: Colors.black,
-            //     unselectedLabelColor: Colors.grey,
-            //     indicatorColor: Colors.black,
-            //     labelStyle: const TextStyle(
-            //       fontSize: 18,
-            //       fontWeight: FontWeight.w500,
-            //     ),
-            //     tabs: const [
-            //       Tab(text: 'Photos'),
-            //       Tab(text: 'Posts'),
-            //     ],
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
