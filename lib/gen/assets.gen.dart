@@ -84,6 +84,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/coffee.svg
   SvgGenImage get coffee => const SvgGenImage('assets/icons/coffee.svg');
 
+  /// File path: assets/icons/coffee_black.svg
+  SvgGenImage get coffeeBlack =>
+      const SvgGenImage('assets/icons/coffee_black.svg');
+
   /// File path: assets/icons/coffee_color.svg
   SvgGenImage get coffeeColor =>
       const SvgGenImage('assets/icons/coffee_color.svg');
@@ -198,6 +202,7 @@ class $AssetsIconsGen {
     chatting,
     coffeeMug,
     coffee,
+    coffeeBlack,
     coffeeColor,
     community,
     creationStar,

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
+import 'package:vibe_now/src/presentation/views/settings/blocked_accounts_screen.dart';
+import 'package:vibe_now/src/presentation/views/settings/profile_setting_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -25,26 +28,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           children: [
             // Header
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                    onPressed: () {},
-                  ),
-                  Text(
-                    'Settings',
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
+            CustomAppBar(title: 'Settings'),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -134,7 +118,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: 'Profile information',
                       hasArrow: true,
                       isFullRounded: true,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfileSettingScreen(),
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: 24.h),
 
@@ -172,7 +163,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       title: 'Blocked',
                       hasArrow: true,
                       isBottomRound: true,
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const BlockedAccountsScreen(),
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(height: 24.h),
 

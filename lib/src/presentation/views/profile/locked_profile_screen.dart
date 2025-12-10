@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/common/interest_chip.dart';
 
 class ProfileLockedScreen extends StatelessWidget {
   const ProfileLockedScreen({super.key});
@@ -85,29 +86,29 @@ class ProfileLockedScreen extends StatelessWidget {
                                     spacing: 8,
                                     runSpacing: 8,
                                     children: [
-                                      _buildInterestTag(
-                                        Assets.icons.iceCream,
-                                        'Ice-cream',
+                                      InterestChip(
+                                        icon: Assets.icons.iceCream,
+                                        label: 'Ice-cream',
                                       ),
-                                      _buildInterestTag(
-                                        Assets.icons.makeUpBrash,
-                                        'Make-up',
+                                      InterestChip(
+                                        icon: Assets.icons.makeUpBrash,
+                                        label: 'Make-up',
                                       ),
-                                      _buildInterestTag(
-                                        Assets.icons.kitty,
-                                        'Pets',
+                                      InterestChip(
+                                        icon: Assets.icons.kitty,
+                                        label: 'Pets',
                                       ),
-                                      _buildInterestTag(
-                                        Assets.icons.filmWheel,
-                                        'Films',
+                                      InterestChip(
+                                        icon: Assets.icons.filmWheel,
+                                        label: 'Films',
                                       ),
-                                      _buildInterestTag(
-                                        Assets.icons.coffee,
-                                        'Coffee',
+                                      InterestChip(
+                                        icon: Assets.icons.coffee,
+                                        label: 'Coffee',
                                       ),
-                                      _buildInterestTag(
-                                        Assets.icons.gift,
-                                        'Gifts',
+                                      InterestChip(
+                                        icon: Assets.icons.gift,
+                                        label: 'Gifts',
                                       ),
                                     ],
                                   ),
@@ -254,7 +255,7 @@ class ProfileLockedScreen extends StatelessWidget {
                     ),
                     onPressed: () {},
                   ),
-                  const SizedBox(width: 56), // Space for center button
+                  const SizedBox(width: 56),
                   IconButton(
                     icon: Icon(
                       Icons.chat_bubble_outline,
@@ -293,7 +294,7 @@ class ProfileLockedScreen extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.purple.withOpacity(0.4),
+                        color: Colors.purple.withValues(alpha: 0.4),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -316,25 +317,6 @@ class ProfileLockedScreen extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildInterestTag(SvgGenImage icon, String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Icon(icon, size: 18, color: Colors.grey.shade700),
-          icon.svg(height: 16.h, width: 16.h),
-          const SizedBox(width: 6),
-          Text(label, style: TextStyle(fontSize: 12.sp)),
-        ],
       ),
     );
   }
@@ -365,3 +347,5 @@ class ProfileLockedScreen extends StatelessWidget {
     );
   }
 }
+
+
