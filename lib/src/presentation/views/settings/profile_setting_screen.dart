@@ -6,6 +6,7 @@ import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/src/presentation/views/common/interest_chip.dart';
 import 'package:vibe_now/src/presentation/views/settings/edit_profile_screen.dart';
+import 'package:vibe_now/src/presentation/views/settings/pause_profile_screen.dart';
 
 class ProfileSettingScreen extends StatelessWidget {
   const ProfileSettingScreen({super.key});
@@ -143,36 +144,7 @@ class ProfileSettingScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 12.h),
 
-                Container(
-                  width: double.infinity,
-                  height: 54.h,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 12.h,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xffE0E0E0)),
-                    borderRadius: BorderRadius.circular(40.r),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Pause your Profile",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: Color(0xFF202020),
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16.h,
-                        color: Color(0xFFCFCFCF),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildProfilePauseSection(context),
                 SizedBox(height: 28.h),
                 Text(
                   'Recent Activity',
@@ -306,6 +278,42 @@ class ProfileSettingScreen extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProfilePauseSection(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PauseProfileScreen(),
+          ),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        height: 54.h,
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: Color(0xffE0E0E0)),
+          borderRadius: BorderRadius.circular(40.r),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              "Pause your Profile",
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: Color(0xFF202020),
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+            Icon(Icons.arrow_forward_ios, size: 16.h, color: Color(0xFFCFCFCF)),
+          ],
         ),
       ),
     );

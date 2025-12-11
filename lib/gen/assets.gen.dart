@@ -14,6 +14,57 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart' as _svg;
 import 'package:vector_graphics/vector_graphics.dart' as _vg;
 
+class $AssetsFlagsGen {
+  const $AssetsFlagsGen();
+
+  /// File path: assets/flags/american samoa.svg
+  SvgGenImage get americanSamoa =>
+      const SvgGenImage('assets/flags/american samoa.svg');
+
+  /// File path: assets/flags/germany.svg
+  SvgGenImage get germany => const SvgGenImage('assets/flags/germany.svg');
+
+  /// File path: assets/flags/italy.svg
+  SvgGenImage get italy => const SvgGenImage('assets/flags/italy.svg');
+
+  /// File path: assets/flags/nauru.svg
+  SvgGenImage get nauru => const SvgGenImage('assets/flags/nauru.svg');
+
+  /// File path: assets/flags/papua new guinea.svg
+  SvgGenImage get papuaNewGuinea =>
+      const SvgGenImage('assets/flags/papua new guinea.svg');
+
+  /// File path: assets/flags/spain.svg
+  SvgGenImage get spain => const SvgGenImage('assets/flags/spain.svg');
+
+  /// File path: assets/flags/tonga.svg
+  SvgGenImage get tonga => const SvgGenImage('assets/flags/tonga.svg');
+
+  /// File path: assets/flags/turkey.svg
+  SvgGenImage get turkey => const SvgGenImage('assets/flags/turkey.svg');
+
+  /// File path: assets/flags/united kingdom.svg
+  SvgGenImage get unitedKingdom =>
+      const SvgGenImage('assets/flags/united kingdom.svg');
+
+  /// File path: assets/flags/vanuatu.svg
+  SvgGenImage get vanuatu => const SvgGenImage('assets/flags/vanuatu.svg');
+
+  /// List of all assets
+  List<SvgGenImage> get values => [
+    americanSamoa,
+    germany,
+    italy,
+    nauru,
+    papuaNewGuinea,
+    spain,
+    tonga,
+    turkey,
+    unitedKingdom,
+    vanuatu,
+  ];
+}
+
 class $AssetsIconsGen {
   const $AssetsIconsGen();
 
@@ -51,6 +102,13 @@ class $AssetsIconsGen {
   /// File path: assets/icons/User-color.svg
   SvgGenImage get userColor => const SvgGenImage('assets/icons/User-color.svg');
 
+  /// File path: assets/icons/User.svg
+  SvgGenImage get user => const SvgGenImage('assets/icons/User.svg');
+
+  /// File path: assets/icons/Users_color.svg
+  SvgGenImage get usersColor =>
+      const SvgGenImage('assets/icons/Users_color.svg');
+
   /// File path: assets/icons/add.svg
   SvgGenImage get add => const SvgGenImage('assets/icons/add.svg');
 
@@ -78,6 +136,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/chatting.svg
   SvgGenImage get chatting => const SvgGenImage('assets/icons/chatting.svg');
 
+  /// File path: assets/icons/checkbox-gradient.svg
+  SvgGenImage get checkboxGradient =>
+      const SvgGenImage('assets/icons/checkbox-gradient.svg');
+
   /// File path: assets/icons/coffee-mug.svg
   SvgGenImage get coffeeMug => const SvgGenImage('assets/icons/coffee-mug.svg');
 
@@ -99,6 +161,9 @@ class $AssetsIconsGen {
   SvgGenImage get creationStar =>
       const SvgGenImage('assets/icons/creation_star.svg');
 
+  /// File path: assets/icons/delete.svg
+  SvgGenImage get delete => const SvgGenImage('assets/icons/delete.svg');
+
   /// File path: assets/icons/dialog-icon.svg
   SvgGenImage get dialogIcon =>
       const SvgGenImage('assets/icons/dialog-icon.svg');
@@ -118,6 +183,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/film-wheel.svg
   SvgGenImage get filmWheel => const SvgGenImage('assets/icons/film-wheel.svg');
 
+  /// File path: assets/icons/friend_ship.svg
+  SvgGenImage get friendShip =>
+      const SvgGenImage('assets/icons/friend_ship.svg');
+
   /// File path: assets/icons/gift.svg
   SvgGenImage get gift => const SvgGenImage('assets/icons/gift.svg');
 
@@ -136,6 +205,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/ice-cream.svg
   SvgGenImage get iceCream => const SvgGenImage('assets/icons/ice-cream.svg');
+
+  /// File path: assets/icons/image_picker.svg
+  SvgGenImage get imagePicker =>
+      const SvgGenImage('assets/icons/image_picker.svg');
 
   /// File path: assets/icons/kitty.svg
   SvgGenImage get kitty => const SvgGenImage('assets/icons/kitty.svg');
@@ -170,12 +243,26 @@ class $AssetsIconsGen {
   SvgGenImage get paintBoard =>
       const SvgGenImage('assets/icons/paint-board.svg');
 
+  /// File path: assets/icons/relation_ship.svg
+  SvgGenImage get relationShip =>
+      const SvgGenImage('assets/icons/relation_ship.svg');
+
   /// File path: assets/icons/scan.svg
   SvgGenImage get scan => const SvgGenImage('assets/icons/scan.svg');
+
+  /// File path: assets/icons/sports.svg
+  SvgGenImage get sports => const SvgGenImage('assets/icons/sports.svg');
+
+  /// File path: assets/icons/stash_question.svg
+  SvgGenImage get stashQuestion =>
+      const SvgGenImage('assets/icons/stash_question.svg');
 
   /// File path: assets/icons/unchecked-circle.svg
   SvgGenImage get uncheckedCircle =>
       const SvgGenImage('assets/icons/unchecked-circle.svg');
+
+  /// File path: assets/icons/unchecked.svg
+  SvgGenImage get unchecked => const SvgGenImage('assets/icons/unchecked.svg');
 
   /// File path: assets/icons/users.svg
   SvgGenImage get users => const SvgGenImage('assets/icons/users.svg');
@@ -191,6 +278,8 @@ class $AssetsIconsGen {
     messageCircleColor,
     shieldColor,
     userColor,
+    user,
+    usersColor,
     add,
     aiGame,
     book,
@@ -200,24 +289,28 @@ class $AssetsIconsGen {
     camera,
     camera2,
     chatting,
+    checkboxGradient,
     coffeeMug,
     coffee,
     coffeeBlack,
     coffeeColor,
     community,
     creationStar,
+    delete,
     dialogIcon,
     down,
     dumbbell2,
     dumbbell,
     earth,
     filmWheel,
+    friendShip,
     gift,
     gradientCheck,
     gridColor,
     group,
     group2,
     iceCream,
+    imagePicker,
     kitty,
     makeUpBrash,
     message,
@@ -227,8 +320,12 @@ class $AssetsIconsGen {
     notificationColor,
     organicFood,
     paintBoard,
+    relationShip,
     scan,
+    sports,
+    stashQuestion,
     uncheckedCircle,
+    unchecked,
     users,
   ];
 }
@@ -254,6 +351,7 @@ class $AssetsImagesGen {
 class Assets {
   const Assets._();
 
+  static const $AssetsFlagsGen flags = $AssetsFlagsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
 }

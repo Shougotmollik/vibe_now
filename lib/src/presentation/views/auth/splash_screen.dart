@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/animated_value.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/animated_ball.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/animated_fade_up_text.dart';
@@ -59,9 +62,11 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           SizedBox(height: 375.h, width: double.infinity),
+
           AnimatedValue(
             option: AnimateOption(
               delay: 2000,
@@ -85,20 +90,56 @@ class _SplashScreenState extends State<SplashScreen> {
               );
             },
           ),
+
           SizedBox(height: 70.h),
+
           AnimatedFadeUpText(
             delay: 2000,
             text: 'vibe.now',
             fontSize: 28.sp,
             fontWeight: FontWeight.w700,
           ),
+
           SizedBox(height: 24.h),
+
           AnimatedFadeUpText(
             delay: 2200,
             text:
                 "Real connections. Right here.\nRight now. Let's vibe together!",
             fontSize: 14.sp,
           ),
+
+          const Spacer(),
+          AnimatedValue(
+            option: AnimateOption(
+              delay: 2400,
+              duration: 600,
+              begin: 1,
+              end: -1,
+            ),
+            builder: (context, value) {
+              final offsetY = remap(value: value, toBegin: 80, toEnd: 0);
+              final opacityValue = remap(value: value, toBegin: 0, toEnd: 1);
+
+              return Transform.translate(
+                offset: Offset(0, offsetY),
+                child: FadeTransition(
+                  opacity: AlwaysStoppedAnimation(opacityValue),
+                  child: Padding(
+                    padding: EdgeInsets.all(16.w),
+                    child: PrimaryButton.text(
+                      onPressed: () {
+                        context.pushNamed(RouteNames.introScreen);
+                      },
+                      text: 'Get Started',
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+
+          const Spacer(),
         ],
       ),
     );
