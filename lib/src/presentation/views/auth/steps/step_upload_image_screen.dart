@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/auth/steps/step_location_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/step_page.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/step_title.dart';
 
@@ -30,7 +30,7 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
               transitionDuration: Duration.zero,
               reverseTransitionDuration: Duration.zero,
               pageBuilder: (_, __, ___) =>
-                  StepUploadImageScreen(step: widget.step + 1),
+                  StepLocationScreen(step: widget.step + 1),
             ),
           );
         },

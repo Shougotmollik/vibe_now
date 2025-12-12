@@ -127,6 +127,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/calender3.svg
   SvgGenImage get calender3 => const SvgGenImage('assets/icons/calender3.svg');
 
+  /// File path: assets/icons/calender_history.svg
+  SvgGenImage get calenderHistory =>
+      const SvgGenImage('assets/icons/calender_history.svg');
+
   /// File path: assets/icons/camera.svg
   SvgGenImage get camera => const SvgGenImage('assets/icons/camera.svg');
 
@@ -213,6 +217,13 @@ class $AssetsIconsGen {
   /// File path: assets/icons/kitty.svg
   SvgGenImage get kitty => const SvgGenImage('assets/icons/kitty.svg');
 
+  /// File path: assets/icons/location_ic.svg
+  SvgGenImage get locationIc =>
+      const SvgGenImage('assets/icons/location_ic.svg');
+
+  /// File path: assets/icons/lock.svg
+  SvgGenImage get lock => const SvgGenImage('assets/icons/lock.svg');
+
   /// File path: assets/icons/make-up-brash.svg
   SvgGenImage get makeUpBrash =>
       const SvgGenImage('assets/icons/make-up-brash.svg');
@@ -264,6 +275,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/unchecked.svg
   SvgGenImage get unchecked => const SvgGenImage('assets/icons/unchecked.svg');
 
+  /// File path: assets/icons/upload_image.svg
+  SvgGenImage get uploadImage =>
+      const SvgGenImage('assets/icons/upload_image.svg');
+
   /// File path: assets/icons/users.svg
   SvgGenImage get users => const SvgGenImage('assets/icons/users.svg');
 
@@ -286,6 +301,7 @@ class $AssetsIconsGen {
     calender,
     calender2,
     calender3,
+    calenderHistory,
     camera,
     camera2,
     chatting,
@@ -312,6 +328,8 @@ class $AssetsIconsGen {
     iceCream,
     imagePicker,
     kitty,
+    locationIc,
+    lock,
     makeUpBrash,
     message,
     music,
@@ -326,6 +344,7 @@ class $AssetsIconsGen {
     stashQuestion,
     uncheckedCircle,
     unchecked,
+    uploadImage,
     users,
   ];
 }

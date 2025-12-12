@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
 class EventOrCommunityScreen extends StatelessWidget {
@@ -80,10 +81,12 @@ class EventOrCommunityScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 16.h),
                     CreateCard(
-                      title: 'Event',
+                      title: 'Community',
                       subtitle:
-                          'Organize gatherings, meetups, or special occasions that bring people together',
-                      icon: Assets.icons.calender2.svg(),
+                          'Build a space where people with shared interests can connect and grow together',
+                      icon: Assets.icons.community.svg(
+                        color: AppColors.onBackground,
+                      ),
                       iconBackground: Color(0xffa9dbf8),
                       gradient: LinearGradient(
                         colors: [Color(0xff99e2f1), Color(0xffaaccff)],
@@ -180,16 +183,16 @@ class CreateCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(3.w),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(30),
-          gradient: LinearGradient(
-            colors: [
-              Color(0xFF8663F6).withAlpha(100),
-              Color(0xFFC470F5).withAlpha(100),
-              Color(0xFF57C2FF).withAlpha(100),
-            ],
-            begin: Alignment.bottomRight,
-            end: Alignment.topLeft,
-          ),
+          borderRadius: BorderRadius.circular(12.r),
+          // gradient: LinearGradient(
+          //   colors: [
+          //     Color(0xFF8663F6).withAlpha(100),
+          //     Color(0xFFC470F5).withAlpha(100),
+          //     Color(0xFF57C2FF).withAlpha(100),
+          //   ],
+          //   begin: Alignment.bottomRight,
+          //   end: Alignment.topLeft,
+          // ),
           boxShadow: [
             BoxShadow(
               color: Colors.grey.shade300,
@@ -201,7 +204,7 @@ class CreateCard extends StatelessWidget {
         child: Container(
           height: 260.h,
           clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(27)),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
           child: Column(
             children: [
               Expanded(

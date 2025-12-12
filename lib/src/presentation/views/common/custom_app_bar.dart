@@ -20,8 +20,8 @@ class CustomAppBar extends StatelessWidget {
           title,
           style: TextStyle(
             fontSize: 20.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.black,
+            fontWeight: FontWeight.w500,
+            color: Color(0xff303030),
           ),
         ),
       ],
