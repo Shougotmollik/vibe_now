@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
@@ -130,6 +132,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             builder: (context) => const ProfileSettingScreen(),
                           ),
                         );
+                      },
+                    ),
+                    SizedBox(height: 12.h),
+                    // Profile Information
+                    _buildMenuItem(
+                      icon: Assets.icons.lock,
+                      iconColor: Colors.black,
+                      title: 'Subscriptions',
+                      hasArrow: true,
+                      isFullRounded: true,
+                      onTap: () {
+                        context.pushNamed(RouteNames.subscriptionScreen);
                       },
                     ),
                     SizedBox(height: 24.h),
@@ -549,4 +563,3 @@ class _SettingsScreenState extends State<SettingsScreen> {
   //   );
   // }
 }
-

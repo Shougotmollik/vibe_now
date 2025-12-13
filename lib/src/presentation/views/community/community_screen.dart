@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
-import 'package:vibe_now/src/presentation/views/community/widgets/avatar_stack.dart';
 import 'package:vibe_now/src/presentation/views/community/widgets/community_card.dart';
 
 class CommunityScreen extends StatefulWidget {
@@ -30,26 +30,60 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildAppBar(),
-            _buildTabBar(),
-            SizedBox(height: 24.h),
-            Expanded(
-              child: ListView.separated(
-                shrinkWrap: true,
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                itemBuilder: (context, index) => CommunityCard(),
-                separatorBuilder: (context, index) => SizedBox(height: 24.h),
-                itemCount: 4,
-              ),
-            ),
-            SizedBox(height: 24.h),
-
-
-          ],
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(bottom: 24.h),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildAppBar(),
+              _buildTabBar(),
+              SizedBox(height: 24.h),
+              _buildCommunityList(),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAppBar() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const CustomAppBar(title: "Community"),
+          Row(
+            children: [
+              GestureDetector(
+                onTap: () => context.pushNamed(RouteNames.qrVerificationScreen),
+                child: Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xff101010).withAlpha(15),
+                  ),
+                  child: Assets.icons.scan.svg(width: 24.w, height: 24.h),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              GestureDetector(
+                onTap: () =>
+                    context.pushNamed(RouteNames.createCommunityScreen),
+                child: Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: AppColors.primaryGradient,
+                  ),
+                  child: Assets.icons.add.svg(width: 24.w, height: 24.h),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -58,12 +92,13 @@ class _CommunityScreenState extends State<CommunityScreen> {
     return SizedBox(
       height: 34.h,
       child: ListView.separated(
-        shrinkWrap: true,
         scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
         itemCount: tabNames.length,
-        separatorBuilder: (context, index) => SizedBox(width: 8.w),
+        separatorBuilder: (_, __) => SizedBox(width: 8.w),
         itemBuilder: (context, index) {
-          bool isSelected = index == selectedIndex;
+          final bool isSelected = index == selectedIndex;
+
           return GestureDetector(
             onTap: () {
               setState(() {
@@ -76,8 +111,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                 color: isSelected ? Colors.black : Colors.transparent,
                 borderRadius: BorderRadius.circular(20.r),
                 border: Border.all(
-                  color: isSelected ? Colors.black : Color(0xffEAEAEA),
-                  width: 1.w,
+                  color: isSelected ? Colors.black : const Color(0xffEAEAEA),
                 ),
               ),
               child: Center(
@@ -86,7 +120,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
-                    color: isSelected ? Colors.white : Color(0xff555555),
+                    color: isSelected ? Colors.white : const Color(0xff555555),
                   ),
                 ),
               ),
@@ -97,35 +131,17 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
-  Widget _buildAppBar() {
+  Widget _buildCommunityList() {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CustomAppBar(title: "Community"),
-          Row(
-            children: [
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xff101010).withAlpha(15),
-                ),
-                child: Assets.icons.scan.svg(width: 24.w, height: 24.h),
-              ),
-              SizedBox(width: 8.w),
-              Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: AppColors.primaryGradient,
-                ),
-                child: Assets.icons.add.svg(width: 24.w, height: 24.h),
-              ),
-            ],
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Column(
+        children: List.generate(
+          4,
+          (index) => Padding(
+            padding: EdgeInsets.only(bottom: 24.h),
+            child: const CommunityCard(),
           ),
-        ],
+        ),
       ),
     );
   }

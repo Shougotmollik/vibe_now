@@ -95,9 +95,16 @@ class $AssetsIconsGen {
   SvgGenImage get messageCircleColor =>
       const SvgGenImage('assets/icons/Message circle-color.svg');
 
+  /// File path: assets/icons/Plus.svg
+  SvgGenImage get plus => const SvgGenImage('assets/icons/Plus.svg');
+
   /// File path: assets/icons/Shield-color.svg
   SvgGenImage get shieldColor =>
       const SvgGenImage('assets/icons/Shield-color.svg');
+
+  /// File path: assets/icons/Time Circle.svg
+  SvgGenImage get timeCircle =>
+      const SvgGenImage('assets/icons/Time Circle.svg');
 
   /// File path: assets/icons/User-color.svg
   SvgGenImage get userColor => const SvgGenImage('assets/icons/User-color.svg');
@@ -140,6 +147,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/chatting.svg
   SvgGenImage get chatting => const SvgGenImage('assets/icons/chatting.svg');
 
+  /// File path: assets/icons/chatting_light.svg
+  SvgGenImage get chattingLight =>
+      const SvgGenImage('assets/icons/chatting_light.svg');
+
   /// File path: assets/icons/checkbox-gradient.svg
   SvgGenImage get checkboxGradient =>
       const SvgGenImage('assets/icons/checkbox-gradient.svg');
@@ -160,6 +171,14 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/community.svg
   SvgGenImage get community => const SvgGenImage('assets/icons/community.svg');
+
+  /// File path: assets/icons/community_color.svg
+  SvgGenImage get communityColor =>
+      const SvgGenImage('assets/icons/community_color.svg');
+
+  /// File path: assets/icons/community_light.svg
+  SvgGenImage get communityLight =>
+      const SvgGenImage('assets/icons/community_light.svg');
 
   /// File path: assets/icons/creation_star.svg
   SvgGenImage get creationStar =>
@@ -206,6 +225,9 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/group2.svg
   SvgGenImage get group2 => const SvgGenImage('assets/icons/group2.svg');
+
+  /// File path: assets/icons/hi.svg
+  SvgGenImage get hi => const SvgGenImage('assets/icons/hi.svg');
 
   /// File path: assets/icons/ice-cream.svg
   SvgGenImage get iceCream => const SvgGenImage('assets/icons/ice-cream.svg');
@@ -254,6 +276,13 @@ class $AssetsIconsGen {
   SvgGenImage get paintBoard =>
       const SvgGenImage('assets/icons/paint-board.svg');
 
+  /// File path: assets/icons/people.svg
+  SvgGenImage get people => const SvgGenImage('assets/icons/people.svg');
+
+  /// File path: assets/icons/people_color.svg
+  SvgGenImage get peopleColor =>
+      const SvgGenImage('assets/icons/people_color.svg');
+
   /// File path: assets/icons/relation_ship.svg
   SvgGenImage get relationShip =>
       const SvgGenImage('assets/icons/relation_ship.svg');
@@ -267,6 +296,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/stash_question.svg
   SvgGenImage get stashQuestion =>
       const SvgGenImage('assets/icons/stash_question.svg');
+
+  /// File path: assets/icons/subscription.svg
+  SvgGenImage get subscription =>
+      const SvgGenImage('assets/icons/subscription.svg');
 
   /// File path: assets/icons/unchecked-circle.svg
   SvgGenImage get uncheckedCircle =>
@@ -291,7 +324,9 @@ class $AssetsIconsGen {
     location,
     logoutColor,
     messageCircleColor,
+    plus,
     shieldColor,
+    timeCircle,
     userColor,
     user,
     usersColor,
@@ -305,12 +340,15 @@ class $AssetsIconsGen {
     camera,
     camera2,
     chatting,
+    chattingLight,
     checkboxGradient,
     coffeeMug,
     coffee,
     coffeeBlack,
     coffeeColor,
     community,
+    communityColor,
+    communityLight,
     creationStar,
     delete,
     dialogIcon,
@@ -325,6 +363,7 @@ class $AssetsIconsGen {
     gridColor,
     group,
     group2,
+    hi,
     iceCream,
     imagePicker,
     kitty,
@@ -338,10 +377,13 @@ class $AssetsIconsGen {
     notificationColor,
     organicFood,
     paintBoard,
+    people,
+    peopleColor,
     relationShip,
     scan,
     sports,
     stashQuestion,
+    subscription,
     uncheckedCircle,
     unchecked,
     uploadImage,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/common/avatar_stack.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   const EventDetailsScreen({super.key});
@@ -15,7 +16,7 @@ class EventDetailsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Event Image
+
               Container(
                 height: 280.h,
                 width: double.infinity,
@@ -121,81 +122,24 @@ class EventDetailsScreen extends StatelessWidget {
                         ],
                       ),
                       SizedBox(height: 16.h),
-
-                      // Attendees and View All
                       Row(
                         children: [
-                          // Avatar Stack
-                          SizedBox(
-                            height: 36.h,
-                            width: 120.w,
-                            child: Stack(
-                              children: [
-                                Positioned(
-                                  left: 0,
-                                  child: CircleAvatar(
-                                    radius: 18.r,
-                                    backgroundImage: const NetworkImage(
-                                      'https://i.pravatar.cc/150?img=1',
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 24.w,
-                                  child: CircleAvatar(
-                                    radius: 18.r,
-                                    backgroundImage: const NetworkImage(
-                                      'https://i.pravatar.cc/150?img=2',
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 48.w,
-                                  child: CircleAvatar(
-                                    radius: 18.r,
-                                    backgroundImage: const NetworkImage(
-                                      'https://i.pravatar.cc/150?img=3',
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 72.w,
-                                  child: CircleAvatar(
-                                    radius: 18.r,
-                                    backgroundImage: const NetworkImage(
-                                      'https://i.pravatar.cc/150?img=4',
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  left: 96.w,
-                                  child: CircleAvatar(
-                                    radius: 18.r,
-                                    backgroundColor: Colors.blue.shade100,
-                                    child: Text(
-                                      '+5',
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        color: Colors.blue,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
+                          Expanded(
+                            child: AvatarStack(
+                              imageUrls: [
+                                "https://i.pravatar.cc/150?img=1",
+                                "https://i.pravatar.cc/150?img=2",
+                                "https://i.pravatar.cc/150?img=3",
+                                "https://i.pravatar.cc/150?img=4",
+                                "https://i.pravatar.cc/150?img=5",
                               ],
+                              extraCount: 5,
                             ),
                           ),
-                          const Spacer(),
-                          Text(
-                            'View All',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          TextButton(onPressed: () {}, child: Text("View all")),
                         ],
                       ),
+
                       SizedBox(height: 20.h),
 
                       // Action Buttons
@@ -206,12 +150,8 @@ class EventDetailsScreen extends StatelessWidget {
                               padding: EdgeInsets.symmetric(vertical: 14.h),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12.r),
-                                gradient: const LinearGradient(
-                                  colors: [
-                                    Color(0xFF9C6FFF),
-                                    Color(0xFF6B9FFF),
-                                  ],
-                                ),
+
+                                gradient: AppColors.primaryGradient,
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -363,9 +303,7 @@ class EventDetailsScreen extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.grey.shade50,
                           borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(
-                            color: Colors.grey.shade200,
-                          ),
+                          border: Border.all(color: Colors.grey.shade200),
                         ),
                         child: TextField(
                           maxLines: 5,

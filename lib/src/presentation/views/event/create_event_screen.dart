@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_time_picker.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_date_picker.dart';
 
-class CreateEventPage extends StatefulWidget {
-  const CreateEventPage({Key? key}) : super(key: key);
+class CreateEventScreen extends StatefulWidget {
+  const CreateEventScreen({super.key});
 
   @override
-  State<CreateEventPage> createState() => _CreateEventPageState();
+  State<CreateEventScreen> createState() => _CreateEventScreenState();
 }
 
-class _CreateEventPageState extends State<CreateEventPage> {
+class _CreateEventScreenState extends State<CreateEventScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _maxAttendeesController = TextEditingController(
     text: '10',
@@ -26,7 +28,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         title: const Text(
           'Create Event',
@@ -45,7 +49,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
             children: [
               _buildHeaderCard(),
               const SizedBox(height: 24),
-              _buildUploadCoverImage(),
+              _buildImageUploadSection(),
               const SizedBox(height: 24),
               _buildEventTitle(),
               const SizedBox(height: 20),
@@ -101,34 +105,41 @@ class _CreateEventPageState extends State<CreateEventPage> {
     );
   }
 
-  Widget _buildUploadCoverImage() {
+  Widget _buildImageUploadSection() {
     return Container(
-      width: double.infinity,
-      height: 200,
+      padding: EdgeInsets.all(38.w),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+        ),
+        borderRadius: BorderRadius.circular(14.r),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.image_outlined, size: 48, color: Colors.grey[400]),
-          const SizedBox(height: 12),
-          const Text(
-            'Upload Cover Image',
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
+      child: Center(
+        child: Column(
+          children: [
+            Assets.icons.uploadImage.svg(width: 40.w, height: 40.h),
+            SizedBox(height: 8.h),
+
+            Text(
+              "Upload Cover Image",
+              style: TextStyle(
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w400,
+                color: Color(0XFF364153),
+              ),
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            'Click to browse',
-            style: TextStyle(fontSize: 13, color: Colors.grey[500]),
-          ),
-        ],
+            Text(
+              "Click to browse",
+              style: TextStyle(
+                fontSize: 10.sp,
+                fontWeight: FontWeight.w400,
+                color: Color(0XFF4A5565),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

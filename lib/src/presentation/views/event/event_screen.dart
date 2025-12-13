@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
-class CreatePostScreen extends StatelessWidget {
-  const CreatePostScreen({super.key});
+class EventScreen extends StatelessWidget {
+  const EventScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -16,24 +18,23 @@ class CreatePostScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                // Back Button
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.0.w,
-                    vertical: 0,
-                  ),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(
-                          Icons.arrow_back_ios,
-                          color: Colors.black,
-                        ),
-                        onPressed: () {},
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
+                        color: Colors.black,
                       ),
-                      Text('Create Post', style: TextStyle(fontSize: 18)),
-                      Spacer(),
-                      Container(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    Text('Create Post', style: TextStyle(fontSize: 18)),
+                    Spacer(),
+                    GestureDetector(
+                      onTap: () =>
+                          context.pushNamed(RouteNames.qrVerificationScreen),
+                      child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -41,8 +42,12 @@ class CreatePostScreen extends StatelessWidget {
                         ),
                         child: Assets.icons.scan.svg(),
                       ),
-                      SizedBox(width: 8),
-                      Container(
+                    ),
+                    SizedBox(width: 8),
+                    GestureDetector(
+                      onTap: () =>
+                          context.pushNamed(RouteNames.createEventScreen),
+                      child: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -50,8 +55,8 @@ class CreatePostScreen extends StatelessWidget {
                         ),
                         child: Assets.icons.add.svg(),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 // Body
                 SizedBox(height: 12),
@@ -59,7 +64,7 @@ class CreatePostScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    // color: Colors.grey.shade200,
+
                     border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: Column(

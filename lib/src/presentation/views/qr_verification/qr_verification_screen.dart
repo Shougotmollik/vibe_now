@@ -1,34 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/design_system/tokens/colors.dart';
 
-void main() {
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+class QRVerificationScreen extends StatefulWidget {
+  const QRVerificationScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
-      ),
-      home: const QRVerificationPage(),
-    );
-  }
+  State<QRVerificationScreen> createState() => _QRVerificationScreenState();
 }
 
-class QRVerificationPage extends StatefulWidget {
-  const QRVerificationPage({Key? key}) : super(key: key);
-
-  @override
-  State<QRVerificationPage> createState() => _QRVerificationPageState();
-}
-
-class _QRVerificationPageState extends State<QRVerificationPage> {
+class _QRVerificationScreenState extends State<QRVerificationScreen> {
   bool isQRCodeTab = true;
 
   @override
@@ -40,7 +20,9 @@ class _QRVerificationPageState extends State<QRVerificationPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pop(context);
+          },
         ),
         title: const Text(
           'QR Verification',
@@ -142,7 +124,7 @@ class _QRVerificationPageState extends State<QRVerificationPage> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                  Icon(Icons.info_outline, color: Colors.grey[700], size: 20),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
@@ -265,12 +247,12 @@ class _QRVerificationPageState extends State<QRVerificationPage> {
               height: 320,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                color: Color(0xffEFF6FF),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF6DD5ED), width: 3),
+                  border: Border.all(color: const Color(0xFF4DAFFF), width: 3),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Stack(
@@ -326,16 +308,16 @@ class _QRVerificationPageState extends State<QRVerificationPage> {
       decoration: BoxDecoration(
         border: Border(
           top: isTop
-              ? BorderSide(color: const Color(0xFF6DD5ED), width: 4)
+              ? BorderSide(color: const Color(0xFF4DAFFF), width: 4)
               : BorderSide.none,
           bottom: !isTop
-              ? BorderSide(color: const Color(0xFF6DD5ED), width: 4)
+              ? BorderSide(color: const Color(0xFF4DAFFF), width: 4)
               : BorderSide.none,
           left: isLeft
-              ? BorderSide(color: const Color(0xFF6DD5ED), width: 4)
+              ? BorderSide(color: const Color(0xFF4DAFFF), width: 4)
               : BorderSide.none,
           right: !isLeft
-              ? BorderSide(color: const Color(0xFF6DD5ED), width: 4)
+              ? BorderSide(color: const Color(0xFF4DAFFF), width: 4)
               : BorderSide.none,
         ),
         borderRadius: BorderRadius.only(

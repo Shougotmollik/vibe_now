@@ -16,6 +16,7 @@ class AvatarStack extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       height: size,
+      width: double.infinity,
       child: Stack(
         children: [
           for (int i = 0; i < imageUrls.length; i++)

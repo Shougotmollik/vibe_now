@@ -29,6 +29,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16.w),
@@ -54,12 +55,13 @@ class _LanguageScreenState extends State<LanguageScreen> {
   }
 
   Widget _buildLanguageTile(LanguageModel lang, int index) {
-    return InkWell(
+    return GestureDetector(
       onTap: () {
         setState(() {
           selectedIndex = index;
         });
       },
+      behavior: HitTestBehavior.translucent,
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 10.h),
         child: Row(

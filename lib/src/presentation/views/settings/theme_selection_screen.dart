@@ -18,6 +18,7 @@ class _ThemeSelectionScreenState extends State<ThemeSelectionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16.w),

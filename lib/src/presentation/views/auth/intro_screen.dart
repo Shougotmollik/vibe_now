@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
@@ -52,6 +54,7 @@ class IntroScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              SizedBox(height: 32.h),
               Text(
                 "Connect with real people nearby",
                 style: TextStyle(
@@ -75,7 +78,12 @@ class IntroScreen extends StatelessWidget {
 
               SizedBox(height: 100.h),
 
-              PrimaryButton.text(onPressed: () {}, text: 'Get Started'),
+              PrimaryButton.text(
+                onPressed: () {
+                  context.pushNamed(RouteNames.signInScreen);
+                },
+                text: 'Get Started',
+              ),
             ],
           ),
         ),

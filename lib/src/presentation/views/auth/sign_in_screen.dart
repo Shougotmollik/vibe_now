@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/auth_title.dart';
@@ -50,7 +52,12 @@ class SignInScreen extends StatelessWidget {
               ],
             ),
             SizedBox(height: 32.h),
-            PrimaryButton.text(onPressed: () {}, text: 'Sign In'),
+            PrimaryButton.text(
+              onPressed: () {
+                context.goNamed(RouteNames.signUpOnBoardingScreen);
+              },
+              text: 'Sign In',
+            ),
             // SizedBox(height: 12.h),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,

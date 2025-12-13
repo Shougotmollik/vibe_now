@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/community/community_details_screen.dart';
-import 'package:vibe_now/src/presentation/views/community/widgets/avatar_stack.dart';
+import 'package:vibe_now/src/presentation/views/common/avatar_stack.dart';
 
 class CommunityCard extends StatelessWidget {
   const CommunityCard({super.key});

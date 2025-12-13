@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/step_page.dart';
@@ -21,10 +23,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
       currentStep: widget.step,
       footer: PrimaryButton.text(
         onPressed: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
-          );
+          context.pushReplacementNamed(RouteNames.mainNavBar);
         },
         text: 'Allow',
       ),

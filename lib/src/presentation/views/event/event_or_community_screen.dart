@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
@@ -68,6 +70,9 @@ class EventOrCommunityScreen extends StatelessWidget {
 
                     // Event Card
                     CreateCard(
+                      onTap: () {
+                        context.pushNamed(RouteNames.eventScreen);
+                      },
                       title: 'Event',
                       subtitle:
                           'Organize gatherings, meetups, or special occasions that bring people together',
@@ -81,6 +86,9 @@ class EventOrCommunityScreen extends StatelessWidget {
                     ),
                     SizedBox(height: 16.h),
                     CreateCard(
+                      onTap: () {
+                        context.pushNamed(RouteNames.communityScreen);
+                      },
                       title: 'Community',
                       subtitle:
                           'Build a space where people with shared interests can connect and grow together',
@@ -167,6 +175,7 @@ class CreateCard extends StatelessWidget {
   final Widget icon;
   final Color iconBackground;
   final LinearGradient gradient;
+  final VoidCallback onTap;
   const CreateCard({
     required this.title,
     required this.subtitle,
@@ -174,92 +183,90 @@ class CreateCard extends StatelessWidget {
     required this.iconBackground,
     required this.gradient,
     super.key,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        padding: EdgeInsets.all(3.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12.r),
-          // gradient: LinearGradient(
-          //   colors: [
-          //     Color(0xFF8663F6).withAlpha(100),
-          //     Color(0xFFC470F5).withAlpha(100),
-          //     Color(0xFF57C2FF).withAlpha(100),
-          //   ],
-          //   begin: Alignment.bottomRight,
-          //   end: Alignment.topLeft,
-          // ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade300,
-              blurRadius: 10,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
+    return GestureDetector(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Container(
-          height: 260.h,
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
-          child: Column(
-            children: [
-              Expanded(
-                child: Container(
-                  decoration: BoxDecoration(gradient: gradient),
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: iconBackground,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 8,
-                            offset: const Offset(0, 8),
+          padding: EdgeInsets.all(3.w),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.r),
+
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade300,
+                blurRadius: 10,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Container(
+            height: 260.h,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(gradient: gradient),
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: iconBackground,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black26,
+                              blurRadius: 8,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: icon,
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 24.h),
+                          Text(
+                            title,
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          Text(
+                            subtitle,
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
                         ],
                       ),
-                      child: icon,
                     ),
                   ),
                 ),
-              ),
-              Expanded(
-                child: Container(
-                  color: Colors.white,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 24.h),
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        Text(
-                          subtitle,
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
