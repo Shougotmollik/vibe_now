@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:vibe_now/gen/assets.gen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -34,7 +36,52 @@ class _MapHomeScreenState extends State<HomeScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(children: [_buildMap(), _buildUserPulse(), _buildMarkers()]),
+      body: Stack(
+        children: [
+          _buildMap(),
+
+          Positioned(
+            top: 40.h,
+            left: 16.w,
+            right: 16.w,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Container(
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Assets.icons.notification.svg(
+                      width: 24.w,
+                      height: 24.h,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                Container(
+                  padding: EdgeInsets.all(14.w),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                  ),
+                  child: Center(
+                    child: Assets.icons.filter.svg(width: 20.w, height: 20.h),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          _buildUserPulse(),
+
+          _buildMarkers(),
+        ],
+      ),
     );
   }
 
@@ -68,7 +115,7 @@ class _MapHomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildCenterUser() {
-    return CircleAvatar(
+    return const CircleAvatar(
       radius: 28,
       backgroundColor: Colors.white,
       child: CircleAvatar(
@@ -78,35 +125,32 @@ class _MapHomeScreenState extends State<HomeScreen>
     );
   }
 
-Widget _buildMarkers() {
-  return Positioned.fill(
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        _buildCenterUser(),
-
-        _marker(offset: const Offset(-80, -60), img: 1),
-        _marker(offset: const Offset(90, -20), img: 2),
-        _marker(offset: const Offset(-60, 80), img: 3),
-        _marker(offset: const Offset(70, 90), img: 4),
-      ],
-    ),
-  );
-}
-
-Widget _marker({required Offset offset, required int img}) {
-  return Transform.translate(
-    offset: offset,
-    child: CircleAvatar(
-      radius: 20,
-      backgroundColor: Colors.purple,
-      child: CircleAvatar(
-        radius: 18,
-        backgroundImage:
-            NetworkImage('https://i.pravatar.cc/150?img=$img'),
+  Widget _buildMarkers() {
+    return Positioned.fill(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _buildCenterUser(),
+          _marker(offset: const Offset(-80, -60), img: 1),
+          _marker(offset: const Offset(90, -20), img: 2),
+          _marker(offset: const Offset(-60, 80), img: 3),
+          _marker(offset: const Offset(70, 90), img: 4),
+        ],
       ),
-    ),
-  );
-}
+    );
+  }
 
+  Widget _marker({required Offset offset, required int img}) {
+    return Transform.translate(
+      offset: offset,
+      child: CircleAvatar(
+        radius: 20,
+        backgroundColor: Colors.purple,
+        child: CircleAvatar(
+          radius: 18,
+          backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=$img'),
+        ),
+      ),
+    );
+  }
 }

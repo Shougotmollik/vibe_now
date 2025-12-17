@@ -13,7 +13,7 @@ import 'package:vibe_now/src/presentation/views/event/event_details_screen.dart'
 import 'package:vibe_now/src/presentation/views/event/event_or_community_screen.dart';
 import 'package:vibe_now/src/presentation/views/home/home_screen.dart';
 import 'package:vibe_now/src/presentation/views/main_nav_bar_screen.dart';
-import 'package:vibe_now/src/presentation/views/subscribtion/subscription_screen.dart';
+import 'package:vibe_now/src/presentation/views/subscription/subscription_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,12 +37,12 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: AppTheme.light(),
         themeMode: ThemeMode.light,
-        // home: MaterialApp.router(
-        //   debugShowCheckedModeBanner: false,
-        //   routerConfig: router,
-        // ),
-        home: HomeScreen(),
+        home: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routerConfig: router,
+        ),
+        // home: HomeScreen(),
       ),
     );
   }
-}
+} 

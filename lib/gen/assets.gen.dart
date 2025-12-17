@@ -206,6 +206,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/film-wheel.svg
   SvgGenImage get filmWheel => const SvgGenImage('assets/icons/film-wheel.svg');
 
+  /// File path: assets/icons/filter.svg
+  SvgGenImage get filter => const SvgGenImage('assets/icons/filter.svg');
+
   /// File path: assets/icons/friend_ship.svg
   SvgGenImage get friendShip =>
       const SvgGenImage('assets/icons/friend_ship.svg');
@@ -267,6 +270,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/notification-color.svg
   SvgGenImage get notificationColor =>
       const SvgGenImage('assets/icons/notification-color.svg');
+
+  /// File path: assets/icons/notification.svg
+  SvgGenImage get notification =>
+      const SvgGenImage('assets/icons/notification.svg');
 
   /// File path: assets/icons/organic-food.svg
   SvgGenImage get organicFood =>
@@ -357,6 +364,7 @@ class $AssetsIconsGen {
     dumbbell,
     earth,
     filmWheel,
+    filter,
     friendShip,
     gift,
     gradientCheck,
@@ -375,6 +383,7 @@ class $AssetsIconsGen {
     musicColor,
     nanoTechnology,
     notificationColor,
+    notification,
     organicFood,
     paintBoard,
     people,
@@ -412,9 +421,13 @@ class $AssetsImagesGen {
 class Assets {
   const Assets._();
 
+  static const String aEnv = '.env';
   static const $AssetsFlagsGen flags = $AssetsFlagsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
+
+  /// List of all assets
+  static List<String> get values => [aEnv];
 }
 
 class AssetGenImage {
