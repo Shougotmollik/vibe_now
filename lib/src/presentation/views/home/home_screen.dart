@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:vibe_now/gen/assets.gen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,6 +16,8 @@ class _MapHomeScreenState extends State<HomeScreen>
 
   final LatLng _currentLocation = const LatLng(23.8103, 90.4125);
 
+  String? mapTheme;
+
   @override
   void initState() {
     super.initState();
@@ -23,6 +26,12 @@ class _MapHomeScreenState extends State<HomeScreen>
       vsync: this,
       duration: const Duration(seconds: 2),
     )..repeat();
+
+    DefaultAssetBundle.of(context).loadString(Assets.mapTheme.pinkTheme).then((
+      themeValue,
+    ) {
+      mapTheme = themeValue;
+    });
   }
 
   @override
@@ -43,7 +52,10 @@ class _MapHomeScreenState extends State<HomeScreen>
       initialCameraPosition: CameraPosition(target: _currentLocation, zoom: 14),
       myLocationEnabled: false,
       zoomControlsEnabled: false,
-      onMapCreated: (controller) => _mapController = controller,
+      onMapCreated: (controller) {
+        controller.setMapStyle(mapTheme);
+        _mapController = controller;
+      },
     );
   }
 
@@ -78,35 +90,33 @@ class _MapHomeScreenState extends State<HomeScreen>
     );
   }
 
-Widget _buildMarkers() {
-  return Positioned.fill(
-    child: Stack(
-      alignment: Alignment.center,
-      children: [
-        _buildCenterUser(),
+  Widget _buildMarkers() {
+    return Positioned.fill(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _buildCenterUser(),
 
-        _marker(offset: const Offset(-80, -60), img: 1),
-        _marker(offset: const Offset(90, -20), img: 2),
-        _marker(offset: const Offset(-60, 80), img: 3),
-        _marker(offset: const Offset(70, 90), img: 4),
-      ],
-    ),
-  );
-}
-
-Widget _marker({required Offset offset, required int img}) {
-  return Transform.translate(
-    offset: offset,
-    child: CircleAvatar(
-      radius: 20,
-      backgroundColor: Colors.purple,
-      child: CircleAvatar(
-        radius: 18,
-        backgroundImage:
-            NetworkImage('https://i.pravatar.cc/150?img=$img'),
+          _marker(offset: const Offset(-80, -60), img: 1),
+          _marker(offset: const Offset(90, -20), img: 2),
+          _marker(offset: const Offset(-60, 80), img: 3),
+          _marker(offset: const Offset(70, 90), img: 4),
+        ],
       ),
-    ),
-  );
-}
+    );
+  }
 
+  Widget _marker({required Offset offset, required int img}) {
+    return Transform.translate(
+      offset: offset,
+      child: CircleAvatar(
+        radius: 20,
+        backgroundColor: Colors.purple,
+        child: CircleAvatar(
+          radius: 18,
+          backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=$img'),
+        ),
+      ),
+    );
+  }
 }

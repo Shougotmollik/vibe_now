@@ -37,11 +37,10 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         theme: AppTheme.light(),
         themeMode: ThemeMode.light,
-        // home: MaterialApp.router(
-        //   debugShowCheckedModeBanner: false,
-        //   routerConfig: router,
-        // ),
-        home: HomeScreen(),
+        home: MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          routerConfig: router,
+        ),
       ),
     );
   }

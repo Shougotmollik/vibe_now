@@ -409,12 +409,27 @@ class $AssetsImagesGen {
   List<dynamic> get values => [dialog, openForCoffee, profilePicture];
 }
 
+class $AssetsMapThemeGen {
+  const $AssetsMapThemeGen();
+
+  /// File path: assets/map_theme/pink_theme.json
+  String get pinkTheme => 'assets/map_theme/pink_theme.json';
+
+  /// List of all assets
+  List<String> get values => [pinkTheme];
+}
+
 class Assets {
   const Assets._();
 
+  static const String aEnv = '.env';
   static const $AssetsFlagsGen flags = $AssetsFlagsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $AssetsMapThemeGen mapTheme = $AssetsMapThemeGen();
+
+  /// List of all assets
+  static List<String> get values => [aEnv];
 }
 
 class AssetGenImage {
