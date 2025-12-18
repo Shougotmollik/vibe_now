@@ -1,7 +1,33 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
+
+class NearbyUser {
+  final String id;
+  final String name;
+  final String imageUrl;
+  final String bio;
+  final String interest;
+  final double distanceKm;
+  final double lat;
+  final double lng;
+
+  NearbyUser({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.bio,
+    required this.interest,
+    required this.distanceKm,
+    required this.lat,
+    required this.lng,
+  });
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,12 +38,71 @@ class HomeScreen extends StatefulWidget {
 
 class _MapHomeScreenState extends State<HomeScreen>
     with SingleTickerProviderStateMixin {
-  late GoogleMapController _mapController;
+  final _mapController = Completer<GoogleMapController>();
   late AnimationController _pulseController;
+
+  final Set<Marker> _markers = {};
 
   final LatLng _currentLocation = const LatLng(23.8103, 90.4125);
 
   String? mapTheme;
+  final List<NearbyUser> nearbyUsers = [
+    NearbyUser(
+      id: 'u1',
+      name: 'Jhon Gomes',
+      imageUrl:
+          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+      bio: 'Coffee lover ☕ | Weekend explorer | Always down for deep talks',
+      interest: 'Coffee & Music',
+      distanceKm: 0.3,
+      lat: 23.780887,
+      lng: 90.279237,
+    ),
+    NearbyUser(
+      id: 'u2',
+      name: 'Ariana Lewis',
+      imageUrl:
+          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400',
+      bio: 'Yoga, sunsets, and good energy 🌿',
+      interest: 'Wellness',
+      distanceKm: 0.7,
+      lat: 23.781912,
+      lng: 90.280541,
+    ),
+    NearbyUser(
+      id: 'u1',
+      name: 'Jhon Gomes',
+      imageUrl:
+          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+      bio: 'Coffee lover ☕ | Weekend explorer | Always down for deep talks',
+      interest: 'Coffee & Music',
+      distanceKm: 0.3,
+      lat: 23.780887,
+      lng: 90.279237,
+    ),
+    NearbyUser(
+      id: 'u3',
+      name: 'Daniel Cruz',
+      imageUrl:
+          'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=400',
+      bio: 'Tech by day, guitarist by night 🎸',
+      interest: 'Music & Tech',
+      distanceKm: 1.2,
+      lat: 23.779421,
+      lng: 90.277843,
+    ),
+    NearbyUser(
+      id: 'u4',
+      name: 'Maya Chen',
+      imageUrl:
+          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
+      bio: 'Photography addict 📸 | Capturing small moments',
+      interest: 'Photography',
+      distanceKm: 1.8,
+      lat: 23.782334,
+      lng: 90.281992,
+    ),
+  ];
 
   @override
   void initState() {
@@ -33,6 +118,302 @@ class _MapHomeScreenState extends State<HomeScreen>
     ) {
       mapTheme = themeValue;
     });
+
+    _loadMarkers();
+    Future.delayed(const Duration(seconds: 2), () {
+      _loadMarkers();
+    });
+  }
+
+  _loadMarkers() async {
+    _markers.add(
+      Marker(
+        markerId: MarkerId('0'),
+        position: _currentLocation,
+        icon:
+            await CircleAvatar(
+              radius: 56,
+              backgroundColor: Colors.purple,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=11',
+                ),
+              ),
+            ).toBitmapDescriptor(
+              logicalSize: const Size(300, 300),
+              imageSize: const Size(300, 300),
+            ),
+        onTap: () {
+          showUserProfileDialog(context, nearbyUsers[0]);
+        },
+      ),
+    );
+    setState(() {});
+    _markers.add(
+      Marker(
+        markerId: const MarkerId("1"),
+        position: _offsetToLatLng(_currentLocation, -60, 80),
+        icon:
+            await CircleAvatar(
+              radius: 56,
+              backgroundColor: Colors.purple,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=11',
+                ),
+              ),
+            ).toBitmapDescriptor(
+              logicalSize: const Size(300, 300),
+              imageSize: const Size(300, 300),
+            ),
+        onTap: () {
+          showUserProfileDialog(context, nearbyUsers[1]);
+        },
+      ),
+    );
+    setState(() {});
+    _markers.add(
+      Marker(
+        markerId: const MarkerId("2"),
+        position: _offsetToLatLng(_currentLocation, 70, 90),
+        icon:
+            await CircleAvatar(
+              radius: 56,
+              backgroundColor: Colors.purple,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=12',
+                ),
+              ),
+            ).toBitmapDescriptor(
+              logicalSize: const Size(300, 300),
+              imageSize: const Size(300, 300),
+            ),
+        onTap: () {
+          showUserProfileDialog(context, nearbyUsers[2]);
+        },
+      ),
+    );
+    setState(() {});
+    _markers.add(
+      Marker(
+        markerId: const MarkerId("3"),
+        position: _offsetToLatLng(_currentLocation, 90, -20),
+        icon:
+            await CircleAvatar(
+              radius: 56,
+              backgroundColor: Colors.purple,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=13',
+                ),
+              ),
+            ).toBitmapDescriptor(
+              logicalSize: const Size(300, 300),
+              imageSize: const Size(300, 300),
+            ),
+        onTap: () {
+          showUserProfileDialog(context, nearbyUsers[3]);
+        },
+      ),
+    );
+    setState(() {});
+    _markers.add(
+      Marker(
+        markerId: const MarkerId("4"),
+
+        position: _offsetToLatLng(_currentLocation, -80, -60),
+
+        icon:
+            await CircleAvatar(
+              radius: 56,
+              backgroundColor: Colors.purple,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=14',
+                ),
+              ),
+            ).toBitmapDescriptor(
+              logicalSize: const Size(300, 300),
+              imageSize: const Size(300, 300),
+            ),
+        onTap: () {
+          showUserProfileDialog(context, nearbyUsers[4]);
+        },
+      ),
+    );
+    setState(() {});
+  }
+
+  void showUserProfileDialog(BuildContext context, NearbyUser user) {
+    showDialog(
+      context: context,
+      // isScrollControlled: true,
+      // backgroundColor: Colors.transparent,
+      builder: (_) {
+        return Center(
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.15),
+                  blurRadius: 20,
+                  offset: const Offset(0, -8),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // drag handle
+                // Container(
+                //   width: 40,
+                //   height: 4,
+                //   decoration: BoxDecoration(
+                //     color: Colors.grey.shade300,
+                //     borderRadius: BorderRadius.circular(4),
+                //   ),
+                // ),
+                const SizedBox(height: 16),
+
+                // avatar
+                Stack(
+                  children: [
+                    CircleAvatar(
+                      radius: 48,
+                      backgroundImage: NetworkImage(user.imageUrl),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: AppColors.primaryGradient,
+                          border: Border.all(color: Colors.white, width: 2),
+                        ),
+                        child: Assets.icons.location.svg(height: 14),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+
+                // name
+                Text(
+                  user.name,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+
+                const SizedBox(height: 4),
+
+                // interests row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Assets.icons.coffeeColor.svg(height: 14),
+                    const SizedBox(width: 4),
+                    Text(
+                      user.interest,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "• ${user.distanceKm} km away",
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // bio
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Text(
+                    user.bio,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // action buttons
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(14),
+                          gradient: AppColors.primaryGradientRotated,
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Wave 👋',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Container(
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(14),
+                        color: Colors.grey.shade200,
+                      ),
+                      child: Assets.icons.chatting.svg(),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 12),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  LatLng _offsetToLatLng(LatLng center, double dx, double dy) {
+    // Rough conversion: 1 degree ≈ 111km
+    // At zoom 14, adjust these values based on your needs
+    const double metersPerPixel = 10.0; // Adjust this value
+    final double latOffset = (dy * metersPerPixel) / 111000;
+    final double lngOffset =
+        (dx * metersPerPixel) / (111000 * 0.9); // Adjust for latitude
+
+    return LatLng(center.latitude + latOffset, center.longitude + lngOffset);
   }
 
   @override
@@ -85,9 +466,9 @@ class _MapHomeScreenState extends State<HomeScreen>
             ),
           ),
 
-          _buildUserPulse(),
+          // _buildUserPulse(),
 
-          _buildMarkers(),
+          // _buildMarkers(),
         ],
       ),
     );
@@ -98,9 +479,10 @@ class _MapHomeScreenState extends State<HomeScreen>
       initialCameraPosition: CameraPosition(target: _currentLocation, zoom: 14),
       myLocationEnabled: false,
       zoomControlsEnabled: false,
+      markers: _markers,
       onMapCreated: (controller) {
         controller.setMapStyle(mapTheme);
-        _mapController = controller;
+        _mapController.complete(controller);
       },
     );
   }
@@ -124,44 +506,44 @@ class _MapHomeScreenState extends State<HomeScreen>
       ),
     );
   }
+}
 
-  Widget _buildCenterUser() {
-    return const CircleAvatar(
-      radius: 28,
-      backgroundColor: Colors.white,
-      child: CircleAvatar(
-        radius: 24,
-        backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=12'),
-      ),
-    );
+class CustomMarker extends StatefulWidget {
+  const CustomMarker({super.key});
+
+  @override
+  State<CustomMarker> createState() => _CustomMarkerState();
+}
+
+class _CustomMarkerState extends State<CustomMarker>
+    with TickerProviderStateMixin {
+  late AnimationController _pulseController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..repeat();
   }
 
-  Widget _buildMarkers() {
-    return Positioned.fill(
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          _buildCenterUser(),
-          _marker(offset: const Offset(-80, -60), img: 1),
-          _marker(offset: const Offset(90, -20), img: 2),
-          _marker(offset: const Offset(-60, 80), img: 3),
-          _marker(offset: const Offset(70, 90), img: 4),
-        ],
-      ),
-    );
-  }
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _pulseController,
+      builder: (context, child) {
+        final size = 120 + (_pulseController.value * 80);
 
-  Widget _marker({required Offset offset, required int img}) {
-    return Transform.translate(
-      offset: offset,
-      child: CircleAvatar(
-        radius: 20,
-        backgroundColor: Colors.purple,
-        child: CircleAvatar(
-          radius: 18,
-          backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=$img'),
-        ),
-      ),
+        return Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.blue.withValues(alpha: 0.15),
+          ),
+        );
+      },
     );
   }
 }
