@@ -4,6 +4,8 @@ import 'package:vibe_now/src/presentation/views/auth/intro_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/sign_in_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/splash_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/steps/step_name_screen.dart';
+import 'package:vibe_now/src/presentation/views/chat/chat_inbox_screen.dart';
+import 'package:vibe_now/src/presentation/views/chat/report_screen.dart';
 import 'package:vibe_now/src/presentation/views/community/community_details_screen.dart';
 import 'package:vibe_now/src/presentation/views/community/community_screen.dart';
 import 'package:vibe_now/src/presentation/views/community/create_community_screen.dart';
@@ -11,6 +13,7 @@ import 'package:vibe_now/src/presentation/views/community/member_screen.dart';
 import 'package:vibe_now/src/presentation/views/event/create_event_screen.dart';
 import 'package:vibe_now/src/presentation/views/event/event_screen.dart';
 import 'package:vibe_now/src/presentation/views/main_nav_bar_screen.dart';
+import 'package:vibe_now/src/presentation/views/notification/notification_screen.dart';
 import 'package:vibe_now/src/presentation/views/qr_verification/qr_verification_screen.dart';
 import 'package:vibe_now/src/presentation/views/subscription/subscription_screen.dart';
 
@@ -88,6 +91,22 @@ final GoRouter router = GoRouter(
       path: '/subscription-screen',
       name: RouteNames.subscriptionScreen,
       builder: (context, state) => const SubscriptionScreen(),
+    ),
+
+    GoRoute(
+      path: '/notification-screen',
+      name: RouteNames.notificationScreen,
+      builder: (context, state) => const NotificationScreen(),
+    ),
+    GoRoute(
+      path: '/chat-inbox-screen',
+      name: RouteNames.chatInboxScreen,
+      builder: (context, state) => const ChatInboxScreen(),
+    ),
+    GoRoute(
+      path: '/report-screen',
+      name: RouteNames.reportScreen,
+      builder: (context, state) => const ReportScreen(),
     ),
   ],
 );

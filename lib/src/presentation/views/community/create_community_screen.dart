@@ -30,6 +30,17 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     });
   }
 
+  final List<String> categories = [
+    'Music',
+    'Art',
+    'Games',
+    'Sports',
+    'Food',
+    'Movies',
+    'Travel',
+  ];
+  String? selectedCategory;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -328,16 +339,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   }
 
   Widget _buildCommunityCategory() {
-    final List<String> categories = [
-      'Music',
-      'Art',
-      'Games',
-      'Sports',
-      'Food',
-      'Movies',
-      'Travel',
-    ];
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -356,30 +357,33 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           child: Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: categories
-                .map(
-                  (e) => Chip(
-                    side: BorderSide.none,
+            children: categories.map((e) {
+              final bool isSelected = e == selectedCategory;
+              return GestureDetector(
+                onTap: () => setState(() => selectedCategory = e),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 5.h,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.r),
+                    gradient: isSelected
+                        ? AppColors.primaryGradientRotated
+                        : LinearGradient(
+                            colors: [Colors.grey[100]!, Colors.grey[100]!],
+                          ),
+                  ),
 
-                    color: WidgetStatePropertyAll(Color(0xFFF3F3F5)),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 8.h,
-                    ),
-                    label: Text(
-                      e,
+                  child: Text(e,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xff484848),
-                      ),
-                    ),
-                  ),
-                )
-                .toList(),
+                        color: isSelected ? Colors.white : Color(0xff555555),
+                  )),
+                ),
+              );
+            }).toList(),
           ),
         ),
       ],

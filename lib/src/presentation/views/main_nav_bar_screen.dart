@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/chat/chat_screen.dart';
 import 'package:vibe_now/src/presentation/views/create_vibe/create_vibe_screen.dart';
 import 'package:vibe_now/src/presentation/views/event/event_or_community_screen.dart';
 import 'package:vibe_now/src/presentation/views/home/home_screen.dart';
-import 'package:vibe_now/src/presentation/views/settings/profile_setting_screen.dart';
 import 'package:vibe_now/src/presentation/views/settings/settings_screen.dart';
 
 class MainNavBarScreen extends StatefulWidget {
@@ -18,11 +19,11 @@ class MainNavBarScreen extends StatefulWidget {
 class _MainNavBarScreenState extends State<MainNavBarScreen> {
   int selectedIndex = 0;
 
-  final List<Widget> screens = [
+  final List<Widget> screens = const [
     HomeScreen(),
     EventOrCommunityScreen(),
     CreateVibeScreen(),
-    Placeholder(),
+    ChatScreen(),
     SettingsScreen(),
   ];
 
@@ -123,10 +124,9 @@ class CustomNavBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: AppColors.primaryGradient,
-
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFF5A7FFF).withValues( alpha: 0.45),
+                        color: Color(0xFF5A7FFF).withValues(alpha: 0.45),
                         blurRadius: 35,
                         spreadRadius: 5,
                       ),
@@ -150,7 +150,6 @@ class CustomNavBar extends StatelessWidget {
 
   Widget _buildIcon(int index) {
     final bool isSelected = currentIndex == index;
-
     final SvgGenImage icon = isSelected ? colorIcons[index] : grayIcons[index];
 
     return GestureDetector(

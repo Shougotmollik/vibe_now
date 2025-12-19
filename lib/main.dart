@@ -13,6 +13,7 @@ import 'package:vibe_now/src/presentation/views/event/event_details_screen.dart'
 import 'package:vibe_now/src/presentation/views/event/event_or_community_screen.dart';
 import 'package:vibe_now/src/presentation/views/home/home_screen.dart';
 import 'package:vibe_now/src/presentation/views/main_nav_bar_screen.dart';
+import 'package:vibe_now/src/presentation/views/notification/notification_screen.dart';
 import 'package:vibe_now/src/presentation/views/subscription/subscription_screen.dart';
 
 void main() async {
@@ -34,9 +35,10 @@ class MyApp extends StatelessWidget {
       designSize: Size(375, 812),
       builder: (context, child) => MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Flutter Demo',
+        title: 'Vive Now',
         theme: AppTheme.light(),
         themeMode: ThemeMode.light,
+        // home: NotificationScreen(),
         home: MaterialApp.router(
           debugShowCheckedModeBanner: false,
           routerConfig: router,
@@ -44,4 +46,4 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-} 
+}

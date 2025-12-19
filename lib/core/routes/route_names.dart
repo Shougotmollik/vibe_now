@@ -21,4 +21,10 @@ class RouteNames {
   static const String memberScreen = "memberScreen";
 
   static const String subscriptionScreen = "subscriptionScreen";
+
+  static const String notificationScreen = "NotificationScreen";
+
+  static const String chatInboxScreen = "chatInboxScreen";
+
+  static const String reportScreen = "reportScreen";
 }

@@ -98,6 +98,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/Plus.svg
   SvgGenImage get plus => const SvgGenImage('assets/icons/Plus.svg');
 
+  /// File path: assets/icons/Send.svg
+  SvgGenImage get send => const SvgGenImage('assets/icons/Send.svg');
+
   /// File path: assets/icons/Shield-color.svg
   SvgGenImage get shieldColor =>
       const SvgGenImage('assets/icons/Shield-color.svg');
@@ -105,6 +108,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/Time Circle.svg
   SvgGenImage get timeCircle =>
       const SvgGenImage('assets/icons/Time Circle.svg');
+
+  /// File path: assets/icons/Trash.svg
+  SvgGenImage get trash => const SvgGenImage('assets/icons/Trash.svg');
 
   /// File path: assets/icons/User-color.svg
   SvgGenImage get userColor => const SvgGenImage('assets/icons/User-color.svg');
@@ -116,11 +122,17 @@ class $AssetsIconsGen {
   SvgGenImage get usersColor =>
       const SvgGenImage('assets/icons/Users_color.svg');
 
+  /// File path: assets/icons/accept_ic.svg
+  SvgGenImage get acceptIc => const SvgGenImage('assets/icons/accept_ic.svg');
+
   /// File path: assets/icons/add.svg
   SvgGenImage get add => const SvgGenImage('assets/icons/add.svg');
 
   /// File path: assets/icons/ai-game.svg
   SvgGenImage get aiGame => const SvgGenImage('assets/icons/ai-game.svg');
+
+  /// File path: assets/icons/block.svg
+  SvgGenImage get block => const SvgGenImage('assets/icons/block.svg');
 
   /// File path: assets/icons/book.svg
   SvgGenImage get book => const SvgGenImage('assets/icons/book.svg');
@@ -187,9 +199,16 @@ class $AssetsIconsGen {
   /// File path: assets/icons/delete.svg
   SvgGenImage get delete => const SvgGenImage('assets/icons/delete.svg');
 
+  /// File path: assets/icons/denied_ic.svg
+  SvgGenImage get deniedIc => const SvgGenImage('assets/icons/denied_ic.svg');
+
   /// File path: assets/icons/dialog-icon.svg
   SvgGenImage get dialogIcon =>
       const SvgGenImage('assets/icons/dialog-icon.svg');
+
+  /// File path: assets/icons/dialog_check.svg
+  SvgGenImage get dialogCheck =>
+      const SvgGenImage('assets/icons/dialog_check.svg');
 
   /// File path: assets/icons/down.svg
   SvgGenImage get down => const SvgGenImage('assets/icons/down.svg');
@@ -294,6 +313,9 @@ class $AssetsIconsGen {
   SvgGenImage get relationShip =>
       const SvgGenImage('assets/icons/relation_ship.svg');
 
+  /// File path: assets/icons/report.svg
+  SvgGenImage get report => const SvgGenImage('assets/icons/report.svg');
+
   /// File path: assets/icons/scan.svg
   SvgGenImage get scan => const SvgGenImage('assets/icons/scan.svg');
 
@@ -332,13 +354,17 @@ class $AssetsIconsGen {
     logoutColor,
     messageCircleColor,
     plus,
+    send,
     shieldColor,
     timeCircle,
+    trash,
     userColor,
     user,
     usersColor,
+    acceptIc,
     add,
     aiGame,
+    block,
     book,
     calender,
     calender2,
@@ -358,7 +384,9 @@ class $AssetsIconsGen {
     communityLight,
     creationStar,
     delete,
+    deniedIc,
     dialogIcon,
+    dialogCheck,
     down,
     dumbbell2,
     dumbbell,
@@ -389,6 +417,7 @@ class $AssetsIconsGen {
     people,
     peopleColor,
     relationShip,
+    report,
     scan,
     sports,
     stashQuestion,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_time_picker.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_date_picker.dart';
@@ -41,26 +42,28 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeaderCard(),
-              const SizedBox(height: 24),
-              _buildImageUploadSection(),
-              const SizedBox(height: 24),
-              _buildEventTitle(),
-              const SizedBox(height: 20),
-              _buildSelectLocation(),
-              const SizedBox(height: 20),
-              _buildDateTimeRow(),
-              const SizedBox(height: 20),
-              _buildMaxAttendees(),
-              const SizedBox(height: 32),
-              _buildActionButtons(),
-            ],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderCard(),
+                const SizedBox(height: 24),
+                _buildImageUploadSection(),
+                const SizedBox(height: 24),
+                _buildEventTitle(),
+                const SizedBox(height: 20),
+                _buildSelectLocation(),
+                const SizedBox(height: 20),
+                _buildDateTimeRow(),
+                const SizedBox(height: 20),
+                _buildMaxAttendees(),
+                const SizedBox(height: 32),
+                _buildActionButtons(),
+              ],
+            ),
           ),
         ),
       ),
@@ -374,11 +377,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         Expanded(
           child: Container(
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [Color(0xFF6DD5ED), Color(0xFFB794F6)],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
+              gradient: AppColors.primaryGradientRotated,
               borderRadius: BorderRadius.circular(30),
             ),
             child: ElevatedButton(
@@ -434,296 +433,3 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     );
   }
 }
-
-// class _DatePickerModal extends StatefulWidget {
-//   final Function(DateTime) onDateSelected;
-
-//   const _DatePickerModal({required this.onDateSelected});
-
-//   @override
-//   State<_DatePickerModal> createState() => _DatePickerModalState();
-// }
-
-// class _DatePickerModalState extends State<_DatePickerModal> {
-//   DateTime _currentMonth = DateTime(2025, 11);
-//   DateTime? _selectedDate = DateTime(2025, 11, 16);
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       padding: const EdgeInsets.all(20),
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         children: [
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//             children: [
-//               const SizedBox(width: 40),
-//               Row(
-//                 children: [
-//                   Text(
-//                     '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
-//                     style: const TextStyle(
-//                       fontSize: 16,
-//                       fontWeight: FontWeight.w600,
-//                     ),
-//                   ),
-//                   const SizedBox(width: 8),
-//                   const Icon(Icons.keyboard_arrow_down, size: 20),
-//                 ],
-//               ),
-//               const SizedBox(width: 40),
-//             ],
-//           ),
-//           const SizedBox(height: 20),
-//           _buildWeekDays(),
-//           const SizedBox(height: 12),
-//           _buildCalendar(),
-//           const SizedBox(height: 20),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.end,
-//             children: [
-//               TextButton(
-//                 onPressed: () => Navigator.pop(context),
-//                 child: Text(
-//                   'Cancel',
-//                   style: TextStyle(color: Colors.grey[600], fontSize: 15),
-//                 ),
-//               ),
-//               const SizedBox(width: 12),
-//               TextButton(
-//                 onPressed: () {
-//                   if (_selectedDate != null) {
-//                     widget.onDateSelected(_selectedDate!);
-//                   }
-//                   Navigator.pop(context);
-//                 },
-//                 child: const Text(
-//                   'Save',
-//                   style: TextStyle(
-//                     color: Color(0xFFB794F6),
-//                     fontSize: 15,
-//                     fontWeight: FontWeight.w600,
-//                   ),
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   Widget _buildWeekDays() {
-//     const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-//     return Row(
-//       mainAxisAlignment: MainAxisAlignment.spaceAround,
-//       children: weekDays
-//           .map(
-//             (day) => SizedBox(
-//               width: 40,
-//               child: Center(
-//                 child: Text(
-//                   day,
-//                   style: TextStyle(
-//                     color: Colors.grey[600],
-//                     fontSize: 14,
-//                     fontWeight: FontWeight.w500,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           )
-//           .toList(),
-//     );
-//   }
-
-//   Widget _buildCalendar() {
-//     final firstDay = DateTime(_currentMonth.year, _currentMonth.month, 1);
-//     final lastDay = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
-//     final daysInMonth = lastDay.day;
-//     final startWeekday = firstDay.weekday % 7;
-
-//     final prevMonthDays = DateTime(
-//       _currentMonth.year,
-//       _currentMonth.month,
-//       0,
-//     ).day;
-//     final List<Widget> dayWidgets = [];
-
-//     // Previous month days
-//     for (int i = startWeekday - 1; i >= 0; i--) {
-//       dayWidgets.add(_buildDayCell(prevMonthDays - i, isOtherMonth: true));
-//     }
-
-//     // Current month days
-//     for (int day = 1; day <= daysInMonth; day++) {
-//       final date = DateTime(_currentMonth.year, _currentMonth.month, day);
-//       dayWidgets.add(_buildDayCell(day, date: date));
-//     }
-
-//     return GridView.count(
-//       crossAxisCount: 7,
-//       shrinkWrap: true,
-//       physics: const NeverScrollableScrollPhysics(),
-//       children: dayWidgets,
-//     );
-//   }
-
-//   Widget _buildDayCell(int day, {bool isOtherMonth = false, DateTime? date}) {
-//     final isSelected =
-//         date != null &&
-//         _selectedDate != null &&
-//         date.year == _selectedDate!.year &&
-//         date.month == _selectedDate!.month &&
-//         date.day == _selectedDate!.day;
-
-//     return GestureDetector(
-//       onTap: date != null
-//           ? () {
-//               setState(() => _selectedDate = date);
-//             }
-//           : null,
-//       child: Container(
-//         margin: const EdgeInsets.all(4),
-//         decoration: BoxDecoration(
-//           gradient: isSelected
-//               ? const LinearGradient(
-//                   colors: [Color(0xFF6DD5ED), Color(0xFFB794F6)],
-//                   begin: Alignment.centerLeft,
-//                   end: Alignment.centerRight,
-//                 )
-//               : null,
-//           shape: BoxShape.circle,
-//         ),
-//         child: Center(
-//           child: Text(
-//             '$day',
-//             style: TextStyle(
-//               color: isOtherMonth
-//                   ? Colors.grey[300]
-//                   : isSelected
-//                   ? Colors.white
-//                   : Colors.black87,
-//               fontSize: 14,
-//               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-
-//   String _getMonthName(int month) {
-//     const months = [
-//       'January',
-//       'February',
-//       'March',
-//       'April',
-//       'May',
-//       'June',
-//       'July',
-//       'August',
-//       'September',
-//       'October',
-//       'November',
-//       'December',
-//     ];
-//     return months[month - 1];
-//   }
-// }
-
-// class _TimePickerModal extends StatefulWidget {
-//   final Function(TimeOfDay) onTimeSelected;
-
-//   const _TimePickerModal({required this.onTimeSelected});
-
-//   @override
-//   State<_TimePickerModal> createState() => _TimePickerModalState();
-// }
-
-// class _TimePickerModalState extends State<_TimePickerModal> {
-//   int _selectedHour = 4;
-//   int _selectedMinute = 14;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container(
-//       height: 300,
-//       padding: const EdgeInsets.symmetric(vertical: 20),
-//       child: Row(
-//         children: [
-//           Expanded(
-//             child: _buildScrollPicker(
-//               items: List.generate(
-//                 24,
-//                 (index) => index.toString().padLeft(2, '0'),
-//               ),
-//               selectedIndex: _selectedHour,
-//               onChanged: (index) => setState(() => _selectedHour = index),
-//             ),
-//           ),
-//           Expanded(
-//             child: _buildScrollPicker(
-//               items: List.generate(
-//                 60,
-//                 (index) => index.toString().padLeft(2, '0'),
-//               ),
-//               selectedIndex: _selectedMinute,
-//               onChanged: (index) => setState(() => _selectedMinute = index),
-//             ),
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   Widget _buildScrollPicker({
-//     required List<String> items,
-//     required int selectedIndex,
-//     required Function(int) onChanged,
-//   }) {
-//     return Stack(
-//       children: [
-//         Center(
-//           child: Container(
-//             height: 45,
-//             decoration: BoxDecoration(
-//               gradient: const LinearGradient(
-//                 colors: [Color(0xFF6DD5ED), Color(0xFFB794F6)],
-//                 begin: Alignment.centerLeft,
-//                 end: Alignment.centerRight,
-//               ),
-//               borderRadius: BorderRadius.circular(8),
-//             ),
-//           ),
-//         ),
-//         ListWheelScrollView.useDelegate(
-//           controller: FixedExtentScrollController(initialItem: selectedIndex),
-//           itemExtent: 45,
-//           physics: const FixedExtentScrollPhysics(),
-//           onSelectedItemChanged: onChanged,
-//           childDelegate: ListWheelChildBuilderDelegate(
-//             builder: (context, index) {
-//               if (index < 0 || index >= items.length) return null;
-//               final isSelected = index == selectedIndex;
-//               return Center(
-//                 child: Text(
-//                   items[index],
-//                   style: TextStyle(
-//                     fontSize: 18,
-//                     fontWeight: isSelected
-//                         ? FontWeight.w600
-//                         : FontWeight.normal,
-//                     color: isSelected ? Colors.white : Colors.black54,
-//                   ),
-//                 ),
-//               );
-//             },
-//             childCount: items.length,
-//           ),
-//         ),
-//       ],
-//     );
-//   }
-// }

@@ -24,6 +24,6 @@ class AppColors {
   static const Gradient primaryGradientRotated = LinearGradient(
     colors: [Color(0xFF8663F6), Color(0xFFC470F5), Color(0xFF57C2FF)],
     stops: [0.16, 0.54, 0.92],
-    transform: GradientRotation(pi - 0.5),
+    transform: GradientRotation(pi - 0.7),
   );
 }

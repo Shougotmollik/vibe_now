@@ -2,9 +2,12 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/home/widgets/filter_dialog.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
 class NearbyUser {
@@ -437,29 +440,40 @@ class _MapHomeScreenState extends State<HomeScreen>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Container(
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Assets.icons.notification.svg(
-                      width: 24.w,
-                      height: 24.h,
-                      color: Colors.black,
+                GestureDetector(
+                  onTap: () => context.pushNamed(RouteNames.notificationScreen),
+                  child: Container(
+                    padding: EdgeInsets.all(12.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Assets.icons.notification.svg(
+                        width: 24.w,
+                        height: 24.h,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ),
                 SizedBox(width: 10.w),
-                Container(
-                  padding: EdgeInsets.all(14.w),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                  ),
-                  child: Center(
-                    child: Assets.icons.filter.svg(width: 20.w, height: 20.h),
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => const FilterDialog(),
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(14.w),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                    ),
+                    child: Center(
+                      child: Assets.icons.filter.svg(width: 20.w, height: 20.h),
+                    ),
                   ),
                 ),
               ],
