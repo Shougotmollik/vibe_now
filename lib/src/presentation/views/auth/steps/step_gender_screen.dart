@@ -22,7 +22,7 @@ class StepGenderScreen extends StatefulWidget {
 }
 
 class _StepGenderScreenState extends State<StepGenderScreen> {
-  String selected = "Beyond Binary";
+  String selected = "Man";
 
   @override
   Widget build(BuildContext context) {
@@ -63,28 +63,33 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
   Widget _buildRadio(String label) {
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
-      child: Row(
-        children: [
-          InkWell(
-            borderRadius: BorderRadius.circular(30),
-            onTap: () {
-              setState(() {
-                selected = label;
-              });
-            },
-            child: selected == label
+      child: InkWell(
+        borderRadius: BorderRadius.circular(30),
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+
+        onTap: () {
+          setState(() {
+            selected = label;
+          });
+        },
+        child: Row(
+          children: [
+            selected == label
                 ? Assets.icons.gradientCheck.svg(width: 20.h, height: 20.h)
                 : Assets.icons.uncheckedCircle.svg(width: 20.h, height: 20.h),
-          ),
-          SizedBox(width: 4.w),
-          Text(
-            label,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              fontWeight: FontWeight.w400,
-              color: selected == label ? Color(0xFF383838) : Color(0xFF9D9D9D),
+            SizedBox(width: 8.w), // a bit more space looks nicer
+            Text(
+              label,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w400,
+                color: selected == label
+                    ? Color(0xFF383838)
+                    : Color(0xFF9D9D9D),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

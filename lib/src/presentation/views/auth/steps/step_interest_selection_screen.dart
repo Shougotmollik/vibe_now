@@ -18,7 +18,8 @@ class StepInterestSelectionScreen extends StatefulWidget {
 
 class _StepInterestSelectionScreenState
     extends State<StepInterestSelectionScreen> {
-  int? selectedIndex;
+  // For multiple selection
+  final Set<int> selectedIndexes = {};
 
   final List<OptionModel> options = [
     OptionModel(icon: Assets.icons.coffee, title: "Coffee"),
@@ -30,7 +31,7 @@ class _StepInterestSelectionScreenState
     OptionModel(icon: Assets.icons.paintBoard, title: "Art"),
     OptionModel(icon: Assets.icons.nanoTechnology, title: "Tech"),
     OptionModel(icon: Assets.icons.organicFood, title: "Food"),
-    OptionModel(icon: Assets.icons.organicFood, title: "Travel"),
+    OptionModel(icon: Assets.icons.locationColor, title: "Travel"),
     OptionModel(icon: Assets.icons.dumbbell, title: "Fitness"),
     OptionModel(icon: Assets.icons.aiGame, title: "Gaming"),
   ];
@@ -41,6 +42,12 @@ class _StepInterestSelectionScreenState
       currentStep: widget.step,
       footer: PrimaryButton.text(
         onPressed: () {
+          if (selectedIndexes.isEmpty) return;
+
+          List<OptionModel> selectedOptions = selectedIndexes
+              .map((i) => options[i])
+              .toList();
+
           Navigator.push(
             context,
             PageRouteBuilder(
@@ -66,7 +73,7 @@ class _StepInterestSelectionScreenState
             SizedBox(height: 16.h),
 
             GridView.builder(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -78,9 +85,15 @@ class _StepInterestSelectionScreenState
               itemBuilder: (context, index) {
                 return OptionCard(
                   model: options[index],
-                  isSelected: selectedIndex == index,
+                  isSelected: selectedIndexes.contains(index),
                   onTap: () {
-                    setState(() => selectedIndex = index);
+                    setState(() {
+                      if (selectedIndexes.contains(index)) {
+                        selectedIndexes.remove(index);
+                      } else {
+                        selectedIndexes.add(index);
+                      }
+                    });
                   },
                 );
               },
