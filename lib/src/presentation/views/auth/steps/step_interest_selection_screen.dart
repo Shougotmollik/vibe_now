@@ -42,7 +42,7 @@ class _StepInterestSelectionScreenState
       currentStep: widget.step,
       footer: PrimaryButton.text(
         onPressed: () {
-          if (selectedIndexes.isEmpty) return;
+          // if (selectedIndexes.isEmpty) return;
 
           List<OptionModel> selectedOptions = selectedIndexes
               .map((i) => options[i])

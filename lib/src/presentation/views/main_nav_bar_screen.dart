@@ -18,6 +18,7 @@ class MainNavBarScreen extends StatefulWidget {
 
 class _MainNavBarScreenState extends State<MainNavBarScreen> {
   int selectedIndex = 0;
+  DateTime? lastBackPressed;
 
   final List<Widget> screens = const [
     HomeScreen(),
@@ -45,16 +46,55 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
     Assets.icons.people,
   ];
 
+  Future<bool> _onWillPop() async {
+    if (selectedIndex != 0) {
+      setState(() => selectedIndex = 0);
+      return false;
+    }
+
+    final now = DateTime.now();
+    if (lastBackPressed == null ||
+        now.difference(lastBackPressed!) > const Duration(seconds: 2)) {
+      lastBackPressed = now;
+
+      // Show snackbar
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Tap again to exit'),
+            duration: Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+      }
+      return false;
+    }
+
+    // Exit the app
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      body: screens[selectedIndex],
-      bottomNavigationBar: CustomNavBar(
-        currentIndex: selectedIndex,
-        colorIcons: colorIcons,
-        grayIcons: grayIcons,
-        onTap: (index) => setState(() => selectedIndex = index),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          final shouldPop = await _onWillPop();
+          if (shouldPop && context.mounted) {
+            SystemNavigator.pop();
+          }
+        }
+      },
+      child: Scaffold(
+        extendBody: true,
+        body: screens[selectedIndex],
+        bottomNavigationBar: CustomNavBar(
+          currentIndex: selectedIndex,
+          colorIcons: colorIcons,
+          grayIcons: grayIcons,
+          onTap: (index) => setState(() => selectedIndex = index),
+        ),
       ),
     );
   }
@@ -77,8 +117,12 @@ class CustomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    final barHeight = 60.0;
+
     return SizedBox(
-      height: 70 + MediaQuery.of(context).padding.bottom,
+      height: barHeight + bottomPadding,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
@@ -89,11 +133,12 @@ class CustomNavBar extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              height: 80,
+              height: barHeight + bottomPadding,
               padding: EdgeInsets.only(
                 left: 24,
                 right: 24,
-                bottom: MediaQuery.of(context).padding.bottom,
+                top: 8,
+                bottom: bottomPadding > 0 ? bottomPadding : 8,
               ),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -107,6 +152,7 @@ class CustomNavBar extends StatelessWidget {
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildIcon(0),
                   _buildIcon(1),
@@ -118,9 +164,8 @@ class CustomNavBar extends StatelessWidget {
             ),
           ),
 
-          /// CENTER FLOATING BUTTON
           Positioned(
-            bottom: 40,
+            bottom: (bottomPadding > 0 ? bottomPadding : 8) + 25,
             child: GestureDetector(
               onTap: () => onTap(2),
               child: Container(
@@ -159,7 +204,10 @@ class CustomNavBar extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () => onTap(index),
-      child: icon.svg(height: 26.h, width: 26.w),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: icon.svg(height: 26.h, width: 26.w),
+      ),
     );
   }
 }

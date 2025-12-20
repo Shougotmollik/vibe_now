@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/auth/steps/step_location_screen.dart';
@@ -18,6 +19,42 @@ class StepUploadImageScreen extends StatefulWidget {
 }
 
 class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
+  final ImagePicker _picker = ImagePicker();
+  final List<File> _selectedImages = [];
+  final int _maxImages = 4;
+
+  Future<void> _pickImage() async {
+    if (_selectedImages.length >= _maxImages) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Maximum $_maxImages images allowed')),
+      );
+      return;
+    }
+
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImages.add(File(pickedFile.path));
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+    }
+  }
+
+  void _deleteImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return StepPage(
@@ -48,38 +85,63 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
             ),
 
             SizedBox(height: 32.h),
-            DottedBorder(
-              options: RoundedRectDottedBorderOptions(
-                radius: Radius.circular(16.r),
-                color: Color(0XFFDBDBDB),
-                strokeWidth: 4.w,
-                dashPattern: [8, 4], // [dash length, gap length]
-                borderPadding: EdgeInsets.zero,
-                padding: EdgeInsets.zero,
-              ),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16.r),
-                  color: Color(0XFFffffff),
-                ),
-                width: 102.w,
-                height: 124.h,
-                child: Center(
-                  child: Assets.icons.imagePicker.svg(
-                    width: 32.w,
-                    height: 32.h,
-                  ),
-                ),
-              ),
+
+            // Main image picker (first image)
+            GestureDetector(
+              onTap: _pickImage,
+              child: _selectedImages.isNotEmpty
+                  ? _buildImageBox(
+                      context,
+                      hasImage: true,
+                      imageFile: _selectedImages[0],
+                      onDelete: () => _deleteImage(0),
+                    )
+                  : DottedBorder(
+                      options: RoundedRectDottedBorderOptions(
+                        radius: Radius.circular(16.r),
+                        color: Color(0XFFDBDBDB),
+                        strokeWidth: 4.w,
+                        dashPattern: [8, 4],
+                        borderPadding: EdgeInsets.zero,
+                        padding: EdgeInsets.zero,
+                      ),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16.r),
+                          color: Color(0XFFffffff),
+                        ),
+                        width: 102.w,
+                        height: 124.h,
+                        child: Center(
+                          child: Assets.icons.imagePicker.svg(
+                            width: 32.w,
+                            height: 32.h,
+                          ),
+                        ),
+                      ),
+                    ),
             ),
+
             SizedBox(height: 30.h),
 
+            // Additional image pickers (3 more slots)
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               spacing: 12.w,
-              children: List.generate(
-                3,
-                (index) => _buildImageBox(context, hasImage: false),
-              ),
+              children: List.generate(3, (index) {
+                final imageIndex = index + 1;
+                final hasImage = imageIndex < _selectedImages.length;
+
+                return GestureDetector(
+                  onTap: hasImage ? null : _pickImage,
+                  child: _buildImageBox(
+                    context,
+                    hasImage: hasImage,
+                    imageFile: hasImage ? _selectedImages[imageIndex] : null,
+                    onDelete: hasImage ? () => _deleteImage(imageIndex) : null,
+                  ),
+                );
+              }),
             ),
           ],
         ),
@@ -134,7 +196,7 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
           radius: Radius.circular(16.r),
           color: Color(0XFFDBDBDB),
           strokeWidth: 4.w,
-          dashPattern: [8, 4], // [dash length, gap length]
+          dashPattern: [8, 4],
           borderPadding: EdgeInsets.zero,
           padding: EdgeInsets.zero,
         ),
