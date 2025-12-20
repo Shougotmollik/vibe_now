@@ -302,6 +302,10 @@ class $AssetsIconsGen {
   SvgGenImage get paintBoard =>
       const SvgGenImage('assets/icons/paint-board.svg');
 
+  /// File path: assets/icons/pause _puple.svg
+  SvgGenImage get pausePuple =>
+      const SvgGenImage('assets/icons/pause _puple.svg');
+
   /// File path: assets/icons/people.svg
   SvgGenImage get people => const SvgGenImage('assets/icons/people.svg');
 
@@ -414,6 +418,7 @@ class $AssetsIconsGen {
     notification,
     organicFood,
     paintBoard,
+    pausePuple,
     people,
     peopleColor,
     relationShip,

@@ -321,7 +321,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
           SafeArea(
             child: IconButton(
               onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back_ios),
               color: Colors.white,
             ),
           ),

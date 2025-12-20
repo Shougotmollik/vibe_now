@@ -20,42 +20,12 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   leading: IconButton(
-      //     icon: const Icon(Icons.arrow_back, color: Colors.black),
-      //     onPressed: () {},
-      //   ),
-      //   title: const Text(
-      //     'Chats',
-      //     style: TextStyle(
-      //       color: Colors.black,
-      //       fontSize: 20,
-      //       fontWeight: FontWeight.w600,
-      //     ),
-      //   ),
-      //   actions: [
-      //     IconButton(
-      //       icon: const Icon(
-      //         Icons.qr_code_scanner_outlined,
-      //         color: Colors.black,
-      //       ),
-      //       onPressed: () {},
-      //     ),
-      //   ],
-      // ),
       body: SafeArea(
         child: Column(
           children: [
             Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                  onPressed: () => Navigator.pop(context),
-                ),
-
-                const SizedBox(width: 8),
+                const SizedBox(width: 18),
                 Text(
                   'Chats',
                   style: const TextStyle(

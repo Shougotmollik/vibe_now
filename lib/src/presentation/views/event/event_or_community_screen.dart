@@ -15,15 +15,10 @@ class EventOrCommunityScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Back Button
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 0),
               child: Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                    onPressed: () {},
-                  ),
                   Text(
                     'Create Event or Community',
                     style: TextStyle(fontSize: 18),

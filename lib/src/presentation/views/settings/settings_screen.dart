@@ -35,7 +35,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(
           children: [
             // Header
-            CustomAppBar(title: 'Settings'),
+            CustomAppBar(title: 'Settings', canBack: false),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
