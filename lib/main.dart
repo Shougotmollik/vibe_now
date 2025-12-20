@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         title: 'Vive Now',
         theme: AppTheme.light(),
         themeMode: ThemeMode.light,
-        // home: SignUpScreen(),
+        // home: MainNavBarScreen(),
         home: MaterialApp.router(
           debugShowCheckedModeBanner: false,
           routerConfig: router,

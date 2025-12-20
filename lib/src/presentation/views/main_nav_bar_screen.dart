@@ -77,73 +77,77 @@ class CustomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SizedBox(
-        height: 90,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            /// BACKGROUND WHITE BAR
-            Positioned(
-              bottom: 0,
+    return SizedBox(
+      height: 70 + MediaQuery.of(context).padding.bottom,
+      child: Stack(
+        clipBehavior: Clip.none,
+        alignment: Alignment.bottomCenter,
+        children: [
+          /// BACKGROUND WHITE BAR
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: 80,
+              padding: EdgeInsets.only(
+                left: 24,
+                right: 24,
+                bottom: MediaQuery.of(context).padding.bottom,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 8,
+                    offset: Offset(0, -2),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildIcon(0),
+                  _buildIcon(1),
+                  const SizedBox(width: 64),
+                  _buildIcon(3),
+                  _buildIcon(4),
+                ],
+              ),
+            ),
+          ),
+
+          /// CENTER FLOATING BUTTON
+          Positioned(
+            bottom: 40,
+            child: GestureDetector(
+              onTap: () => onTap(2),
               child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: 70,
-                padding: const EdgeInsets.symmetric(horizontal: 24),
+                width: 64,
+                height: 64,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  shape: BoxShape.circle,
+                  gradient: AppColors.primaryGradient,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black12,
-                      blurRadius: 8,
-                      offset: Offset(0, -2),
+                      color: Color(0xFF5A7FFF).withValues(alpha: 0.45),
+                      blurRadius: 35,
+                      spreadRadius: 5,
                     ),
                   ],
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildIcon(0),
-                    _buildIcon(1),
-                    const SizedBox(width: 50),
-                    _buildIcon(3),
-                    _buildIcon(4),
-                  ],
-                ),
-              ),
-            ),
-
-            /// CENTER BUTTON
-            Positioned(
-              bottom: 20,
-              child: GestureDetector(
-                onTap: () => onTap(2),
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: AppColors.primaryGradient,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Color(0xFF5A7FFF).withValues(alpha: 0.45),
-                        blurRadius: 35,
-                        spreadRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: Center(
-                    child: Assets.icons.plus.svg(
-                      height: 30.h,
-                      width: 30.w,
-                      color: Colors.white,
-                    ),
+                child: Center(
+                  child: Assets.icons.plus.svg(
+                    height: 30.h,
+                    width: 30.w,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
