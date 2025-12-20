@@ -22,15 +22,17 @@ class StepPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.backgroundVariant,
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10.0),
-          child: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back_ios),
-          ),
-        ),
+        leading: Navigator.canPop(context)
+            ? Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back_ios),
+                ),
+              )
+            : null,
         backgroundColor: AppColors.backgroundVariant,
         centerTitle: true,
         title: title == null

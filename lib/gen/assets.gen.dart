@@ -131,6 +131,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/ai-game.svg
   SvgGenImage get aiGame => const SvgGenImage('assets/icons/ai-game.svg');
 
+  /// File path: assets/icons/apple_ic.svg
+  SvgGenImage get appleIc => const SvgGenImage('assets/icons/apple_ic.svg');
+
   /// File path: assets/icons/block.svg
   SvgGenImage get block => const SvgGenImage('assets/icons/block.svg');
 
@@ -222,6 +225,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/earth.svg
   SvgGenImage get earth => const SvgGenImage('assets/icons/earth.svg');
 
+  /// File path: assets/icons/facebook_ic.svg
+  SvgGenImage get facebookIc =>
+      const SvgGenImage('assets/icons/facebook_ic.svg');
+
   /// File path: assets/icons/film-wheel.svg
   SvgGenImage get filmWheel => const SvgGenImage('assets/icons/film-wheel.svg');
 
@@ -234,6 +241,9 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/gift.svg
   SvgGenImage get gift => const SvgGenImage('assets/icons/gift.svg');
+
+  /// File path: assets/icons/google_ic.svg
+  SvgGenImage get googleIc => const SvgGenImage('assets/icons/google_ic.svg');
 
   /// File path: assets/icons/gradient-check.svg
   SvgGenImage get gradientCheck =>
@@ -348,8 +358,12 @@ class $AssetsIconsGen {
   /// File path: assets/icons/users.svg
   SvgGenImage get users => const SvgGenImage('assets/icons/users.svg');
 
+  /// File path: assets/icons/vivenowlogo.png
+  AssetGenImage get vivenowlogo =>
+      const AssetGenImage('assets/icons/vivenowlogo.png');
+
   /// List of all assets
-  List<SvgGenImage> get values => [
+  List<dynamic> get values => [
     basketballColor,
     calendarColor,
     colorPaletteColor,
@@ -368,6 +382,7 @@ class $AssetsIconsGen {
     acceptIc,
     add,
     aiGame,
+    appleIc,
     block,
     book,
     calender,
@@ -395,10 +410,12 @@ class $AssetsIconsGen {
     dumbbell2,
     dumbbell,
     earth,
+    facebookIc,
     filmWheel,
     filter,
     friendShip,
     gift,
+    googleIc,
     gradientCheck,
     gridColor,
     group,
@@ -431,6 +448,7 @@ class $AssetsIconsGen {
     unchecked,
     uploadImage,
     users,
+    vivenowlogo,
   ];
 }
 

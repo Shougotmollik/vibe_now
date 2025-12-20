@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/src/presentation/views/auth/intro_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/sign_in_screen.dart';
+import 'package:vibe_now/src/presentation/views/auth/sign_up_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/splash_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/steps/step_name_screen.dart';
 import 'package:vibe_now/src/presentation/views/chat/chat_inbox_screen.dart';
@@ -36,8 +37,13 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const SignInScreen(),
     ),
     GoRoute(
-      path: '/signup-onboarding',
-      name: RouteNames.signUpOnBoardingScreen,
+      path: '/signup',
+      name: RouteNames.signUpScreen,
+      builder: (context, state) => const SignUpScreen(),
+    ),
+    GoRoute(
+      path: '/step-name',
+      name: RouteNames.stepNameScreen,
       builder: (context, state) => const StepNameScreen(),
     ),
 

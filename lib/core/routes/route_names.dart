@@ -6,6 +6,7 @@ class RouteNames {
   static const String signUpScreen = "signUpScreen";
   static const String signInScreen = "signInScreen";
   static const String signUpOnBoardingScreen = "signUpOnBoardingScreen";
+  static const String stepNameScreen = "stepNameScreen";
 
   static const String mainNavBar = "mainNavBar";
 
