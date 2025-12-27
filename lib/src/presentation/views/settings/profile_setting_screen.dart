@@ -35,7 +35,7 @@ class ProfileSettingScreen extends StatelessWidget {
                             child: Image.network(
                               'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
                               width: 78.w,
-                              height: 78.h,
+                              height: 78.w,
                               fit: BoxFit.cover,
                             ),
                           ),
@@ -162,7 +162,7 @@ class ProfileSettingScreen extends StatelessWidget {
                     vertical: 12.h,
                   ),
                   width: double.infinity,
-                  height: 72.h,
+                  // height: 72.h,
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xffE0E0E0)),
                     borderRadius: BorderRadius.circular(40.r),
@@ -216,7 +216,7 @@ class ProfileSettingScreen extends StatelessWidget {
                     vertical: 12.h,
                   ),
                   width: double.infinity,
-                  height: 72.h,
+                  // height: 72.h,
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(0xffE0E0E0)),
                     borderRadius: BorderRadius.circular(40.r),
@@ -296,7 +296,7 @@ class ProfileSettingScreen extends StatelessWidget {
       },
       child: Container(
         width: double.infinity,
-        height: 54.h,
+        // height: 54.h,
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
         decoration: BoxDecoration(
           border: Border.all(color: Color(0xffE0E0E0)),
@@ -323,7 +323,7 @@ class ProfileSettingScreen extends StatelessWidget {
   Widget _buildProfileInfo({required String label, required String value}) {
     return Container(
       width: double.infinity,
-      height: 70.h,
+      // height: 70.h,
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
 
       decoration: BoxDecoration(

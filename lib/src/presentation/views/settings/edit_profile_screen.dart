@@ -185,7 +185,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 child: Image.network(
                   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
                   width: 78.w,
-                  height: 78.h,
+                  height: 78.w,
                   fit: BoxFit.cover,
                 ),
               ),

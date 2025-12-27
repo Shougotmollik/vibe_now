@@ -12,64 +12,63 @@ class NotificationPermissionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 225.h,
+      // height: 225.h,
       width: double.infinity,
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
       ),
-      child: Center(
-        child: Column(
-          children: [
-            Text(
-              'vibe.now wants to send you notifications',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 18.sp,
-                fontWeight: FontWeight.w500,
-                color: Color(0xff2a2a2a),
-              ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'vibe.now wants to send you notifications',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w500,
+              color: Color(0xff2a2a2a),
             ),
-            SizedBox(height: 16.h),
-            Text(
-              'Stay updated on new vibes, waves, and real-time connections.',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                color: Color(0xff707070),
-              ),
+          ),
+          SizedBox(height: 16.h),
+          Text(
+            'Stay updated on new vibes, waves, and real-time connections.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w400,
+              color: Color(0xff707070),
             ),
-            SizedBox(height: 32.h),
-
-            Row(
-              spacing: 8.w,
-              children: [
-                Expanded(
-                  child: CustomElevatedButton(
-                    onTap: () {
-                      Navigator.of(parentContext, rootNavigator: true).pop();
-                      parentContext.pushNamed(RouteNames.stepNameScreen);
-                    },
-                    buttonText: "Don't Allow",
-                    btnColor: Color(0xffEDF3F8),
-                    textColor: Color(0xff202020),
-                  ),
+          ),
+          SizedBox(height: 32.h),
+      
+          Row(
+            spacing: 8.w,
+            children: [
+              Expanded(
+                child: CustomElevatedButton(
+                  onTap: () {
+                    Navigator.of(parentContext, rootNavigator: true).pop();
+                    parentContext.pushNamed(RouteNames.stepNameScreen);
+                  },
+                  buttonText: "Don't Allow",
+                  btnColor: Color(0xffEDF3F8),
+                  textColor: Color(0xff202020),
                 ),
-                Expanded(
-                  child: PrimaryButton.text(
-                    onPressed: () {
-                      Navigator.of(parentContext, rootNavigator: true).pop();
-                      parentContext.pushNamed(RouteNames.stepNameScreen);
-                    },
-                    text: 'Allow',
-                  ),
+              ),
+              Expanded(
+                child: PrimaryButton.text(
+                  onPressed: () {
+                    Navigator.of(parentContext, rootNavigator: true).pop();
+                    parentContext.pushNamed(RouteNames.stepNameScreen);
+                  },
+                  text: 'Allow',
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
