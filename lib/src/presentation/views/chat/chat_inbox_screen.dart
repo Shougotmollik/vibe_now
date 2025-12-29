@@ -193,9 +193,9 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
         const SizedBox(width: 8),
         Text(
           name,
-          style: const TextStyle(
+          style: TextStyle(
             color: Color(0xff303030),
-            fontSize: 20,
+            fontSize: 20.sp,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -228,7 +228,7 @@ class ReceivedMessage extends StatelessWidget {
             bottomLeft: Radius.circular(4),
           ),
         ),
-        child: Text(message),
+        child: Text(message, style:  TextStyle(color: Colors.black,fontSize: 12.sp)),
       ),
     );
   }
@@ -253,7 +253,7 @@ class SentMessage extends StatelessWidget {
             bottomRight: Radius.circular(4),
           ),
         ),
-        child: Text(message, style: const TextStyle(color: Colors.white)),
+        child: Text(message, style:  TextStyle(color: Colors.white,fontSize: 12.sp)),
       ),
     );
   }
@@ -287,8 +287,8 @@ class SentVoiceMessage extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             SizedBox(
-              width: 80,
-              height: 24,
+              width: 80.w,
+              height: 24.h,
               child: CustomPaint(
                 painter: WaveformPainter(isAnimating: !isPaused, isWhite: true),
               ),
