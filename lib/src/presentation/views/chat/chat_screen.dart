@@ -28,23 +28,27 @@ class _ChatScreenState extends State<ChatScreen> {
                 const SizedBox(width: 18),
                 Text(
                   'Chats',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: Color(0xff303030),
-                    fontSize: 20,
+                    fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 Spacer(),
-                Container(
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey[200],
-                  ),
-                  child: Assets.icons.scan.svg(
-                    width: 24.w,
-                    height: 24.h,
-                    fit: BoxFit.cover,
+                GestureDetector(
+                  onTap: () =>
+                      context.pushNamed(RouteNames.qrVerificationScreen),
+                  child: Container(
+                    padding: EdgeInsets.all(8.w),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.grey[200],
+                    ),
+                    child: Assets.icons.scan.svg(
+                      width: 24.w,
+                      height: 24.h,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -56,8 +60,15 @@ class _ChatScreenState extends State<ChatScreen> {
                 controller: _searchController,
                 decoration: InputDecoration(
                   hintText: 'Search a person',
-                  hintStyle: TextStyle(color: Color(0xff9d9d9d)),
-                  prefixIcon: Icon(Icons.search, color: Color(0xff9d9d9d)),
+                  hintStyle: TextStyle(
+                    color: Color(0xff9d9d9d),
+                    fontSize: 14.sp,
+                  ),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Color(0xff9d9d9d),
+                    size: 20.sp,
+                  ),
                   filled: true,
                   fillColor: Colors.grey[50],
                   border: OutlineInputBorder(
@@ -171,8 +182,8 @@ class ChatListItem extends StatelessWidget {
               borderRadius: BorderRadius.circular(50),
               child: Image.network(
                 avatar,
-                width: 50,
-                height: 50,
+                width: 50.w,
+                height: 50.w,
                 fit: BoxFit.cover,
               ),
             ),
@@ -184,8 +195,8 @@ class ChatListItem extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
                       color: Color(0xff303030),
                     ),
@@ -193,7 +204,7 @@ class ChatListItem extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     message,
-                    style: TextStyle(fontSize: 14, color: Color(0xff585858)),
+                    style: TextStyle(fontSize: 14.sp, color: Color(0xff585858)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -206,7 +217,7 @@ class ChatListItem extends StatelessWidget {
               children: [
                 Text(
                   time,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+                  style: TextStyle(fontSize: 12.sp, color: Colors.grey[500]),
                 ),
                 if (unreadCount > 0) ...[
                   const SizedBox(height: 4),
@@ -218,9 +229,9 @@ class ChatListItem extends StatelessWidget {
                     ),
                     child: Text(
                       unreadCount.toString(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: 14.sp,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

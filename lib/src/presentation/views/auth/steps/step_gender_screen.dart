@@ -49,6 +49,7 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
             title: 'What\'s your gender?',
             subtitle:
                 'Choose what best describes you. You can update or add more details anytime.',
+                
           ),
           SizedBox(height: 16.h),
           _buildRadio("Man"),
@@ -86,6 +87,7 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
                 color: selected == label
                     ? Color(0xFF383838)
                     : Color(0xFF9D9D9D),
+                fontSize: 14.sp,
               ),
             ),
           ],

@@ -12,9 +12,10 @@ class StepTitle extends StatelessWidget {
       children: [
         Text(
           title,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w500),
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            fontWeight: FontWeight.w500,
+            fontSize: 16.sp,
+          ),
         ),
         SizedBox(height: 24.h),
         Text(
@@ -22,6 +23,7 @@ class StepTitle extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             fontWeight: FontWeight.w400,
             color: Colors.black54,
+            fontSize: 12.sp,
           ),
           textAlign: TextAlign.center,
         ),

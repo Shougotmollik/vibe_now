@@ -151,7 +151,7 @@ class PlanCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
-        padding: EdgeInsets.all(1.5.w), // gradient border thickness
+        padding: EdgeInsets.all(1.5.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16.r),
           gradient: const LinearGradient(
@@ -177,7 +177,7 @@ class PlanCard extends StatelessWidget {
 
   Widget _header() {
     return Container(
-      height: 160,
+      height: 160.h,
       width: double.infinity,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
@@ -186,13 +186,17 @@ class PlanCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Assets.icons.subscription.svg(width: 40, height: 40),
+          Assets.icons.subscription.svg(
+            width: 40.w,
+            height: 40.h,
+            color: Colors.white,
+          ),
           const SizedBox(height: 16),
           Text(
             '${plan.price} / month',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.white,
-              fontSize: 28,
+              fontSize: 28.sp,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -201,7 +205,7 @@ class PlanCard extends StatelessWidget {
             plan.subtitle,
             style: TextStyle(
               color: Colors.white.withValues(alpha: 0.9),
-              fontSize: 14,
+              fontSize: 14.sp,
             ),
           ),
         ],
@@ -217,7 +221,7 @@ class PlanCard extends StatelessWidget {
         children: [
           Text(
             plan.title,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 20),
           ...plan.features.map(
@@ -231,8 +235,8 @@ class PlanCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       feature,
-                      style: const TextStyle(
-                        fontSize: 14,
+                      style: TextStyle(
+                        fontSize: 14.sp,
                         color: Color(0xFF374151),
                         height: 1.4,
                       ),
@@ -252,7 +256,7 @@ class PlanCard extends StatelessWidget {
   Widget _upgradeButton() {
     return Container(
       width: double.infinity,
-      height: 50,
+      height: 50.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.r),
         gradient: AppColors.primaryGradientRotated,
@@ -266,10 +270,10 @@ class PlanCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(8.r),
           ),
         ),
-        child: const Text(
+        child: Text(
           'Upgrade',
           style: TextStyle(
-            fontSize: 16,
+            fontSize: 16.sp,
             fontWeight: FontWeight.w600,
             color: Colors.white,
           ),

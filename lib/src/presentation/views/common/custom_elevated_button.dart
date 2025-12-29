@@ -19,20 +19,23 @@ class CustomElevatedButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
+        height: 48.h,
+        // padding: EdgeInsets.symmetric(vertical: 12.h),
         width: double.infinity,
         decoration: BoxDecoration(
           color: btnColor ?? Color(0xff2A2A2A),
           borderRadius: BorderRadius.circular(40.r),
         ),
-        child: Text(
-          buttonText,
-          style: TextStyle(
-            fontSize: 16.sp,
-            color: textColor ?? Color(0xFFfefefe),
-            fontWeight: FontWeight.w500,
+        child: Center(
+          child: Text(
+            buttonText,
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: textColor ?? Color(0xFFfefefe),
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
           ),
-          textAlign: TextAlign.center,
         ),
       ),
     );

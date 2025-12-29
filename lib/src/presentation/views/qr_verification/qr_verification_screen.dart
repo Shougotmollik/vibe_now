@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 
 class QRVerificationScreen extends StatefulWidget {
@@ -19,16 +20,16 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 20.sp),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: const Text(
+        title: Text(
           'QR Verification',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -92,14 +93,14 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             Icon(
               icon,
               color: isSelected ? Colors.white : Colors.black54,
-              size: 20,
+              size: 20.sp,
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
                 color: isSelected ? Colors.white : Colors.black54,
-                fontSize: 15,
+                fontSize: 15.sp,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -112,27 +113,31 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
   Widget _buildQRCodeView() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
                 color: Color(0xFFEFF6FF),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.info_outline, color: Colors.grey[700], size: 20),
+                  Icon(
+                    Icons.info_outline,
+                    color: Colors.grey[700],
+                    size: 20.sp,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'To join the community chat, simply scan each other\'s QR codes to connect.',
                       style: TextStyle(
                         color: Colors.grey[800],
-                        fontSize: 13,
-                        height: 1.4,
+                        fontSize: 13.sp,
+                        height: 1.4.h,
                       ),
                     ),
                   ),
@@ -140,10 +145,10 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            const Text(
+            Text(
               'Show Your QR Code',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -152,20 +157,20 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.qr_code_2, color: Colors.grey[400], size: 16),
+                Icon(Icons.qr_code_2, color: Colors.grey[400], size: 16.sp),
                 const SizedBox(width: 6),
                 Text(
                   'Let them scan this code',
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 14.sp),
                 ),
               ],
             ),
             const SizedBox(height: 32),
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: EdgeInsets.all(24.w),
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(20.r),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.05),
@@ -175,8 +180,8 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
                 ],
               ),
               child: Container(
-                width: 220,
-                height: 220,
+                width: 220.w,
+                height: 220.h,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -201,25 +206,29 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
   Widget _buildScanView() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.blue[50],
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline, color: Colors.blue[700], size: 20),
+                  Icon(
+                    Icons.info_outline,
+                    color: Colors.blue[700],
+                    size: 20.sp,
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
                       'Share this QR code with your contact both of you need to scan each other\'s codes to unlock messaging.',
                       style: TextStyle(
                         color: Colors.grey[800],
-                        fontSize: 13,
+                        fontSize: 13.sp,
                         height: 1.4,
                       ),
                     ),
@@ -228,10 +237,10 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            const Text(
+            Text(
               'Scan Their QR Code',
               style: TextStyle(
-                fontSize: 20,
+                fontSize: 20.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -239,12 +248,12 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             const SizedBox(height: 8),
             Text(
               'Align the QR code in the frame',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14),
+              style: TextStyle(color: Colors.grey[600], fontSize: 14.sp),
             ),
             const SizedBox(height: 32),
             Container(
               width: double.infinity,
-              height: 320,
+              height: 320.h,
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 color: Color(0xffEFF6FF),
@@ -282,7 +291,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
                     Center(
                       child: Icon(
                         Icons.camera_alt_outlined,
-                        size: 64,
+                        size: 64.sp,
                         color: Colors.grey[400],
                       ),
                     ),
@@ -293,7 +302,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             const SizedBox(height: 16),
             Text(
               'Camera permission required',
-              style: TextStyle(color: Colors.grey[400], fontSize: 13),
+              style: TextStyle(color: Colors.grey[400], fontSize: 13.sp),
             ),
           ],
         ),
@@ -303,8 +312,8 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
 
   Widget _buildCorner(bool isTop, bool isLeft) {
     return Container(
-      width: 40,
-      height: 40,
+      width: 40.w,
+      height: 40.h,
       decoration: BoxDecoration(
         border: Border(
           top: isTop
@@ -321,14 +330,10 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
               : BorderSide.none,
         ),
         borderRadius: BorderRadius.only(
-          topLeft: isTop && isLeft ? const Radius.circular(12) : Radius.zero,
-          topRight: isTop && !isLeft ? const Radius.circular(12) : Radius.zero,
-          bottomLeft: !isTop && isLeft
-              ? const Radius.circular(12)
-              : Radius.zero,
-          bottomRight: !isTop && !isLeft
-              ? const Radius.circular(12)
-              : Radius.zero,
+          topLeft: isTop && isLeft ? Radius.circular(12.r) : Radius.zero,
+          topRight: isTop && !isLeft ? Radius.circular(12.r) : Radius.zero,
+          bottomLeft: !isTop && isLeft ? Radius.circular(12.r) : Radius.zero,
+          bottomRight: !isTop && !isLeft ? Radius.circular(12.r) : Radius.zero,
         ),
       ),
     );

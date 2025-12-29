@@ -33,6 +33,7 @@ class PrimaryButton extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Colors.white,
             fontWeight: FontWeight.w600,
+            fontSize: 16.sp,
           ),
         );
     final height = 48.h;

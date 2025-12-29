@@ -30,7 +30,7 @@ class MemberScreen extends StatelessWidget {
                     subtitle: Text(
                       'Open for small talk',
                       style: TextStyle(
-                        fontSize: 12,
+                        fontSize: 12.sp,
                         color: Colors.grey.shade600,
                       ),
                     ),
@@ -64,7 +64,7 @@ class MemberScreen extends StatelessWidget {
                               'Hi!!',
                               style: TextStyle(
                                 fontWeight: FontWeight.w600,
-                                fontSize: 16.sp,
+                                fontSize: 12.sp,
                                 color: Color(0xff008CFF),
                               ),
                             ),
