@@ -4,10 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/model/community_notification.dart';
 
 class CommunityNotificationCard extends StatefulWidget {
-  const CommunityNotificationCard({super.key});
+  final NotificationModel notification;
+
+  const CommunityNotificationCard({super.key, required this.notification});
 
   @override
   State<CommunityNotificationCard> createState() =>
@@ -60,10 +64,18 @@ class _CommunityNotificationCardState extends State<CommunityNotificationCard> {
             ClipRRect(
               borderRadius: BorderRadius.circular(50.r),
               child: Image.network(
-                'https://images.unsplash.com/photo-1525026198548-4baa812f1183?q=80&w=1034&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                widget.notification.userImage,
                 width: 48.w,
                 height: 48.w,
                 fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 48.w,
+                    height: 48.w,
+                    color: Colors.grey[300],
+                    child: Icon(Icons.person, color: Colors.grey[600]),
+                  );
+                },
               ),
             ),
             SizedBox(width: 12.w),
@@ -72,58 +84,138 @@ class _CommunityNotificationCardState extends State<CommunityNotificationCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    "Jenny Smith",
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xff303030),
-                    ),
-                  ),
+                  _buildNameSection(),
                   SizedBox(height: 8.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Assets.icons.location.svg(
-                        width: 16.w,
-                        height: 16.h,
-                        color: const Color(0xff707070),
-                      ),
-                      SizedBox(width: 5.w),
-                      Text(
-                        '300km away',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xff707070),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4.h),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Assets.icons.calendarColor.svg(
-                        width: 16.w,
-                        height: 16.h,
-                        color: const Color(0xff707070),
-                      ),
-                      SizedBox(width: 5.w),
-                      Text(
-                        '8PM, 21 Nov',
-                        style: TextStyle(
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xff707070),
-                        ),
-                      ),
-                    ],
-                  ),
+                  _buildDistanceRow(),
+                  if (widget.notification.type == NotificationType.event)
+                    ..._buildEventDetails(),
+                  if (widget.notification.type == NotificationType.request)
+                    ..._buildRequestButtons(),
                 ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNameSection() {
+    String displayName = widget.notification.userName;
+
+    // For interest notifications, append the interest description
+    if (widget.notification.type == NotificationType.interest &&
+        widget.notification.interestDescription != null) {
+      displayName += ' ${widget.notification.interestDescription}';
+    }
+    // For event notifications, show the event name instead
+    else if (widget.notification.type == NotificationType.event &&
+        widget.notification.eventName != null) {
+      displayName = widget.notification.eventName!;
+    }
+
+    return Text(
+      displayName,
+      style: TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w500,
+        color: const Color(0xff303030),
+      ),
+    );
+  }
+
+  Widget _buildDistanceRow() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Assets.icons.location.svg(
+          width: 16.w,
+          height: 16.h,
+          color: const Color(0xff707070),
+        ),
+        SizedBox(width: 5.w),
+        Text(
+          widget.notification.distance,
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w400,
+            color: const Color(0xff707070),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildEventDetails() {
+    if (widget.notification.eventTime == null) return [];
+
+    return [
+      SizedBox(height: 4.h),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Assets.icons.calendarColor.svg(
+            width: 16.w,
+            height: 16.h,
+            color: const Color(0xff707070),
+          ),
+          SizedBox(width: 5.w),
+          Text(
+            widget.notification.eventTime!,
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w400,
+              color: const Color(0xff707070),
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  List<Widget> _buildRequestButtons() {
+    return [
+      SizedBox(height: 12.h),
+      Row(
+        spacing: 8.w,
+        children: [
+          _buildActionButton('Accept', true, () {
+            // Handle accept action
+            print('Accept tapped for ${widget.notification.id}');
+          }),
+          SizedBox(width: 12.w),
+          _buildActionButton('Decline', false, () {
+            // Handle decline action
+            print('Decline tapped for ${widget.notification.id}');
+          }),
+        ],
+      ),
+    ];
+  }
+
+  Widget _buildActionButton(String label, bool isPrimary, VoidCallback onTap) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.h),
+          decoration: BoxDecoration(
+            gradient: isPrimary ? AppColors.primaryGradientRotated : null,
+            color: isPrimary ? null : Colors.transparent,
+            borderRadius: BorderRadius.circular(25.r),
+            border: isPrimary
+                ? null
+                : Border.all(color: const Color(0xffE0E0E0), width: 1.w),
+          ),
+          child: Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: isPrimary ? Colors.white : const Color(0xff707070),
+            ),
+          ),
         ),
       ),
     );
