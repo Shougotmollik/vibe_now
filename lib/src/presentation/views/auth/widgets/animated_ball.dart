@@ -24,7 +24,7 @@ class AnimatedBall extends StatelessWidget {
         switch (alignType) {
           case AlignmentType.bottom:
             return Positioned(
-              bottom: value * -1,
+              bottom: value * -1 - 5.h,
               left: 0,
               right: 0,
               child: GuffBoll(gradient: gradient as LinearGradient),

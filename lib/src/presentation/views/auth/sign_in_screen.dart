@@ -42,19 +42,19 @@ class SignInScreen extends StatelessWidget {
                 CustomSocialButton(
                   icon: Assets.icons.facebookIc,
                   title: 'Facebook',
-                  onTap: () => _buildDialogSection(context),
+                  onTap: () => context.pushNamed(RouteNames.stepNameScreen),
                 ),
                 SizedBox(height: 12.h),
                 CustomSocialButton(
                   icon: Assets.icons.googleIc,
                   title: 'Google',
-                  onTap: () => _buildDialogSection(context),
+                  onTap: () => context.pushNamed(RouteNames.stepNameScreen),
                 ),
                 SizedBox(height: 12.h),
                 CustomSocialButton(
                   icon: Assets.icons.appleIc,
                   title: 'Apple',
-                  onTap: () => _buildDialogSection(context),
+                  onTap: () => context.pushNamed(RouteNames.stepNameScreen),
                 ),
                 SizedBox(height: 12.h),
                 TextButton(
@@ -78,22 +78,22 @@ class SignInScreen extends StatelessWidget {
     );
   }
 
-  Future<dynamic> _buildDialogSection(BuildContext context) {
-    return showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (_) {
-        return Center(
-          child: Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.r),
-            ),
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            child: NotificationPermissionDialog(parentContext: context),
-          ),
-        );
-      },
-    );
-  }
+  // Future<dynamic> _buildDialogSection(BuildContext context) {
+  //   return showDialog(
+  //     context: context,
+  //     barrierDismissible: true,
+  //     builder: (_) {
+  //       return Center(
+  //         child: Dialog(
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(20.r),
+  //           ),
+  //           elevation: 0,
+  //           backgroundColor: Colors.transparent,
+  //           child: NotificationPermissionDialog(parentContext: context),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }
