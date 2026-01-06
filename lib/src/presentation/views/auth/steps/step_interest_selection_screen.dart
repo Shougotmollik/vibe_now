@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/auth/steps/step_upload_image_screen.dart';
@@ -38,16 +39,36 @@ class _StepInterestSelectionScreenState
 
   @override
   Widget build(BuildContext context) {
-    return StepPage(
-      currentStep: widget.step,
-      footer: PrimaryButton.text(
-        onPressed: () {
-          // if (selectedIndexes.isEmpty) return;
+    return Scaffold(
+      body: StepPage(
+        currentStep: widget.step,
+        footer: PrimaryButton.text(
+          onPressed: () {
+            List<OptionModel> selectedOptions = selectedIndexes
+                .map((i) => options[i])
+                .toList();
 
-          List<OptionModel> selectedOptions = selectedIndexes
-              .map((i) => options[i])
-              .toList();
-
+            if (selectedOptions.isNotEmpty) {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                  pageBuilder: (_, __, ___) =>
+                      StepUploadImageScreen(step: widget.step + 1),
+                ),
+              );
+            } else {
+              AppSnackbar.show(
+                message: 'Please select at least one option to continue',
+                type: SnackType.info,
+              );
+            }
+          },
+          text: 'Continue',
+        ),
+        isSkippable: true,
+        onSkip: () {
           Navigator.push(
             context,
             PageRouteBuilder(
@@ -58,49 +79,48 @@ class _StepInterestSelectionScreenState
             ),
           );
         },
-        text: 'Continue',
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(height: 32.h),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 32.h),
 
-            const StepTitle(
-              title: 'What are you into?',
-              subtitle: 'You can update your interests anytime.',
-            ),
-
-            SizedBox(height: 16.h),
-
-            GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 1.7,
+              const StepTitle(
+                title: 'What are you into?',
+                subtitle: 'You can update your interests anytime.',
               ),
-              itemCount: options.length,
-              itemBuilder: (context, index) {
-                return OptionCard(
-                  model: options[index],
-                  isSelected: selectedIndexes.contains(index),
-                  onTap: () {
-                    setState(() {
-                      if (selectedIndexes.contains(index)) {
-                        selectedIndexes.remove(index);
-                      } else {
-                        selectedIndexes.add(index);
-                      }
-                    });
-                  },
-                );
-              },
-            ),
 
-            SizedBox(height: 32.h),
-          ],
+              SizedBox(height: 16.h),
+
+              GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 1.7,
+                ),
+                itemCount: options.length,
+                itemBuilder: (context, index) {
+                  return OptionCard(
+                    model: options[index],
+                    isSelected: selectedIndexes.contains(index),
+                    onTap: () {
+                      setState(() {
+                        if (selectedIndexes.contains(index)) {
+                          selectedIndexes.remove(index);
+                        } else {
+                          selectedIndexes.add(index);
+                        }
+                      });
+                    },
+                  );
+                },
+              ),
+
+              SizedBox(height: 32.h),
+            ],
+          ),
         ),
       ),
     );

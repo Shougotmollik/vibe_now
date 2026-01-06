@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/routes.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/src/presentation/views/auth/sign_in_screen.dart';
@@ -32,21 +33,20 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: Size(375, 812),
-      builder: (context, child) => MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Vive Now',
-        theme: AppTheme.light(),
-        themeMode: ThemeMode.light,
-        // home: MainNavBarScreen(),
-        home: MaterialApp.router(
+      designSize: const Size(375, 812),
+      builder: (context, child) {
+        return MaterialApp.router(
           debugShowCheckedModeBanner: false,
+          title: 'Vibe Now',
+          scaffoldMessengerKey: rootScaffoldMessengerKey,
+          themeMode: ThemeMode.light,
           routerConfig: router,
-        ),
-      ),
+        );
+      },
     );
   }
 }

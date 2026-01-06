@@ -7,6 +7,8 @@ class StepPage extends StatelessWidget {
   final int stepCount;
   final int currentStep;
   final Widget child;
+  final bool? isSkippable;
+  final VoidCallback? onSkip;
   final Widget? footer;
   const StepPage({
     required this.child,
@@ -15,6 +17,8 @@ class StepPage extends StatelessWidget {
     this.currentStep = 1,
     this.footer,
     super.key,
+    this.isSkippable = false,
+    this.onSkip,
   });
 
   @override
@@ -38,6 +42,21 @@ class StepPage extends StatelessWidget {
         title: title == null
             ? null
             : Text(title!, style: Theme.of(context).textTheme.headlineMedium),
+
+        actions: [
+          isSkippable!
+              ? TextButton(
+                  onPressed: onSkip,
+                  child: Text(
+                    'Skip',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink(),
+        ],
       ),
       body: SafeArea(
         top: false,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/auth/steps/step_interest_selection_screen.dart';
@@ -28,10 +29,33 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return StepPage(
-      currentStep: widget.step,
-      footer: PrimaryButton.text(
-        onPressed: () {
+    return Scaffold(
+      body: StepPage(
+        currentStep: widget.step,
+        footer: PrimaryButton.text(
+          onPressed: () {
+            if (selectedIndex != null) {
+              Navigator.push(
+                context,
+                PageRouteBuilder(
+                  transitionDuration: Duration.zero,
+                  reverseTransitionDuration: Duration.zero,
+                  pageBuilder: (_, __, ___) =>
+                      StepInterestSelectionScreen(step: widget.step + 1),
+                ),
+              );
+            } else {
+              AppSnackbar.show(
+                message: 'Please select an option to continue',
+                type: SnackType.info,
+                
+              );
+            }
+          },
+          text: 'Continue',
+        ),
+        isSkippable: true,
+        onSkip: () {
           Navigator.push(
             context,
             PageRouteBuilder(
@@ -42,40 +66,39 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
             ),
           );
         },
-        text: 'Continue',
-      ),
-      child: Column(
-        children: [
-          SizedBox(height: 32.h),
+        child: Column(
+          children: [
+            SizedBox(height: 32.h),
 
-          const StepTitle(
-            title: 'What are you looking for?',
-            subtitle: 'No pressure — you can change this anytime.',
-          ),
-
-          SizedBox(height: 16.h),
-
-          Expanded(
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 16,
-                crossAxisSpacing: 16,
-                childAspectRatio: 1.7,
-              ),
-              itemCount: options.length,
-              itemBuilder: (context, index) {
-                return OptionCard(
-                  model: options[index],
-                  isSelected: selectedIndex == index,
-                  onTap: () {
-                    setState(() => selectedIndex = index);
-                  },
-                );
-              },
+            const StepTitle(
+              title: 'What are you looking for?',
+              subtitle: 'No pressure — you can change this anytime.',
             ),
-          ),
-        ],
+
+            SizedBox(height: 16.h),
+
+            Expanded(
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 16,
+                  crossAxisSpacing: 16,
+                  childAspectRatio: 1.7,
+                ),
+                itemCount: options.length,
+                itemBuilder: (context, index) {
+                  return OptionCard(
+                    model: options[index],
+                    isSelected: selectedIndex == index,
+                    onTap: () {
+                      setState(() => selectedIndex = index);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
