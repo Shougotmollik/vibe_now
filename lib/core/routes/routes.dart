@@ -44,7 +44,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/step-name',
       name: RouteNames.stepNameScreen,
-      builder: (context, state) => const StepNameScreen(),
+      builder: (context, state) =>  StepNameScreen(),
     ),
 
     GoRoute(

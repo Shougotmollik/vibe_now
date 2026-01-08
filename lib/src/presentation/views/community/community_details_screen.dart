@@ -183,20 +183,25 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
-                                      Icons.headphones_outlined,
+                                    // Icon(
+                                    //   Icons.favorite,
+                                    //   color: Colors.white,
+                                    //   size: 20.sp,
+                                    // ),
+                                    Assets.icons.chattingLight.svg(
+                                      width: 24.w,
+                                      height: 24.h,
                                       color: Colors.white,
-                                      size: 20.sp,
                                     ),
                                     SizedBox(width: 8.w),
-                                    Text(
-                                      'Interested',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                                    // Text(
+                                    //   'Interested',
+                                    //   style: TextStyle(
+                                    //     color: Colors.white,
+                                    //     fontSize: 16.sp,
+                                    //     fontWeight: FontWeight.w600,
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                               ),
@@ -209,8 +214,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                 color: Colors.grey.shade100,
                               ),
                               child: Icon(
-                                Icons.more_horiz,
-                                color: Colors.black,
+                                Icons.more_vert,
+                                color: Colors.black54,
                                 size: 20.sp,
                               ),
                             ),

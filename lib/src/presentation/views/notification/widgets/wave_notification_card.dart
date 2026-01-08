@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/notification/widgets/animated_dialog_content.dart';
 
 class WaveNotificationCard extends StatelessWidget {
   const WaveNotificationCard({super.key});
@@ -60,7 +61,10 @@ class WaveNotificationCard extends StatelessWidget {
                                     ),
                                     elevation: 0,
                                     backgroundColor: Colors.transparent,
-                                    child: _AnimatedDialogContent(),
+                                    child: AnimatedDialogContent(
+                                      content:
+                                          'John Smith has accepted your request. You both may now proceed to walk over to the other person.',
+                                    ),
                                   ),
                                 );
                               },
@@ -72,10 +76,33 @@ class WaveNotificationCard extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 8.w),
-                        Assets.icons.deniedIc.svg(
-                          width: 24.w,
-                          height: 24.h,
-                          color: const Color(0xff707070),
+                        GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (context) {
+                                return Center(
+                                  child: Dialog(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                    elevation: 0,
+                                    backgroundColor: Colors.transparent,
+                                    child: AnimatedDialogContent(
+                                      content:
+                                          'You have declined John Smith\'s request.',
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Assets.icons.deniedIc.svg(
+                            width: 24.w,
+                            height: 24.h,
+                            color: const Color(0xff707070),
+                          ),
                         ),
                       ],
                     ),
@@ -129,92 +156,6 @@ class WaveNotificationCard extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// Animated Dialog Content
-class _AnimatedDialogContent extends StatefulWidget {
-  @override
-  State<_AnimatedDialogContent> createState() => _AnimatedDialogContentState();
-}
-
-class _AnimatedDialogContentState extends State<_AnimatedDialogContent>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _fadeAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 300),
-    );
-
-    _scaleAnimation = CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeOutBack,
-    );
-
-    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
-    _controller.forward();
-
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted) {
-        _controller.reverse().then((value) {
-          if (mounted) {
-            Navigator.of(context).pop();
-          }
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _fadeAnimation,
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: Container(
-          width: 335.w,
-          padding: EdgeInsets.all(20.w),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(20.r),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Assets.icons.dialogCheck.svg(
-                width: 50.w,
-                height: 50.h,
-                fit: BoxFit.cover,
-              ),
-              SizedBox(height: 15.h),
-              Text(
-                'John Smith has accepted your request. You both may now proceed to walk over to the other person.',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xff555555),
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 10.h),
-            ],
-          ),
-        ),
       ),
     );
   }

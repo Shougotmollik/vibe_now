@@ -117,7 +117,7 @@ class _CustomSnackbarState extends State<CustomSnackbar>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 400),
+      duration: const Duration(milliseconds: 300),
     );
 
     _scaleAnimation = CurvedAnimation(

@@ -7,14 +7,12 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/model/community_notification.dart';
+import 'package:vibe_now/src/presentation/views/notification/widgets/animated_dialog_content.dart';
 
 class EventNotificationCard extends StatefulWidget {
   final NotificationModel notification;
 
-  const EventNotificationCard({
-    super.key,
-    required this.notification,
-  });
+  const EventNotificationCard({super.key, required this.notification});
 
   @override
   State<EventNotificationCard> createState() => _EventNotificationCardState();
@@ -182,11 +180,49 @@ class _EventNotificationCardState extends State<EventNotificationCard> {
         spacing: 8.w,
         children: [
           _buildActionButton('Accept', true, () {
+            showDialog(
+              context: context,
+              barrierDismissible: true,
+              builder: (context) {
+                return Center(
+                  child: Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    child: AnimatedDialogContent(
+                      content:
+                          'You have accepted ${widget.notification.userName}\'s event request.',
+                    ),
+                  ),
+                );
+              },
+            );
             // Handle accept action
             print('Accept tapped for ${widget.notification.id}');
           }),
           SizedBox(width: 12.w),
           _buildActionButton('Decline', false, () {
+            showDialog(
+              context: context,
+              barrierDismissible: true,
+              builder: (context) {
+                return Center(
+                  child: Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    child: AnimatedDialogContent(
+                      content:
+                          'You have declined ${widget.notification.userName}\'s event request.',
+                    ),
+                  ),
+                );
+              },
+            );
             // Handle decline action
             print('Decline tapped for ${widget.notification.id}');
           }),

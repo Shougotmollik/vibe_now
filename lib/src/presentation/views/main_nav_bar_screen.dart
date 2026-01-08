@@ -133,7 +133,7 @@ class CustomNavBar extends StatelessWidget {
             left: 0,
             right: 0,
             child: Container(
-              height: barHeight + bottomPadding,
+              height: barHeight + bottomPadding + 4,
               padding: EdgeInsets.only(
                 left: 24,
                 right: 24,
@@ -156,7 +156,7 @@ class CustomNavBar extends StatelessWidget {
                 children: [
                   _buildIcon(0),
                   _buildIcon(1),
-                  const SizedBox(width: 64),
+                  const SizedBox(width: 44),
                   _buildIcon(3),
                   _buildIcon(4),
                 ],
@@ -165,12 +165,12 @@ class CustomNavBar extends StatelessWidget {
           ),
 
           Positioned(
-            bottom: (bottomPadding > 0 ? bottomPadding : 8) + 25,
+            bottom: (bottomPadding > 0 ? bottomPadding : 8) + 4,
             child: GestureDetector(
               onTap: () => onTap(2),
               child: Container(
-                width: 64,
-                height: 64,
+                width: 52,
+                height: 52,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: AppColors.primaryGradient,
@@ -184,8 +184,8 @@ class CustomNavBar extends StatelessWidget {
                 ),
                 child: Center(
                   child: Assets.icons.plus.svg(
-                    height: 30.h,
-                    width: 30.w,
+                    height: 22.h,
+                    width: 22.w,
                     color: Colors.white,
                   ),
                 ),
