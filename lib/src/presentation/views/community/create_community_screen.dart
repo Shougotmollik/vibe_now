@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
@@ -21,6 +24,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   );
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  File? _selectedImage;
 
   @override
   void initState() {
@@ -156,7 +160,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
         TextField(
           controller: _maxAttendeesController,
           keyboardType: TextInputType.number,
-          style: TextStyle(fontSize: 14.sp, color: Color(0xff9d9d9d)),
+          style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.grey[100],
@@ -205,7 +209,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                     children: [
                       Icon(
                         Icons.calendar_today_outlined,
-                        color: Colors.grey[400],
+                        color: Colors.grey[700],
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -213,7 +217,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                         _selectedDate == null
                             ? 'Select'
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                        style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
                       ),
                     ],
                   ),
@@ -251,7 +255,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                     children: [
                       Icon(
                         Icons.access_time_outlined,
-                        color: Colors.grey[400],
+                        color: Colors.grey[700],
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -259,7 +263,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                         _selectedTime == null
                             ? 'Select'
                             : _selectedTime!.format(context),
-                        style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
                       ),
                     ],
                   ),
@@ -323,13 +327,13 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             children: [
               Icon(
                 Icons.location_on_outlined,
-                color: Colors.grey[400],
+                color: Colors.grey[700],
                 size: 20,
               ),
               const SizedBox(width: 12),
               Text(
                 'Select address',
-                style: TextStyle(color: Colors.grey[400], fontSize: 14),
+                style: TextStyle(color: Colors.grey[700], fontSize: 14),
               ),
             ],
           ),
@@ -375,12 +379,14 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                           ),
                   ),
 
-                  child: Text(e,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: isSelected ? Colors.white : Color(0xff555555),
-                  )),
+                  child: Text(
+                    e,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w400,
+                      color: isSelected ? Colors.white : Color(0xff555555),
+                    ),
+                  ),
                 ),
               );
             }).toList(),
@@ -408,7 +414,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           maxLines: 4,
           decoration: InputDecoration(
             hintText: 'What is this community about?',
-            hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
             filled: true,
             fillColor: Colors.grey[100],
             border: OutlineInputBorder(
@@ -455,7 +461,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           controller: _titleController,
           decoration: InputDecoration(
             hintText: 'e.g. Music Lovers',
-            hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
             filled: true,
             fillColor: Colors.grey[100],
             border: OutlineInputBorder(
@@ -473,40 +479,90 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   }
 
   Widget _buildImageUploadSection() {
-    return Container(
-      padding: EdgeInsets.all(38.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+    return GestureDetector(
+      onTap: () async {
+        final File? image = await CustomImagePicker.pickImage();
+        if (image != null) {
+          setState(() {
+            _selectedImage = image;
+          });
+        }
+      },
+      child: Container(
+        width: double.infinity,
+        height: 172.h,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+          ),
+          borderRadius: BorderRadius.circular(14.r),
         ),
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      child: Center(
-        child: Column(
-          children: [
-            Assets.icons.uploadImage.svg(width: 40.w, height: 40.h),
-            SizedBox(height: 8.h),
+        child: _selectedImage != null
+            ? Stack(
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14.r),
+                    child: Image.file(
+                      _selectedImage!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                  Positioned(
+                    top: 8.w,
+                    right: 8.w,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedImage = null;
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(4.w),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(24, 23, 24, 0.3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 16.w,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Assets.icons.uploadImage.svg(width: 40.w, height: 40.h),
+                    SizedBox(height: 8.h),
 
-            Text(
-              "Upload Cover Image",
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w400,
-                color: Color(0XFF364153),
+                    Text(
+                      "Upload Cover Image",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0XFF364153),
+                      ),
+                    ),
+                    Text(
+                      "Click to browse",
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0XFF4A5565),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            Text(
-              "Click to browse",
-              style: TextStyle(
-                fontSize: 10.sp,
-                fontWeight: FontWeight.w400,
-                color: Color(0XFF4A5565),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

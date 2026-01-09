@@ -179,7 +179,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
         TextField(
           controller: _titleController,
           decoration: InputDecoration(
-            hintText: 'Sunday coffee vibes — who’s in? 🌞',
+            hintText: 'e.g. Sunday coffee vibes — who’s in? 🌞',
             hintStyle: TextStyle(color: Color(0xff717182), fontSize: 14.sp),
             filled: true,
             fillColor: Colors.grey[100],
