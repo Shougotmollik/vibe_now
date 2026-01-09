@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/interest_chip.dart';
 
-class ProfileLockedScreen extends StatelessWidget {
-  const ProfileLockedScreen({super.key});
+class LockedProfileScreen extends StatelessWidget {
+  const LockedProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,17 +15,20 @@ class ProfileLockedScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Back Button
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: IconButton(
-                  icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                  onPressed: () {},
-                ),
-              ),
-            ),
+            // // Back Button
+            // Padding(
+            //   padding: const EdgeInsets.all(16.0),
+            //   child: Align(
+            //     alignment: Alignment.centerLeft,
+            //     child: IconButton(
+            //       icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            //       onPressed: () {
+            //         context.pop();
+            //       },
+            //     ),
+            //   ),
+            // ),
+            _buildAppBar(context),
 
             // Scrollable Content
             Expanded(
@@ -151,31 +155,51 @@ class ProfileLockedScreen extends StatelessWidget {
                           top: 0,
                           left: 0,
                           right: 0,
-                          child: Container(
-                            width: 120,
-                            height: 120,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              gradient: LinearGradient(
-                                colors: [
-                                  Colors.grey.shade300,
-                                  Colors.grey.shade400,
+                          child: Center(
+                            child: Container(
+                              width: 130,
+                              height: 130,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                // Border color
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.15),
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 8),
+                                  ),
                                 ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.shade400,
-                                  blurRadius: 10,
-                                  offset: const Offset(0, 4),
+                              padding: const EdgeInsets.all(
+                                4,
+                              ), // Border thickness
+                              child: ClipOval(
+                                child: Image.network(
+                                  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
+                                  fit: BoxFit.cover,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          return child;
+                                        }
+                                        return const Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        );
+                                      },
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Colors.grey.shade200,
+                                      child: const Icon(
+                                        Icons.person,
+                                        size: 60,
+                                        color: Colors.grey,
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ],
-                            ),
-                            child: const Icon(
-                              Icons.person,
-                              size: 60,
-                              color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -223,97 +247,35 @@ class ProfileLockedScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
 
-      // Bottom Navigation Bar
-      bottomNavigationBar: Container(
-        height: 80,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Colors.grey.shade200)),
-        ),
-        child: Stack(
-          clipBehavior: Clip.none,
+  PreferredSize _buildAppBar(BuildContext context) {
+    return PreferredSize(
+      preferredSize: const Size.fromHeight(56), // AppBar height
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: Icon(
-                      Icons.location_on_outlined,
-                      color: Colors.grey.shade400,
-                      size: 28,
-                    ),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: Icon(
-                      Icons.people_outline,
-                      color: Colors.grey.shade400,
-                      size: 28,
-                    ),
-                    onPressed: () {},
-                  ),
-                  const SizedBox(width: 56),
-                  IconButton(
-                    icon: Icon(
-                      Icons.chat_bubble_outline,
-                      color: Colors.grey.shade400,
-                      size: 28,
-                    ),
-                    onPressed: () {},
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.person,
-                      color: Color(0xFF9C27B0),
-                      size: 28,
-                    ),
-                    onPressed: () {},
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              onPressed: () => Navigator.pop(context),
+            ),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.shade200,
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
-            ),
-
-            // Center Floating Button
-            Positioned(
-              left: 0,
-              right: 0,
-              top: -20,
-              child: Center(
-                child: Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [Color(0xFF9C27B0), Color(0xFFE91E63)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.purple.withValues(alpha: 0.4),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {},
-                      borderRadius: BorderRadius.circular(28),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: Assets.icons.chatting.svg(),
             ),
           ],
         ),
@@ -347,5 +309,3 @@ class ProfileLockedScreen extends StatelessWidget {
     );
   }
 }
-
-

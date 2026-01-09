@@ -19,6 +19,7 @@ class NearbyUser {
   final double distanceKm;
   final double lat;
   final double lng;
+  bool? isWaved;
 
   NearbyUser({
     required this.id,
@@ -29,6 +30,7 @@ class NearbyUser {
     required this.distanceKm,
     required this.lat,
     required this.lng,
+    this.isWaved,
   });
 }
 
@@ -60,6 +62,7 @@ class _MapHomeScreenState extends State<HomeScreen>
       distanceKm: 0.3,
       lat: 23.780887,
       lng: 90.279237,
+      isWaved: false,
     ),
     NearbyUser(
       id: 'u2',
@@ -71,9 +74,10 @@ class _MapHomeScreenState extends State<HomeScreen>
       distanceKm: 0.7,
       lat: 23.781912,
       lng: 90.280541,
+      isWaved: true,
     ),
     NearbyUser(
-      id: 'u1',
+      id: 'u3',
       name: 'Jhon Gomes',
       imageUrl:
           'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
@@ -82,9 +86,10 @@ class _MapHomeScreenState extends State<HomeScreen>
       distanceKm: 0.3,
       lat: 23.780887,
       lng: 90.279237,
+      isWaved: false,
     ),
     NearbyUser(
-      id: 'u3',
+      id: 'u4',
       name: 'Daniel Cruz',
       imageUrl:
           'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=400',
@@ -93,9 +98,10 @@ class _MapHomeScreenState extends State<HomeScreen>
       distanceKm: 1.2,
       lat: 23.779421,
       lng: 90.277843,
+      isWaved: true,
     ),
     NearbyUser(
-      id: 'u4',
+      id: 'u5',
       name: 'Maya Chen',
       imageUrl:
           'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
@@ -104,6 +110,7 @@ class _MapHomeScreenState extends State<HomeScreen>
       distanceKm: 1.8,
       lat: 23.782334,
       lng: 90.281992,
+      isWaved: false,
     ),
   ];
 
@@ -268,7 +275,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.15),
+                  color: Colors.black.withValues(alpha: 0.15),
                   blurRadius: 20,
                   offset: const Offset(0, -8),
                 ),
@@ -277,23 +284,23 @@ class _MapHomeScreenState extends State<HomeScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // drag handle
-                // Container(
-                //   width: 40,
-                //   height: 4,
-                //   decoration: BoxDecoration(
-                //     color: Colors.grey.shade300,
-                //     borderRadius: BorderRadius.circular(4),
-                //   ),
-                // ),
                 const SizedBox(height: 16),
 
                 // avatar
                 Stack(
                   children: [
-                    CircleAvatar(
-                      radius: 48,
-                      backgroundImage: NetworkImage(user.imageUrl),
+                    GestureDetector(
+                      onTap: () {
+                        if (user.isWaved == true) {
+                          context.pushNamed(RouteNames.unlockedProfileScreen);
+                        } else {
+                          context.pushNamed(RouteNames.lockedProfileScreen);
+                        }
+                      },
+                      child: CircleAvatar(
+                        radius: 48,
+                        backgroundImage: NetworkImage(user.imageUrl),
+                      ),
                     ),
                     Positioned(
                       bottom: 0,
@@ -370,18 +377,36 @@ class _MapHomeScreenState extends State<HomeScreen>
                 Row(
                   children: [
                     Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(14),
-                          gradient: AppColors.primaryGradientRotated,
-                        ),
-                        child: const Center(
-                          child: Text(
-                            'Wave 👋',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
+                      child: GestureDetector(
+                        onTap: user.isWaved == true
+                            ? null
+                            : () {
+                                setState(() {
+                                  user.isWaved = true;
+                                });
+                                // Navigator.of(context).pop();
+                              },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(14),
+                            gradient: user.isWaved == true
+                                ? LinearGradient(
+                                    colors: [
+                                      AppColors.onBackground,
+                                      AppColors.onBackground,
+                                      AppColors.onBackground,
+                                    ],
+                                  )
+                                : AppColors.primaryGradientRotated,
+                          ),
+                          child: Center(
+                            child: Text(
+                              user.isWaved == true ? 'Waved👋' : 'Wave 👋',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),

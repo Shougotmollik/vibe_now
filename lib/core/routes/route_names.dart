@@ -28,4 +28,8 @@ class RouteNames {
   static const String chatInboxScreen = "chatInboxScreen";
 
   static const String reportScreen = "reportScreen";
+
+  static const String lockedProfileScreen = "lockedProfileScreen";
+  static const String unlockedProfileScreen = "unlockedProfileScreen";
+  static const String likeScreen = "likeScreen";
 }

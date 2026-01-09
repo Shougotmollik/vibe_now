@@ -56,6 +56,18 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
         },
         text: 'Continue',
       ),
+      isSkippable: true,
+      onSkip: () {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+            pageBuilder: (_, __, ___) =>
+                StepGenderScreen(step: widget.step + 1),
+          ),
+        );
+      },
       child: Column(
         children: [
           SizedBox(height: 32.h),

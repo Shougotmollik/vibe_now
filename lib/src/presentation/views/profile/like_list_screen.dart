@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LikeListScreen extends StatelessWidget {
   const LikeListScreen({super.key});
@@ -19,7 +20,9 @@ class LikeListScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                    onPressed: () {},
+                    onPressed: () {
+                      context.pop();
+                    },
                   ),
                   Text('Likes', style: TextStyle(fontSize: 18)),
                 ],

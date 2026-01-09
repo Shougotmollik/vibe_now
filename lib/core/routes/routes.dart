@@ -15,6 +15,9 @@ import 'package:vibe_now/src/presentation/views/event/create_event_screen.dart';
 import 'package:vibe_now/src/presentation/views/event/event_screen.dart';
 import 'package:vibe_now/src/presentation/views/main_nav_bar_screen.dart';
 import 'package:vibe_now/src/presentation/views/notification/notification_screen.dart';
+import 'package:vibe_now/src/presentation/views/profile/like_list_screen.dart';
+import 'package:vibe_now/src/presentation/views/profile/locked_profile_screen.dart';
+import 'package:vibe_now/src/presentation/views/profile/unlocked_profile_screen.dart';
 import 'package:vibe_now/src/presentation/views/qr_verification/qr_verification_screen.dart';
 import 'package:vibe_now/src/presentation/views/subscription/subscription_screen.dart';
 
@@ -44,7 +47,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/step-name',
       name: RouteNames.stepNameScreen,
-      builder: (context, state) =>  StepNameScreen(),
+      builder: (context, state) => StepNameScreen(),
     ),
 
     GoRoute(
@@ -113,6 +116,21 @@ final GoRouter router = GoRouter(
       path: '/report-screen',
       name: RouteNames.reportScreen,
       builder: (context, state) => const ReportScreen(),
+    ),
+    GoRoute(
+      path: '/locked-profile-screen',
+      name: RouteNames.lockedProfileScreen,
+      builder: (context, state) => const LockedProfileScreen(),
+    ),
+    GoRoute(
+      path: '/unlocked-profile-screen',
+      name: RouteNames.unlockedProfileScreen,
+      builder: (context, state) => const UnlockedProfileScreen(),
+    ),
+    GoRoute(
+      path: '/like-screen',
+      name: RouteNames.likeScreen,
+      builder: (context, state) => const LikeListScreen(),
     ),
   ],
 );

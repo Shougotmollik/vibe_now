@@ -42,6 +42,18 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
         },
         text: 'Continue',
       ),
+      isSkippable: true,
+      onSkip: () {
+        Navigator.push(
+          context,
+          PageRouteBuilder(
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+            pageBuilder: (_, __, ___) =>
+                StepLookingForScreen(step: widget.step + 1),
+          ),
+        );
+      },
       child: Column(
         children: [
           SizedBox(height: 32.h),
@@ -49,7 +61,6 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
             title: 'What\'s your gender?',
             subtitle:
                 'Choose what best describes you. You can update or add more details anytime.',
-                
           ),
           SizedBox(height: 16.h),
           _buildRadio("Man"),

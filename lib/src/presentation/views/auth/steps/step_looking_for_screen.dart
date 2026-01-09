@@ -18,6 +18,8 @@ class StepLookingForScreen extends StatefulWidget {
 
 class _StepLookingForScreenState extends State<StepLookingForScreen> {
   int? selectedIndex;
+  // For multiple selection
+  final Set<int> selectedIndexes = {};
 
   final List<OptionModel> options = [
     OptionModel(icon: Assets.icons.friendShip, title: "Friendship"),
@@ -34,7 +36,11 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
         currentStep: widget.step,
         footer: PrimaryButton.text(
           onPressed: () {
-            if (selectedIndex != null) {
+            List<OptionModel> selectedOptions = selectedIndexes
+                .map((i) => options[i])
+                .toList();
+
+            if (selectedOptions.isNotEmpty) {
               Navigator.push(
                 context,
                 PageRouteBuilder(
@@ -48,7 +54,6 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
               AppSnackbar.show(
                 message: 'Please select an option to continue',
                 type: SnackType.info,
-                
               );
             }
           },
@@ -89,9 +94,15 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
                 itemBuilder: (context, index) {
                   return OptionCard(
                     model: options[index],
-                    isSelected: selectedIndex == index,
+                    isSelected: selectedIndexes.contains(index),
                     onTap: () {
-                      setState(() => selectedIndex = index);
+                      setState(() {
+                        if (selectedIndexes.contains(index)) {
+                          selectedIndexes.remove(index);
+                        } else {
+                          selectedIndexes.add(index);
+                        }
+                      });
                     },
                   );
                 },
