@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/src/presentation/views/qr_verification/qr_screen.dart';
 
 class QRVerificationScreen extends StatefulWidget {
   const QRVerificationScreen({super.key});
@@ -251,51 +255,62 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
               style: TextStyle(color: Colors.grey[600], fontSize: 14.sp),
             ),
             const SizedBox(height: 32),
-            Container(
-              width: double.infinity,
-              height: 320.h,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Color(0xffEFF6FF),
-                borderRadius: BorderRadius.circular(20),
-              ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => QrScreen()),
+                );
+              },
               child: Container(
+                width: double.infinity,
+                height: 320.h,
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  border: Border.all(color: const Color(0xFF4DAFFF), width: 3),
-                  borderRadius: BorderRadius.circular(16),
+                  color: Color(0xffEFF6FF),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: Stack(
-                  children: [
-                    // Corner decorations
-                    Positioned(
-                      top: 0,
-                      left: 0,
-                      child: _buildCorner(true, true),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: const Color(0xFF4DAFFF),
+                      width: 3,
                     ),
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: _buildCorner(true, false),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      child: _buildCorner(false, true),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: _buildCorner(false, false),
-                    ),
-                    // Camera icon in center
-                    Center(
-                      child: Icon(
-                        Icons.camera_alt_outlined,
-                        size: 64.sp,
-                        color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Stack(
+                    children: [
+                      // Corner decorations
+                      Positioned(
+                        top: 0,
+                        left: 0,
+                        child: _buildCorner(true, true),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: _buildCorner(true, false),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        left: 0,
+                        child: _buildCorner(false, true),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: _buildCorner(false, false),
+                      ),
+                      // Camera icon in center
+                      Center(
+                        child: Icon(
+                          Icons.camera_alt_outlined,
+                          size: 64.sp,
+                          color: Colors.grey[400],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
