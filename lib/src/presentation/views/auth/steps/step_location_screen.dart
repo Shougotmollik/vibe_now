@@ -6,6 +6,7 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/step_page.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/step_title.dart';
+import 'package:vibe_now/src/presentation/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/src/presentation/views/home/home_screen.dart';
 
 class StepLocationScreen extends StatefulWidget {
@@ -21,11 +22,26 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
   Widget build(BuildContext context) {
     return StepPage(
       currentStep: widget.step,
-      footer: PrimaryButton.text(
-        onPressed: () {
-          context.pushReplacementNamed(RouteNames.mainNavBar);
-        },
-        text: 'Allow',
+      footer: Row(
+        spacing: 28.w,
+        children: [
+          Expanded(
+            child: CustomElevatedButton(
+              onTap: () {
+                context.pushNamed(RouteNames.mainNavBar);
+              },
+              buttonText: 'Not Now',
+            ),
+          ),
+          Expanded(
+            child: PrimaryButton.text(
+              onPressed: () {
+                context.pushReplacementNamed(RouteNames.mainNavBar);
+              },
+              text: 'Allow',
+            ),
+          ),
+        ],
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -52,11 +68,12 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
                 ),
               ),
             ),
+            SizedBox(height: 8.h),
             Text(
               'We only use your location while you’re using the app.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                fontSize: 16.sp,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
                 color: const Color(0xff727272),
               ),
