@@ -178,30 +178,17 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12.r),
 
-                                  gradient: AppColors.primaryGradient,
+                                  gradient: AppColors.primaryGradientRotated,
                                 ),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    // Icon(
-                                    //   Icons.favorite,
-                                    //   color: Colors.white,
-                                    //   size: 20.sp,
-                                    // ),
                                     Assets.icons.chattingLight.svg(
                                       width: 24.w,
                                       height: 24.h,
                                       color: Colors.white,
                                     ),
                                     SizedBox(width: 8.w),
-                                    // Text(
-                                    //   'Interested',
-                                    //   style: TextStyle(
-                                    //     color: Colors.white,
-                                    //     fontSize: 16.sp,
-                                    //     fontWeight: FontWeight.w600,
-                                    //   ),
-                                    // ),
                                   ],
                                 ),
                               ),
