@@ -26,7 +26,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              CustomAppBar(title: "Create Post", canBack: false),
+              // CustomAppBar(title: "Create Vibe", canBack: false),
               Padding(
                 padding: EdgeInsets.all(16.w),
                 child: Column(

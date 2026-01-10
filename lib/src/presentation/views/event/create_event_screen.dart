@@ -81,30 +81,19 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         color: Colors.blue[50],
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(Icons.group_outlined, color: Colors.grey[600], size: 20),
-              const SizedBox(width: 8),
-              const Text(
-                'Create Event',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
+          Icon(Icons.group_outlined, color: Colors.grey[600], size: 20),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Build a space where people with shared interests can connect and grow together',
+              style: TextStyle(
+                fontSize: 13,
+                color: Colors.grey[600],
+                height: 1.4,
               ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Build a space where people with shared interests can connect and grow together',
-            style: TextStyle(
-              fontSize: 13,
-              color: Colors.grey[600],
-              height: 1.4,
             ),
           ),
         ],

@@ -104,8 +104,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
           AnimatedFadeUpText(
             delay: 2200,
-            text:
-                "Real connections. Right here.\nRight now. Let's vibe together!",
+            text: "We believe in real-life encounters",
             fontSize: 14.sp,
           ),
 

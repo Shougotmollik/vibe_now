@@ -36,7 +36,7 @@ class StepNameScreen extends StatelessWidget {
         },
         text: 'Continue',
       ),
-      isSkippable: true,
+      isSkippable: false,
       onSkip: () {
         Navigator.push(
           context,

@@ -54,7 +54,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomAppBar(title: 'Create Post'),
+              CustomAppBar(title: 'Create Community'),
 
               Padding(
                 padding: EdgeInsets.all(16.w),
@@ -581,26 +581,22 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
       child: Column(
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 12.w,
             children: [
               Assets.icons.community.svg(width: 24.w, height: 24.h),
-              Text(
-                "Create Community",
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xff6E6E6E),
+              Expanded(
+                child: Text(
+                  "Build a space where people with shared interests can connect and grow together",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xff6E6E6E),
+                  ),
                 ),
               ),
             ],
-          ),
-          Text(
-            "Build a space where people with shared interests can connect and grow together",
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w400,
-              color: const Color(0xff6E6E6E),
-            ),
           ),
         ],
       ),
