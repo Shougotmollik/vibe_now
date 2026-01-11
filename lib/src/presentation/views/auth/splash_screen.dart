@@ -61,6 +61,8 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    AnimationConfig.enabled = true;
+    AnimationConfig.speedMultiplier = 2.0;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
