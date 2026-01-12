@@ -186,7 +186,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
           ),
         ),
         GestureDetector(
-          onTap: () => context.pushNamed(RouteNames.unlockedProfileScreen),
+          onTap: () => context.pushNamed(RouteNames.profileScreen),
           behavior: HitTestBehavior.translucent,
           child: Row(
             children: [

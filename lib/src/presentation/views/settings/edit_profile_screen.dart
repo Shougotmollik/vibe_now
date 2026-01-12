@@ -16,7 +16,6 @@ class EditProfileScreen extends StatefulWidget {
 final TextEditingController bioController = TextEditingController();
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  // ---------- Interests Data ----------
   List<String> selectedInterests = [];
 
   final List<Map<String, dynamic>> allInterests = [
@@ -271,7 +270,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       children: allInterests.map((item) {
         final String label = item["label"];
         final icon = item["icon"];
-        return InterestChip(icon: icon, label: label);
+        final isSelected = selectedInterests.contains(label);
+
+        return GestureDetector(
+          onTap: () {
+            setState(() {
+              if (isSelected) {
+                selectedInterests.remove(label);
+              } else {
+                if (selectedInterests.length < 5) {
+                  return;
+                }
+                selectedInterests.add(label);
+              }
+            });
+          },
+          child: InterestChip(icon: icon, label: label, isSelected: isSelected),
+        );
       }).toList(),
     );
   }

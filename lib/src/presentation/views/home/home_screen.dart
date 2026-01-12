@@ -227,7 +227,7 @@ class _MapHomeScreenState extends State<HomeScreen>
         icon:
             await CircleAvatar(
               radius: 56,
-              backgroundColor: Colors.purple,
+              backgroundColor: Colors.red,
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: NetworkImage(
@@ -249,13 +249,16 @@ class _MapHomeScreenState extends State<HomeScreen>
         markerId: const MarkerId("3"),
         position: _offsetToLatLng(_currentLocation, 90, -20),
         icon:
-            await CircleAvatar(
-              radius: 56,
-              backgroundColor: Colors.purple,
+            await Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.red,
+              ),
+
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=13',
+                  'https://m.media-amazon.com/images/S/pv-target-images/d6e25ce8c6cdf788ec947effcec7854aee7090812cb73e536adf6b75b9eb7ca6.jpg',
                 ),
               ),
             ).toBitmapDescriptor(
@@ -290,6 +293,30 @@ class _MapHomeScreenState extends State<HomeScreen>
             ),
         onTap: () {
           showUserProfileDialog(context, nearbyUsers[4]);
+        },
+      ),
+    );
+
+    _markers.add(
+      Marker(
+        markerId: const MarkerId("5"),
+        position: _offsetToLatLng(_currentLocation, -100, -100),
+        icon:
+            await CircleAvatar(
+              radius: 56,
+              backgroundColor: Colors.green,
+              child: CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  'https://i.pravatar.cc/150?img=15',
+                ),
+              ),
+            ).toBitmapDescriptor(
+              logicalSize: const Size(300, 300),
+              imageSize: const Size(300, 300),
+            ),
+        onTap: () {
+          showUserProfileDialog(context, nearbyUsers[5]);
         },
       ),
     );
@@ -328,7 +355,7 @@ class _MapHomeScreenState extends State<HomeScreen>
                     GestureDetector(
                       onTap: () {
                         if (user.isWaved == true) {
-                          context.pushNamed(RouteNames.unlockedProfileScreen);
+                          context.pushNamed(RouteNames.profileScreen);
                         } else {
                           context.pushNamed(RouteNames.lockedProfileScreen);
                         }

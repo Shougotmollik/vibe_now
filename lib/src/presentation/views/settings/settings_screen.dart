@@ -34,8 +34,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
-            CustomAppBar(title: 'Settings', canBack: false),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: CustomAppBar(title: 'Settings', canBack: true),
+            ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(

@@ -26,6 +26,7 @@ class RouteNames {
   static const String notificationScreen = "NotificationScreen";
 
   static const String chatInboxScreen = "chatInboxScreen";
+  static const String chatScreen = "chatScreen";
 
   static const String reportScreen = "reportScreen";
 
@@ -33,4 +34,6 @@ class RouteNames {
   static const String unlockedProfileScreen = "unlockedProfileScreen";
   static const String likeScreen = "likeScreen";
   static const String settingsScreen = "settingsScreen";
+
+  static const String profileScreen = "profileScreen";
 }

@@ -26,7 +26,7 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
     EventOrCommunityScreen(),
     CreateVibeScreen(),
     ChatScreen(),
-    ProfileScreen(),
+    ProfileScreen(isMyProfile: true),
   ];
 
   /// Colored icons (active)

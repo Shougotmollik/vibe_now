@@ -6,6 +6,7 @@ import 'package:vibe_now/src/presentation/views/auth/sign_up_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/splash_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/steps/step_name_screen.dart';
 import 'package:vibe_now/src/presentation/views/chat/chat_inbox_screen.dart';
+import 'package:vibe_now/src/presentation/views/chat/chat_screen.dart';
 import 'package:vibe_now/src/presentation/views/chat/report_screen.dart';
 import 'package:vibe_now/src/presentation/views/community/community_details_screen.dart';
 import 'package:vibe_now/src/presentation/views/community/community_screen.dart';
@@ -17,6 +18,7 @@ import 'package:vibe_now/src/presentation/views/main_nav_bar_screen.dart';
 import 'package:vibe_now/src/presentation/views/notification/notification_screen.dart';
 import 'package:vibe_now/src/presentation/views/profile/like_list_screen.dart';
 import 'package:vibe_now/src/presentation/views/profile/locked_profile_screen.dart';
+import 'package:vibe_now/src/presentation/views/profile/profile_screen.dart';
 import 'package:vibe_now/src/presentation/views/profile/unlocked_profile_screen.dart';
 import 'package:vibe_now/src/presentation/views/qr_verification/qr_verification_screen.dart';
 import 'package:vibe_now/src/presentation/views/settings/settings_screen.dart';
@@ -109,6 +111,11 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const NotificationScreen(),
     ),
     GoRoute(
+      path: '/chat-screen',
+      name: RouteNames.chatScreen,
+      builder: (context, state) => const ChatScreen(),
+    ),
+    GoRoute(
       path: '/chat-inbox-screen',
       name: RouteNames.chatInboxScreen,
       builder: (context, state) => const ChatInboxScreen(),
@@ -119,14 +126,14 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const ReportScreen(),
     ),
     GoRoute(
+      path: '/profile-screen',
+      name: RouteNames.profileScreen,
+      builder: (context, state) => const ProfileScreen(isMyProfile: false),
+    ),
+    GoRoute(
       path: '/locked-profile-screen',
       name: RouteNames.lockedProfileScreen,
       builder: (context, state) => const LockedProfileScreen(),
-    ),
-    GoRoute(
-      path: '/unlocked-profile-screen',
-      name: RouteNames.unlockedProfileScreen,
-      builder: (context, state) => const UnlockedProfileScreen(),
     ),
     GoRoute(
       path: '/like-screen',
