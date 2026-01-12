@@ -22,7 +22,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
   final List<String> notificationTabs = ['Wave', 'Event', 'Community'];
   int selectedTapIndex = 0;
   CommunityFilter _selectedCommunityFilter = CommunityFilter.all;
-  CommunityFilter _selectedEventFilter = CommunityFilter.all; // Separate filter for events
+  CommunityFilter _selectedEventFilter =
+      CommunityFilter.all; // Separate filter for events
 
   // Community notifications
   final List<NotificationModel> _allCommunityNotifications = [

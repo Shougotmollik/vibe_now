@@ -1,22 +1,18 @@
 import 'package:flutter/material.dart';
 
-/// Global animation configuration
 class AnimationConfig {
   static bool _enabled = true;
   static double _speedMultiplier = 1.0;
 
-  /// Enable or disable all animations globally
   static bool get enabled => _enabled;
   static set enabled(bool value) => _enabled = value;
 
-  /// Control animation speed (1.0 = normal, 2.0 = 2x faster, 0.5 = half speed)
   static double get speedMultiplier => _speedMultiplier;
   static set speedMultiplier(double value) {
     assert(value > 0, 'Speed multiplier must be greater than 0');
     _speedMultiplier = value;
   }
 
-  /// Reset to defaults
   static void reset() {
     _enabled = true;
     _speedMultiplier = 1.0;
@@ -38,11 +34,9 @@ class AnimateOption {
     this.curve = Curves.easeOut,
   });
 
-  /// Get adjusted duration based on speed multiplier
   int get adjustedDuration =>
       (duration / AnimationConfig.speedMultiplier).round();
 
-  /// Get adjusted delay based on speed multiplier
   int get adjustedDelay => (delay / AnimationConfig.speedMultiplier).round();
 }
 
@@ -80,7 +74,6 @@ class _AnimatedValueState extends State<AnimatedValue>
       end: widget.option.end,
     ).animate(CurvedAnimation(parent: _controller, curve: widget.option.curve));
 
-    // Auto-start animation after delay
     if (AnimationConfig.enabled) {
       Future.delayed(Duration(milliseconds: widget.option.adjustedDelay), () {
         if (mounted) {
@@ -88,7 +81,6 @@ class _AnimatedValueState extends State<AnimatedValue>
         }
       });
     } else {
-      // If animations are disabled, jump to end state immediately
       _controller.value = 1.0;
     }
   }
