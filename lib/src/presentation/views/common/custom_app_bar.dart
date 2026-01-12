@@ -14,9 +14,9 @@ class CustomAppBar extends StatelessWidget {
     return Row(
       children: [
         canBack
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                onPressed: () {
+            ? GestureDetector(
+                child: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                onTap: () {
                   if (context.canPop()) {
                     context.pop();
                   } else {

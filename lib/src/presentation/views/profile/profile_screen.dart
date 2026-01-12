@@ -4,14 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
-class UnlockedProfileScreen extends StatefulWidget {
-  const UnlockedProfileScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<UnlockedProfileScreen> createState() => _UnlockedProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _UnlockedProfileScreenState extends State<UnlockedProfileScreen>
+class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   final tabs = ['Photos', 'Posts'];
@@ -37,6 +37,7 @@ class _UnlockedProfileScreenState extends State<UnlockedProfileScreen>
           SliverToBoxAdapter(
             child: SafeArea(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [_buildAppBar(context), _buildProfileHeader()],
               ),
             ),
@@ -69,30 +70,29 @@ class _UnlockedProfileScreenState extends State<UnlockedProfileScreen>
 
   PreferredSize _buildAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(kToolbarHeight), // AppBar height
+      preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             GestureDetector(
-              child: const Icon(Icons.arrow_back_ios, color: Colors.black),
-              onTap: () => Navigator.pop(context),
-            ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.shade200,
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+              onTap: () => context.pushNamed(RouteNames.settingsScreen),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade200,
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Icon(Icons.settings, color: Colors.grey.shade600),
               ),
-              child: Assets.icons.chatting.svg(),
             ),
           ],
         ),
@@ -208,7 +208,6 @@ class _UnlockedProfileScreenState extends State<UnlockedProfileScreen>
             ],
           ),
         ),
-        // SizedBox(height: 24.h),
       ],
     );
   }
@@ -249,7 +248,11 @@ class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    return Container(color: const Color(0xFFF5F5F5), child: _tabBar);
+    return Container(
+      color: const Color(0xFFF5F5F5),
+      padding: EdgeInsets.zero,
+      child: _tabBar,
+    );
   }
 
   @override
@@ -293,7 +296,7 @@ class _PostsTabState extends State<PostsTab> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16.h),
+      padding: EdgeInsets.zero,
       itemCount: 2,
       itemBuilder: (context, index) {
         return PostItem(

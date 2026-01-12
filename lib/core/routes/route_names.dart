@@ -32,4 +32,5 @@ class RouteNames {
   static const String lockedProfileScreen = "lockedProfileScreen";
   static const String unlockedProfileScreen = "unlockedProfileScreen";
   static const String likeScreen = "likeScreen";
+  static const String settingsScreen = "settingsScreen";
 }

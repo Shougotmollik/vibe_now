@@ -271,6 +271,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/kitty.svg
   SvgGenImage get kitty => const SvgGenImage('assets/icons/kitty.svg');
 
+  /// File path: assets/icons/leave.svg
+  SvgGenImage get leave => const SvgGenImage('assets/icons/leave.svg');
+
   /// File path: assets/icons/location_ic.svg
   SvgGenImage get locationIc =>
       const SvgGenImage('assets/icons/location_ic.svg');
@@ -424,6 +427,7 @@ class $AssetsIconsGen {
     iceCream,
     imagePicker,
     kitty,
+    leave,
     locationIc,
     lock,
     makeUpBrash,

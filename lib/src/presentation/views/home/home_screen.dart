@@ -112,6 +112,42 @@ class _MapHomeScreenState extends State<HomeScreen>
       lng: 90.281992,
       isWaved: false,
     ),
+    NearbyUser(
+      id: 'u5',
+      name: 'Maya Chen',
+      imageUrl:
+          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
+      bio: 'Photography addict 📸 | Capturing small moments',
+      interest: 'Photography',
+      distanceKm: 1.8,
+      lat: 23.782334,
+      lng: 90.281992,
+      isWaved: false,
+    ),
+    NearbyUser(
+      id: 'u5',
+      name: 'Maya Chen',
+      imageUrl:
+          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
+      bio: 'Photography addict 📸 | Capturing small moments',
+      interest: 'Photography',
+      distanceKm: 1.8,
+      lat: 23.782334,
+      lng: 90.281992,
+      isWaved: false,
+    ),
+    NearbyUser(
+      id: 'u5',
+      name: 'Maya Chen',
+      imageUrl:
+          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
+      bio: 'Photography addict 📸 | Capturing small moments',
+      interest: 'Photography',
+      distanceKm: 1.8,
+      lat: 23.782334,
+      lng: 90.281992,
+      isWaved: false,
+    ),
   ];
 
   @override

@@ -19,6 +19,7 @@ import 'package:vibe_now/src/presentation/views/profile/like_list_screen.dart';
 import 'package:vibe_now/src/presentation/views/profile/locked_profile_screen.dart';
 import 'package:vibe_now/src/presentation/views/profile/unlocked_profile_screen.dart';
 import 'package:vibe_now/src/presentation/views/qr_verification/qr_verification_screen.dart';
+import 'package:vibe_now/src/presentation/views/settings/settings_screen.dart';
 import 'package:vibe_now/src/presentation/views/subscription/subscription_screen.dart';
 
 final GoRouter router = GoRouter(
@@ -131,6 +132,11 @@ final GoRouter router = GoRouter(
       path: '/like-screen',
       name: RouteNames.likeScreen,
       builder: (context, state) => const LikeListScreen(),
+    ),
+    GoRoute(
+      path: '/setting-screen',
+      name: RouteNames.settingsScreen,
+      builder: (context, state) => const SettingsScreen(),
     ),
   ],
 );

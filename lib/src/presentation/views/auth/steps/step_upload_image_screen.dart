@@ -63,22 +63,22 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
         currentStep: widget.step,
         footer: PrimaryButton.text(
           onPressed: () {
-            if (_selectedImages.isNotEmpty) {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                  pageBuilder: (_, __, ___) =>
-                      StepLocationScreen(step: widget.step + 1),
-                ),
-              );
-            } else {
-              AppSnackbar.show(
-                message: 'Please upload at least one image to continue',
-                type: SnackType.info,
-              );
-            }
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero,
+                pageBuilder: (_, __, ___) =>
+                    StepLocationScreen(step: widget.step + 1),
+              ),
+            );
+            // if (_selectedImages.isNotEmpty) {
+            // } else {
+            //   AppSnackbar.show(
+            //     message: 'Please upload at least one image to continue',
+            //     type: SnackType.info,
+            //   );
+            // }
           },
           text: 'Continue',
         ),

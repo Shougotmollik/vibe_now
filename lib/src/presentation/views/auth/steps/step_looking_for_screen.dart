@@ -39,23 +39,24 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
             List<OptionModel> selectedOptions = selectedIndexes
                 .map((i) => options[i])
                 .toList();
+            // Navigate to the next screen
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero,
+                pageBuilder: (_, __, ___) =>
+                    StepInterestSelectionScreen(step: widget.step + 1),
+              ),
+            );
 
-            if (selectedOptions.isNotEmpty) {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                  pageBuilder: (_, __, ___) =>
-                      StepInterestSelectionScreen(step: widget.step + 1),
-                ),
-              );
-            } else {
-              AppSnackbar.show(
-                message: 'Please select an option to continue',
-                type: SnackType.info,
-              );
-            }
+            // if (selectedOptions.isNotEmpty) {
+            // } else {
+            //   AppSnackbar.show(
+            //     message: 'Please select an option to continue',
+            //     type: SnackType.info,
+            //   );
+            // }
           },
           text: 'Continue',
         ),

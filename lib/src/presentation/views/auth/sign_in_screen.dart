@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
-import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/auth_title.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/custom_social_button.dart';
@@ -59,7 +58,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 SizedBox(height: 24.h),
                 PrimaryButton.text(
                   onPressed: () {
-                    context.pushNamed(RouteNames.mainNavBar);
+                    context.goNamed(RouteNames.mainNavBar);
                   },
                   text: 'Get Started',
                 ),
@@ -77,26 +76,26 @@ class _SignInScreenState extends State<SignInScreen> {
                 CustomSocialButton(
                   icon: Assets.icons.facebookIc,
                   title: 'Facebook',
-                  onTap: () => context.pushNamed(RouteNames.mainNavBar),
+                  onTap: () => context.goNamed(RouteNames.mainNavBar),
                 ),
                 SizedBox(height: 12.w),
                 CustomSocialButton(
                   icon: Assets.icons.googleIc,
                   title: 'Google',
-                  onTap: () => context.pushNamed(RouteNames.mainNavBar),
+                  onTap: () => context.goNamed(RouteNames.mainNavBar),
                 ),
                 SizedBox(height: 12.w),
                 CustomSocialButton(
                   icon: Assets.icons.appleIc,
                   title: 'Apple',
-                  onTap: () => context.pushNamed(RouteNames.mainNavBar),
+                  onTap: () => context.goNamed(RouteNames.mainNavBar),
                 ),
                 SizedBox(height: 12.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Dont have an account?',
+                      " Don't have an account?",
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: Color(0xff787878),

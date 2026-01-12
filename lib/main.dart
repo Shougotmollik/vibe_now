@@ -17,7 +17,6 @@ import 'package:vibe_now/src/presentation/views/event/event_or_community_screen.
 import 'package:vibe_now/src/presentation/views/home/home_screen.dart';
 import 'package:vibe_now/src/presentation/views/main_nav_bar_screen.dart';
 import 'package:vibe_now/src/presentation/views/notification/notification_screen.dart';
-import 'package:vibe_now/src/presentation/views/sign_in_screen.dart';
 import 'package:vibe_now/src/presentation/views/subscription/subscription_screen.dart';
 
 void main() async {

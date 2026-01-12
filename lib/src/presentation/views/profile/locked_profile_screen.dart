@@ -258,9 +258,9 @@ class LockedProfileScreen extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
+            GestureDetector(
+              child: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              onTap: () => Navigator.pop(context),
             ),
             Container(
               padding: const EdgeInsets.all(8),

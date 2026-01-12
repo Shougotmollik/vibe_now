@@ -5,8 +5,108 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
-class EventOrCommunityScreen extends StatelessWidget {
+class EventOrCommunityScreen extends StatefulWidget {
   const EventOrCommunityScreen({super.key});
+
+  @override
+  State<EventOrCommunityScreen> createState() => _EventOrCommunityScreenState();
+}
+
+class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Show the popup after the first frame is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showProTipsDialog();
+    });
+  }
+
+  void _showProTipsDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: Color(0xFFE9D4FF), width: 1.5.w),
+              gradient: LinearGradient(
+                colors: [Color(0xFFFAF5FF), Color(0xFFFDF2F8)],
+                begin: Alignment.bottomRight,
+                end: Alignment.topLeft,
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.info_outline, color: Color(0xFF8200DB)),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Pro tip:',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF8200DB),
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            Text(
+                              'Communities are for long-term connections, Events are for specific occasions, and Vibes are for capturing fleeting moments.',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xFF364153),
+                              ),
+                              textAlign: TextAlign.justify,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 16.h),
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      padding: EdgeInsets.all(8.w),
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradientRotated,
+                        borderRadius: BorderRadius.circular(12.r),
+                      ),
+                      child: Text(
+                        "Got it!",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,61 +197,6 @@ class EventOrCommunityScreen extends StatelessWidget {
                         end: Alignment.bottomCenter,
                       ),
                     ),
-                    SizedBox(height: 16.h),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
-                          border: Border.all(color: Color(0xFFE9D4FF)),
-                          gradient: LinearGradient(
-                            colors: [Color(0xFFFAF5FF), Color(0xFFFDF2F8)],
-                            begin: Alignment.bottomRight,
-                            end: Alignment.topLeft,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 17,
-                            vertical: 13,
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.info_outline,
-                                color: Color(0xFF8200DB),
-                              ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Pro tip:',
-                                      style: TextStyle(
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xFF8200DB),
-                                      ),
-                                    ),
-                                    SizedBox(height: 2.h),
-                                    Text(
-                                      'Communities are for long-term connections, Events are for specific occasions, and Vibes are for capturing fleeting moments.',
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xFF364153),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
                     SizedBox(height: 80.h),
                   ],
                 ),
@@ -191,7 +236,6 @@ class CreateCard extends StatelessWidget {
           padding: EdgeInsets.all(3.w),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12.r),
-
             boxShadow: [
               BoxShadow(
                 color: Colors.grey.shade300,

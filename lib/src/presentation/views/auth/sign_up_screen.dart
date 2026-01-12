@@ -54,9 +54,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 SizedBox(height: 24.h),
                 PrimaryButton.text(
-                  onPressed: () {
-                    _buildDialogSection(context);
-                  },
+                  onPressed: () => context.goNamed(RouteNames.stepNameScreen),
                   text: 'Get Started',
                 ),
                 SizedBox(height: 24.h),
@@ -73,19 +71,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 CustomSocialButton(
                   icon: Assets.icons.facebookIc,
                   title: 'Facebook',
-                  onTap: () => _buildDialogSection(context),
+                  onTap: () => context.goNamed(RouteNames.stepNameScreen),
                 ),
                 SizedBox(height: 12.h),
                 CustomSocialButton(
                   icon: Assets.icons.googleIc,
                   title: 'Google',
-                  onTap: () => _buildDialogSection(context),
+                  onTap: () => context.goNamed(RouteNames.stepNameScreen),
                 ),
                 SizedBox(height: 12.h),
                 CustomSocialButton(
                   icon: Assets.icons.appleIc,
                   title: 'Apple',
-                  onTap: () => _buildDialogSection(context),
+                  onTap: () => context.goNamed(RouteNames.stepNameScreen),
                 ),
                 SizedBox(height: 12.h),
                 Row(
@@ -103,7 +101,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         context.pushNamed(RouteNames.signUpScreen);
                       },
                       child: Text(
-                        'Sign Up',
+                        'Sign In',
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
@@ -121,22 +119,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  Future<dynamic> _buildDialogSection(BuildContext context) {
-    return showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (_) {
-        return Center(
-          child: Dialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20.r),
-            ),
-            elevation: 0,
-            backgroundColor: Colors.transparent,
-            child: NotificationPermissionDialog(parentContext: context),
-          ),
-        );
-      },
-    );
-  }
+  // Future<dynamic> _buildDialogSection(BuildContext context) {
+  //   return showDialog(
+  //     context: context,
+  //     barrierDismissible: true,
+  //     builder: (_) {
+  //       return Center(
+  //         child: Dialog(
+  //           shape: RoundedRectangleBorder(
+  //             borderRadius: BorderRadius.circular(20.r),
+  //           ),
+  //           elevation: 0,
+  //           backgroundColor: Colors.transparent,
+  //           child: NotificationPermissionDialog(parentContext: context),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }

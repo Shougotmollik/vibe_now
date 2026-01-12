@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
@@ -177,32 +178,48 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
   Widget _buildAppBar(BuildContext context, avatar, name) {
     return Row(
       children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20.r),
-          child: Image.network(
-            avatar,
-            width: 40,
-            height: 40,
-            fit: BoxFit.cover,
+        Padding(
+          padding: EdgeInsets.only(left: 16.0),
+          child: GestureDetector(
+            child: const Icon(Icons.arrow_back_ios, color: Colors.black),
+            onTap: () => Navigator.pop(context),
           ),
         ),
-        const SizedBox(width: 8),
-        Text(
-          name,
-          style: TextStyle(
-            color: Color(0xff303030),
-            fontSize: 20.sp,
-            fontWeight: FontWeight.w500,
+        GestureDetector(
+          onTap: () => context.pushNamed(RouteNames.unlockedProfileScreen),
+          behavior: HitTestBehavior.translucent,
+          child: Row(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20.r),
+                child: Image.network(
+                  avatar,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.cover,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                name,
+                style: TextStyle(
+                  color: Color(0xff303030),
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
           ),
         ),
         const Spacer(),
         PopupMenuButton<String>(
           icon: const Icon(Icons.more_vert, color: Colors.black),
-          itemBuilder: (_) => const [],
+          offset: const Offset(0, 50),
+          color: AppColors.backgroundVariant,
+          itemBuilder: (_) => [
+            const PopupMenuItem<String>(value: 'block', child: Text('Block')),
+            const PopupMenuItem<String>(value: 'report', child: Text('Report')),
+          ],
         ),
       ],
     );
@@ -228,7 +245,10 @@ class ReceivedMessage extends StatelessWidget {
             bottomLeft: Radius.circular(4),
           ),
         ),
-        child: Text(message, style:  TextStyle(color: Colors.black,fontSize: 12.sp)),
+        child: Text(
+          message,
+          style: TextStyle(color: Colors.black, fontSize: 12.sp),
+        ),
       ),
     );
   }
@@ -253,7 +273,10 @@ class SentMessage extends StatelessWidget {
             bottomRight: Radius.circular(4),
           ),
         ),
-        child: Text(message, style:  TextStyle(color: Colors.white,fontSize: 12.sp)),
+        child: Text(
+          message,
+          style: TextStyle(color: Colors.white, fontSize: 12.sp),
+        ),
       ),
     );
   }

@@ -167,7 +167,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const CustomAppBar(title: "Notification"),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              child: const CustomAppBar(title: "Notification"),
+            ),
             SizedBox(height: 12.h),
             _buildTapBarSection(),
             SizedBox(height: 16.h),

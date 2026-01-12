@@ -201,7 +201,10 @@ class _CustomSnackbarState extends State<CustomSnackbar>
                     Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        onTap: widget.onClose,
+                        onTap: () async {
+                          await _controller.reverse();
+                          widget.onClose();
+                        },
                         borderRadius: BorderRadius.circular(20),
                         child: Padding(
                           padding: const EdgeInsets.all(4),
@@ -213,22 +216,25 @@ class _CustomSnackbarState extends State<CustomSnackbar>
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 26,
-                      height: 26,
-                      child: TweenAnimationBuilder<double>(
-                        tween: Tween(begin: 1.0, end: 0.0),
-                        duration: Duration(milliseconds: widget.duration),
-                        builder: (context, value, child) {
-                          return CircularProgressIndicator(
-                            value: value,
-                            strokeWidth: 2,
-                            color: config.primaryColor.withValues(alpha: 0.5),
-                            backgroundColor: config.primaryColor.withValues(
-                              alpha: 0.1,
-                            ),
-                          );
-                        },
+                    IgnorePointer(
+                      ignoring: true,
+                      child: SizedBox(
+                        width: 26,
+                        height: 26,
+                        child: TweenAnimationBuilder<double>(
+                          tween: Tween(begin: 1.0, end: 0.0),
+                          duration: Duration(milliseconds: widget.duration),
+                          builder: (context, value, child) {
+                            return CircularProgressIndicator(
+                              value: value,
+                              strokeWidth: 2,
+                              color: config.primaryColor.withValues(alpha: 0.5),
+                              backgroundColor: config.primaryColor.withValues(
+                                alpha: 0.1,
+                              ),
+                            );
+                          },
+                        ),
                       ),
                     ),
                   ],

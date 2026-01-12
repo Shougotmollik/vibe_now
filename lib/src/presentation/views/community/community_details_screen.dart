@@ -194,16 +194,41 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                               ),
                             ),
                             SizedBox(width: 12.w),
+
                             Container(
-                              padding: EdgeInsets.all(10.w),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12.r),
                                 color: Colors.grey.shade100,
                               ),
-                              child: Icon(
-                                Icons.more_vert,
-                                color: Colors.black54,
-                                size: 20.sp,
+
+                              child: PopupMenuButton(
+                                color: AppColors.surface,
+                                iconColor: Colors.grey.shade600,
+                                itemBuilder: (context) => [
+                                  PopupMenuItem(
+                                    onTap: () {
+                                      context.pop();
+                                    },
+                                    child: Row(
+                                      children: [
+                                        Assets.icons.leave.svg(
+                                          width: 24.w,
+                                          height: 24.h,
+                                          color: Colors.black54,
+                                        ),
+                                        SizedBox(width: 8.w),
+                                        Text(
+                                          "Leave",
+                                          style: TextStyle(
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.black54,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -311,10 +336,12 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
             },
           ),
           SafeArea(
-            child: IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back_ios),
-              color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20.0),
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              ),
             ),
           ),
         ],

@@ -29,11 +29,11 @@ class StepPage extends StatelessWidget {
         leading: Navigator.canPop(context)
             ? Padding(
                 padding: const EdgeInsets.only(left: 10.0),
-                child: IconButton(
-                  onPressed: () {
+                child: GestureDetector(
+                  onTap: () {
                     Navigator.pop(context);
                   },
-                  icon: const Icon(Icons.arrow_back_ios),
+                  child: const Icon(Icons.arrow_back_ios),
                 ),
               )
             : null,

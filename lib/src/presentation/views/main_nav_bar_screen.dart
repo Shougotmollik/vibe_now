@@ -7,6 +7,7 @@ import 'package:vibe_now/src/presentation/views/chat/chat_screen.dart';
 import 'package:vibe_now/src/presentation/views/create_vibe/create_vibe_screen.dart';
 import 'package:vibe_now/src/presentation/views/event/event_or_community_screen.dart';
 import 'package:vibe_now/src/presentation/views/home/home_screen.dart';
+import 'package:vibe_now/src/presentation/views/profile/profile_screen.dart';
 import 'package:vibe_now/src/presentation/views/settings/settings_screen.dart';
 
 class MainNavBarScreen extends StatefulWidget {
@@ -25,7 +26,7 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
     EventOrCommunityScreen(),
     CreateVibeScreen(),
     ChatScreen(),
-    SettingsScreen(),
+    ProfileScreen(),
   ];
 
   /// Colored icons (active)

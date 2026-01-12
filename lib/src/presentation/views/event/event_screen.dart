@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/event/event_card.dart';
 
 class EventScreen extends StatelessWidget {
@@ -43,13 +44,15 @@ class EventScreen extends StatelessWidget {
   Row _buildAppBar(BuildContext context) {
     return Row(
       children: [
-        IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        Text('Create Post', style: TextStyle(fontSize: 18)),
+        // IconButton(
+        //   icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+        //   onPressed: () {
+        //     Navigator.pop(context);
+        //   },
+        // ),
+        // Text('Events', style: TextStyle(fontSize: 18)),
+
+        CustomAppBar(title: 'Events'),
         Spacer(),
         GestureDetector(
           onTap: () => context.pushNamed(RouteNames.qrVerificationScreen),
