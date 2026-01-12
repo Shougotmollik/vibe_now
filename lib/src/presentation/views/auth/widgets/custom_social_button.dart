@@ -8,10 +8,16 @@ class CustomSocialButton extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.onTap,
+    this.fontSize,
+    this.fontWeight,
   });
+
+  final double? fontSize;
   final SvgGenImage icon;
   final String title;
   final VoidCallback onTap;
+  final FontWeight? fontWeight;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -40,8 +46,8 @@ class CustomSocialButton extends StatelessWidget {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
+                  fontSize: fontSize ?? 14.sp,
+                  fontWeight: fontWeight ?? FontWeight.w600,
                   color: Color(0xff1a1a23),
                 ),
               ),

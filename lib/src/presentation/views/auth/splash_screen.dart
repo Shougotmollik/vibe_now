@@ -85,7 +85,7 @@ class _SplashScreenState extends State<SplashScreen> {
                   scale: scaleValue,
                   child: SizedBox(
                     width: 66.w,
-                    height: 62.h,
+                    height: 62.w,
                     child: Stack(clipBehavior: Clip.none, children: balls),
                   ),
                 ),

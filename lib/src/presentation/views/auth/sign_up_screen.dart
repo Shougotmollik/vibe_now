@@ -2,14 +2,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/auth_title.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/custom_social_button.dart';
+import 'package:vibe_now/src/presentation/views/auth/widgets/custom_text_form_field.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/notification_permission_dialog.dart';
 
-class SignUpScreen extends StatelessWidget {
+class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
+
+  @override
+  State<SignUpScreen> createState() => _SignUpScreenState();
+}
+
+class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,19 +40,35 @@ class SignUpScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(height: 120.h),
+                SizedBox(height: 72.h),
                 AuthTitle(title: 'Sign Up', subtitle: 'Create your account'),
-                SizedBox(height: 150.h),
+                SizedBox(height: 36.h),
+                CustomTextFormField(
+                  controller: _emailController,
+                  hintText: 'Enter your email',
+                ),
+                SizedBox(height: 18.h),
+                CustomTextFormField(
+                  controller: _passwordController,
+                  hintText: 'Enter your password',
+                ),
+                SizedBox(height: 24.h),
+                PrimaryButton.text(
+                  onPressed: () {
+                    _buildDialogSection(context);
+                  },
+                  text: 'Get Started',
+                ),
+                SizedBox(height: 24.h),
                 Text(
                   "By signing up or creating an account, you agree to our Terms and Event. Learn more about how we process your data in our privacy and Cookies Policy",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
                     color: Color(0xff727272),
                   ),
                 ),
-
                 SizedBox(height: 32.h),
                 CustomSocialButton(
                   icon: Assets.icons.facebookIc,
@@ -55,18 +88,30 @@ class SignUpScreen extends StatelessWidget {
                   onTap: () => _buildDialogSection(context),
                 ),
                 SizedBox(height: 12.h),
-                TextButton(
-                  onPressed: () {
-                    context.goNamed(RouteNames.signInScreen);
-                  },
-                  child: Text(
-                    'Having trouble in sign in?',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xff787878),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Already have an account?',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Color(0xff787878),
+                      ),
                     ),
-                  ),
+                    TextButton(
+                      onPressed: () {
+                        context.pushNamed(RouteNames.signUpScreen);
+                      },
+                      child: Text(
+                        'Sign Up',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: const Color.fromARGB(255, 172, 137, 255),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

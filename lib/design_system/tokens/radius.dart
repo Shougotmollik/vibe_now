@@ -5,10 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppRadius {
   AppRadius._();
 
-  static const BorderRadius small = BorderRadius.all(Radius.circular(4));
-  static const BorderRadius medium = BorderRadius.all(Radius.circular(8));
-  static const BorderRadius large = BorderRadius.all(Radius.circular(16));
-  static final BorderRadius extraLarge = BorderRadius.all(
-    Radius.circular(24.r),
-  );
+  static BorderRadius small = BorderRadius.circular(4.r);
+  static BorderRadius medium = BorderRadius.circular(8.r);
+  static BorderRadius large = BorderRadius.circular(16.r);
+  static BorderRadius extraLarge = BorderRadius.circular(24.r);
 }
