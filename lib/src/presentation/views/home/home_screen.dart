@@ -266,7 +266,6 @@ class _MapHomeScreenState extends State<HomeScreen>
                   topLeft: Radius.circular(20),
                   bottomRight: Radius.elliptical(25, 25),
                 ),
-
                 gradient: AppColors.primaryGradient,
               ),
               child: ClipRRect(
@@ -380,7 +379,7 @@ class _MapHomeScreenState extends State<HomeScreen>
         },
       ),
     );
-    setState(() {});
+    setState(() { });
   }
 
   void showUserProfileDialog(BuildContext context, NearbyUser user) {
