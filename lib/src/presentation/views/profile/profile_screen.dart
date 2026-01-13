@@ -4,6 +4,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
@@ -31,6 +32,9 @@ class _ProfileScreenState extends State<ProfileScreen>
     'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=800',
   ];
 
+  File? _selectedImage;
+  int _selectedTabIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -41,17 +45,11 @@ class _ProfileScreenState extends State<ProfileScreen>
     super.dispose();
   }
 
-  File? _selectedImage;
-
-  int _selectedTabIndex = 0;
-
-  late final List<Widget> _tabWidgets = [
-    _buildPhotosTab(widget.isMyProfile),
-    PostsTab(),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    // Move _tabWidgets here so it rebuilds when setState is called
+    final _tabWidgets = [_buildPhotosTab(widget.isMyProfile), PostsTab()];
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: SingleChildScrollView(
@@ -68,9 +66,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                       setState(() => _selectedTabIndex = _tabs.indexOf(item)),
                   child: Container(
                     decoration: BoxDecoration(
-                      // color: _selectedTabIndex == _tabs.indexOf(item)
-                      //     ? AppColors.primary
-                      //     : Colors.red,
                       border: Border(
                         bottom: BorderSide(
                           color: _selectedTabIndex == _tabs.indexOf(item)
@@ -80,7 +75,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                       ),
                     ),
-
                     width: (1.sw - 40.w) / 2,
                     height: 48.w,
                     child: Center(
@@ -218,10 +212,8 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget _buildPhotosTab(bool isMyProfile) {
     final width = (1.sw - 40.w - 12.w) / 2;
 
-    // Build photo items separately for clarity
     List<Widget> photoItems = [];
 
-    // Add "Add Photo" button only if it's my profile
     if (isMyProfile) {
       photoItems.add(
         GestureDetector(
@@ -229,7 +221,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             final pickedImage = await CustomImagePicker.pickImage();
             if (pickedImage != null) {
               setState(() {
-                _selectedImage = pickedImage;
+                _selectedImage = File(pickedImage.path);
               });
             }
           },
@@ -340,11 +332,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                             height: 32.h,
                             color: Colors.red.shade600,
                           ),
-                          // child: Icon(
-                          //   Icons.delete_sharp,
-                          //   color: Colors.red.shade600,
-                          //   size: 24.h,
-                          // ),
                         ),
                         content: Text(
                           'Are you sure you want to delete this photo?',
@@ -362,6 +349,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                               setState(() {
                                 _photos.remove(item);
                               });
+                              AppSnackbar.show(
+                                message: "Your photo has been deleted",
+                                type: SnackType.warning,
+                              );
                               Navigator.pop(context);
                             },
                             child: Text(
@@ -391,12 +382,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                       height: 20.h,
                       color: Colors.red.shade600,
                     ),
-
-                    // child: Icon(
-                    //   Icons.delete,
-                    //   color: Colors.red.shade600,
-                    //   size: 20.w,
-                    // ),
                   ),
                 ),
               ),
@@ -435,29 +420,6 @@ void _openFullImage(String imageUrl, BuildContext context) {
   );
 }
 
-// /// Helper for SliverPersistentHeader
-// class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
-//   final TabBar _tabBar;
-
-//   _SliverTabBarDelegate(this._tabBar);
-
-//   @override
-//   double get minExtent => _tabBar.preferredSize.height;
-//   @override
-//   double get maxExtent => _tabBar.preferredSize.height;
-
-//   @override
-//   Widget build(
-//     BuildContext context,
-//     double shrinkOffset,
-//     bool overlapsContent,
-//   ) {
-//     return Container(color: const Color(0xFFF5F5F5), child: _tabBar);
-//   }
-
-//   @override
-//   bool shouldRebuild(_SliverTabBarDelegate oldDelegate) => false;
-// }
 class PostsTab extends StatefulWidget {
   const PostsTab({super.key});
 
@@ -497,8 +459,10 @@ class PostItem extends StatelessWidget {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.symmetric(vertical: 12.h),
-      decoration:  BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.grey.shade300, width: 1)),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -519,7 +483,6 @@ class PostItem extends StatelessWidget {
                     'Jenny smith',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   ),
-
                   Row(
                     children: [
                       Assets.icons.earth.svg(

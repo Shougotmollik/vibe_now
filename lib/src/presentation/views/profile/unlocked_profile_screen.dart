@@ -297,12 +297,12 @@ class _PostsTabState extends State<PostsTab> {
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16.h),
       itemCount: 2,
       itemBuilder: (context, index) {
-        return PostItem(
-          isLiked: _isLiked[index],
-          onLikeTap: () {
-            setState(() => _isLiked[index] = !_isLiked[index]);
-          },
-        );
+        // return PostItem(
+        //   isLiked: _isLiked[index],
+        //   onLikeTap: () {
+        //     setState(() => _isLiked[index] = !_isLiked[index]);
+        //   },
+        // );
       },
     );
   }

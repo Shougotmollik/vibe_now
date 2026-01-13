@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 
 class ReportScreen extends StatelessWidget {
@@ -50,19 +52,41 @@ class ReportScreen extends StatelessWidget {
   }
 
   Widget _buildAppBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        CustomAppBar(title: 'What happened?'),
-        Padding(
-          padding: const EdgeInsets.only(right: 12.0),
-          child: SizedBox(
-            width: 80.w,
-            height: 32.h,
-            child: PrimaryButton.text(onPressed: () {}, text: 'Send'),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          CustomAppBar(title: 'What happened?'),
+          GestureDetector(
+            onTap: () {
+              AppSnackbar.show(
+                message: 'you have reported the user',
+                type: SnackType.warning,
+              );
+            },
+            child: Container(
+              width: 80.w,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(40.r),
+                shape: BoxShape.rectangle,
+                gradient: AppColors.primaryGradientRotated,
+              ),
+              child: Center(
+                child: Text(
+                  'Send',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

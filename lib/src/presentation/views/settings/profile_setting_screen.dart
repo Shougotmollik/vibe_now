@@ -48,34 +48,25 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          Positioned(
-                            bottom: 0,
-                            right: 0,
-                            child: GestureDetector(
-                              onTap: () {
-                                final picked = CustomImagePicker.pickImage(
-                                  fromCamera: true,
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(6.w),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  shape: BoxShape.circle,
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.1,
-                                      ),
-                                      blurRadius: 4,
-                                      offset: const Offset(0, 2),
-                                    ),
-                                  ],
-                                ),
-                                child: Assets.icons.camera2.svg(),
-                              ),
-                            ),
-                          ),
+                          // Positioned(
+                          //   bottom: 0,
+                          //   right: 0,
+                          //   child: Container(
+                          //     padding: EdgeInsets.all(6.w),
+                          //     decoration: BoxDecoration(
+                          //       color: Colors.white,
+                          //       shape: BoxShape.circle,
+                          //       boxShadow: [
+                          //         BoxShadow(
+                          //           color: Colors.black.withValues(alpha: 0.1),
+                          //           blurRadius: 4,
+                          //           offset: const Offset(0, 2),
+                          //         ),
+                          //       ],
+                          //     ),
+                          //     // child: Assets.icons.camera2.svg(),
+                          //   ),
+                          // ),
                         ],
                       ),
                       SizedBox(height: 16.h),

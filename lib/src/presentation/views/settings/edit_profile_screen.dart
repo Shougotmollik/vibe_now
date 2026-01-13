@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
+import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
@@ -13,10 +17,17 @@ class EditProfileScreen extends StatefulWidget {
   State<EditProfileScreen> createState() => _EditProfileScreenState();
 }
 
-final TextEditingController bioController = TextEditingController();
-
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  final TextEditingController bioController = TextEditingController();
+  final TextEditingController nameController = TextEditingController(
+    text: 'John Gomes',
+  );
+  final TextEditingController passwordController = TextEditingController(
+    text: '********',
+  );
+
   List<String> selectedInterests = [];
+  File? _selectedImage;
 
   final List<Map<String, dynamic>> allInterests = [
     {"label": "Coffee", "icon": Assets.icons.coffee},
@@ -30,6 +41,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     {"label": "Art", "icon": Assets.icons.community},
     {"label": "Photography", "icon": Assets.icons.camera},
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    bioController.text =
+        "Coffee enthusiast. Music lover. Avid traveler. Foodie.";
+    selectedInterests = ["Coffee", "Music"]; // Pre-selected interests
+  }
+
+  @override
+  void dispose() {
+    bioController.dispose();
+    nameController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +102,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Name
               _buildHeadingText(text: 'Name'),
               SizedBox(height: 12.h),
-              _buildInputField(hint: 'John Gomes'),
+              _buildInputField(hint: 'John Gomes', controller: nameController),
               SizedBox(height: 28.h),
 
               // Bio
@@ -87,7 +114,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               // Password
               _buildHeadingText(text: 'Password'),
               SizedBox(height: 12.h),
-              _buildInputField(hint: '********'),
+              _buildInputField(
+                hint: '********',
+                controller: passwordController,
+                obscureText: true,
+              ),
               SizedBox(height: 28.h),
 
               // Interests
@@ -95,7 +126,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(height: 16.h),
               _buildInterestSection(),
               SizedBox(height: 84.h),
-              CustomElevatedButton(onTap: () {}, buttonText: "Save"),
+              CustomElevatedButton(
+                onTap: () {
+                  AppSnackbar.show(
+                    message: 'Profile updated successfully',
+                    type: SnackType.success,
+                  );
+                },
+                buttonText: "Save",
+              ),
               SizedBox(height: 74.h),
             ],
           ),
@@ -115,13 +154,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     );
   }
 
-  Widget _buildInputField({required String hint}) {
+  Widget _buildInputField({
+    required String hint,
+    TextEditingController? controller,
+    bool obscureText = false,
+  }) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: Color(0xffAEAEAE)),
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hint,
           hintStyle: TextStyle(fontSize: 14.sp, color: Color(0xff202020)),
@@ -181,30 +226,47 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(50.r),
-                child: Image.network(
-                  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
-                  width: 78.w,
-                  height: 78.w,
-                  fit: BoxFit.cover,
-                ),
+                child: _selectedImage != null
+                    ? Image.file(
+                        _selectedImage!,
+                        width: 78.w,
+                        height: 78.w,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.network(
+                        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+                        width: 78.w,
+                        height: 78.w,
+                        fit: BoxFit.cover,
+                      ),
               ),
               Positioned(
                 bottom: 0,
                 right: 0,
-                child: Container(
-                  padding: EdgeInsets.all(6.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        blurRadius: 4,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
+                child: GestureDetector(
+                  onTap: () {
+                    final pickedImage = CustomImagePicker.pickImage();
+                    pickedImage.then((value) {
+                      setState(() {
+                        _selectedImage = value;
+                      });
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(6.w),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 4,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Assets.icons.camera2.svg(),
                   ),
-                  child: Assets.icons.camera2.svg(),
                 ),
               ),
             ],
@@ -279,13 +341,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 selectedInterests.remove(label);
               } else {
                 if (selectedInterests.length < 5) {
-                  return;
+                  selectedInterests.add(label);
+                } else {
+                  AppSnackbar.show(
+                    message: 'You can select a maximum of 5 interests',
+                    type: SnackType.info,
+                  );
                 }
-                selectedInterests.add(label);
               }
             });
           },
-          child: InterestChip(icon: icon, label: label, isSelected: isSelected),
+          child: InterestChip(
+            icon: icon,
+            label: label,
+            isSelected: !isSelected,
+          ),
         );
       }).toList(),
     );

@@ -5,6 +5,21 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
+// Message model
+class ChatMessage {
+  final String content;
+  final bool isSent;
+  final bool isVoice;
+  final DateTime timestamp;
+
+  ChatMessage({
+    required this.content,
+    required this.isSent,
+    this.isVoice = false,
+    DateTime? timestamp,
+  }) : timestamp = timestamp ?? DateTime.now();
+}
+
 class ChatInboxScreen extends StatefulWidget {
   const ChatInboxScreen({super.key});
 
@@ -14,13 +29,33 @@ class ChatInboxScreen extends StatefulWidget {
 
 class _ChatInboxScreenState extends State<ChatInboxScreen> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final List<ChatMessage> _messages = [
+    ChatMessage(content: 'Hi! how can i help?', isSent: false),
+    ChatMessage(content: 'Lorem ipsum dolor sit amet', isSent: true),
+    ChatMessage(content: 'What are you doing', isSent: false),
+    ChatMessage(content: 'Voice message', isSent: true, isVoice: true),
+  ];
 
   bool _isRecording = false;
 
   @override
   void dispose() {
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
   }
 
   @override
@@ -38,17 +73,21 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
 
             /// CHAT LIST
             Expanded(
-              child: ListView(
+              child: ListView.builder(
+                controller: _scrollController,
                 padding: const EdgeInsets.all(16),
-                children: const [
-                  ReceivedMessage(message: 'Hi! how can i help?'),
-                  SizedBox(height: 12),
-                  SentMessage(message: 'Lorem ipsum dolor sit amet'),
-                  SizedBox(height: 12),
-                  ReceivedMessage(message: 'What are you doing'),
-                  SizedBox(height: 12),
-                  SentVoiceMessage(),
-                ],
+                itemCount: _messages.length,
+                itemBuilder: (context, index) {
+                  final message = _messages[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: message.isSent
+                        ? (message.isVoice
+                              ? const SentVoiceMessage()
+                              : SentMessage(message: message.content))
+                        : ReceivedMessage(message: message.content),
+                  );
+                },
               ),
             ),
 
@@ -77,7 +116,10 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
         child: Row(
           spacing: 10.w,
           children: [
-            Assets.icons.trash.svg(width: 24.w, height: 24.h),
+            GestureDetector(
+              onTap: _deleteLastMessage,
+              child: Assets.icons.trash.svg(width: 24.w, height: 24.h),
+            ),
 
             /// INPUT BOX
             Expanded(
@@ -93,7 +135,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                     : null,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: !_isRecording ? Color(0xffffffff) : null,
+                    color: !_isRecording ? const Color(0xffffffff) : null,
                     gradient: _isRecording
                         ? AppColors.primaryGradientRotated
                         : null,
@@ -130,6 +172,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                                     border: InputBorder.none,
                                     isDense: true,
                                   ),
+                                  onSubmitted: (_) => _sendTextMessage(),
                                 ),
                         ),
                       ),
@@ -164,22 +207,41 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
+    setState(() {
+      _messages.add(ChatMessage(content: text, isSent: true, isVoice: false));
+    });
+
     debugPrint('📨 Text sent: $text');
     _messageController.clear();
+    _scrollToBottom();
   }
 
   void _sendVoiceMessage() {
-    debugPrint('🎤 Voice message sent');
     setState(() {
+      _messages.add(
+        ChatMessage(content: 'Voice message', isSent: true, isVoice: true),
+      );
       _isRecording = false;
     });
+
+    debugPrint('🎤 Voice message sent');
+    _scrollToBottom();
+  }
+
+  void _deleteLastMessage() {
+    if (_messages.isNotEmpty) {
+      setState(() {
+        _messages.removeLast();
+      });
+      debugPrint('🗑️ Last message deleted');
+    }
   }
 
   Widget _buildAppBar(BuildContext context, avatar, name) {
     return Row(
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 16.0),
+          padding: const EdgeInsets.only(left: 16.0),
           child: GestureDetector(
             child: const Icon(Icons.arrow_back_ios, color: Colors.black),
             onTap: () => Navigator.pop(context),
@@ -203,7 +265,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
               Text(
                 name,
                 style: TextStyle(
-                  color: Color(0xff303030),
+                  color: const Color(0xff303030),
                   fontSize: 20.sp,
                   fontWeight: FontWeight.w500,
                 ),
@@ -217,8 +279,35 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
           offset: const Offset(0, 50),
           color: AppColors.backgroundVariant,
           itemBuilder: (_) => [
-            const PopupMenuItem<String>(value: 'block', child: Text('Block')),
-            const PopupMenuItem<String>(value: 'report', child: Text('Report')),
+            PopupMenuItem<String>(
+              value: 'block',
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 6.w,
+                children: [
+                  Assets.icons.block.svg(width: 16.w, height: 16.h),
+                  Text('Block'),
+                ],
+              ),
+              onTap: () {
+                context.pushNamed(RouteNames.reportScreen);
+              },
+            ),
+            PopupMenuItem<String>(
+              value: 'report',
+              child: Row(
+                spacing: 6.w,
+                children: [
+                  Assets.icons.report.svg(width: 16.w, height: 16.h),
+                  Text('Report'),
+                ],
+              ),
+              onTap: () {
+                context.pushNamed(RouteNames.reportScreen);
+              },
+            ),
           ],
         ),
       ],

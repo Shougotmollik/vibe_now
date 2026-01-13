@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -95,7 +96,12 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
               borderRadius: BorderRadius.circular(30),
             ),
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                AppSnackbar.show(
+                  message: 'Your vibe has been created',
+                  type: SnackType.success,
+                );
+              },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,

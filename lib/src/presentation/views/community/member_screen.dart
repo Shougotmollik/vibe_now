@@ -13,7 +13,10 @@ class MemberScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            CustomAppBar(title: 'Members'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: CustomAppBar(title: 'Members'),
+            ),
             Expanded(
               child: ListView.builder(
                 itemCount: 10,

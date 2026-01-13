@@ -58,25 +58,25 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
                                 ),
                               ),
-                              Positioned(
-                                bottom: 0,
-                                right: 0,
-                                child: Container(
-                                  padding: EdgeInsets.all(6.w),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Assets.icons.camera2.svg(),
-                                ),
-                              ),
+                              // Positioned(
+                              //   bottom: 0,
+                              //   right: 0,
+                              //   child: Container(
+                              //     padding: EdgeInsets.all(6.w),
+                              //     decoration: BoxDecoration(
+                              //       color: Colors.white,
+                              //       shape: BoxShape.circle,
+                              //       boxShadow: [
+                              //         BoxShadow(
+                              //           color: Colors.black.withOpacity(0.1),
+                              //           blurRadius: 4,
+                              //           offset: const Offset(0, 2),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     // child: Assets.icons.camera2.svg(),
+                              //   ),
+                              // ),
                             ],
                           ),
                           SizedBox(height: 16.h),

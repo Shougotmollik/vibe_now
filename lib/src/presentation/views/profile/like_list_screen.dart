@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 
 class LikeListScreen extends StatelessWidget {
   const LikeListScreen({super.key});
@@ -12,21 +13,8 @@ class LikeListScreen extends StatelessWidget {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 0,
-              ),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-                    onPressed: () {
-                      context.pop();
-                    },
-                  ),
-                  Text('Likes', style: TextStyle(fontSize: 18)),
-                ],
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: CustomAppBar(title: 'Likes', canBack: true),
             ),
             Expanded(
               child: ListView.builder(
