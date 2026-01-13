@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -254,14 +255,32 @@ class _MapHomeScreenState extends State<HomeScreen>
       Marker(
         markerId: const MarkerId("2"),
         position: _offsetToLatLng(_currentLocation, 70, 90),
+
         icon:
-            await CircleAvatar(
-              radius: 56,
-              backgroundColor: Colors.red,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  'https://www.sbdcnet.org/wp-content/uploads/2020/07/chuttersnap-aEnH4hJ_Mrs-unsplash-e1594836312246.jpg',
+            await Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.purple, width: 4),
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.elliptical(50, 50),
+                  topLeft: Radius.circular(20),
+                  bottomRight: Radius.elliptical(25, 25),
+                ),
+
+                gradient: AppColors.primaryGradient,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.elliptical(50, 50),
+                  topLeft: Radius.circular(14),
+                  bottomRight: Radius.elliptical(25, 25),
+                ),
+                child: CachedNetworkImage(
+                  imageUrl:
+                      "https://www.sbdcnet.org/wp-content/uploads/2020/07/chuttersnap-aEnH4hJ_Mrs-unsplash-e1594836312246.jpg",
+                  height: 80.h,
+                  width: 120.w,
+                  fit: BoxFit.cover,
                 ),
               ),
             ).toBitmapDescriptor(
@@ -331,15 +350,25 @@ class _MapHomeScreenState extends State<HomeScreen>
     _markers.add(
       Marker(
         markerId: const MarkerId("5"),
-        position: _offsetToLatLng(_currentLocation, -100, -100),
+        position: _offsetToLatLng(_currentLocation, -100, -110),
         icon:
-            await CircleAvatar(
-              radius: 56,
-              backgroundColor: Colors.green,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  'https://jandevents.com/wp-content/uploads/jand-party.jpg',
+            await Container(
+              padding: EdgeInsets.all(6.w),
+              height: 120.w,
+              width: 80.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.rectangle,
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20.r),
+                child: CachedNetworkImage(
+                  imageUrl:
+                      "https://jandevents.com/wp-content/uploads/jand-party.jpg",
+                  height: 80.h,
+                  width: 120.w,
+                  fit: BoxFit.cover,
                 ),
               ),
             ).toBitmapDescriptor(
@@ -347,7 +376,6 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          // showUserProfileDialog(context, nearbyUsers[5]);
           _openEventPopUp();
         },
       ),

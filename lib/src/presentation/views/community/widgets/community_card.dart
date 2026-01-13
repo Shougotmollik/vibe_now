@@ -30,7 +30,7 @@ class CommunityCard extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(8.r),
             child: Image.network(
-              "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTR8fHBhcnR5fGVufDB8fDB8fHww",
+              'https://www.sbdcnet.org/wp-content/uploads/2020/07/chuttersnap-aEnH4hJ_Mrs-unsplash-e1594836312246.jpg',
               width: double.infinity,
               height: 160.h,
               fit: BoxFit.cover,
