@@ -34,7 +34,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/intro',
       name: RouteNames.introScreen,
-      builder: (context, state) => const IntroScreen(),
+      builder: (context, state) => IntroScreen(),
     ),
 
     GoRoute(
