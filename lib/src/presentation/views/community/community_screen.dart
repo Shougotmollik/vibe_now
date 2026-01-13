@@ -17,6 +17,9 @@ class CommunityScreen extends StatefulWidget {
 class _CommunityScreenState extends State<CommunityScreen> {
   int selectedIndex = 0;
 
+  final List<String> tabs = ['My Communities', "Joined", 'Other'];
+  String selectedTab = 'My Communities';
+
   final List<String> tabNames = [
     "All",
     "Wellness",
@@ -38,9 +41,58 @@ class _CommunityScreenState extends State<CommunityScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildAppBar(),
-              _buildTabBar(),
-              SizedBox(height: 24.h),
-              _buildCommunityList(),
+              Padding(
+                padding: EdgeInsets.only(left: 8.w),
+                child: Row(
+                  children: tabs.map((tab) {
+                    final isSelected = selectedTab == tab;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: GestureDetector(
+                        onTap: () => setState(() => selectedTab = tab),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 8.w,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: isSelected
+                                ? AppColors.primaryGradientRotated
+                                : null,
+                            color: isSelected ? null : Colors.grey[200],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            tab,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.grey[700],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              SizedBox(height: 14.h),
+
+              Column(
+                children: [
+                  if (selectedTab == 'Joined' || selectedTab == 'Other')
+                    _buildTabBar(),
+                  if (selectedTab == 'Joined' || selectedTab == 'Other')
+                    SizedBox(height: 24.h),
+                  _buildCommunityList(),
+                ],
+              ),
+
+              // _buildTabBar(),
+              // SizedBox(height: 24.h),
+              // _buildCommunityList(),
             ],
           ),
         ),

@@ -7,6 +7,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/community/widgets/community_card.dart';
+import 'package:vibe_now/src/presentation/views/event/event_card.dart';
 import 'package:vibe_now/src/presentation/views/home/widgets/filter_dialog.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
@@ -171,6 +173,34 @@ class _MapHomeScreenState extends State<HomeScreen>
     });
   }
 
+  void _openCommunityPopUp() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: SizedBox(child: CommunityCard()),
+          ),
+        );
+      },
+    );
+  }
+
+  void _openEventPopUp() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: EventCard(),
+          ),
+        );
+      },
+    );
+  }
+
   _loadMarkers() async {
     _markers.add(
       Marker(
@@ -231,7 +261,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=12',
+                  'https://www.sbdcnet.org/wp-content/uploads/2020/07/chuttersnap-aEnH4hJ_Mrs-unsplash-e1594836312246.jpg',
                 ),
               ),
             ).toBitmapDescriptor(
@@ -239,7 +269,8 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, nearbyUsers[2]);
+          // showUserProfileDialog(context, nearbyUsers[2]);
+          _openCommunityPopUp();
         },
       ),
     );
@@ -308,7 +339,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               child: CircleAvatar(
                 radius: 50,
                 backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=15',
+                  'https://jandevents.com/wp-content/uploads/jand-party.jpg',
                 ),
               ),
             ).toBitmapDescriptor(
@@ -316,7 +347,8 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, nearbyUsers[5]);
+          // showUserProfileDialog(context, nearbyUsers[5]);
+          _openEventPopUp();
         },
       ),
     );

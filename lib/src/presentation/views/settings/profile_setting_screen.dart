@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/gen/assets.gen.dart' as svgs;
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
@@ -8,9 +11,15 @@ import 'package:vibe_now/src/presentation/views/common/interest_chip.dart';
 import 'package:vibe_now/src/presentation/views/settings/edit_profile_screen.dart';
 import 'package:vibe_now/src/presentation/views/settings/pause_profile_screen.dart';
 
-class ProfileSettingScreen extends StatelessWidget {
+class ProfileSettingScreen extends StatefulWidget {
   const ProfileSettingScreen({super.key});
 
+  @override
+  State<ProfileSettingScreen> createState() => _ProfileSettingScreenState();
+}
+
+class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
+  File? _selectedImage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,20 +51,29 @@ class ProfileSettingScreen extends StatelessWidget {
                           Positioned(
                             bottom: 0,
                             right: 0,
-                            child: Container(
-                              padding: EdgeInsets.all(6.w),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
+                            child: GestureDetector(
+                              onTap: () {
+                                final picked = CustomImagePicker.pickImage(
+                                  fromCamera: true,
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(6.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                        alpha: 0.1,
+                                      ),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Assets.icons.camera2.svg(),
                               ),
-                              child: Assets.icons.camera2.svg(),
                             ),
                           ),
                         ],
@@ -289,9 +307,7 @@ class ProfileSettingScreen extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => PauseProfileScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => PauseProfileScreen()),
         );
       },
       child: Container(

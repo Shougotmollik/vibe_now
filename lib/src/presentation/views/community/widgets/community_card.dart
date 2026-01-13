@@ -16,12 +16,15 @@ class CommunityCard extends StatelessWidget {
       width: double.infinity,
 
       decoration: BoxDecoration(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: Color(0xffBDBDBD)),
       ),
 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+
         spacing: 12.h,
         children: [
           ClipRRect(

@@ -1,28 +1,35 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
 class EventCard extends StatefulWidget {
-  const EventCard({super.key});
+  const EventCard({super.key, this.isMyEvent = false});
 
   @override
   State<EventCard> createState() => _EventCardState();
+
+  final bool isMyEvent;
 }
 
 class _EventCardState extends State<EventCard> {
+  String btnText = 'Interested';
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(vertical: 2.h),
+
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(20),
 
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             height: 200.h,
@@ -84,40 +91,62 @@ class _EventCardState extends State<EventCard> {
             ],
           ),
           SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: EdgeInsets.all(12.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: Colors.grey.shade300),
-                    gradient: AppColors.primaryGradientRotated,
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Interested',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
+          widget.isMyEvent
+              ? SizedBox.shrink()
+              : Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: Colors.grey.shade300),
+                          gradient: AppColors.primaryGradientRotated,
+                        ),
+                        child: Center(
+                          child: Text(
+                            btnText,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    SizedBox(width: 8.w),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12.r),
+                        color: Colors.grey.shade200,
+                      ),
+                      child: PopupMenuButton(
+                        color: AppColors.surface,
+                        iconColor: Colors.grey.shade600,
+                        icon: Assets.icons.down.svg(),
+                        itemBuilder: (context) => [
+                          PopupMenuItem(
+                            onTap: () {
+                              setState(() {
+                                btnText = 'Going';
+                              });
+                              // context.pop();
+                            },
+                            child: Text(
+                              "Going",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black54,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              SizedBox(width: 8.w),
-              Container(
-                padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12.r),
-                  color: Colors.grey.shade200,
-                  // border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Assets.icons.down.svg(),
-              ),
-            ],
-          ),
         ],
       ),
     );

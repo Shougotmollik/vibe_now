@@ -7,9 +7,16 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/event/event_card.dart';
 
-class EventScreen extends StatelessWidget {
+class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
 
+  @override
+  State<EventScreen> createState() => _EventScreenState();
+}
+
+class _EventScreenState extends State<EventScreen> {
+  final List<String> tabs = ['All', 'My Events', 'Interested'];
+  String selectedTab = 'All';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,10 +31,61 @@ class EventScreen extends StatelessWidget {
                 // Body
                 SizedBox(height: 12),
 
-                Column(
-                  spacing: 12.h,
-                  children: List.generate(3, (index) => EventCard()),
+                Row(
+                  children: tabs.map((tab) {
+                    final isSelected = selectedTab == tab;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: GestureDetector(
+                        onTap: () => setState(() => selectedTab = tab),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 20.w,
+                            vertical: 8.w,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: isSelected
+                                ? AppColors.primaryGradientRotated
+                                : null,
+                            color: isSelected ? null : Colors.grey[200],
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            tab,
+                            style: TextStyle(
+                              color: isSelected
+                                  ? Colors.white
+                                  : Colors.grey[700],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 ),
+
+                SizedBox(height: 14.h),
+
+                if (selectedTab == 'All')
+                  Column(
+                    spacing: 12.h,
+                    children: List.generate(3, (index) => EventCard()),
+                  ),
+
+                if (selectedTab == 'My Events')
+                  Column(
+                    spacing: 12.h,
+                    children: List.generate(1, (index) => EventCard(
+                      isMyEvent: true,
+                    )),
+                  ),
+
+                if (selectedTab == 'Interested')
+                  Column(
+                    spacing: 12.h,
+                    children: List.generate(2, (index) => EventCard()),
+                  ),
 
                 // EventCard(),
                 SizedBox(height: 24),
@@ -44,14 +102,6 @@ class EventScreen extends StatelessWidget {
   Row _buildAppBar(BuildContext context) {
     return Row(
       children: [
-        // IconButton(
-        //   icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-        //   onPressed: () {
-        //     Navigator.pop(context);
-        //   },
-        // ),
-        // Text('Events', style: TextStyle(fontSize: 18)),
-
         CustomAppBar(title: 'Events'),
         Spacer(),
         GestureDetector(

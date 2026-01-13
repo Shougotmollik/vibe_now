@@ -8,7 +8,7 @@ class InterestChip extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
-    this.isSelected = false,
+    this.isSelected = true,
   });
 
   final SvgGenImage icon;
