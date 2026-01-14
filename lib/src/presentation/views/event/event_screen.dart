@@ -70,15 +70,19 @@ class _EventScreenState extends State<EventScreen> {
                 if (selectedTab == 'All')
                   Column(
                     spacing: 12.h,
-                    children: List.generate(3, (index) => EventCard()),
+                    children: List.generate(
+                      3,
+                      (index) => EventCard(isJoined: true),
+                    ),
                   ),
 
                 if (selectedTab == 'My Events')
                   Column(
                     spacing: 12.h,
-                    children: List.generate(1, (index) => EventCard(
-                      isMyEvent: true,
-                    )),
+                    children: List.generate(
+                      1,
+                      (index) => EventCard(isMyEvent: true),
+                    ),
                   ),
 
                 if (selectedTab == 'Interested')

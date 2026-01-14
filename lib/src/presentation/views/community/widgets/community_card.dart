@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/community/community_details_screen.dart';
 import 'package:vibe_now/src/presentation/views/common/avatar_stack.dart';
 
-class CommunityCard extends StatelessWidget {
-  const CommunityCard({super.key});
+class CommunityCard extends StatefulWidget {
+  const CommunityCard({super.key, this.isJoined = false});
+  final bool isJoined;
 
+  @override
+  State<CommunityCard> createState() => _CommunityCardState();
+}
+
+class _CommunityCardState extends State<CommunityCard> {
+  String btnText = "View Details";
+  String requestBtnText = 'Request';
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -122,10 +131,22 @@ class CommunityCard extends StatelessWidget {
           ),
 
           GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CommunityDetailsScreen()),
-            ),
+            onTap: widget.isJoined
+                ? () => {
+                    setState(() {
+                      requestBtnText = "Waiting";
+                    }),
+                    AppSnackbar.show(
+                      message: "You have requested to join this community",
+                      type: SnackType.success,
+                    ),
+                  }
+                : () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CommunityDetailsScreen(),
+                    ),
+                  ),
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.all(12.w),
@@ -135,7 +156,7 @@ class CommunityCard extends StatelessWidget {
               ),
               child: Center(
                 child: Text(
-                  "View Details",
+                  widget.isJoined ? requestBtnText : btnText,
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,

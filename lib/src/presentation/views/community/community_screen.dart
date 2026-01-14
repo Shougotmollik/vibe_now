@@ -82,17 +82,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
               Column(
                 children: [
-                  if (selectedTab == 'Joined' || selectedTab == 'Other')
+                  if (selectedTab == 'My Communities') ...[
+                    _buildCommunityList(),
+                  ] else if (selectedTab == 'Joined') ...[
                     _buildTabBar(),
-                  if (selectedTab == 'Joined' || selectedTab == 'Other')
-                    SizedBox(height: 24.h),
-                  _buildCommunityList(),
+                    SizedBox(height: 18.h),
+                    _buildCommunityList(),
+                  ] else if (selectedTab == 'Other') ...[
+                    _buildTabBar(),
+                    SizedBox(height: 18.h),
+                    _buildAllCommunityList(),
+                  ],
                 ],
               ),
-
-              // _buildTabBar(),
-              // SizedBox(height: 24.h),
-              // _buildCommunityList(),
             ],
           ),
         ),
@@ -188,10 +190,25 @@ class _CommunityScreenState extends State<CommunityScreen> {
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         children: List.generate(
-          4,
+          2,
           (index) => Padding(
             padding: EdgeInsets.only(bottom: 24.h),
-            child: const CommunityCard(),
+            child: const CommunityCard(isJoined: false),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAllCommunityList() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Column(
+        children: List.generate(
+          2,
+          (index) => Padding(
+            padding: EdgeInsets.only(bottom: 24.h),
+            child: const CommunityCard(isJoined: true),
           ),
         ),
       ),

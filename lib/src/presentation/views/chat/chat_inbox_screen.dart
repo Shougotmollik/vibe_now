@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -6,9 +8,13 @@ import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
 // Message model
+enum MessageType { text, voice, image }
+
 class ChatMessage {
-  final String content;
+  final String? content;
   final bool isSent;
+  final MessageType messageType;
+  final String? imagePath;
   final bool isVoice;
   final DateTime timestamp;
 
@@ -16,6 +22,8 @@ class ChatMessage {
     required this.content,
     required this.isSent,
     this.isVoice = false,
+    this.messageType = MessageType.text,
+    this.imagePath,
     DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
 }
@@ -38,6 +46,8 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
   ];
 
   bool _isRecording = false;
+
+  File? _selectedImage;
 
   @override
   void dispose() {
@@ -84,8 +94,8 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                     child: message.isSent
                         ? (message.isVoice
                               ? const SentVoiceMessage()
-                              : SentMessage(message: message.content))
-                        : ReceivedMessage(message: message.content),
+                              : SentMessage(message: message.content!))
+                        : ReceivedMessage(message: message.content!),
                   );
                 },
               ),

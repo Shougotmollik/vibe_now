@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
 class EventCard extends StatefulWidget {
-  const EventCard({super.key, this.isMyEvent = false});
+  const EventCard({super.key, this.isMyEvent = false, this.isJoined = false});
 
   @override
   State<EventCard> createState() => _EventCardState();
 
   final bool isMyEvent;
+  final bool isJoined;
 }
 
 class _EventCardState extends State<EventCard> {
   String btnText = 'Interested';
+  String requestBtnText = 'Request';
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -96,55 +99,71 @@ class _EventCardState extends State<EventCard> {
               : Row(
                   children: [
                     Expanded(
-                      child: Container(
-                        padding: EdgeInsets.all(12.w),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.r),
-                          border: Border.all(color: Colors.grey.shade300),
-                          gradient: AppColors.primaryGradientRotated,
-                        ),
-                        child: Center(
-                          child: Text(
-                            btnText,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
+                      child: GestureDetector(
+                        onTap: widget.isJoined
+                            ? () {
+                                setState(() {
+                                  requestBtnText = 'Waiting';
+                                });
+                                AppSnackbar.show(
+                                  message:
+                                      "You request to join this event has been sent",
+                                  type: SnackType.success,
+                                );
+                              }
+                            : null,
+                        child: Container(
+                          padding: EdgeInsets.all(12.w),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(color: Colors.grey.shade300),
+                            gradient: AppColors.primaryGradientRotated,
+                          ),
+                          child: Center(
+                            child: Text(
+                              widget.isJoined ? requestBtnText : btnText,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                     SizedBox(width: 8.w),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12.r),
-                        color: Colors.grey.shade200,
-                      ),
-                      child: PopupMenuButton(
-                        color: AppColors.surface,
-                        iconColor: Colors.grey.shade600,
-                        icon: Assets.icons.down.svg(),
-                        itemBuilder: (context) => [
-                          PopupMenuItem(
-                            onTap: () {
-                              setState(() {
-                                btnText = 'Going';
-                              });
-                              // context.pop();
-                            },
-                            child: Text(
-                              "Going",
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black54,
-                              ),
+                    widget.isJoined
+                        ? SizedBox.shrink()
+                        : Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12.r),
+                              color: Colors.grey.shade200,
+                            ),
+                            child: PopupMenuButton(
+                              color: AppColors.surface,
+                              iconColor: Colors.grey.shade600,
+                              icon: Assets.icons.down.svg(),
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  onTap: () {
+                                    setState(() {
+                                      btnText = 'Going';
+                                    });
+                                    // context.pop();
+                                  },
+                                  child: Text(
+                                    "Going",
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
         ],
