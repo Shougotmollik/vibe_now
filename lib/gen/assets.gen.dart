@@ -134,6 +134,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/apple_ic.svg
   SvgGenImage get appleIc => const SvgGenImage('assets/icons/apple_ic.svg');
 
+  /// File path: assets/icons/attached_file.svg
+  SvgGenImage get attachedFile =>
+      const SvgGenImage('assets/icons/attached_file.svg');
+
   /// File path: assets/icons/block.svg
   SvgGenImage get block => const SvgGenImage('assets/icons/block.svg');
 
@@ -386,6 +390,7 @@ class $AssetsIconsGen {
     add,
     aiGame,
     appleIc,
+    attachedFile,
     block,
     book,
     calender,
@@ -462,6 +467,9 @@ class $AssetsImagesGen {
   /// File path: assets/images/dialog.svg
   SvgGenImage get dialog => const SvgGenImage('assets/images/dialog.svg');
 
+  /// Directory path: assets/images/onbording
+  $AssetsImagesOnbordingGen get onbording => const $AssetsImagesOnbordingGen();
+
   /// File path: assets/images/open_for_coffee.png
   AssetGenImage get openForCoffee =>
       const AssetGenImage('assets/images/open_for_coffee.png');
@@ -482,6 +490,21 @@ class $AssetsMapThemeGen {
 
   /// List of all assets
   List<String> get values => [pinkTheme];
+}
+
+class $AssetsImagesOnbordingGen {
+  const $AssetsImagesOnbordingGen();
+
+  /// File path: assets/images/onbording/create_event.png
+  AssetGenImage get createEvent =>
+      const AssetGenImage('assets/images/onbording/create_event.png');
+
+  /// File path: assets/images/onbording/map.png
+  AssetGenImage get map =>
+      const AssetGenImage('assets/images/onbording/map.png');
+
+  /// List of all assets
+  List<AssetGenImage> get values => [createEvent, map];
 }
 
 class Assets {

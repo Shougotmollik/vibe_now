@@ -5,7 +5,10 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
+import 'package:vibe_now/src/presentation/views/common/custom_search_bar.dart';
 import 'package:vibe_now/src/presentation/views/event/event_card.dart';
+import 'package:vibe_now/src/presentation/views/event/widgets/event_filter.dart';
+import 'package:vibe_now/src/presentation/views/home/widgets/filter_dialog.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -30,6 +33,16 @@ class _EventScreenState extends State<EventScreen> {
                 _buildAppBar(context),
                 // Body
                 SizedBox(height: 12),
+
+                CustomSearchBar(
+                  onFilterTap: () => showDialog(
+                    context: context,
+                    builder: (context) => const EventFilterDialog(),
+                  ),
+                  hintText: 'Search for events',
+                ),
+
+                SizedBox(height: 12.h),
 
                 Row(
                   children: tabs.map((tab) {

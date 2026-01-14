@@ -224,6 +224,19 @@ class _ProfileScreenState extends State<ProfileScreen>
                 _selectedImage = File(pickedImage.path);
               });
             }
+
+            // showDialog(
+            //   context: context,
+            //   builder: (context) {
+            //     return AlertDialog(
+            //       content: Row(
+            //         children: [
+            //           Icon(Icons.camera_alt, color: AppColors.primary),
+            //         ],
+            //       ),
+            //     );
+            //   },
+            // );
           },
           child: DottedBorder(
             options: RoundedRectDottedBorderOptions(

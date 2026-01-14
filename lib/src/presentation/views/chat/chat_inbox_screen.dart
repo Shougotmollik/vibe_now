@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -89,8 +90,24 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                 itemCount: _messages.length,
                 itemBuilder: (context, index) {
                   final message = _messages[index];
+
+                  if (message.messageType == MessageType.image) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: message.isSent
+                          ? SentImageMessage(
+                              imagePath: message.imagePath!,
+                              caption: message.content,
+                            )
+                          : ReceivedImageMessage(
+                              imagePath: message.imagePath!,
+                              caption: message.content,
+                            ),
+                    );
+                  }
+
                   return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.only(bottom: 8),
                     child: message.isSent
                         ? (message.isVoice
                               ? const SentVoiceMessage()
@@ -129,6 +146,16 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
             GestureDetector(
               onTap: _deleteLastMessage,
               child: Assets.icons.trash.svg(width: 24.w, height: 24.h),
+            ),
+
+            // ! image added
+            GestureDetector(
+              onTap: _showImagePickerSheet,
+              child: Assets.icons.attachedFile.svg(
+                width: 24.w,
+                height: 24.h,
+                color: AppColors.primary,
+              ),
             ),
 
             /// INPUT BOX
@@ -321,6 +348,134 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  // ? image section
+
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage(ImageSource source) async {
+    final XFile? image = await _picker.pickImage(
+      source: source,
+      imageQuality: 70,
+    );
+
+    if (image == null) return;
+
+    setState(() {
+      _messages.add(
+        ChatMessage(
+          content: _messageController.text.isNotEmpty
+              ? _messageController.text.trim()
+              : null,
+          isSent: true,
+          messageType: MessageType.image,
+          imagePath: image.path,
+        ),
+      );
+    });
+
+    _messageController.clear();
+    _scrollToBottom();
+  }
+
+  void _showImagePickerSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo),
+              title: const Text('Gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Camera'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(ImageSource.camera);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SentImageMessage extends StatelessWidget {
+  final String imagePath;
+  final String? caption;
+
+  const SentImageMessage({super.key, required this.imagePath, this.caption});
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.file(
+              File(imagePath),
+              width: 180.w,
+              height: 220.h,
+              fit: BoxFit.cover,
+            ),
+          ),
+          if (caption != null && caption!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: SentMessage(message: caption!),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class ReceivedImageMessage extends StatelessWidget {
+  final String imagePath;
+  final String? caption;
+
+  const ReceivedImageMessage({
+    super.key,
+    required this.imagePath,
+    this.caption,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.file(
+              File(imagePath),
+              width: 180.w,
+              height: 220.h,
+              fit: BoxFit.cover,
+            ),
+          ),
+          if (caption != null && caption!.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: ReceivedMessage(message: caption!),
+            ),
+        ],
+      ),
     );
   }
 }

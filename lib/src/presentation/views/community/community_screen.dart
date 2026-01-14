@@ -5,7 +5,9 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
+import 'package:vibe_now/src/presentation/views/common/custom_search_bar.dart';
 import 'package:vibe_now/src/presentation/views/community/widgets/community_card.dart';
+import 'package:vibe_now/src/presentation/views/community/widgets/community_filter.dart';
 
 class CommunityScreen extends StatefulWidget {
   const CommunityScreen({super.key});
@@ -42,7 +44,18 @@ class _CommunityScreenState extends State<CommunityScreen> {
             children: [
               _buildAppBar(),
               Padding(
-                padding: EdgeInsets.only(left: 8.w),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: CustomSearchBar(
+                  hintText: 'Search for communities',
+                  onFilterTap: () => showDialog(
+                    context: context,
+                    builder: (context) => const CommunityFilterDialog(),
+                  ),
+                ),
+              ),
+              SizedBox(height: 14.h),
+              Padding(
+                padding: EdgeInsets.only(left: 14.w),
                 child: Row(
                   children: tabs.map((tab) {
                     final isSelected = selectedTab == tab;
@@ -85,12 +98,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   if (selectedTab == 'My Communities') ...[
                     _buildCommunityList(),
                   ] else if (selectedTab == 'Joined') ...[
-                    _buildTabBar(),
-                    SizedBox(height: 18.h),
+                    // _buildTabBar(),
+                    // SizedBox(height: 18.h),
                     _buildCommunityList(),
                   ] else if (selectedTab == 'Other') ...[
-                    _buildTabBar(),
-                    SizedBox(height: 18.h),
+                    // _buildTabBar(),
+                    // SizedBox(height: 18.h),
                     _buildAllCommunityList(),
                   ],
                 ],
