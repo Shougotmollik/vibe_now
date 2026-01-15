@@ -199,6 +199,10 @@ class $AssetsIconsGen {
   SvgGenImage get communityLight =>
       const SvgGenImage('assets/icons/community_light.svg');
 
+  /// File path: assets/icons/community_pin.svg
+  SvgGenImage get communityPin =>
+      const SvgGenImage('assets/icons/community_pin.svg');
+
   /// File path: assets/icons/creation_star.svg
   SvgGenImage get creationStar =>
       const SvgGenImage('assets/icons/creation_star.svg');
@@ -281,6 +285,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/location_ic.svg
   SvgGenImage get locationIc =>
       const SvgGenImage('assets/icons/location_ic.svg');
+
+  /// File path: assets/icons/location_pin.svg
+  SvgGenImage get locationPin =>
+      const SvgGenImage('assets/icons/location_pin.svg');
 
   /// File path: assets/icons/lock.svg
   SvgGenImage get lock => const SvgGenImage('assets/icons/lock.svg');
@@ -409,6 +417,7 @@ class $AssetsIconsGen {
     community,
     communityColor,
     communityLight,
+    communityPin,
     creationStar,
     delete,
     deniedIc,
@@ -434,6 +443,7 @@ class $AssetsIconsGen {
     kitty,
     leave,
     locationIc,
+    locationPin,
     lock,
     makeUpBrash,
     message,

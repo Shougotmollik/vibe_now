@@ -1,0 +1,32 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/gen/assets.gen.dart';
+
+class UserLocationPin extends StatelessWidget {
+  const UserLocationPin({super.key, required this.imagePath});
+
+  final String imagePath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Assets.icons.locationPin.svg(width: 140.w, height: 140.h),
+
+        Align(
+          alignment: Alignment(0, -0.15),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(40.r),
+            child: Image.network(
+              imagePath,
+              width: 90.w,
+              height: 90.w,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

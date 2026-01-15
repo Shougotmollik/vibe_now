@@ -18,28 +18,74 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 300,
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Expanded(
-            child: _buildScrollPicker(
-              items: List.generate(
-                24,
-                (index) => index.toString().padLeft(2, '0'),
-              ),
-              selectedIndex: _selectedHour,
-              onChanged: (index) => setState(() => _selectedHour = index),
+          /// PICKERS
+          SizedBox(
+            height: 300,
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildScrollPicker(
+                    items: List.generate(
+                      24,
+                      (index) => index.toString().padLeft(2, '0'),
+                    ),
+                    selectedIndex: _selectedHour,
+                    onChanged: (index) => setState(() => _selectedHour = index),
+                  ),
+                ),
+                Expanded(
+                  child: _buildScrollPicker(
+                    items: List.generate(
+                      60,
+                      (index) => index.toString().padLeft(2, '0'),
+                    ),
+                    selectedIndex: _selectedMinute,
+                    onChanged: (index) =>
+                        setState(() => _selectedMinute = index),
+                  ),
+                ),
+              ],
             ),
           ),
-          Expanded(
-            child: _buildScrollPicker(
-              items: List.generate(
-                60,
-                (index) => index.toString().padLeft(2, '0'),
-              ),
-              selectedIndex: _selectedMinute,
-              onChanged: (index) => setState(() => _selectedMinute = index),
+
+          const SizedBox(height: 16),
+
+          // FOOTER BUTTONS
+          SafeArea(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(color: Colors.grey[600], fontSize: 15),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                TextButton(
+                  onPressed: () {
+                    final time = TimeOfDay(
+                      hour: _selectedHour,
+                      minute: _selectedMinute,
+                    );
+                    widget.onTimeSelected(time);
+                    Navigator.pop(context);
+                  },
+                  child: const Text(
+                    'Save',
+                    style: TextStyle(
+                      color: Color(0xFFB794F6),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -60,7 +106,6 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
             width: 80.w,
             decoration: BoxDecoration(
               gradient: AppColors.primaryGradient,
-
               borderRadius: BorderRadius.circular(8),
             ),
           ),

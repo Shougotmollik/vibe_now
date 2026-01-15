@@ -10,7 +10,10 @@ import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/community/widgets/community_card.dart';
 import 'package:vibe_now/src/presentation/views/event/event_card.dart';
+import 'package:vibe_now/src/presentation/views/home/widgets/community_location_pin.dart';
+import 'package:vibe_now/src/presentation/views/home/widgets/event_location_pin.dart';
 import 'package:vibe_now/src/presentation/views/home/widgets/filter_dialog.dart';
+import 'package:vibe_now/src/presentation/views/home/widgets/user_location_pin.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
 class NearbyUser {
@@ -208,15 +211,8 @@ class _MapHomeScreenState extends State<HomeScreen>
         markerId: MarkerId('0'),
         position: _currentLocation,
         icon:
-            await CircleAvatar(
-              radius: 56,
-              backgroundColor: Colors.purple,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=11',
-                ),
-              ),
+            await UserLocationPin(
+              imagePath: 'https://i.pravatar.cc/150?img=11',
             ).toBitmapDescriptor(
               logicalSize: const Size(300, 300),
               imageSize: const Size(300, 300),
@@ -232,15 +228,8 @@ class _MapHomeScreenState extends State<HomeScreen>
         markerId: const MarkerId("1"),
         position: _offsetToLatLng(_currentLocation, -60, 80),
         icon:
-            await CircleAvatar(
-              radius: 56,
-              backgroundColor: Colors.purple,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=11',
-                ),
-              ),
+            await UserLocationPin(
+              imagePath: 'https://i.pravatar.cc/150?img=12',
             ).toBitmapDescriptor(
               logicalSize: const Size(300, 300),
               imageSize: const Size(300, 300),
@@ -255,37 +244,10 @@ class _MapHomeScreenState extends State<HomeScreen>
       Marker(
         markerId: const MarkerId("2"),
         position: _offsetToLatLng(_currentLocation, 70, 90),
-
-        icon:
-            await Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.purple, width: 4),
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.elliptical(50, 50),
-                  topLeft: Radius.circular(20),
-                  bottomRight: Radius.elliptical(25, 25),
-                ),
-                gradient: AppColors.primaryGradient,
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.elliptical(50, 50),
-                  topLeft: Radius.circular(14),
-                  bottomRight: Radius.elliptical(25, 25),
-                ),
-                child: CachedNetworkImage(
-                  imageUrl:
-                      "https://www.sbdcnet.org/wp-content/uploads/2020/07/chuttersnap-aEnH4hJ_Mrs-unsplash-e1594836312246.jpg",
-                  height: 80.h,
-                  width: 120.w,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ).toBitmapDescriptor(
-              logicalSize: const Size(300, 300),
-              imageSize: const Size(300, 300),
-            ),
+        icon: await CommunityLocationPin().toBitmapDescriptor(
+          logicalSize: const Size(300, 300),
+          imageSize: const Size(300, 300),
+        ),
         onTap: () {
           // showUserProfileDialog(context, nearbyUsers[2]);
           _openCommunityPopUp();
@@ -298,18 +260,8 @@ class _MapHomeScreenState extends State<HomeScreen>
         markerId: const MarkerId("3"),
         position: _offsetToLatLng(_currentLocation, 90, -20),
         icon:
-            await Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.red,
-              ),
-
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  'https://m.media-amazon.com/images/S/pv-target-images/d6e25ce8c6cdf788ec947effcec7854aee7090812cb73e536adf6b75b9eb7ca6.jpg',
-                ),
-              ),
+            await UserLocationPin(
+              imagePath: 'https://i.pravatar.cc/150?img=13',
             ).toBitmapDescriptor(
               logicalSize: const Size(300, 300),
               imageSize: const Size(300, 300),
@@ -327,15 +279,8 @@ class _MapHomeScreenState extends State<HomeScreen>
         position: _offsetToLatLng(_currentLocation, -80, -60),
 
         icon:
-            await CircleAvatar(
-              radius: 56,
-              backgroundColor: Colors.purple,
-              child: CircleAvatar(
-                radius: 50,
-                backgroundImage: NetworkImage(
-                  'https://i.pravatar.cc/150?img=14',
-                ),
-              ),
+            await UserLocationPin(
+              imagePath: 'https://i.pravatar.cc/150?img=14',
             ).toBitmapDescriptor(
               logicalSize: const Size(300, 300),
               imageSize: const Size(300, 300),
@@ -349,37 +294,17 @@ class _MapHomeScreenState extends State<HomeScreen>
     _markers.add(
       Marker(
         markerId: const MarkerId("5"),
-        position: _offsetToLatLng(_currentLocation, -100, -110),
-        icon:
-            await Container(
-              padding: EdgeInsets.all(6.w),
-              height: 120.w,
-              width: 80.w,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.r),
-                child: CachedNetworkImage(
-                  imageUrl:
-                      "https://jandevents.com/wp-content/uploads/jand-party.jpg",
-                  height: 80.h,
-                  width: 120.w,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ).toBitmapDescriptor(
-              logicalSize: const Size(300, 300),
-              imageSize: const Size(300, 300),
-            ),
+        position: _offsetToLatLng(_currentLocation, -100, 10),
+        icon: await EventLocationPin().toBitmapDescriptor(
+          logicalSize: const Size(300, 300),
+          imageSize: const Size(300, 300),
+        ),
         onTap: () {
           _openEventPopUp();
         },
       ),
     );
-    setState(() { });
+    setState(() {});
   }
 
   void showUserProfileDialog(BuildContext context, NearbyUser user) {
