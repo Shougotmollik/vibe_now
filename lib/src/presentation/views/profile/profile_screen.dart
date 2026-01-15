@@ -57,6 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           children: [
             SafeArea(bottom: false, child: SizedBox(height: 12.h)),
             _buildAppBar(context, widget.isMyProfile),
+
             _buildProfileHeader(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -167,6 +168,25 @@ class _ProfileScreenState extends State<ProfileScreen>
             Icon(Icons.location_on_outlined, size: 16.h),
             const SizedBox(width: 4),
             Text('Approx. 400 km', style: TextStyle(fontSize: 14.sp)),
+          ],
+        ),
+        SizedBox(height: 8.h),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Assets.icons.coffeeColor.svg(height: 16.h),
+            SizedBox(width: 4.w),
+            Text(
+              'Coffee enthusiast   |',
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+            ),
+            SizedBox(width: 8.w),
+            Assets.icons.musicColor.svg(height: 16.h),
+            SizedBox(width: 4.w),
+            Text(
+              'Music lover',
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+            ),
           ],
         ),
         SizedBox(height: 16.h),

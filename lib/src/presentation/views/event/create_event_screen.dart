@@ -25,6 +25,19 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   File? _selectedImage;
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(3100),
+    );
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +297,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
               const SizedBox(height: 8),
               GestureDetector(
-                onTap: () => _showDatePicker(context),
+                onTap: () => _selectDate(context),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
@@ -459,19 +472,19 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     );
   }
 
-  void _showDatePicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => CustomDatePicker(
-        onDateSelected: (date) {
-          setState(() => _selectedDate = date);
-        },
-      ),
-    );
-  }
+  // void _showDatePicker(BuildContext context) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     builder: (context) => CustomDatePicker(
+  //       onDateSelected: (date) {
+  //         setState(() => _selectedDate = date);
+  //       },
+  //     ),
+  //   );
+  // }
 
   void _showTimePicker(BuildContext context) {
     showModalBottomSheet(

@@ -117,7 +117,93 @@ class PauseProfileScreen extends StatelessWidget {
                                       Expanded(
                                         child: TextButton(
                                           onPressed: () {
-                                            // Your delete action
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        16.r,
+                                                      ),
+                                                ),
+                                                contentPadding: EdgeInsets.all(
+                                                  16.w,
+                                                ),
+                                                content: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      "Confirm your password to delete your account",
+                                                      style: TextStyle(
+                                                        fontSize: 18.sp,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+
+                                                    SizedBox(height: 36.h),
+
+                                                    TextField(
+                                                      obscureText: true,
+                                                      decoration: InputDecoration(
+                                                        hintText:
+                                                            "Enter your password",
+                                                        hintStyle: TextStyle(
+                                                          color: Colors.grey,
+                                                          fontSize: 14.sp,
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    SizedBox(height: 18.h),
+
+                                                    Row(
+                                                      children: [
+                                                        Expanded(
+                                                          child: TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                context,
+                                                              );
+                                                            },
+                                                            child: Text(
+                                                              "Cancel",
+                                                              style: TextStyle(
+                                                                fontSize: 16.sp,
+                                                                color:
+                                                                    Colors.grey,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        Expanded(
+                                                          child: TextButton(
+                                                            onPressed: () {
+                                                              Navigator.pop(
+                                                                context,
+                                                              );
+                                                            },
+                                                            child: Text(
+                                                              "Delete",
+                                                              style: TextStyle(
+                                                                fontSize: 16.sp,
+                                                                color:
+                                                                    Colors.red,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+
+                                            // Navigator.pop(context);
                                           },
                                           child: Text(
                                             "Delete",

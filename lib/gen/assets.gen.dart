@@ -290,6 +290,14 @@ class $AssetsIconsGen {
   SvgGenImage get locationPin =>
       const SvgGenImage('assets/icons/location_pin.svg');
 
+  /// File path: assets/icons/location_pin_community.svg
+  SvgGenImage get locationPinCommunity =>
+      const SvgGenImage('assets/icons/location_pin_community.svg');
+
+  /// File path: assets/icons/location_pin_event.svg
+  SvgGenImage get locationPinEvent =>
+      const SvgGenImage('assets/icons/location_pin_event.svg');
+
   /// File path: assets/icons/lock.svg
   SvgGenImage get lock => const SvgGenImage('assets/icons/lock.svg');
 
@@ -444,6 +452,8 @@ class $AssetsIconsGen {
     leave,
     locationIc,
     locationPin,
+    locationPinCommunity,
+    locationPinEvent,
     lock,
     makeUpBrash,
     message,

@@ -10,6 +10,7 @@ import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/community/widgets/community_card.dart';
 import 'package:vibe_now/src/presentation/views/event/event_card.dart';
+import 'package:vibe_now/src/presentation/views/home/widgets/cloud_container.dart';
 import 'package:vibe_now/src/presentation/views/home/widgets/community_location_pin.dart';
 import 'package:vibe_now/src/presentation/views/home/widgets/event_location_pin.dart';
 import 'package:vibe_now/src/presentation/views/home/widgets/filter_dialog.dart';

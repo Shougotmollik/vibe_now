@@ -3,9 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
 class UserLocationPin extends StatelessWidget {
-  const UserLocationPin({super.key, required this.imagePath});
+  const UserLocationPin({
+    super.key,
+    required this.imagePath,
+    this.hasVibe = false,
+  });
 
   final String imagePath;
+  final bool? hasVibe;
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +31,19 @@ class UserLocationPin extends StatelessWidget {
             ),
           ),
         ),
+
+        if (hasVibe!)
+          Align(
+            alignment: Alignment(0, 0.30),
+            child: Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              child: Assets.icons.creationStar.svg(width: 32.w, height: 32.h),
+            ),
+          ),
       ],
     );
   }

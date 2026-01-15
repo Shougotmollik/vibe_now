@@ -37,14 +37,6 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
       currentStep: widget.step,
       footer: PrimaryButton.text(
         onPressed: () {
-          // if (_birthdayController.text.isNotEmpty) {
-
-          // } else {
-          //   // AppSnackbar.show(
-          //   //   message: 'Please enter your birthday',
-          //   //   type: SnackType.info,
-          //   // );
-          // }
           Navigator.push(
             context,
             PageRouteBuilder(

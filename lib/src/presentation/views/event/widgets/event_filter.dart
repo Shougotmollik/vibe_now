@@ -19,13 +19,18 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
   List<String> selectedEventCategories = [];
 
   final List<String> eventTypes = [
-    'All Events',
-    'Workshops',
-    'Meetups',
-    'Parties',
-    'Concerts',
+    // 'All Events',
+    // 'Workshops',
+    // 'Meetups',
+    // 'Parties',
+    // 'Concerts',
+    "100 m",
+    "200 m",
+    "300 m",
+    "400 m",
+    "1 km",
   ];
-
+  RangeValues ageRange = const RangeValues(100, 1000);
   final List<String> eventCategories = [
     'Music',
     'Sports',
@@ -135,17 +140,19 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Event Type',
+          'Event Range',
           style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: 12),
-        Column(
-          children: eventTypes.map((type) {
-            return _buildRadioOption(type, selectedEventType, (value) {
-              setState(() => selectedEventType = value);
-            });
-          }).toList(),
-        ),
+
+        _buildAgeSlider(),
+        // Column(
+        //   children: eventTypes.map((type) {
+        //     return _buildRadioOption(type, selectedEventType, (value) {
+        //       setState(() => selectedEventType = value);
+        //     });
+        //   }).toList(),
+        // ),
         const SizedBox(height: 12),
 
         Text(
@@ -228,6 +235,87 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildAgeSlider() {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final totalRange = 1000 - 100;
+        final selectedStart = (ageRange.start - 18) / totalRange;
+        final selectedEnd = (ageRange.end - 18) / totalRange;
+
+        return Column(
+          children: [
+            Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Positioned(
+                  left: constraints.maxWidth * selectedStart,
+                  child: Container(
+                    width: constraints.maxWidth * (selectedEnd - selectedStart),
+                    height: 4,
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradientRotated,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                SliderTheme(
+                  data: SliderThemeData(
+                    activeTrackColor: Colors.transparent,
+                    inactiveTrackColor: Colors.transparent,
+                    thumbColor: const Color(0xFF9C27B0),
+                    overlayColor: const Color(
+                      0xFF9C27B0,
+                    ).withValues(alpha: 0.2),
+                    trackHeight: 4,
+                    rangeThumbShape: const RoundRangeSliderThumbShape(
+                      enabledThumbRadius: 10,
+                    ),
+                    overlappingShapeStrokeColor: Colors.white,
+                  ),
+                  child: RangeSlider(
+                    values: ageRange,
+                    min: 100,
+                    max: 1000,
+                    divisions: 47,
+                    onChanged: (values) {
+                      setState(() => ageRange = values);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${ageRange.start.round()} m',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                Text(
+                  '${ageRange.end.round()} m',
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

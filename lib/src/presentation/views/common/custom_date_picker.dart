@@ -18,87 +18,28 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
   @override
   void initState() {
     super.initState();
-
     final now = DateTime.now();
     _today = DateTime(now.year, now.month, now.day);
-
     _currentMonth = DateTime(now.year, now.month);
-    _selectedDate = _today; // pre-select today
+    _selectedDate = _today;
   }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: SingleChildScrollView(
-        child: Container(
+        child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // HEADER
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.chevron_left),
-                    onPressed: _goToPreviousMonth,
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.keyboard_arrow_down, size: 20),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.chevron_right),
-                    onPressed: _goToNextMonth,
-                  ),
-                ],
-              ),
-
+              _buildHeader(),
               const SizedBox(height: 20),
               _buildWeekDays(),
               const SizedBox(height: 12),
               _buildCalendar(),
               const SizedBox(height: 20),
-
-              // FOOTER BUTTONS
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(color: Colors.grey[600], fontSize: 15),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  TextButton(
-                    onPressed: () {
-                      if (_selectedDate != null) {
-                        widget.onDateSelected(_selectedDate!);
-                      }
-                      Navigator.pop(context);
-                    },
-                    child: const Text(
-                      'Save',
-                      style: TextStyle(
-                        color: Color(0xFFB794F6),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              _buildFooter(),
             ],
           ),
         ),
@@ -106,7 +47,42 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     );
   }
 
-  // WEEK DAYS ROW
+  // ================= HEADER =================
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          icon: const Icon(Icons.chevron_left),
+          onPressed: _goToPreviousMonth,
+        ),
+        GestureDetector(
+          onTap: _openMonthYearPicker,
+          child: Row(
+            children: [
+              Text(
+                '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(Icons.keyboard_arrow_down, size: 20),
+            ],
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.chevron_right),
+          onPressed: _goToNextMonth,
+        ),
+      ],
+    );
+  }
+
+  // ================= WEEK DAYS =================
+
   Widget _buildWeekDays() {
     const weekDays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
     return Row(
@@ -131,7 +107,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     );
   }
 
-  // CALENDAR GRID
+  // ================= CALENDAR =================
+
   Widget _buildCalendar() {
     final firstDay = DateTime(_currentMonth.year, _currentMonth.month, 1);
     final lastDay = DateTime(_currentMonth.year, _currentMonth.month + 1, 0);
@@ -146,7 +123,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
 
     final List<Widget> dayWidgets = [];
 
-    // PREVIOUS MONTH DAYS (grey)
+    // PREVIOUS MONTH DAYS
     for (int i = startWeekday - 1; i >= 0; i--) {
       dayWidgets.add(_buildDayCell(prevMonthDays - i, isOtherMonth: true));
     }
@@ -165,7 +142,8 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     );
   }
 
-  // EACH DAY CELL
+  // ================= DAY CELL =================
+
   Widget _buildDayCell(int day, {bool isOtherMonth = false, DateTime? date}) {
     bool isPastDate = false;
 
@@ -177,15 +155,13 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     final isSelected =
         date != null &&
         _selectedDate != null &&
-        date!.year == _selectedDate!.year &&
+        date.year == _selectedDate!.year &&
         date.month == _selectedDate!.month &&
         date.day == _selectedDate!.day;
 
     return GestureDetector(
       onTap: (date != null && !isPastDate)
-          ? () {
-              setState(() => _selectedDate = date);
-            }
+          ? () => setState(() => _selectedDate = date)
           : null,
       child: Container(
         margin: const EdgeInsets.all(4),
@@ -197,9 +173,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           child: Text(
             '$day',
             style: TextStyle(
-              color: isOtherMonth
-                  ? Colors.grey[300]
-                  : isPastDate
+              color: isOtherMonth || isPastDate
                   ? Colors.grey[300]
                   : isSelected
                   ? Colors.white
@@ -213,7 +187,154 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
     );
   }
 
-  // HELPERS
+  // ================= FOOTER =================
+
+  Widget _buildFooter() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: Text(
+            'Cancel',
+            style: TextStyle(color: Colors.grey[600], fontSize: 15),
+          ),
+        ),
+        const SizedBox(width: 12),
+        TextButton(
+          onPressed: () {
+            if (_selectedDate != null) {
+              widget.onDateSelected(_selectedDate!);
+            }
+            Navigator.pop(context);
+          },
+          child: const Text(
+            'Save',
+            style: TextStyle(
+              color: Color(0xFFB794F6),
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ================= MONTH / YEAR PICKER =================
+
+  Future<void> _openMonthYearPicker() async {
+    int tempYear = _currentMonth.year;
+    int tempMonth = _currentMonth.month;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: const Text('Select month'),
+              content: SizedBox(
+                height: 240,
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.chevron_left),
+                          onPressed: () => setDialogState(() => tempYear--),
+                        ),
+                        Text(
+                          '$tempYear',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.chevron_right),
+                          onPressed: () => setDialogState(() => tempYear++),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Expanded(
+                      child: GridView.builder(
+                        itemCount: 12,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 8,
+                            ),
+                        itemBuilder: (context, index) {
+                          final month = index + 1;
+                          final isSelected = month == tempMonth;
+
+                          return GestureDetector(
+                            onTap: () =>
+                                setDialogState(() => tempMonth = month),
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? const Color(0xFFB794F6)
+                                    : Colors.transparent,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                _getMonthName(month).substring(0, 3),
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Colors.black87,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    final lastDay = DateTime(tempYear, tempMonth + 1, 0).day;
+                    final selectedDay = _selectedDate?.day ?? 1;
+
+                    setState(() {
+                      _currentMonth = DateTime(tempYear, tempMonth);
+                      _selectedDate = DateTime(
+                        tempYear,
+                        tempMonth,
+                        selectedDay.clamp(1, lastDay),
+                      );
+                    });
+
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // ================= HELPERS =================
+
   void _goToNextMonth() {
     setState(() {
       _currentMonth = DateTime(_currentMonth.year, _currentMonth.month + 1);

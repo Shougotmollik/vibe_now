@@ -9,6 +9,7 @@ import 'package:vibe_now/src/presentation/views/common/custom_elevated_button.da
 import 'package:vibe_now/src/presentation/views/common/gradient_switch.dart';
 import 'package:vibe_now/src/presentation/views/settings/blocked_accounts_screen.dart';
 import 'package:vibe_now/src/presentation/views/settings/language_screen.dart';
+import 'package:vibe_now/src/presentation/views/settings/manage_password.dart';
 import 'package:vibe_now/src/presentation/views/settings/profile_setting_screen.dart';
 import 'package:vibe_now/src/presentation/views/settings/terms_and_privacy.dart';
 import 'package:vibe_now/src/presentation/views/settings/theme_selection_screen.dart';
@@ -225,7 +226,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildSwitchItem(
                       icon: Assets.icons.colorPaletteColor,
                       iconColor: Colors.purple,
-                      title: 'Matches',
+                      title: 'Community',
                       value: matches,
                       onChanged: (val) {
                         setState(() {
@@ -301,6 +302,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           context,
                           MaterialPageRoute(
                             builder: (context) => const ThemeSelectionScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildMenuItem(
+                      icon: Assets.icons.gridColor,
+                      iconColor: Colors.purple,
+                      title: 'Manage Password',
+                      isBottomRound: true,
+                      hasArrow: true,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ManagePassword(),
                           ),
                         );
                       },

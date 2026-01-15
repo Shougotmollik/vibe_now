@@ -10,7 +10,7 @@ class CommunityLocationPin extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        Assets.icons.locationPin.svg(width: 140.w, height: 140.h),
+        Assets.icons.locationPinCommunity.svg(width: 140.w, height: 140.h),
 
         Align(
           alignment: Alignment(0, -0.15),
