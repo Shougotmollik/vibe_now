@@ -8,7 +8,7 @@ class InterestChip extends StatelessWidget {
     super.key,
     required this.icon,
     required this.label,
-    this.isSelected = false,
+    required this.isSelected,
   });
 
   final SvgGenImage icon;
@@ -20,18 +20,8 @@ class InterestChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        // color: Colors.grey.shade100,
-        gradient: isSelected
-            ? LinearGradient(
-                colors: [
-                  Colors.grey.shade100,
-                  Colors.grey.shade100,
-                  Colors.grey.shade100,
-                ],
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-              )
-            : AppColors.primaryGradientRotated,
+        color: !isSelected ? Colors.grey.shade300 : null,
+        gradient: isSelected ? AppColors.primaryGradientRotated : null,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -40,14 +30,14 @@ class InterestChip extends StatelessWidget {
           icon.svg(
             height: 16.h,
             width: 16.h,
-            color: isSelected ? Colors.black : Colors.white,
+            color: !isSelected ? Colors.black : Colors.white,
           ),
           const SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(
               fontSize: 12.sp,
-              color: isSelected ? Colors.black : Colors.white,
+              color: !isSelected ? Colors.black : Colors.white,
             ),
           ),
         ],

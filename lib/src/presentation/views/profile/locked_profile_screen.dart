@@ -90,30 +90,30 @@ class LockedProfileScreen extends StatelessWidget {
                                     spacing: 8,
                                     runSpacing: 8,
                                     children: [
-                                      InterestChip(
-                                        icon: Assets.icons.iceCream,
-                                        label: 'Ice-cream',
-                                      ),
-                                      InterestChip(
-                                        icon: Assets.icons.makeUpBrash,
-                                        label: 'Make-up',
-                                      ),
-                                      InterestChip(
-                                        icon: Assets.icons.kitty,
-                                        label: 'Pets',
-                                      ),
-                                      InterestChip(
-                                        icon: Assets.icons.filmWheel,
-                                        label: 'Films',
-                                      ),
-                                      InterestChip(
-                                        icon: Assets.icons.coffee,
-                                        label: 'Coffee',
-                                      ),
-                                      InterestChip(
-                                        icon: Assets.icons.gift,
-                                        label: 'Gifts',
-                                      ),
+                                      // InterestChip(
+                                      //   icon: Assets.icons.iceCream,
+                                      //   label: 'Ice-cream',
+                                      // ),
+                                      // InterestChip(
+                                      //   icon: Assets.icons.makeUpBrash,
+                                      //   label: 'Make-up',
+                                      // ),
+                                      // InterestChip(
+                                      //   icon: Assets.icons.kitty,
+                                      //   label: 'Pets',
+                                      // ),
+                                      // InterestChip(
+                                      //   icon: Assets.icons.filmWheel,
+                                      //   label: 'Films',
+                                      // ),
+                                      // InterestChip(
+                                      //   icon: Assets.icons.coffee,
+                                      //   label: 'Coffee',
+                                      // ),
+                                      // InterestChip(
+                                      //   icon: Assets.icons.gift,
+                                      //   label: 'Gifts',
+                                      // ),
                                     ],
                                   ),
                                   const SizedBox(height: 24),

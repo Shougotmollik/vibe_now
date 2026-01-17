@@ -10,7 +10,21 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vibe_now/src/presentation/views/common/interest_chip.dart';
 import 'package:vibe_now/src/presentation/views/profile/unlocked_profile_screen.dart';
+import 'package:vibe_now/utils.dart' as utils;
+
+class InterestTag {
+  final String label;
+  final SvgGenImage icon;
+  bool isSelected;
+
+  InterestTag({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+  });
+}
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.isMyProfile = true});
@@ -23,6 +37,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
+  final TextEditingController _bioController = TextEditingController();
+
   final _tabs = ['Photos', 'Posts'];
 
   // For photo grid
@@ -32,8 +48,37 @@ class _ProfileScreenState extends State<ProfileScreen>
     'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=800',
   ];
 
+  File? _selectedProfileImage;
+
+  final List<InterestTag> _allInterests = [
+    InterestTag(label: 'Coffee', icon: Assets.icons.coffee, isSelected: true),
+    InterestTag(label: 'Music', icon: Assets.icons.music, isSelected: true),
+    InterestTag(label: 'Books', icon: Assets.icons.book, isSelected: true),
+    InterestTag(label: 'Gaming', icon: Assets.icons.aiGame, isSelected: false),
+    InterestTag(
+      label: 'Calendar',
+      icon: Assets.icons.calender,
+      isSelected: false,
+    ),
+    InterestTag(label: 'Travel', icon: Assets.icons.book, isSelected: false),
+    InterestTag(
+      label: 'Fitness',
+      icon: Assets.icons.creationStar,
+      isSelected: true,
+    ),
+    InterestTag(label: 'Cooking', icon: Assets.icons.gift, isSelected: false),
+    InterestTag(label: 'Art', icon: Assets.icons.community, isSelected: false),
+    InterestTag(
+      label: 'Photography',
+      icon: Assets.icons.camera,
+      isSelected: false,
+    ),
+  ];
+
   File? _selectedImage;
   int _selectedTabIndex = 0;
+
+  bool _isEditable = false;
 
   @override
   void initState() {
@@ -42,6 +87,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   void dispose() {
+    _bioController.dispose();
     super.dispose();
   }
 
@@ -122,22 +168,26 @@ class _ProfileScreenState extends State<ProfileScreen>
                   context.pushNamed(RouteNames.settingsScreen);
                 }
               },
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.shade200,
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade200,
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: isMyProfile != true
-                    ? Assets.icons.chatting.svg()
-                    : Icon(Icons.settings, color: Colors.grey.shade600),
+                    child: isMyProfile != true
+                        ? Assets.icons.chatting.svg()
+                        : Icon(Icons.settings, color: Colors.grey.shade600),
+                  ),
+                ],
               ),
             ),
           ],
@@ -146,14 +196,144 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildProfileHeader() {
-    return Column(
+  Widget _profilePicWidget() {
+    return Stack(
+      alignment: Alignment.bottomRight,
       children: [
-        SizedBox(height: 16.h),
         CircleAvatar(
           radius: 60,
           backgroundImage: const NetworkImage(
             'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
+          ),
+        ),
+        if (_isEditable)
+          GestureDetector(
+            onTap: () async {
+              utils.showImagePickerOptions(context, (imageSource) async {
+                final image = await utils.pickSingleImage(
+                  context: context,
+                  source: imageSource,
+                );
+              });
+              setState(() {
+                
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Assets.icons.camera2.svg(),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildBioField() {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(
+                'Bio',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xff555555),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Color(0xffAEAEAE)),
+              borderRadius: BorderRadius.circular(24.r),
+            ),
+            child: TextFormField(
+              controller: _bioController,
+              maxLines: 4,
+              maxLength: 70,
+              decoration: InputDecoration(
+                counterText: "",
+                hintText:
+                    "Coffee enthusiast. Music lover. Avid traveler. Foodie.",
+                hintStyle: TextStyle(fontSize: 14.sp, color: Color(0xff202020)),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 12.h,
+                  horizontal: 16.w,
+                ),
+                border: InputBorder.none,
+              ),
+              onChanged: (value) => setState(() {}),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: 4.h, right: 4.w),
+            child: Text(
+              "${_bioController.text.length}/70",
+              style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileHeader() {
+    return Column(
+      children: [
+        SizedBox(height: 16.h),
+        SizedBox(
+          width: double.infinity,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              _profilePicWidget(),
+              Positioned(
+                right: 16.w,
+                bottom: 0,
+                child: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _isEditable = !_isEditable;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade200,
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      _isEditable ? Icons.done_all : Icons.edit,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
         SizedBox(height: 10.h),
@@ -171,41 +351,43 @@ class _ProfileScreenState extends State<ProfileScreen>
           ],
         ),
         SizedBox(height: 8.h),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Assets.icons.coffeeColor.svg(height: 16.h),
-            SizedBox(width: 4.w),
-            Text(
-              'Coffee enthusiast   |',
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
-            ),
-            SizedBox(width: 8.w),
-            Assets.icons.musicColor.svg(height: 16.h),
-            SizedBox(width: 4.w),
-            Text(
-              'Music lover',
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
-            ),
-          ],
-        ),
-        SizedBox(height: 16.h),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 8.h,
-            runSpacing: 8.h,
+        if (!_isEditable)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _buildInterestTag(Assets.icons.iceCream, 'Ice-cream'),
-              _buildInterestTag(Assets.icons.makeUpBrash, 'Make-up'),
-              _buildInterestTag(Assets.icons.kitty, 'Pets'),
-              _buildInterestTag(Assets.icons.filmWheel, 'Films'),
-              _buildInterestTag(Assets.icons.coffee, 'Coffee'),
-              _buildInterestTag(Assets.icons.gift, 'Gifts'),
+              Assets.icons.coffeeColor.svg(height: 16.h),
+              SizedBox(width: 4.w),
+              Text(
+                'Coffee enthusiast   |',
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+              ),
+              SizedBox(width: 8.w),
+              Assets.icons.musicColor.svg(height: 16.h),
+              SizedBox(width: 4.w),
+              Text(
+                'Music lover',
+                style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+              ),
             ],
           ),
-        ),
+        if (_isEditable) _buildBioField(),
+        SizedBox(height: 16.h),
+        if (!_isEditable)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 40),
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 8.h,
+              runSpacing: 8.h,
+              children: _allInterests
+                  .where((interest) => interest.isSelected)
+                  .map((interest) {
+                    return _buildInterestTag(interest.icon, interest.label);
+                  })
+                  .toList(),
+            ),
+          ),
+        if (_isEditable) _buildInterestSection(),
         SizedBox(height: 28.h),
       ],
     );
@@ -424,6 +606,48 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
 
     return Wrap(spacing: 12.w, runSpacing: 12.w, children: photoItems);
+  }
+
+  Widget _buildInterestSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Text(
+            'Interests',
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w400,
+              color: Color(0xff555555),
+            ),
+          ),
+        ),
+        SizedBox(height: 8.h),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Wrap(
+            spacing: 12.w,
+            runSpacing: 12.h,
+            children: _allInterests.map((item) {
+              return GestureDetector(
+                onTap: () {
+                  setState(() {
+                    item.isSelected = !item.isSelected;
+                  });
+                },
+                child: InterestChip(
+                  icon: item.icon,
+                  label: item.label,
+                  isSelected: item.isSelected,
+                ),
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
   }
 }
 

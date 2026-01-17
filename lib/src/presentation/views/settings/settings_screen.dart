@@ -122,21 +122,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SizedBox(height: 32.h),
 
                     // Profile Information
-                    _buildMenuItem(
-                      icon: Assets.icons.userColor,
-                      iconColor: Colors.purple,
-                      title: 'Profile information',
-                      hasArrow: true,
-                      isFullRounded: true,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const ProfileSettingScreen(),
-                          ),
-                        );
-                      },
-                    ),
+                    // _buildMenuItem(
+                    //   icon: Assets.icons.userColor,
+                    //   iconColor: Colors.purple,
+                    //   title: 'Profile information',
+                    //   hasArrow: true,
+                    //   isFullRounded: true,
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => const ProfileSettingScreen(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                     SizedBox(height: 12.h),
                     // Profile Information
                     _buildMenuItem(

@@ -20,6 +20,7 @@ class ProfileSettingScreen extends StatefulWidget {
 
 class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
   File? _selectedImage;
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,9 +125,9 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                   spacing: 8.w,
                   runSpacing: 8.h,
                   children: [
-                    InterestChip(icon: Assets.icons.kitty, label: 'Pets'),
-                    InterestChip(icon: Assets.icons.filmWheel, label: 'Films'),
-                    InterestChip(icon: Assets.icons.coffee, label: 'Coffee'),
+                    // InterestChip(icon: Assets.icons.kitty, label: 'Pets'),
+                    // InterestChip(icon: Assets.icons.filmWheel, label: 'Films'),
+                    // InterestChip(icon: Assets.icons.coffee, label: 'Coffee'),
                   ],
                 ),
                 SizedBox(height: 28.h),

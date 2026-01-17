@@ -214,12 +214,13 @@ class _MapHomeScreenState extends State<HomeScreen>
         icon:
             await UserLocationPin(
               imagePath: 'https://i.pravatar.cc/150?img=11',
+              hasVibe: true,
             ).toBitmapDescriptor(
               logicalSize: const Size(300, 300),
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, nearbyUsers[0]);
+          showUserProfileDialog(context, nearbyUsers[0], hasVibe: true);
         },
       ),
     );
@@ -263,12 +264,13 @@ class _MapHomeScreenState extends State<HomeScreen>
         icon:
             await UserLocationPin(
               imagePath: 'https://i.pravatar.cc/150?img=13',
+              hasVibe: true,
             ).toBitmapDescriptor(
               logicalSize: const Size(300, 300),
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, nearbyUsers[3]);
+          showUserProfileDialog(context, nearbyUsers[3], hasVibe: true);
         },
       ),
     );
@@ -295,7 +297,7 @@ class _MapHomeScreenState extends State<HomeScreen>
     _markers.add(
       Marker(
         markerId: const MarkerId("5"),
-        position: _offsetToLatLng(_currentLocation, -100, 10),
+        position: _offsetToLatLng(_currentLocation, -140, 10),
         icon: await EventLocationPin().toBitmapDescriptor(
           logicalSize: const Size(300, 300),
           imageSize: const Size(300, 300),
@@ -308,7 +310,11 @@ class _MapHomeScreenState extends State<HomeScreen>
     setState(() {});
   }
 
-  void showUserProfileDialog(BuildContext context, NearbyUser user) {
+  void showUserProfileDialog(
+    BuildContext context,
+    NearbyUser user, {
+    bool hasVibe = false,
+  }) {
     showDialog(
       context: context,
       // isScrollControlled: true,
@@ -338,34 +344,81 @@ class _MapHomeScreenState extends State<HomeScreen>
                 Stack(
                   children: [
                     GestureDetector(
-                      onTap: () {
-                        if (user.isWaved == true) {
-                          context.pushNamed(RouteNames.profileScreen);
-                        } else {
-                          context.pushNamed(RouteNames.lockedProfileScreen);
-                        }
-                      },
-                      child: CircleAvatar(
-                        radius: 48,
-                        backgroundImage: NetworkImage(user.imageUrl),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
+                      onTap: hasVibe
+                          ? () => _openFullImage(user.imageUrl, context)
+                          : () {
+                              if (user.isWaved == true) {
+                                context.pushNamed(RouteNames.profileScreen);
+                              } else {
+                                context.pushNamed(
+                                  RouteNames.lockedProfileScreen,
+                                );
+                              }
+                            },
                       child: Container(
-                        padding: const EdgeInsets.all(6),
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: AppColors.primaryGradient,
-                          border: Border.all(color: Colors.white, width: 2),
+                        padding: EdgeInsets.all(2.w),
+                        decoration: hasVibe
+                            ? BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: SweepGradient(
+                                  colors: [
+                                    AppColors.primaryVariant,
+                                    Color(0xffC470F5),
+                                    Color(0xff8663F6),
+                                    Color(0xff57C2FF),
+                                    AppColors.primaryVariant,
+                                  ],
+                                ),
+                              )
+                            : null,
+                        child: Container(
+                          padding: EdgeInsets.all(2.w),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          child: CircleAvatar(
+                            radius: 48,
+                            backgroundImage: NetworkImage(user.imageUrl),
+                          ),
                         ),
-                        child: Assets.icons.location.svg(height: 14),
                       ),
                     ),
+                    // Positioned(
+                    //   bottom: 0,
+                    //   right: 0,
+                    //   child: Container(
+                    //     padding: const EdgeInsets.all(6),
+                    //     decoration: BoxDecoration(
+                    //       shape: BoxShape.circle,
+                    //       gradient: AppColors.primaryGradient,
+                    //       border: Border.all(color: Colors.white, width: 2),
+                    //     ),
+                    //     child: Assets.icons.location.svg(height: 14),
+                    //   ),
+                    // ),
                   ],
                 ),
+                SizedBox(height: 12.h),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.w,
+                    horizontal: 18.w,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                                
+                    borderRadius: BorderRadius.circular(24.r),
+                    // border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: const Text(
+                    "sunday coffee vibes - who's in? 🌞",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 13, color: Colors.black),
+                  ),
+                ),
 
+                // SizedBox(height: 6.h),
                 const SizedBox(height: 12),
 
                 // name
@@ -406,18 +459,23 @@ class _MapHomeScreenState extends State<HomeScreen>
                 const SizedBox(height: 16),
 
                 // bio
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Text(
-                    user.bio,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
-                  ),
-                ),
+                !hasVibe
+                    ? Container(
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Text(
+                          user.bio,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                      )
+                    : Container(),
 
                 const SizedBox(height: 16),
 
@@ -478,6 +536,32 @@ class _MapHomeScreenState extends State<HomeScreen>
           ),
         );
       },
+    );
+  }
+
+  void _openFullImage(String imageUrl, BuildContext context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        opaque: true,
+        pageBuilder: (_, __, ___) {
+          return Scaffold(
+            backgroundColor: Colors.black,
+            body: Dismissible(
+              key: const Key('full_image'),
+              direction: DismissDirection.down,
+              onDismissed: (_) => Navigator.pop(context),
+              child: Center(
+                child: InteractiveViewer(
+                  minScale: 1,
+                  maxScale: 4,
+                  child: Image.network(imageUrl, fit: BoxFit.contain),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -574,25 +658,25 @@ class _MapHomeScreenState extends State<HomeScreen>
     );
   }
 
-  Widget _buildUserPulse() {
-    return Center(
-      child: AnimatedBuilder(
-        animation: _pulseController,
-        builder: (context, child) {
-          final size = 120 + (_pulseController.value * 80);
+  // Widget _buildUserPulse() {
+  //   return Center(
+  //     child: AnimatedBuilder(
+  //       animation: _pulseController,
+  //       builder: (context, child) {
+  //         final size = 120 + (_pulseController.value * 80);
 
-          return Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.blue.withValues(alpha: 0.15),
-            ),
-          );
-        },
-      ),
-    );
-  }
+  //         return Container(
+  //           width: size,
+  //           height: size,
+  //           decoration: BoxDecoration(
+  //             shape: BoxShape.circle,
+  //             color: Colors.blue.withValues(alpha: 0.15),
+  //           ),
+  //         );
+  //       },
+  //     ),
+  //   );
+  // }
 }
 
 class CustomMarker extends StatefulWidget {

@@ -28,6 +28,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         'Filters: Age, gender, 1—2 interests',
         'Visibility: Standard, no prioritization',
       ],
+      isSelected: true,
     ),
     PlanData(
       title: 'Premium',
@@ -41,6 +42,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         'Filters: All filters available',
         'Visibility: Priority in search',
       ],
+      isSelected: false,
     ),
     PlanData(
       title: 'Pro',
@@ -70,7 +72,10 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            CustomAppBar(title: "Upgrade plan"),
+            Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: CustomAppBar(title: "Upgrade plan"),
+            ),
             const SizedBox(height: 30),
             Expanded(
               child: PageView.builder(
@@ -133,12 +138,14 @@ class PlanData {
   final String price;
   final String subtitle;
   final List<String> features;
+  bool isSelected;
 
   PlanData({
     required this.title,
     required this.price,
     required this.subtitle,
     required this.features,
+    this.isSelected = false,
   });
 }
 
@@ -163,12 +170,17 @@ class PlanCard extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(16.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: plan.isSelected ? Colors.grey.shade100 : Colors.white,
             borderRadius: BorderRadius.circular(14.r),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            children: [_header(), _features()],
+            children: [
+              _header(),
+              _features(),
+              const SizedBox(height: 10),
+              _upgradeButton(),
+            ],
           ),
         ),
       ),
@@ -246,8 +258,6 @@ class PlanCard extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 10),
-          _upgradeButton(),
         ],
       ),
     );
@@ -259,7 +269,8 @@ class PlanCard extends StatelessWidget {
       height: 50.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.r),
-        gradient: AppColors.primaryGradientRotated,
+        color: plan.isSelected ? Colors.grey : null,
+        gradient: plan.isSelected ? null : AppColors.primaryGradientRotated,
       ),
       child: ElevatedButton(
         onPressed: () {},
@@ -271,7 +282,7 @@ class PlanCard extends StatelessWidget {
           ),
         ),
         child: Text(
-          'Upgrade',
+          plan.isSelected ? 'Current Plan' : 'Upgrade',
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w600,
