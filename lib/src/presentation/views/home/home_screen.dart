@@ -185,7 +185,29 @@ class _MapHomeScreenState extends State<HomeScreen>
         return Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: SizedBox(child: CommunityCard()),
+            child: SizedBox(
+              child: CommunityCard(
+                community: Community(
+                  name: "Coffee Meetup at Central Park",
+                  description: "Casual coffee and conversation in the park",
+                  location: "Central Park Cafe",
+                  distance: "0.3 km",
+                  dateTime: "Tomorrow at 3:00 PM",
+                  attending: "5",
+                  totalAttending: "10",
+                  image:
+                      'https://www.sbdcnet.org/wp-content/uploads/2020/07/chuttersnap-aEnH4hJ_Mrs-unsplash-e1594836312246.jpg',
+                  avatars: [
+                    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBlb3BsZXxlbnwwfHwwfHx8MA%3D%3D",
+                    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                    "https://plus.unsplash.com/premium_photo-1673957923985-b814a9dbc03d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                  ],
+                  extraCount: 5,
+                  isMyCommunity: true,
+                  userStatus: CommunityStatus.going,
+                ),
+              ),
+            ),
           ),
         );
       },
@@ -199,7 +221,21 @@ class _MapHomeScreenState extends State<HomeScreen>
         return Center(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: EventCard(),
+            child: EventCard(
+              event: Event(
+                name: 'Club House',
+                location: '123 Main St, New York, NY 10001',
+                date: '21 Nov',
+                time: '8PM - 11PM',
+                description: '10 Interested • 16 Going',
+                image:
+                    'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800',
+                attending: '5',
+                totalAttending: '10',
+                isJoined: false,
+                isMyEvent: false,
+              ),
+            ),
           ),
         );
       },
@@ -407,7 +443,7 @@ class _MapHomeScreenState extends State<HomeScreen>
                   ),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade200,
-                                
+
                     borderRadius: BorderRadius.circular(24.r),
                     // border: Border.all(color: Colors.grey.shade300),
                   ),

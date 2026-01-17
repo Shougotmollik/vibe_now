@@ -5,29 +5,120 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
+enum EventStatus { request, requested, interested, going }
+
+class Event {
+  String name;
+  String description;
+  String date;
+  String time;
+  String location;
+  String image;
+  String attending;
+  String totalAttending;
+  bool isJoined;
+  bool isMyEvent;
+  EventStatus? userStatus; // Can be null, interested, going, or requested
+
+  Event({
+    required this.name,
+    required this.description,
+    required this.date,
+    required this.time,
+    required this.location,
+    required this.image,
+    required this.attending,
+    required this.totalAttending,
+    this.isJoined = false,
+    this.isMyEvent = false,
+    this.userStatus,
+  });
+
+  Event copyWith({
+    String? name,
+    String? description,
+    String? date,
+    String? time,
+    String? location,
+    String? image,
+    String? attending,
+    String? totalAttending,
+    bool? isJoined,
+    bool? isMyEvent,
+    EventStatus? userStatus,
+  }) {
+    return Event(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      date: date ?? this.date,
+      time: time ?? this.time,
+      location: location ?? this.location,
+      image: image ?? this.image,
+      attending: attending ?? this.attending,
+      totalAttending: totalAttending ?? this.totalAttending,
+      isJoined: isJoined ?? this.isJoined,
+      isMyEvent: isMyEvent ?? this.isMyEvent,
+      userStatus: userStatus ?? this.userStatus,
+    );
+  }
+}
+
 class EventCard extends StatefulWidget {
-  const EventCard({super.key, this.isMyEvent = false, this.isJoined = false});
+  const EventCard({super.key, required this.event});
 
   @override
   State<EventCard> createState() => _EventCardState();
 
-  final bool isMyEvent;
-  final bool isJoined;
+  final Event event;
 }
 
 class _EventCardState extends State<EventCard> {
-  String btnText = 'Interested';
-  String requestBtnText = 'Request';
+  late EventStatus? currentStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    currentStatus = widget.event.userStatus;
+  }
+
+  String get buttonText {
+    if (currentStatus == null) return 'Request';
+    switch (currentStatus!) {
+      case EventStatus.request:
+        return 'Request';
+      case EventStatus.requested:
+        return 'Requested';
+      case EventStatus.interested:
+        return 'Interested';
+      case EventStatus.going:
+        return 'Going';
+    }
+  }
+
+  bool get isButtonActive {
+    return currentStatus == EventStatus.requested;
+  }
+
+  void _handleButtonTap() {
+    if (currentStatus != EventStatus.requested) {
+      setState(() {
+        currentStatus = EventStatus.requested;
+      });
+      AppSnackbar.show(
+        message: "Your request to join this event has been sent",
+        type: SnackType.success,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 2.h),
-
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.background,
         borderRadius: BorderRadius.circular(20),
-
         border: Border.all(color: Colors.grey.shade300),
       ),
       child: Column(
@@ -38,17 +129,15 @@ class _EventCardState extends State<EventCard> {
             height: 200.h,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
-              image: const DecorationImage(
-                image: NetworkImage(
-                  'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800',
-                ),
+              image: DecorationImage(
+                image: NetworkImage(widget.event.image),
                 fit: BoxFit.cover,
               ),
             ),
           ),
           SizedBox(height: 12.h),
           Text(
-            'Club House',
+            widget.event.name,
             style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
           ),
           SizedBox(height: 6.h),
@@ -56,9 +145,14 @@ class _EventCardState extends State<EventCard> {
             children: [
               Assets.icons.location.svg(),
               SizedBox(width: 4.w),
-              Text(
-                '123 Main St, New York, NY 10001',
-                style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+              Expanded(
+                child: Text(
+                  widget.event.location,
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: Colors.grey.shade600,
+                  ),
+                ),
               ),
             ],
           ),
@@ -68,7 +162,7 @@ class _EventCardState extends State<EventCard> {
               Assets.icons.calender3.svg(),
               SizedBox(width: 4.w),
               Text(
-                '8PM - 11PM, 21 Nov',
+                '${widget.event.time}, ${widget.event.date}',
                 style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
               ),
             ],
@@ -77,7 +171,7 @@ class _EventCardState extends State<EventCard> {
           Row(
             children: [
               Text(
-                '10 Interested • 16 Going',
+                widget.event.description,
                 style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
               ),
             ],
@@ -88,42 +182,36 @@ class _EventCardState extends State<EventCard> {
               Assets.icons.users.svg(),
               SizedBox(width: 4.w),
               Text(
-                '5/10 attending',
+                '${widget.event.attending}/${widget.event.totalAttending} attending',
                 style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
               ),
             ],
           ),
           SizedBox(height: 12),
-          widget.isMyEvent
+          widget.event.isMyEvent
               ? SizedBox.shrink()
               : Row(
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: widget.isJoined
-                            ? () {
-                                setState(() {
-                                  requestBtnText = 'Waiting';
-                                });
-                                AppSnackbar.show(
-                                  message:
-                                      "You request to join this event has been sent",
-                                  type: SnackType.success,
-                                );
-                              }
-                            : null,
+                        onTap: _handleButtonTap,
                         child: Container(
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(color: Colors.grey.shade300),
-                            gradient: AppColors.primaryGradientRotated,
+                            gradient: isButtonActive
+                                ? null
+                                : AppColors.primaryGradientRotated,
+                            color: isButtonActive ? Colors.grey.shade200 : null,
                           ),
                           child: Center(
                             child: Text(
-                              widget.isJoined ? requestBtnText : btnText,
+                              buttonText,
                               style: TextStyle(
-                                color: Colors.white,
+                                color: isButtonActive
+                                    ? Colors.grey.shade600
+                                    : Colors.white,
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -133,7 +221,7 @@ class _EventCardState extends State<EventCard> {
                       ),
                     ),
                     SizedBox(width: 8.w),
-                    widget.isJoined
+                    isButtonActive
                         ? SizedBox.shrink()
                         : Container(
                             decoration: BoxDecoration(
@@ -147,10 +235,28 @@ class _EventCardState extends State<EventCard> {
                               itemBuilder: (context) => [
                                 PopupMenuItem(
                                   onTap: () {
-                                    setState(() {
-                                      btnText = 'Going';
+                                    Future.delayed(Duration.zero, () {
+                                      setState(() {
+                                        currentStatus = EventStatus.interested;
+                                      });
                                     });
-                                    // context.pop();
+                                  },
+                                  child: Text(
+                                    "Interested",
+                                    style: TextStyle(
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black54,
+                                    ),
+                                  ),
+                                ),
+                                PopupMenuItem(
+                                  onTap: () {
+                                    Future.delayed(Duration.zero, () {
+                                      setState(() {
+                                        currentStatus = EventStatus.going;
+                                      });
+                                    });
                                   },
                                   child: Text(
                                     "Going",

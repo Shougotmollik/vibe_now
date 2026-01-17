@@ -20,6 +20,62 @@ class EventScreen extends StatefulWidget {
 class _EventScreenState extends State<EventScreen> {
   final List<String> tabs = ['All', 'My Events', 'Interested'];
   String selectedTab = 'All';
+
+  final List<Event> events = [
+    Event(
+      name: 'Club House',
+      location: '123 Main St, New York, NY 10001',
+      date: '21 Nov',
+      time: '8PM - 11PM',
+      description: '10 Interested • 16 Going',
+      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800',
+      attending: '5',
+      totalAttending: '10',
+      isJoined: false,
+      isMyEvent: false,
+      userStatus: EventStatus.request, // Request button
+    ),
+    Event(
+      name: 'Music Night',
+      description: '15 Interested • 20 Going',
+      date: '25 Nov',
+      time: '9PM - 12AM',
+      location: '456 Party Ave, Los Angeles, CA 90001',
+      image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800',
+      attending: '8',
+      totalAttending: '15',
+      isJoined: false,
+      isMyEvent: false,
+      userStatus: EventStatus.requested, // Requested (grey button)
+    ),
+    Event(
+      name: 'Beach Party',
+      description: '20 Interested • 30 Going',
+      date: '28 Nov',
+      time: '6PM - 10PM',
+      location: '789 Beach Blvd, Miami, FL 33101',
+      image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800',
+      attending: '12',
+      totalAttending: '20',
+      isJoined: false,
+      isMyEvent: false,
+      userStatus: EventStatus.interested, // Interested
+    ),
+    Event(
+      name: 'Food Festival',
+      description: '25 Interested • 40 Going',
+      date: '30 Nov',
+      time: '5PM - 11PM',
+      location: '321 Food St, Chicago, IL 60007',
+      image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800',
+      attending: '15',
+      totalAttending: '25',
+      isJoined: false,
+      isMyEvent: false,
+      userStatus: EventStatus.going, // Going
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +87,6 @@ class _EventScreenState extends State<EventScreen> {
             child: Column(
               children: [
                 _buildAppBar(context),
-                // Body
                 SizedBox(height: 12),
 
                 CustomSearchBar(
@@ -82,32 +137,37 @@ class _EventScreenState extends State<EventScreen> {
 
                 if (selectedTab == 'All')
                   Column(
-                    spacing: 12.h,
-                    children: List.generate(
-                      3,
-                      (index) => EventCard(isJoined: true),
-                    ),
+                    children: events.map((e) => Padding(
+                      padding: EdgeInsets.only(bottom: 12.h),
+                      child: EventCard(event: e),
+                    )).toList(),
                   ),
 
                 if (selectedTab == 'My Events')
                   Column(
-                    spacing: 12.h,
                     children: List.generate(
                       1,
-                      (index) => EventCard(isMyEvent: true),
+                      (index) => Padding(
+                        padding: EdgeInsets.only(bottom: 12.h),
+                        child: EventCard(
+                          event: events[0].copyWith(isMyEvent: true),
+                        ),
+                      ),
                     ),
                   ),
 
                 if (selectedTab == 'Interested')
                   Column(
-                    spacing: 12.h,
-                    children: List.generate(2, (index) => EventCard()),
+                    children: List.generate(
+                      2,
+                      (index) => Padding(
+                        padding: EdgeInsets.only(bottom: 12.h),
+                        child: EventCard(event: events[index % events.length]),
+                      ),
+                    ),
                   ),
 
-                // EventCard(),
                 SizedBox(height: 24),
-
-                //
               ],
             ),
           ),

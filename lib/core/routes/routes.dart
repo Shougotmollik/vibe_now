@@ -8,6 +8,7 @@ import 'package:vibe_now/src/presentation/views/auth/steps/step_name_screen.dart
 import 'package:vibe_now/src/presentation/views/chat/chat_inbox_screen.dart';
 import 'package:vibe_now/src/presentation/views/chat/chat_screen.dart';
 import 'package:vibe_now/src/presentation/views/chat/report_screen.dart';
+import 'package:vibe_now/src/presentation/views/chat/wave_screen.dart';
 import 'package:vibe_now/src/presentation/views/community/community_details_screen.dart';
 import 'package:vibe_now/src/presentation/views/community/community_screen.dart';
 import 'package:vibe_now/src/presentation/views/community/create_community_screen.dart';
@@ -144,6 +145,11 @@ final GoRouter router = GoRouter(
       path: '/setting-screen',
       name: RouteNames.settingsScreen,
       builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/wave-screen',
+      name: RouteNames.waveScreen,
+      builder: (context, state) => const WaveScreen(),
     ),
   ],
 );

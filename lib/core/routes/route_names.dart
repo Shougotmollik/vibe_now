@@ -36,4 +36,5 @@ class RouteNames {
   static const String settingsScreen = "settingsScreen";
 
   static const String profileScreen = "profileScreen";
+  static const String waveScreen = "waveScreen";
 }

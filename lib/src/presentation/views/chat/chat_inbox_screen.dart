@@ -5,8 +5,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/src/presentation/views/chat/chat_screen.dart';
+import 'package:vibe_now/src/presentation/views/common/custom_elevated_button.dart';
 
 // Message model
 enum MessageType { text, voice, image }
@@ -47,8 +50,18 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
   ];
 
   bool _isRecording = false;
+  bool _waveAccepted = false;
 
   File? _selectedImage;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final extra = GoRouterState.of(context).extra as Chat;
+      final wave = extra.wave;
+    });
+  }
 
   @override
   void dispose() {
@@ -69,11 +82,107 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
     });
   }
 
+  void _showWaveDialog(Map<String, dynamic> extra) {
+    final name = extra['name'] ?? 'User';
+    final avatar = extra['avatar'] ?? '';
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColors.backgroundVariant,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          contentPadding: EdgeInsets.all(24.w),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Avatar
+              ClipRRect(
+                borderRadius: BorderRadius.circular(50.r),
+                child: Image.network(
+                  avatar,
+                  width: 80.w,
+                  height: 80.h,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 80.w,
+                      height: 80.h,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(Icons.person, size: 40.sp),
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 16.h),
+
+              Text('👋', style: TextStyle(fontSize: 48.sp)),
+              SizedBox(height: 16.h),
+
+              Text(
+                '$name sent you a wave!',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 8.h),
+
+              Text(
+                'Would you like to start chatting?',
+                style: TextStyle(fontSize: 14.sp, color: Colors.black54),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 24.h),
+
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomElevatedButton(
+                      onTap: () {
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      },
+                      buttonText: 'Reject',
+                      btnColor: Colors.black87,
+                      textColor: Colors.white,
+                    ),
+                  ),
+                  SizedBox(width: 18.w),
+
+                  Expanded(
+                    child: PrimaryButton.text(
+                      onPressed: () {
+                        setState(() {
+                          _waveAccepted = true;
+                        });
+                        Navigator.pop(context);
+                      },
+                      text: 'Accept',
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final extra = GoRouterState.of(context).extra as Map<String, dynamic>;
-    final name = extra['name'];
-    final avatar = extra['avatar'];
+    final extra = GoRouterState.of(context).extra as Chat;
+    final name = extra.name;
+    final avatar = extra.avatar;
 
     return Scaffold(
       backgroundColor: Colors.white,

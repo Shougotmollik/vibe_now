@@ -19,7 +19,7 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
-  final List<String> notificationTabs = ['Wave', 'Event', 'Community'];
+  final List<String> notificationTabs = ['Event', 'Community'];
   int selectedTapIndex = 0;
   CommunityFilter _selectedCommunityFilter = CommunityFilter.all;
   CommunityFilter _selectedEventFilter =
@@ -166,6 +166,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
@@ -176,13 +177,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
             SizedBox(height: 16.h),
 
             // Show filter for Event tab
-            if (selectedTapIndex == 1) ...[
+            if (selectedTapIndex == 0) ...[
               _buildEventFilterSection(),
               SizedBox(height: 12.h),
             ],
 
             // Show filter for Community tab
-            if (selectedTapIndex == 2) ...[
+            if (selectedTapIndex == 1) ...[
               _buildCommunityFilterSection(),
               SizedBox(height: 12.h),
             ],
@@ -195,7 +196,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget _buildNotificationsList() {
-    if (selectedTapIndex == 2) {
+    if (selectedTapIndex == 1) {
       // Community tab with filtering
       return ListView.builder(
         itemCount: _filteredCommunityNotifications.length,
@@ -205,7 +206,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           );
         },
       );
-    } else if (selectedTapIndex == 1) {
+    } else {
       // Event tab with filtering
       return ListView.builder(
         itemCount: _filteredEventNotifications.length,
@@ -214,18 +215,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
             notification: _filteredEventNotifications[index],
           );
         },
-      );
-    } else {
-      // Wave tab (no filtering)
-      return SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 0.w),
-          child: Column(
-            children: List.generate(5, (index) {
-              return const WaveNotificationCard();
-            }),
-          ),
-        ),
       );
     }
   }
@@ -331,6 +320,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
         spacing: 8.w,
         children: List.generate(notificationTabs.length, (index) {
           bool isTapSelected = selectedTapIndex == index;

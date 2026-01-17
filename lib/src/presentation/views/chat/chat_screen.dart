@@ -16,6 +16,41 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _searchController = TextEditingController();
 
+  final List<Chat> _chatList = [
+    Chat(
+      avatar: 'https://randomuser.me/api/portraits/women/9.jpg',
+      name: 'Jane Doe',
+      message: 'Hello, how are you?',
+      time: '10:30 AM',
+      unreadCount: 0,
+      wave: true,
+    ),
+    Chat(
+      avatar: 'https://randomuser.me/api/portraits/women/9.jpg',
+      name: 'Jane Doe',
+      message: 'Hello, how are you?',
+      time: '10:30 AM',
+      unreadCount: 1,
+      wave: false,
+    ),
+    Chat(
+      avatar: 'https://randomuser.me/api/portraits/women/9.jpg',
+      name: 'Jane Doe',
+      message: 'Hello, how are you?',
+      time: '10:30 AM',
+      unreadCount: 2,
+      wave: false,
+    ),
+    Chat(
+      avatar: 'https://randomuser.me/api/portraits/women/9.jpg',
+      name: 'Jane Doe',
+      message: 'Hello, how are you?',
+      time: '10:30 AM',
+      unreadCount: 4,
+      wave: false,
+    ),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,62 +122,27 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
               ),
             ),
-            // Chat List
+
             Expanded(
-              child: ListView(
-                children: [
-                  ChatListItem(
-                    name: 'Jony Gomes',
-                    message: 'Hi! How are you? 😊',
-                    time: '9:41',
-                    avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-                    unreadCount: 0,
-                    onTap: () {
-                      context.pushNamed(
-                        RouteNames.chatInboxScreen,
-                        extra: {
-                          'name': 'Jony Gomes',
-                          'avatar':
-                              'https://randomuser.me/api/portraits/men/1.jpg',
+              child: Column(
+                children: _chatList
+                    .map(
+                      (e) => ChatListItem(
+                        chat: e,
+                        onTap: () {
+                          e.wave == true
+                              ? context.pushNamed(
+                                  RouteNames.waveScreen,
+                                  extra: e,
+                                )
+                              : context.pushNamed(
+                                  RouteNames.chatInboxScreen,
+                                  extra: e,
+                                );
                         },
-                      );
-                    },
-                  ),
-                  ChatListItem(
-                    name: 'carol smith',
-                    message: 'Hi! How are you? 😊',
-                    time: '9:41',
-                    avatar: 'https://randomuser.me/api/portraits/women/2.jpg',
-                    unreadCount: 2,
-                    onTap: () {
-                      context.pushNamed(
-                        RouteNames.chatInboxScreen,
-                        extra: {
-                          'name': 'carol smith',
-                          'avatar':
-                              'https://randomuser.me/api/portraits/women/2.jpg',
-                        },
-                      );
-                    },
-                  ),
-                  ChatListItem(
-                    name: 'lauren gomes',
-                    message: 'Hi! How are you? 😊',
-                    time: '9:41',
-                    avatar: 'https://randomuser.me/api/portraits/women/8.jpg',
-                    unreadCount: 0,
-                    onTap: () {
-                      context.pushNamed(
-                        RouteNames.chatInboxScreen,
-                        extra: {
-                          'name': 'lauren gomes',
-                          'avatar':
-                              'https://randomuser.me/api/portraits/women/8.jpg',
-                        },
-                      );
-                    },
-                  ),
-                ],
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ],
@@ -152,23 +152,30 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-class ChatListItem extends StatelessWidget {
+class Chat {
   final String name;
   final String message;
   final String time;
   final String avatar;
-  final int unreadCount;
-  final VoidCallback onTap;
+  final int? unreadCount;
+  final bool wave;
 
-  const ChatListItem({
-    super.key,
+  Chat({
     required this.name,
     required this.message,
     required this.time,
     required this.avatar,
-    required this.unreadCount,
-    required this.onTap,
+    this.unreadCount,
+    required this.wave,
   });
+}
+
+class ChatListItem extends StatelessWidget {
+  final VoidCallback onTap;
+
+  final Chat chat;
+
+  const ChatListItem({super.key, required this.chat, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +188,7 @@ class ChatListItem extends StatelessWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(50),
               child: Image.network(
-                avatar,
+                chat.avatar,
                 width: 50.w,
                 height: 50.w,
                 fit: BoxFit.cover,
@@ -194,7 +201,7 @@ class ChatListItem extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    name,
+                    chat.name,
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
@@ -203,7 +210,7 @@ class ChatListItem extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    message,
+                    chat.message,
                     style: TextStyle(fontSize: 14.sp, color: Color(0xff585858)),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -216,10 +223,10 @@ class ChatListItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  time,
+                  chat.time,
                   style: TextStyle(fontSize: 12.sp, color: Colors.grey[500]),
                 ),
-                if (unreadCount > 0) ...[
+                if (chat.unreadCount! > 0) ...[
                   const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.all(6),
@@ -228,7 +235,7 @@ class ChatListItem extends StatelessWidget {
                       shape: BoxShape.circle,
                     ),
                     child: Text(
-                      unreadCount.toString(),
+                      chat.unreadCount.toString(),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14.sp,
