@@ -8,6 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/community.dart';
+import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/src/presentation/views/community/widgets/community_card.dart';
 import 'package:vibe_now/src/presentation/views/event/event_card.dart';
 import 'package:vibe_now/src/presentation/views/home/widgets/cloud_container.dart';

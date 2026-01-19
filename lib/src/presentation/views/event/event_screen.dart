@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_search_bar.dart';
 import 'package:vibe_now/src/presentation/views/event/event_card.dart';
 import 'package:vibe_now/src/presentation/views/event/widgets/event_filter.dart';
-import 'package:vibe_now/src/presentation/views/home/widgets/filter_dialog.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -18,7 +18,7 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-  final List<String> tabs = ['All', 'My Events', 'Interested'];
+  final List<String> tabs = ['All', 'Joined', 'Organized', 'Interested'];
   String selectedTab = 'All';
 
   final List<Event> events = [
@@ -33,7 +33,7 @@ class _EventScreenState extends State<EventScreen> {
       totalAttending: '10',
       isJoined: false,
       isMyEvent: false,
-      userStatus: EventStatus.request, // Request button
+      userStatus: EventStatus.interested,
     ),
     Event(
       name: 'Music Night',
@@ -41,12 +41,13 @@ class _EventScreenState extends State<EventScreen> {
       date: '25 Nov',
       time: '9PM - 12AM',
       location: '456 Party Ave, Los Angeles, CA 90001',
-      image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800',
+      image:
+          'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800',
       attending: '8',
       totalAttending: '15',
-      isJoined: false,
+      isJoined: true,
       isMyEvent: false,
-      userStatus: EventStatus.requested, // Requested (grey button)
+      userStatus: EventStatus.going,
     ),
     Event(
       name: 'Beach Party',
@@ -54,12 +55,13 @@ class _EventScreenState extends State<EventScreen> {
       date: '28 Nov',
       time: '6PM - 10PM',
       location: '789 Beach Blvd, Miami, FL 33101',
-      image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800',
+      image:
+          'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800',
       attending: '12',
       totalAttending: '20',
       isJoined: false,
-      isMyEvent: false,
-      userStatus: EventStatus.interested, // Interested
+      isMyEvent: true,
+      userStatus: EventStatus.interested,
     ),
     Event(
       name: 'Food Festival',
@@ -70,11 +72,28 @@ class _EventScreenState extends State<EventScreen> {
       image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800',
       attending: '15',
       totalAttending: '25',
-      isJoined: false,
-      isMyEvent: false,
-      userStatus: EventStatus.going, // Going
+      isJoined: true,
+      isMyEvent: true,
+      userStatus: EventStatus.going,
     ),
   ];
+
+  // Filter events based on selected tab
+  List<Event> get filteredEvents {
+    switch (selectedTab) {
+      case 'Joined':
+        return events.where((e) => e.userStatus == EventStatus.going).toList();
+      case 'Organized':
+        return events.where((e) => e.isMyEvent).toList();
+      case 'Interested':
+        return events
+            .where((e) => e.userStatus == EventStatus.interested)
+            .toList();
+      case 'All':
+      default:
+        return events;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,8 +106,9 @@ class _EventScreenState extends State<EventScreen> {
             child: Column(
               children: [
                 _buildAppBar(context),
-                SizedBox(height: 12),
+                SizedBox(height: 12.h),
 
+                // Search bar with filter
                 CustomSearchBar(
                   onFilterTap: () => showDialog(
                     context: context,
@@ -99,73 +119,57 @@ class _EventScreenState extends State<EventScreen> {
 
                 SizedBox(height: 12.h),
 
-                Row(
-                  children: tabs.map((tab) {
-                    final isSelected = selectedTab == tab;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: GestureDetector(
-                        onTap: () => setState(() => selectedTab = tab),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 8.w,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: isSelected
-                                ? AppColors.primaryGradientRotated
-                                : null,
-                            color: isSelected ? null : Colors.grey[200],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            tab,
-                            style: TextStyle(
-                              color: isSelected
-                                  ? Colors.white
-                                  : Colors.grey[700],
-                              fontWeight: FontWeight.w500,
+                // Category tabs
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: tabs.map((tab) {
+                      final isSelected = selectedTab == tab;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: GestureDetector(
+                          onTap: () => setState(() => selectedTab = tab),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20.w,
+                              vertical: 8.w,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: isSelected
+                                  ? AppColors.primaryGradientRotated
+                                  : null,
+                              color: isSelected ? null : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              tab,
+                              style: TextStyle(
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.grey[700],
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
 
                 SizedBox(height: 14.h),
 
-                if (selectedTab == 'All')
-                  Column(
-                    children: events.map((e) => Padding(
-                      padding: EdgeInsets.only(bottom: 12.h),
-                      child: EventCard(event: e),
-                    )).toList(),
-                  ),
-
-                if (selectedTab == 'My Events')
-                  Column(
-                    children: List.generate(
-                      1,
-                      (index) => Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: EventCard(
-                          event: events[0].copyWith(isMyEvent: true),
+                // Event list based on selected tab
+                Column(
+                  children: filteredEvents
+                      .map(
+                        (e) => Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: EventCard(event: e),
                         ),
-                      ),
-                    ),
-                  ),
-
-                if (selectedTab == 'Interested')
-                  Column(
-                    children: List.generate(
-                      2,
-                      (index) => Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: EventCard(event: events[index % events.length]),
-                      ),
-                    ),
-                  ),
+                      )
+                      .toList(),
+                ),
 
                 SizedBox(height: 24),
               ],
@@ -176,6 +180,7 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
+  // Custom AppBar with QR and Add buttons
   Row _buildAppBar(BuildContext context) {
     return Row(
       children: [

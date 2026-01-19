@@ -4,64 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
-
-enum EventStatus { request, requested, interested, going }
-
-class Event {
-  String name;
-  String description;
-  String date;
-  String time;
-  String location;
-  String image;
-  String attending;
-  String totalAttending;
-  bool isJoined;
-  bool isMyEvent;
-  EventStatus? userStatus; // Can be null, interested, going, or requested
-
-  Event({
-    required this.name,
-    required this.description,
-    required this.date,
-    required this.time,
-    required this.location,
-    required this.image,
-    required this.attending,
-    required this.totalAttending,
-    this.isJoined = false,
-    this.isMyEvent = false,
-    this.userStatus,
-  });
-
-  Event copyWith({
-    String? name,
-    String? description,
-    String? date,
-    String? time,
-    String? location,
-    String? image,
-    String? attending,
-    String? totalAttending,
-    bool? isJoined,
-    bool? isMyEvent,
-    EventStatus? userStatus,
-  }) {
-    return Event(
-      name: name ?? this.name,
-      description: description ?? this.description,
-      date: date ?? this.date,
-      time: time ?? this.time,
-      location: location ?? this.location,
-      image: image ?? this.image,
-      attending: attending ?? this.attending,
-      totalAttending: totalAttending ?? this.totalAttending,
-      isJoined: isJoined ?? this.isJoined,
-      isMyEvent: isMyEvent ?? this.isMyEvent,
-      userStatus: userStatus ?? this.userStatus,
-    );
-  }
-}
+import 'package:vibe_now/model/event.dart';
 
 class EventCard extends StatefulWidget {
   const EventCard({super.key, required this.event});
@@ -84,32 +27,30 @@ class _EventCardState extends State<EventCard> {
   String get buttonText {
     if (currentStatus == null) return 'Request';
     switch (currentStatus!) {
-      case EventStatus.request:
-        return 'Request';
-      case EventStatus.requested:
-        return 'Requested';
       case EventStatus.interested:
         return 'Interested';
       case EventStatus.going:
         return 'Going';
+      case EventStatus.requested:
+        return 'Interested';
     }
   }
 
-  bool get isButtonActive {
-    return currentStatus == EventStatus.requested;
-  }
+  // bool get isButtonActive {
+  //   return currentStatus == EventStatus.interested;
+  // }
 
-  void _handleButtonTap() {
-    if (currentStatus != EventStatus.requested) {
-      setState(() {
-        currentStatus = EventStatus.requested;
-      });
-      AppSnackbar.show(
-        message: "Your request to join this event has been sent",
-        type: SnackType.success,
-      );
-    }
-  }
+  // void _handleButtonTap() {
+  //   if (currentStatus != EventStatus.requested) {
+  //     setState(() {
+  //       currentStatus = EventStatus.requested;
+  //     });
+  //     AppSnackbar.show(
+  //       message: "Your request to join this event has been sent",
+  //       type: SnackType.success,
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -194,22 +135,33 @@ class _EventCardState extends State<EventCard> {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: _handleButtonTap,
+                        onTap: () {
+                          setState(() {
+                            currentStatus = EventStatus.requested;
+                            AppSnackbar.show(
+                              message:
+                                  "Send a request to the event creator to joint the event",
+                              type: SnackType.success,
+                            );
+                          });
+                        },
                         child: Container(
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(color: Colors.grey.shade300),
-                            gradient: isButtonActive
+                            gradient: EventStatus.interested != currentStatus
                                 ? null
                                 : AppColors.primaryGradientRotated,
-                            color: isButtonActive ? Colors.grey.shade200 : null,
+                            color: EventStatus.interested != currentStatus
+                                ? Colors.grey.shade200
+                                : null,
                           ),
                           child: Center(
                             child: Text(
                               buttonText,
                               style: TextStyle(
-                                color: isButtonActive
+                                color: EventStatus.interested != currentStatus
                                     ? Colors.grey.shade600
                                     : Colors.white,
                                 fontSize: 16.sp,
@@ -221,7 +173,7 @@ class _EventCardState extends State<EventCard> {
                       ),
                     ),
                     SizedBox(width: 8.w),
-                    isButtonActive
+                    widget.event.isMyEvent
                         ? SizedBox.shrink()
                         : Container(
                             decoration: BoxDecoration(

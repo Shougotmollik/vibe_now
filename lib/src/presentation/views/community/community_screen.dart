@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_search_bar.dart';
 import 'package:vibe_now/src/presentation/views/community/widgets/community_card.dart';
@@ -17,7 +18,7 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  final List<String> tabs = ['All', 'My Communities', 'Interested'];
+  final List<String> tabs = ['All', 'Joined', 'Organized', 'Interested'];
   String selectedTab = 'All';
 
   final List<Community> allCommunities = [
@@ -32,14 +33,14 @@ class _CommunityScreenState extends State<CommunityScreen> {
       image:
           'https://www.sbdcnet.org/wp-content/uploads/2020/07/chuttersnap-aEnH4hJ_Mrs-unsplash-e1594836312246.jpg',
       avatars: [
-        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBlb3BsZXxlbnwwfHwwfHx8MA%3D%3D",
-        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&auto=format&fit=crop&q=60",
+        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=764&auto=format&fit=crop",
       ],
       extraCount: 5,
       isMyCommunity: false,
       isJoined: false,
       isInterested: false,
-      userStatus: CommunityStatus.request, // Request button with dropdown
+      userStatus: CommunityStatus.interested,
     ),
     Community(
       name: "Morning Yoga Session",
@@ -58,8 +59,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       isMyCommunity: false,
       isJoined: false,
       isInterested: false,
-      userStatus:
-          CommunityStatus.requested, // Requested (grey button, no dropdown)
+      userStatus: CommunityStatus.interested,
     ),
     Community(
       name: "Book Club Reading",
@@ -77,8 +77,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
       extraCount: 8,
       isMyCommunity: false,
       isJoined: false,
-      isInterested: false,
-      userStatus: CommunityStatus.interested, // Interested with dropdown
+      isInterested: true,
+      userStatus: CommunityStatus.interested,
     ),
     Community(
       name: "Tech Networking Event",
@@ -95,13 +95,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
       ],
       extraCount: 15,
       isMyCommunity: false,
-      isJoined: false,
+      isJoined: true,
       isInterested: false,
-      userStatus: CommunityStatus.going, // Going with dropdown
+      userStatus: CommunityStatus.going,
     ),
-  ];
-
-  final List<Community> myCommunities = [
     Community(
       name: "My Community Event",
       description: "Community I created",
@@ -116,50 +113,27 @@ class _CommunityScreenState extends State<CommunityScreen> {
         "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&auto=format&fit=crop",
       ],
       extraCount: 7,
-      isMyCommunity: true, // My community - shows "View Details"
+      isMyCommunity: true,
       isJoined: false,
       isInterested: false,
+      userStatus: CommunityStatus.interested,
     ),
   ];
 
-  final List<Community> interestedCommunities = [
-    Community(
-      name: "Joined Book Club",
-      description: "Book club I'm part of",
-      location: "Library",
-      distance: "1.0 km",
-      dateTime: "Saturday 5PM",
-      attending: "15",
-      totalAttending: "25",
-      image:
-          'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800&auto=format&fit=crop',
-      avatars: [
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=500&auto=format&fit=crop",
-      ],
-      extraCount: 10,
-      isMyCommunity: false,
-      isJoined: true, // Joined - shows "View Details"
-      isInterested: false,
-    ),
-    Community(
-      name: "Art Gallery Tour",
-      description: "Art tour I'm interested in",
-      location: "Gallery",
-      distance: "2.0 km",
-      dateTime: "Sunday 3PM",
-      attending: "8",
-      totalAttending: "15",
-      image:
-          'https://images.unsplash.com/photo-1531243269054-5ebf6f34081e?w=800&auto=format&fit=crop',
-      avatars: [
-        "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=500&auto=format&fit=crop",
-      ],
-      extraCount: 5,
-      isMyCommunity: false,
-      isJoined: false,
-      isInterested: true, // Interested - shows "View Details"
-    ),
-  ];
+  // Dynamic filtering based on selected tab
+  List<Community> get filteredCommunities {
+    switch (selectedTab) {
+      case 'Joined':
+        return allCommunities.where((c) => c.isJoined).toList();
+      case 'Organized':
+        return allCommunities.where((c) => c.isMyCommunity).toList();
+      case 'Interested':
+        return allCommunities.where((c) => c.isInterested).toList();
+      case 'All':
+      default:
+        return allCommunities;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -181,73 +155,58 @@ class _CommunityScreenState extends State<CommunityScreen> {
                   ),
                 ),
                 SizedBox(height: 12.h),
-                Row(
-                  children: tabs.map((tab) {
-                    final isSelected = selectedTab == tab;
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: GestureDetector(
-                        onTap: () => setState(() => selectedTab = tab),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 8.w,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: isSelected
-                                ? AppColors.primaryGradientRotated
-                                : null,
-                            color: isSelected ? null : Colors.grey[200],
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Text(
-                            tab,
-                            style: TextStyle(
-                              color: isSelected
-                                  ? Colors.white
-                                  : Colors.grey[700],
-                              fontWeight: FontWeight.w500,
+
+                // Horizontal tabs
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: tabs.map((tab) {
+                      final isSelected = selectedTab == tab;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: GestureDetector(
+                          onTap: () => setState(() => selectedTab = tab),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 20.w,
+                              vertical: 8.w,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: isSelected
+                                  ? AppColors.primaryGradientRotated
+                                  : null,
+                              color: isSelected ? null : Colors.grey[200],
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              tab,
+                              style: TextStyle(
+                                color: isSelected
+                                    ? Colors.white
+                                    : Colors.grey[700],
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
+
                 SizedBox(height: 14.h),
-                if (selectedTab == 'All')
-                  Column(
-                    children: allCommunities
-                        .map(
-                          (c) => Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: CommunityCard(community: c),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                if (selectedTab == 'My Communities')
-                  Column(
-                    children: myCommunities
-                        .map(
-                          (c) => Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: CommunityCard(community: c),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                if (selectedTab == 'Interested')
-                  Column(
-                    children: interestedCommunities
-                        .map(
-                          (c) => Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: CommunityCard(community: c),
-                          ),
-                        )
-                        .toList(),
-                  ),
+
+                // Filtered community list
+                Column(
+                  children: filteredCommunities
+                      .map(
+                        (c) => Padding(
+                          padding: EdgeInsets.only(bottom: 12.h),
+                          child: CommunityCard(community: c),
+                        ),
+                      )
+                      .toList(),
+                ),
                 SizedBox(height: 24),
               ],
             ),

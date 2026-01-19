@@ -12,47 +12,37 @@ class CommunityFilterDialog extends StatefulWidget {
 }
 
 class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
-  // Community filters
-  String selectedCommunitySize = 'Any Size';
-  List<String> selectedCommunityTypes = [];
-  bool onlineOnly = false;
+  // Filter states
+  double distance = 100;
+  String selectedDate = 'Today';
+  List<String> selectedCategories = [];
 
-  final List<String> communitySizes = [
-    'Any Size',
-    'Small (< 50)',
-    'Medium (50-200)',
-    'Large (200+)',
+  // Options
+  final List<String> dateOptions = ['Today', 'This Week', 'This Month'];
+  final List<String> categories = [
+    'Music',
+    'Sports',
+    'Food',
+    'Art',
+    'Tech',
+    'Wellness',
   ];
 
-  final List<String> communityTypes = [
-    'Book Club',
-    'Fitness Group',
-    'Professional',
-    'Hobby',
-    'Support Group',
-    "Wellness",
-    "Music",
-    "Fitness",
-    "Food",
-    "Movies",
-    "Travel",
-  ];
-
-  void toggleCommunityType(String type) {
+  void toggleCategory(String category) {
     setState(() {
-      if (selectedCommunityTypes.contains(type)) {
-        selectedCommunityTypes.remove(type);
+      if (selectedCategories.contains(category)) {
+        selectedCategories.remove(category);
       } else {
-        selectedCommunityTypes.add(type);
+        selectedCategories.add(category);
       }
     });
   }
 
   void clearFilters() {
     setState(() {
-      selectedCommunitySize = 'Any Size';
-      selectedCommunityTypes.clear();
-      onlineOnly = false;
+      distance = 100;
+      selectedDate = 'Today';
+      selectedCategories.clear();
     });
   }
 
@@ -75,9 +65,9 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Community Filter',
+                    'Event Filter',
                     style: TextStyle(
-                      fontSize: 22.sp,
+                      fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -89,10 +79,141 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                   ),
                 ],
               ),
-              SizedBox(height: 14.h),
+              SizedBox(height: 16.h),
 
-              // Tab Content
-              _buildCommunityContent(),
+              // Distance Slider with gradient track
+              Column(
+                children: [
+                  Row(
+                    spacing: 8.w,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Distance',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+
+                      Text(
+                        distance < 1000
+                            ? 'under: ${distance.round()} m'
+                            : 'under: ${(distance / 1000).toStringAsFixed(1)} km',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+
+                  // Show selected distance
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final trackWidth = constraints.maxWidth;
+                      final thumbPercent = (distance - 100) / (5000 - 100);
+
+                      return Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          // Full track (gray)
+                          Container(
+                            height: 4.h,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          // Gradient track up to thumb
+                          Container(
+                            width: trackWidth * thumbPercent,
+                            height: 4.h,
+                            decoration: BoxDecoration(
+                              gradient: AppColors.primaryGradientRotated,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          // Slider itself
+                          SliderTheme(
+                            data: SliderThemeData(
+                              activeTrackColor: Colors.transparent,
+                              inactiveTrackColor: Colors.transparent,
+                              thumbColor:
+                                  AppColors.primaryGradient.colors.first,
+                              overlayColor: AppColors
+                                  .primaryGradient
+                                  .colors
+                                  .first
+                                  .withOpacity(0.2),
+                              trackHeight: 4.h,
+                              rangeThumbShape: const RoundRangeSliderThumbShape(
+                                enabledThumbRadius: 10,
+                              ),
+                            ),
+                            child: Slider(
+                              min: 100,
+                              max: 5000,
+                              divisions: 49,
+                              value: distance,
+                              label: distance < 1000
+                                  ? '${distance.round()} m'
+                                  : '${(distance / 1000).toStringAsFixed(1)} km',
+                              onChanged: (value) =>
+                                  setState(() => distance = value),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [Text('100 m'), Text('5 km')],
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 16.h),
+
+              // Categories
+              Text(
+                'Categories',
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: categories.map((category) {
+                  final isSelected = selectedCategories.contains(category);
+                  return GestureDetector(
+                    onTap: () => toggleCategory(category),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: isSelected
+                            ? AppColors.primaryGradientRotated
+                            : null,
+                        color: isSelected ? null : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        category,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.grey[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
 
               SizedBox(height: 32.h),
 
@@ -100,23 +221,25 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
               SizedBox(
                 height: 44.h,
                 child: Row(
-                  spacing: 18.w,
                   children: [
                     Expanded(
                       child: CustomElevatedButton(
                         btnColor: Colors.grey[200],
                         textColor: Colors.black87,
-
                         onTap: clearFilters,
                         buttonText: 'Clear',
                       ),
                     ),
-
+                    SizedBox(width: 16.w),
                     Expanded(
                       child: PrimaryButton.text(
                         text: 'Apply',
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.of(context).pop({
+                            'distance': distance,
+                            'date': selectedDate,
+                            'categories': selectedCategories,
+                          });
                         },
                       ),
                     ),
@@ -125,108 +248,6 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  // Community Tab Content
-  Widget _buildCommunityContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Community Size',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-        ),
-        SizedBox(height: 12.h),
-        Column(
-          children: communitySizes.map((size) {
-            return _buildRadioOption(size, selectedCommunitySize, (value) {
-              setState(() => selectedCommunitySize = value);
-            });
-          }).toList(),
-        ),
-        SizedBox(height: 24.h),
-        Text(
-          'Community categories',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-        ),
-        SizedBox(height: 12.h),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: communityTypes.map((type) {
-            final isSelected = selectedCommunityTypes.contains(type);
-            return GestureDetector(
-              onTap: () => toggleCommunityType(type),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  gradient: isSelected
-                      ? AppColors.primaryGradientRotated
-                      : null,
-                  color: isSelected ? null : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  type,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey[800],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-        const SizedBox(height: 24),
-      ],
-    );
-  }
-
-  Widget _buildRadioOption(
-    String value,
-    String groupValue,
-    Function(String) onChanged,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: GestureDetector(
-        onTap: () => onChanged(value),
-        child: Row(
-          children: [
-            Container(
-              width: 20.w,
-              height: 20.h,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: groupValue == value
-                      ? const Color(0xFFC2E3FF)
-                      : const Color(0xFFE0E0E0),
-                  width: 2,
-                ),
-              ),
-              child: groupValue == value
-                  ? Center(
-                      child: Container(
-                        width: 10.w,
-                        height: 10.h,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          gradient: AppColors.primaryGradient,
-                        ),
-                      ),
-                    )
-                  : null,
-            ),
-            const SizedBox(width: 12),
-            Text(value, style: TextStyle(fontSize: 15.sp)),
-          ],
         ),
       ),
     );

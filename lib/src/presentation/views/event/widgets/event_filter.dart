@@ -12,26 +12,14 @@ class EventFilterDialog extends StatefulWidget {
 }
 
 class _EventFilterDialogState extends State<EventFilterDialog> {
-  // Events filters
-  String selectedEventType = 'All Events';
-  DateTime? selectedDate;
-  String selectedLocation = 'Nearby';
-  List<String> selectedEventCategories = [];
+  // Filter states
+  double distance = 100;
+  String selectedDate = 'Today';
+  List<String> selectedCategories = [];
 
-  final List<String> eventTypes = [
-    // 'All Events',
-    // 'Workshops',
-    // 'Meetups',
-    // 'Parties',
-    // 'Concerts',
-    "100 m",
-    "200 m",
-    "300 m",
-    "400 m",
-    "1 km",
-  ];
-  RangeValues ageRange = const RangeValues(100, 1000);
-  final List<String> eventCategories = [
+  // Options
+  final List<String> dateOptions = ['Today', 'This Week', 'This Month'];
+  final List<String> categories = [
     'Music',
     'Sports',
     'Food',
@@ -40,22 +28,21 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
     'Wellness',
   ];
 
-  void toggleEventCategory(String category) {
+  void toggleCategory(String category) {
     setState(() {
-      if (selectedEventCategories.contains(category)) {
-        selectedEventCategories.remove(category);
+      if (selectedCategories.contains(category)) {
+        selectedCategories.remove(category);
       } else {
-        selectedEventCategories.add(category);
+        selectedCategories.add(category);
       }
     });
   }
 
   void clearFilters() {
     setState(() {
-      selectedEventType = 'All Events';
-      selectedDate = null;
-      selectedLocation = 'Nearby';
-      selectedEventCategories.clear();
+      distance = 100;
+      selectedDate = 'Today';
+      selectedCategories.clear();
     });
   }
 
@@ -92,11 +79,158 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                   ),
                 ],
               ),
+              SizedBox(height: 16.h),
 
-              SizedBox(height: 14.h),
+              // Distance Slider with gradient track
+              Column(
+                children: [
+                  Row(
+                    spacing: 8.w,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Distance',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
 
-              // Events Content
-              _buildEventsContent(),
+                      Text(
+                        distance < 1000
+                            ? 'under: ${distance.round()} m'
+                            : 'under: ${(distance / 1000).toStringAsFixed(1)} km',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+
+                  // Show selected distance
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final trackWidth = constraints.maxWidth;
+                      final thumbPercent = (distance - 100) / (5000 - 100);
+
+                      return Stack(
+                        alignment: Alignment.centerLeft,
+                        children: [
+                          // Full track (gray)
+                          Container(
+                            height: 4.h,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          // Gradient track up to thumb
+                          Container(
+                            width: trackWidth * thumbPercent,
+                            height: 4.h,
+                            decoration: BoxDecoration(
+                              gradient: AppColors.primaryGradientRotated,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                          ),
+                          // Slider itself
+                          SliderTheme(
+                            data: SliderThemeData(
+                              activeTrackColor: Colors.transparent,
+                              inactiveTrackColor: Colors.transparent,
+                              thumbColor:
+                                  AppColors.primaryGradient.colors.first,
+                              overlayColor: AppColors
+                                  .primaryGradient
+                                  .colors
+                                  .first
+                                  .withOpacity(0.2),
+                              trackHeight: 4.h,
+                              rangeThumbShape: const RoundRangeSliderThumbShape(
+                                enabledThumbRadius: 10,
+                              ),
+                            ),
+                            child: Slider(
+                              min: 100,
+                              max: 5000,
+                              divisions: 49,
+                              value: distance,
+                              label: distance < 1000
+                                  ? '${distance.round()} m'
+                                  : '${(distance / 1000).toStringAsFixed(1)} km',
+                              onChanged: (value) =>
+                                  setState(() => distance = value),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: const [Text('100 m'), Text('5 km')],
+                  ),
+                ],
+              ),
+
+              SizedBox(height: 16.h),
+
+              // Categories
+              Text(
+                'Categories',
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: categories.map((category) {
+                  final isSelected = selectedCategories.contains(category);
+                  return GestureDetector(
+                    onTap: () => toggleCategory(category),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: isSelected
+                            ? AppColors.primaryGradientRotated
+                            : null,
+                        color: isSelected ? null : Colors.grey[200],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        category,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.grey[800],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 16.h),
+
+              // Date Filter (Radio)
+              Text(
+                'Date',
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 8),
+              Column(
+                children: dateOptions.map((date) {
+                  return _buildRadioOption(date, selectedDate, (value) {
+                    setState(() {
+                      selectedDate = value;
+                    });
+                  });
+                }).toList(),
+              ),
 
               SizedBox(height: 32.h),
 
@@ -104,23 +238,25 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
               SizedBox(
                 height: 44.h,
                 child: Row(
-                  spacing: 18.w,
                   children: [
                     Expanded(
                       child: CustomElevatedButton(
                         btnColor: Colors.grey[200],
                         textColor: Colors.black87,
-
                         onTap: clearFilters,
                         buttonText: 'Clear',
                       ),
                     ),
-
+                    SizedBox(width: 16.w),
                     Expanded(
                       child: PrimaryButton.text(
                         text: 'Apply',
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          Navigator.of(context).pop({
+                            'distance': distance,
+                            'date': selectedDate,
+                            'categories': selectedCategories,
+                          });
                         },
                       ),
                     ),
@@ -134,71 +270,13 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
     );
   }
 
-  // Events Tab Content
-  Widget _buildEventsContent() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Event Range',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 12),
-
-        _buildAgeSlider(),
-        // Column(
-        //   children: eventTypes.map((type) {
-        //     return _buildRadioOption(type, selectedEventType, (value) {
-        //       setState(() => selectedEventType = value);
-        //     });
-        //   }).toList(),
-        // ),
-        const SizedBox(height: 12),
-
-        Text(
-          'Categories',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: eventCategories.map((category) {
-            final isSelected = selectedEventCategories.contains(category);
-            return GestureDetector(
-              onTap: () => toggleEventCategory(category),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  gradient: isSelected
-                      ? AppColors.primaryGradientRotated
-                      : null,
-                  color: isSelected ? null : Colors.grey[200],
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  category,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey[800],
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
+  // Radio Option Widget
   Widget _buildRadioOption(
     String value,
     String groupValue,
     Function(String) onChanged,
   ) {
+    final bool isSelected = value == groupValue;
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: GestureDetector(
@@ -211,13 +289,13 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: groupValue == value
+                  color: isSelected
                       ? const Color(0xFFC2E3FF)
                       : const Color(0xFFE0E0E0),
                   width: 2,
                 ),
               ),
-              child: groupValue == value
+              child: isSelected
                   ? Center(
                       child: Container(
                         width: 10.w,
@@ -235,87 +313,6 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildAgeSlider() {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final totalRange = 1000 - 100;
-        final selectedStart = (ageRange.start - 18) / totalRange;
-        final selectedEnd = (ageRange.end - 18) / totalRange;
-
-        return Column(
-          children: [
-            Stack(
-              alignment: Alignment.centerLeft,
-              children: [
-                Container(
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                Positioned(
-                  left: constraints.maxWidth * selectedStart,
-                  child: Container(
-                    width: constraints.maxWidth * (selectedEnd - selectedStart),
-                    height: 4,
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradientRotated,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                SliderTheme(
-                  data: SliderThemeData(
-                    activeTrackColor: Colors.transparent,
-                    inactiveTrackColor: Colors.transparent,
-                    thumbColor: const Color(0xFF9C27B0),
-                    overlayColor: const Color(
-                      0xFF9C27B0,
-                    ).withValues(alpha: 0.2),
-                    trackHeight: 4,
-                    rangeThumbShape: const RoundRangeSliderThumbShape(
-                      enabledThumbRadius: 10,
-                    ),
-                    overlappingShapeStrokeColor: Colors.white,
-                  ),
-                  child: RangeSlider(
-                    values: ageRange,
-                    min: 100,
-                    max: 1000,
-                    divisions: 47,
-                    onChanged: (values) {
-                      setState(() => ageRange = values);
-                    },
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${ageRange.start.round()} m',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Text(
-                  '${ageRange.end.round()} m',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        );
-      },
     );
   }
 }

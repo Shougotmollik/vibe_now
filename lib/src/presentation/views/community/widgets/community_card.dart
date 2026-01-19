@@ -1,92 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/src/presentation/views/community/community_details_screen.dart';
 import 'package:vibe_now/src/presentation/views/common/avatar_stack.dart';
 
-enum CommunityStatus {
-  request,
-  requested,
-  interested,
-  going,
-}
-
-class Community {
-  String name;
-  String description;
-  String location;
-  String distance;
-  String dateTime;
-  String attending;
-  String totalAttending;
-  String image;
-  List<String> avatars;
-  int extraCount;
-  bool isMyCommunity;
-  bool isJoined;
-  bool isInterested;
-  CommunityStatus? userStatus;
-
-  Community({
-    required this.name,
-    required this.description,
-    required this.location,
-    required this.distance,
-    required this.dateTime,
-    required this.attending,
-    required this.totalAttending,
-    required this.image,
-    required this.avatars,
-    required this.extraCount,
-    this.isMyCommunity = false,
-    this.isJoined = false,
-    this.isInterested = false,
-    this.userStatus,
-  });
-
-  Community copyWith({
-    String? name,
-    String? description,
-    String? location,
-    String? distance,
-    String? dateTime,
-    String? attending,
-    String? totalAttending,
-    String? image,
-    List<String>? avatars,
-    int? extraCount,
-    bool? isMyCommunity,
-    bool? isJoined,
-    bool? isInterested,
-    CommunityStatus? userStatus,
-  }) {
-    return Community(
-      name: name ?? this.name,
-      description: description ?? this.description,
-      location: location ?? this.location,
-      distance: distance ?? this.distance,
-      dateTime: dateTime ?? this.dateTime,
-      attending: attending ?? this.attending,
-      totalAttending: totalAttending ?? this.totalAttending,
-      image: image ?? this.image,
-      avatars: avatars ?? this.avatars,
-      extraCount: extraCount ?? this.extraCount,
-      isMyCommunity: isMyCommunity ?? this.isMyCommunity,
-      isJoined: isJoined ?? this.isJoined,
-      isInterested: isInterested ?? this.isInterested,
-      userStatus: userStatus ?? this.userStatus,
-    );
-  }
-}
-
 class CommunityCard extends StatefulWidget {
   const CommunityCard({super.key, required this.community});
-  final Community community;
 
   @override
   State<CommunityCard> createState() => _CommunityCardState();
+
+  final Community community;
 }
 
 class _CommunityCardState extends State<CommunityCard> {
@@ -100,9 +29,9 @@ class _CommunityCardState extends State<CommunityCard> {
 
   // Check if should show "View Details" button
   bool get shouldShowViewDetails {
-    return widget.community.isMyCommunity || 
-           widget.community.isJoined || 
-           widget.community.isInterested;
+    return widget.community.isMyCommunity ||
+        widget.community.isJoined ||
+        widget.community.isInterested;
   }
 
   String get buttonText {
@@ -110,14 +39,12 @@ class _CommunityCardState extends State<CommunityCard> {
     if (shouldShowViewDetails) {
       return 'View Details';
     }
-    
+
     // Otherwise show status-based text
     if (currentStatus == null) return 'Request';
     switch (currentStatus!) {
-      case CommunityStatus.request:
-        return 'Request';
       case CommunityStatus.requested:
-        return 'Requested';
+        return 'Interested';
       case CommunityStatus.interested:
         return 'Interested';
       case CommunityStatus.going:
@@ -125,31 +52,31 @@ class _CommunityCardState extends State<CommunityCard> {
     }
   }
 
-  bool get isButtonActive {
-    return currentStatus == CommunityStatus.requested;
-  }
+  // bool get isButtonActive {
+  //   return currentStatus == CommunityStatus.requested;
+  // }
 
-  void _handleButtonTap() {
-    // If should show view details, navigate to details screen
-    if (shouldShowViewDetails) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => CommunityDetailsScreen()),
-      );
-      return;
-    }
+  // void _handleButtonTap() {
+  //   // If should show view details, navigate to details screen
+  //   if (shouldShowViewDetails) {
+  //     Navigator.push(
+  //       context,
+  //       MaterialPageRoute(builder: (context) => CommunityDetailsScreen()),
+  //     );
+  //     return;
+  //   }
 
-    // Otherwise handle request logic
-    if (currentStatus != CommunityStatus.requested) {
-      setState(() {
-        currentStatus = CommunityStatus.requested;
-      });
-      AppSnackbar.show(
-        message: "Your request to join this community has been sent",
-        type: SnackType.success,
-      );
-    }
-  }
+  //   // Otherwise handle request logic
+  //   if (currentStatus != CommunityStatus.requested) {
+  //     setState(() {
+  //       currentStatus = CommunityStatus.requested;
+  //     });
+  //     AppSnackbar.show(
+  //       message: "Your request to join this community has been sent",
+  //       type: SnackType.success,
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -258,7 +185,12 @@ class _CommunityCardState extends State<CommunityCard> {
           // If should show "View Details", show simple button
           if (shouldShowViewDetails)
             GestureDetector(
-              onTap: _handleButtonTap,
+              onTap: () {
+                context.pushNamed(
+                  RouteNames.communityDetailsScreen,
+                  extra: widget.community,
+                );
+              },
               child: Container(
                 width: double.infinity,
                 padding: EdgeInsets.all(12.w),
@@ -284,22 +216,33 @@ class _CommunityCardState extends State<CommunityCard> {
               children: [
                 Expanded(
                   child: GestureDetector(
-                    onTap: _handleButtonTap,
+                    onTap: () {
+                      setState(() {
+                        currentStatus = CommunityStatus.requested;
+                        AppSnackbar.show(
+                          message:
+                              "Send a request to the community creator to joint the community",
+                          type: SnackType.success,
+                        );
+                      });
+                    },
                     child: Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(color: Colors.grey.shade300),
-                        gradient: isButtonActive
+                        gradient: CommunityStatus.interested != currentStatus
                             ? null
                             : AppColors.primaryGradient,
-                        color: isButtonActive ? Colors.grey.shade200 : null,
+                        color: CommunityStatus.interested != currentStatus
+                            ? Colors.grey.shade200
+                            : null,
                       ),
                       child: Center(
                         child: Text(
                           buttonText,
                           style: TextStyle(
-                            color: isButtonActive
+                            color: CommunityStatus.interested != currentStatus
                                 ? Colors.grey.shade600
                                 : Colors.white,
                             fontSize: 16.sp,
@@ -311,7 +254,7 @@ class _CommunityCardState extends State<CommunityCard> {
                   ),
                 ),
                 SizedBox(width: 8.w),
-                isButtonActive
+                widget.community.isMyCommunity
                     ? SizedBox.shrink()
                     : Container(
                         decoration: BoxDecoration(

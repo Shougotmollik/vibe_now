@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_elevated_button.dart';
+import 'package:vibe_now/src/presentation/views/event/widgets/event_filter.dart';
+import 'package:vibe_now/src/presentation/views/home/widgets/home_event_filter.dart';
 
 class FilterDialog extends StatefulWidget {
   const FilterDialog({super.key});
@@ -12,7 +14,7 @@ class FilterDialog extends StatefulWidget {
 }
 
 class _FilterDialogState extends State<FilterDialog> {
-  String selectedTab = 'Friendship';
+  String selectedTab = 'Vibe';
 
   // Friendship filters
   String selectedGender = 'Women';
@@ -30,7 +32,7 @@ class _FilterDialogState extends State<FilterDialog> {
   List<String> selectedCommunityTypes = [];
   bool onlineOnly = false;
 
-  final List<String> tabs = ['Friendship', 'Events', 'Community'];
+  final List<String> tabs = ['Vibe', 'Events', 'Community'];
 
   final List<String> interests = [
     'Social',
@@ -200,8 +202,8 @@ class _FilterDialogState extends State<FilterDialog> {
               SizedBox(height: 24.h),
 
               // Tab Content
-              if (selectedTab == 'Friendship') _buildFriendshipContent(),
-              if (selectedTab == 'Events') _buildEventsContent(),
+              if (selectedTab == 'Vibe') _buildFriendshipContent(),
+              if (selectedTab == 'Events') HomeEventFilter(),
               if (selectedTab == 'Community') _buildCommunityContent(),
 
               SizedBox(height: 32.h),
