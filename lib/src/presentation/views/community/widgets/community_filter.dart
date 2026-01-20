@@ -65,7 +65,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Event Filter',
+                    'Community Filter',
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,

@@ -149,19 +149,22 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         CustomAppBar(title: "Reason"),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-          decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
-            borderRadius: BorderRadius.circular(40.r),
-          ),
+        GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(40.r),
+            ),
 
-          child: Text(
-            'Send',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w400,
+            child: Text(
+              'Send',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w400,
+              ),
             ),
           ),
         ),

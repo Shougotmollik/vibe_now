@@ -22,6 +22,7 @@ import 'package:vibe_now/src/presentation/views/profile/locked_profile_screen.da
 import 'package:vibe_now/src/presentation/views/profile/profile_screen.dart';
 import 'package:vibe_now/src/presentation/views/profile/unlocked_profile_screen.dart';
 import 'package:vibe_now/src/presentation/views/qr_verification/qr_verification_screen.dart';
+import 'package:vibe_now/src/presentation/views/settings/delete_reason_screen.dart';
 import 'package:vibe_now/src/presentation/views/settings/settings_screen.dart';
 import 'package:vibe_now/src/presentation/views/subscription/subscription_screen.dart';
 
@@ -150,6 +151,11 @@ final GoRouter router = GoRouter(
       path: '/wave-screen',
       name: RouteNames.waveScreen,
       builder: (context, state) => const WaveScreen(),
+    ),
+    GoRoute(
+      path: '/reason-screen',
+      name: RouteNames.reasonScreen,
+      builder: (context, state) => const DeleteReasonScreen(),
     ),
   ],
 );

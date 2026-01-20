@@ -2,13 +2,17 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/helper.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/gen/assets.gen.dart' as svgs;
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/src/presentation/views/common/interest_chip.dart';
+import 'package:vibe_now/src/presentation/views/settings/delete_reason_screen.dart';
 import 'package:vibe_now/src/presentation/views/settings/edit_profile_screen.dart';
+import 'package:vibe_now/src/presentation/views/settings/manage_password.dart';
 import 'package:vibe_now/src/presentation/views/settings/pause_profile_screen.dart';
 
 class ProfileSettingScreen extends StatefulWidget {
@@ -19,8 +23,8 @@ class ProfileSettingScreen extends StatefulWidget {
 }
 
 class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
-  File? _selectedImage;
-  
+  // File? _selectedImage;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +37,8 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header
-                CustomAppBar(title: 'Settings'),
+                CustomAppBar(title: 'Account Settings'),
+                SizedBox(height: 16.h),
                 // Profile Section
                 Center(
                   child: Column(
@@ -49,28 +54,9 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                               fit: BoxFit.cover,
                             ),
                           ),
-                          // Positioned(
-                          //   bottom: 0,
-                          //   right: 0,
-                          //   child: Container(
-                          //     padding: EdgeInsets.all(6.w),
-                          //     decoration: BoxDecoration(
-                          //       color: Colors.white,
-                          //       shape: BoxShape.circle,
-                          //       boxShadow: [
-                          //         BoxShadow(
-                          //           color: Colors.black.withValues(alpha: 0.1),
-                          //           blurRadius: 4,
-                          //           offset: const Offset(0, 2),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //     // child: Assets.icons.camera2.svg(),
-                          //   ),
-                          // ),
                         ],
                       ),
-                      SizedBox(height: 16.h),
+                      SizedBox(height: 12.h),
                       Text(
                         'Jhon Gomes',
                         style: TextStyle(
@@ -79,213 +65,63 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                           color: Colors.black,
                         ),
                       ),
-                      SizedBox(height: 8.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Assets.icons.coffeeColor.svg(height: 16.h),
-                          SizedBox(width: 4.w),
-                          Text(
-                            'Coffee enthusiast   |',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                          SizedBox(width: 8.w),
-                          Assets.icons.musicColor.svg(height: 16.h),
-                          SizedBox(width: 4.w),
-                          Text(
-                            'Music lover',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Colors.grey.shade600,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        'john.gomes@me.com',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ],
                   ),
                 ),
-                SizedBox(height: 28.h),
-
-                Text(
-                  'Interests',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0XFF555555),
-                  ),
+                SizedBox(height: 18.h),
+                // Text(
+                //   'Account Information',
+                //   style: TextStyle(
+                //     fontSize: 14.sp,
+                //     fontWeight: FontWeight.w400,
+                //     color: Color(0XFF555555),
+                //   ),
+                // ),
+                SizedBox(height: 12.h),
+                _buildOption(
+                  context,
+                  title: 'Change Your Password',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ManagePassword()),
+                    );
+                  },
                 ),
                 SizedBox(height: 12.h),
 
-                // Interest Tags
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: 8.w,
-                  runSpacing: 8.h,
-                  children: [
-                    // InterestChip(icon: Assets.icons.kitty, label: 'Pets'),
-                    // InterestChip(icon: Assets.icons.filmWheel, label: 'Films'),
-                    // InterestChip(icon: Assets.icons.coffee, label: 'Coffee'),
-                  ],
-                ),
-                SizedBox(height: 28.h),
-
-                Text(
-                  'Account Information',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0XFF555555),
-                  ),
-                ),
-                SizedBox(height: 12.h),
-
-                _buildProfileInfo(label: "Your name", value: "Jhon Gomes"),
-                SizedBox(height: 12.h),
-                _buildProfileInfo(
-                  label: "Email",
-                  value: "jhon.gomes@example.com",
-                ),
-                SizedBox(height: 12.h),
-                _buildProfileInfo(
-                  label: "Password",
-                  value: "*****************",
-                ),
-                SizedBox(height: 12.h),
-
-                _buildProfilePauseSection(context),
-                SizedBox(height: 28.h),
-                Text(
-                  'Recent Activity',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0XFF555555),
-                  ),
-                ),
-                SizedBox(height: 12.h),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 12.h,
-                  ),
-                  width: double.infinity,
-                  // height: 72.h,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xffE0E0E0)),
-                    borderRadius: BorderRadius.circular(40.r),
-                  ),
-                  child: Row(
-                    spacing: 8.w,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(10.w),
-                        decoration: BoxDecoration(
-                          color: Color(0xffEAF0FB),
-                          shape: BoxShape.circle,
-                        ),
-
-                        child: svgs.Assets.icons.locationColor.svg(
-                          height: 20.h,
-                        ),
-                      ),
-
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(width: 12.w),
-                          Text(
-                            'Started a vibe at Central Park',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: Color(0xff171135),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 4.h),
-                          Text(
-                            '2 hours ago',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Color(0xff908F90),
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: 12.h),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 12.w,
-                    vertical: 12.h,
-                  ),
-                  width: double.infinity,
-                  // height: 72.h,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Color(0xffE0E0E0)),
-                    borderRadius: BorderRadius.circular(40.r),
-                  ),
-                  child: Row(
-                    spacing: 8.w,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(10.w),
-                        decoration: BoxDecoration(
-                          color: Color(0xffEAF0FB),
-                          shape: BoxShape.circle,
-                        ),
-
-                        child: svgs.Assets.icons.calendarColor.svg(
-                          height: 20.h,
-                        ),
-                      ),
-
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(width: 12.w),
-                          Text(
-                            'Met with Sarah for coffee',
-                            style: TextStyle(
-                              fontSize: 16.sp,
-                              color: Color(0xff171135),
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          SizedBox(height: 4.h),
-                          Text(
-                            '1 day ago',
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: Color(0xff908F90),
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 80.h),
-
-                CustomElevatedButton(
+                _buildOption(
+                  context,
+                  title: 'Pause Your Account',
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfileScreen(),
+                        builder: (context) => DeleteReasonScreen(),
                       ),
                     );
                   },
-                  buttonText: 'Edit Profile',
                 ),
-                SizedBox(height: 80.h),
+                SizedBox(height: 12.h),
+                _buildOption(
+                  context,
+                  title: 'Delete Your Account',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return _buildDeleteDialog(context);
+                      },
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -294,17 +130,169 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
     );
   }
 
-  Widget _buildProfilePauseSection(BuildContext context) {
+  Widget _buildDeleteDialog(BuildContext context) {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+      contentPadding: EdgeInsets.all(16.w),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Assets.icons.delete.svg(
+                width: 32.w,
+                height: 32.w,
+                color: Colors.white,
+              ),
+            ),
+          ),
+
+          SizedBox(height: 16.h),
+
+          Text(
+            "Delete Confirmation",
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+
+          SizedBox(height: 8.h),
+
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Text(
+              "You can delete your account, but please note the process may take some time to complete. Once deleted, it cannot be undone later.",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14.sp, color: Color(0xff908F90)),
+            ),
+          ),
+
+          SizedBox(height: 24.h),
+
+          // Buttons
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        contentPadding: EdgeInsets.all(16.w),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Confirm your password to delete your account",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+
+                            SizedBox(height: 36.h),
+
+                            TextField(
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                hintText: "Enter your password",
+                                hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 18.h),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text(
+                                      "Cancel",
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  child: TextButton(
+                                    onPressed: () {
+                                      context.pushNamed(
+                                        RouteNames.reasonScreen,
+                                      );
+                                      context.pop();
+                                      context.pop();
+                                    },
+                                    child: Text(
+                                      "Delete",
+                                      style: TextStyle(
+                                        fontSize: 16.sp,
+                                        color: Colors.red,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+
+                    // Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Delete",
+                    style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOption(
+    BuildContext context, {
+    required String title,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PauseProfileScreen()),
-        );
-      },
+      onTap: onTap,
       child: Container(
         width: double.infinity,
-        // height: 54.h,
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
         decoration: BoxDecoration(
           border: Border.all(color: Color(0xffE0E0E0)),
@@ -314,7 +302,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "Pause your Profile",
+              title,
               style: TextStyle(
                 fontSize: 16.sp,
                 color: Color(0xFF202020),
@@ -328,38 +316,95 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
     );
   }
 
-  Widget _buildProfileInfo({required String label, required String value}) {
-    return Container(
-      width: double.infinity,
-      // height: 70.h,
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+  // Widget _buildPauseAccountSection(BuildContext context) {
+  //   return GestureDetector(
+  //     onTap: () {
+  //       Navigator.push(
+  //         context,
+  //         MaterialPageRoute(builder: (context) => ManagePassword()),
+  //       );
+  //     },
+  //     child: Container(
+  //       width: double.infinity,
+  //       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+  //       decoration: BoxDecoration(
+  //         border: Border.all(color: Color(0xffE0E0E0)),
+  //         borderRadius: BorderRadius.circular(40.r),
+  //       ),
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           Text(
+  //             "Pause Your Account",
+  //             style: TextStyle(
+  //               fontSize: 16.sp,
+  //               color: Color(0xFF202020),
+  //               fontWeight: FontWeight.w400,
+  //             ),
+  //           ),
+  //           Icon(Icons.arrow_forward_ios, size: 16.h, color: Color(0xFFCFCFCF)),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
-      decoration: BoxDecoration(
-        border: Border.all(color: Color(0xffE0E0E0)),
-        borderRadius: BorderRadius.circular(40.r),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 16.sp,
-              color: Color(0xff202020),
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Color(0xff908F90),
-              fontWeight: FontWeight.w400,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildProfileInfo({required String label, required String value}) {
+  //   return Container(
+  //     width: double.infinity,
+  //     // height: 70.h,
+  //     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+
+  //     decoration: BoxDecoration(
+  //       border: Border.all(color: Color(0xffE0E0E0)),
+  //       borderRadius: BorderRadius.circular(40.r),
+  //     ),
+  //     child: Column(
+  //       mainAxisSize: MainAxisSize.min,
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Text(
+  //           label,
+  //           style: TextStyle(
+  //             fontSize: 16.sp,
+  //             color: Color(0xff202020),
+  //             fontWeight: FontWeight.w400,
+  //           ),
+  //         ),
+  //         Text(
+  //           value,
+  //           style: TextStyle(
+  //             fontSize: 14.sp,
+  //             color: Color(0xff908F90),
+  //             fontWeight: FontWeight.w400,
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+  // Widget _buildOptionTile({required String title, VoidCallback? onTap}) {
+  //   return Padding(
+  //     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 20.h),
+  //     child: GestureDetector(
+  //       onTap: onTap,
+  //       behavior: HitTestBehavior.translucent,
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //         children: [
+  //           Text(
+  //             title,
+  //             style: TextStyle(
+  //               fontSize: 16.sp,
+  //               color: Color(0xff2A2A2A),
+  //               fontWeight: FontWeight.w400,
+  //             ),
+  //           ),
+
+  //           Icon(Icons.arrow_forward_ios, size: 20.h, color: Color(0xFFCFCFCF)),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }

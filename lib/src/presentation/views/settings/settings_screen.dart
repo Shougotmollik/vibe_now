@@ -122,21 +122,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SizedBox(height: 32.h),
 
                     // Profile Information
-                    // _buildMenuItem(
-                    //   icon: Assets.icons.userColor,
-                    //   iconColor: Colors.purple,
-                    //   title: 'Profile information',
-                    //   hasArrow: true,
-                    //   isFullRounded: true,
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => const ProfileSettingScreen(),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
+                    _buildMenuItem(
+                      icon: Assets.icons.userColor,
+                      iconColor: Colors.purple,
+                      title: 'Account information',
+                      hasArrow: true,
+                      isFullRounded: true,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const ProfileSettingScreen(),
+                          ),
+                        );
+                      },
+                    ),
                     SizedBox(height: 12.h),
                     // Profile Information
                     _buildMenuItem(
@@ -306,21 +306,21 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         );
                       },
                     ),
-                    _buildMenuItem(
-                      icon: Assets.icons.gridColor,
-                      iconColor: Colors.purple,
-                      title: 'Manage Password',
-                      isBottomRound: true,
-                      hasArrow: true,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => ManagePassword(),
-                          ),
-                        );
-                      },
-                    ),
+                    // _buildMenuItem(
+                    //   icon: Assets.icons.gridColor,
+                    //   iconColor: Colors.purple,
+                    //   title: 'Manage Password',
+                    //   isBottomRound: true,
+                    //   hasArrow: true,
+                    //   onTap: () {
+                    //     Navigator.push(
+                    //       context,
+                    //       MaterialPageRoute(
+                    //         builder: (context) => ManagePassword(),
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                     SizedBox(height: 24.h),
 
                     // About Section

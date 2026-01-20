@@ -33,27 +33,28 @@ class _IntroScreenState extends State<IntroScreen> {
     IntroTileModel(
       title: "Discover vibes happening around you",
       icon: Assets.icons.location,
-      image: "assets/images/onbording/map.png",
+      image: "assets/images/onbording/home.png",
     ),
-    IntroTileModel(
-      title: "Make spontaneous real-life connections",
-      icon: Assets.icons.user,
-      image: "assets/images/onbording/map.png",
-    ),
+
     IntroTileModel(
       title: "Create your own events",
       icon: Assets.icons.calender,
-      image: "assets/images/onbording/create_event.png",
+      image: "assets/images/onbording/event.png",
     ),
     IntroTileModel(
       title: "Create your own community's",
       icon: Assets.icons.usersColor,
-      image: "assets/images/onbording/create_event.png",
+      image: "assets/images/onbording/community.png",
+    ),
+    IntroTileModel(
+      title: "Make spontaneous real-life connections",
+      icon: Assets.icons.user,
+      image: "assets/images/onbording/chat.png",
     ),
     IntroTileModel(
       title: "Safe & privacy-first by design",
       icon: Assets.icons.shieldColor,
-      image: "assets/images/onbording/map.png",
+      image: "assets/images/onbording/profile.png",
     ),
   ];
 
@@ -203,7 +204,7 @@ class _IntroScreenState extends State<IntroScreen> {
               model.image,
               width: 1.sw,
               height: 400.h,
-              fit: BoxFit.cover,
+              fit: BoxFit.fitWidth,
             ),
           ),
         ),

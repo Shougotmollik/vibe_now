@@ -4,7 +4,9 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/src/presentation/views/event/widgets/event_filter.dart';
+import 'package:vibe_now/src/presentation/views/home/widgets/home_community_filter.dart';
 import 'package:vibe_now/src/presentation/views/home/widgets/home_event_filter.dart';
+import 'package:vibe_now/src/presentation/views/home/widgets/home_vibe_filter.dart';
 
 class FilterDialog extends StatefulWidget {
   const FilterDialog({super.key});
@@ -202,9 +204,9 @@ class _FilterDialogState extends State<FilterDialog> {
               SizedBox(height: 24.h),
 
               // Tab Content
-              if (selectedTab == 'Vibe') _buildFriendshipContent(),
+              if (selectedTab == 'Vibe') HomeVibeFilter(),
               if (selectedTab == 'Events') HomeEventFilter(),
-              if (selectedTab == 'Community') _buildCommunityContent(),
+              if (selectedTab == 'Community') HomeCommunityFilter(),
 
               SizedBox(height: 32.h),
 

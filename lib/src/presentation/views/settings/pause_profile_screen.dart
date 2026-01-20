@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/settings/delete_reason_screen.dart';
@@ -30,12 +32,7 @@ class PauseProfileScreen extends StatelessWidget {
                     _buildOptionTile(
                       title: "Pause Account",
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DeleteReasonScreen(),
-                          ),
-                        );
+                        context.pushNamed(RouteNames.reasonScreen);
                       },
                     ),
                     Divider(height: 1.h, color: Colors.black12),
@@ -119,88 +116,8 @@ class PauseProfileScreen extends StatelessWidget {
                                           onPressed: () {
                                             showDialog(
                                               context: context,
-                                              builder: (context) => AlertDialog(
-                                                backgroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                        16.r,
-                                                      ),
-                                                ),
-                                                contentPadding: EdgeInsets.all(
-                                                  16.w,
-                                                ),
-                                                content: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                      "Confirm your password to delete your account",
-                                                      style: TextStyle(
-                                                        fontSize: 18.sp,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-
-                                                    SizedBox(height: 36.h),
-
-                                                    TextField(
-                                                      obscureText: true,
-                                                      decoration: InputDecoration(
-                                                        hintText:
-                                                            "Enter your password",
-                                                        hintStyle: TextStyle(
-                                                          color: Colors.grey,
-                                                          fontSize: 14.sp,
-                                                        ),
-                                                      ),
-                                                    ),
-
-                                                    SizedBox(height: 18.h),
-
-                                                    Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: TextButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                context,
-                                                              );
-                                                            },
-                                                            child: Text(
-                                                              "Cancel",
-                                                              style: TextStyle(
-                                                                fontSize: 16.sp,
-                                                                color:
-                                                                    Colors.grey,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          child: TextButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                context,
-                                                              );
-                                                            },
-                                                            child: Text(
-                                                              "Delete",
-                                                              style: TextStyle(
-                                                                fontSize: 16.sp,
-                                                                color:
-                                                                    Colors.red,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                              builder: (context) =>
+                                                  _buildDeleteDialog(context),
                                             );
 
                                             // Navigator.pop(context);
@@ -233,11 +150,74 @@ class PauseProfileScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildDeleteDialog(BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+      contentPadding: EdgeInsets.all(16.w),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Confirm your password to delete your account",
+            style: TextStyle(
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
+
+          SizedBox(height: 36.h),
+
+          TextField(
+            obscureText: true,
+            decoration: InputDecoration(
+              hintText: "Enter your password",
+              hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+            ),
+          ),
+
+          SizedBox(height: 18.h),
+
+          Row(
+            children: [
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Cancel",
+                    style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: TextButton(
+                  onPressed: () {
+                    context.pushNamed(RouteNames.reasonScreen);
+                    context.pop();
+                    context.pop();
+                  },
+                  child: Text(
+                    "Delete",
+                    style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildOptionTile({required String title, VoidCallback? onTap}) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 20.h),
       child: GestureDetector(
         onTap: onTap,
+        behavior: HitTestBehavior.translucent,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [

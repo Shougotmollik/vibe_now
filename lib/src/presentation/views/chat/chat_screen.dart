@@ -18,15 +18,15 @@ class _ChatScreenState extends State<ChatScreen> {
 
   final List<Chat> _chatList = [
     Chat(
-      avatar: 'https://randomuser.me/api/portraits/women/9.jpg',
-      name: 'Jane Doe',
-      message: 'Hello, how are you?',
+      avatar: 'https://randomuser.me/api/portraits/women/10.jpg',
+      name: 'Sammy Smith',
+      message: 'Send You a Wave',
       time: '10:30 AM',
       unreadCount: 0,
       wave: true,
     ),
     Chat(
-      avatar: 'https://randomuser.me/api/portraits/women/9.jpg',
+      avatar: 'https://randomuser.me/api/portraits/women/11.jpg',
       name: 'Jane Doe',
       message: 'Hello, how are you?',
       time: '10:30 AM',
@@ -34,18 +34,18 @@ class _ChatScreenState extends State<ChatScreen> {
       wave: false,
     ),
     Chat(
-      avatar: 'https://randomuser.me/api/portraits/women/9.jpg',
-      name: 'Jane Doe',
-      message: 'Hello, how are you?',
-      time: '10:30 AM',
+      avatar: 'https://randomuser.me/api/portraits/women/12.jpg',
+      name: 'kyaliace baker',
+      message: 'what are you doing? bro',
+      time: '11:30 AM',
       unreadCount: 2,
       wave: false,
     ),
     Chat(
-      avatar: 'https://randomuser.me/api/portraits/women/9.jpg',
-      name: 'Jane Doe',
-      message: 'Hello, how are you?',
-      time: '10:30 AM',
+      avatar: 'https://randomuser.me/api/portraits/women/13.jpg',
+      name: 'stephanie smith',
+      message: 'Are you there?',
+      time: '11:30 AM',
       unreadCount: 4,
       wave: false,
     ),
@@ -183,6 +183,9 @@ class ChatListItem extends StatelessWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: chat.wave ? AppColors.backgroundVariant : Colors.white,
+        ),
         child: Row(
           children: [
             ClipRRect(

@@ -57,7 +57,10 @@ class _MapHomeScreenState extends State<HomeScreen>
 
   final Set<Marker> _markers = {};
 
-  final LatLng _currentLocation = const LatLng(23.8103, 90.4125);
+  final LatLng _currentLocation = const LatLng(
+    50.93747315706174,
+    6.953134027839385,
+  );
 
   String? mapTheme;
   final List<NearbyUser> nearbyUsers = [
@@ -634,6 +637,7 @@ class _MapHomeScreenState extends State<HomeScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
+              spacing: 8.w,
               children: [
                 GestureDetector(
                   onTap: () => context.pushNamed(RouteNames.notificationScreen),
@@ -642,17 +646,56 @@ class _MapHomeScreenState extends State<HomeScreen>
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade300,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Center(
                       child: Assets.icons.notification.svg(
-                        width: 24.w,
-                        height: 24.h,
+                        width: 20.w,
+                        height: 20.h,
                         color: Colors.black,
                       ),
                     ),
                   ),
                 ),
-                SizedBox(width: 10.w),
+
+                Expanded(
+                  child: Container(
+                    height: 36.h,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20.r),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade300,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                          ),
+                          border: InputBorder.none,
+                          hintText: 'Search',
+                          hintStyle: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 GestureDetector(
                   onTap: () {
                     showDialog(
@@ -661,13 +704,20 @@ class _MapHomeScreenState extends State<HomeScreen>
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.all(14.w),
+                    padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.shade300,
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Center(
-                      child: Assets.icons.filter.svg(width: 20.w, height: 20.h),
+                      child: Assets.icons.filter.svg(width: 16.w, height: 16.h),
                     ),
                   ),
                 ),

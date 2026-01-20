@@ -22,6 +22,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   final TextEditingController _maxAttendeesController = TextEditingController(
     text: '10',
   );
+  final TextEditingController _categoryController = TextEditingController();
+
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   File? _selectedImage;
@@ -38,6 +40,18 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       });
     }
   }
+
+  List<String> categories = [
+    'Music',
+    'Art',
+    'Games',
+    'Sports',
+    'Food',
+    'Movies',
+    'Travel',
+  ];
+  String? selectedCategory;
+  Set<String> selectedCategories = {};
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +89,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 _buildImageUploadSection(),
                 const SizedBox(height: 24),
                 _buildEventTitle(),
+                const SizedBox(height: 20),
+                _buildEventCategory(),
                 const SizedBox(height: 20),
                 _buildSelectLocation(),
                 const SizedBox(height: 20),
@@ -497,6 +513,162 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           setState(() => _selectedTime = time);
         },
       ),
+    );
+  }
+
+  Widget _buildEventCategory() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Event Category',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ...categories.map((e) {
+                final bool isSelected = selectedCategories.contains(e);
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isSelected) {
+                        selectedCategories.remove(e);
+                      } else {
+                        selectedCategories.add(e);
+                      }
+                    });
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 5.h,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.r),
+                      gradient: isSelected
+                          ? AppColors.primaryGradientRotated
+                          : LinearGradient(
+                              colors: [Colors.grey[100]!, Colors.grey[100]!],
+                            ),
+                    ),
+                    child: Text(
+                      e,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w400,
+                        color: isSelected ? Colors.white : Color(0xff555555),
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+              // Add Category Button
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: GestureDetector(
+                  onTap: () => _showAddCategoryDialog(),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16.r),
+                      border: Border.all(color: Colors.grey[400]!, width: 1.5),
+                      gradient: AppColors.primaryGradientRotated,
+                    ),
+                    child: Icon(Icons.add, color: Colors.white, size: 20.sp),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showAddCategoryDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          backgroundColor: Colors.white,
+          title: const Text(
+            'Add New Category',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          content: TextField(
+            controller: _categoryController,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: 'Enter category name',
+              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              filled: true,
+              fillColor: Colors.grey[100],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+            ),
+            textCapitalization: TextCapitalization.words,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _categoryController.clear();
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                if (_categoryController.text.trim().isNotEmpty) {
+                  setState(() {
+                    final newCategory = _categoryController.text.trim();
+                    if (!categories.contains(newCategory)) {
+                      categories.add(newCategory);
+                      selectedCategory = newCategory;
+                    }
+                  });
+                  _categoryController.clear();
+                  Navigator.pop(context);
+                }
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  'Add',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

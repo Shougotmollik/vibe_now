@@ -29,6 +29,7 @@ class RouteNames {
   static const String chatScreen = "chatScreen";
 
   static const String reportScreen = "reportScreen";
+  static const String reasonScreen = "reasonScreen";
 
   static const String lockedProfileScreen = "lockedProfileScreen";
   static const String unlockedProfileScreen = "unlockedProfileScreen";
