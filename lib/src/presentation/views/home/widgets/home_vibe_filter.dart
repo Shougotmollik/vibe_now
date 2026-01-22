@@ -13,7 +13,7 @@ class HomeVibeFilter extends StatefulWidget {
 
 class _HomeVibeFilterState extends State<HomeVibeFilter> {
   // Filter states
-  RangeValues ageRange = const RangeValues(18, 35);
+  RangeValues ageRange = const RangeValues(18, 70);
   double distance = 100;
   String selectedDate = 'Today';
   List<String> selectedCategories = [];
@@ -96,7 +96,7 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final trackWidth = constraints.maxWidth;
-                    final thumbPercent = (distance - 100) / (5000 - 100);
+                    final thumbPercent = (distance - 100) / (10000 - 100);
 
                     return Stack(
                       alignment: Alignment.centerLeft,
@@ -133,7 +133,7 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
                           ),
                           child: Slider(
                             min: 100,
-                            max: 5000,
+                            max: 10000,
                             divisions: 49,
                             value: distance,
                             label: distance < 1000
@@ -149,7 +149,7 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [Text('100 m'), Text('5 km')],
+                  children: const [Text('100 m'), Text('10 km')],
                 ),
               ],
             ),
@@ -291,9 +291,9 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
   Widget _buildAgeSlider() {
     return LayoutBuilder(
       builder: (context, constraints) {
-        final totalRange = 65 - 18;
-        final selectedStart = (ageRange.start - 18) / totalRange;
-        final selectedEnd = (ageRange.end - 18) / totalRange;
+        final totalRange = 100 - 14;
+        final selectedStart = (ageRange.start - 14) / totalRange;
+        final selectedEnd = (ageRange.end - 14) / totalRange;
 
         return Column(
           children: [
@@ -334,8 +334,8 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
                   ),
                   child: RangeSlider(
                     values: ageRange,
-                    min: 18,
-                    max: 65,
+                    min: 14,
+                    max: 100,
                     divisions: 47,
                     onChanged: (values) {
                       setState(() => ageRange = values);

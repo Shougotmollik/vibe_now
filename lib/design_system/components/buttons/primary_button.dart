@@ -41,14 +41,16 @@ class PrimaryButton extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         gradient: gradient ?? AppColors.primaryGradient,
-        borderRadius: AppRadius.extraLarge,
+        borderRadius: BorderRadius.circular(24.r),
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           minimumSize: Size.fromHeight(height),
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
-          shape: RoundedRectangleBorder(borderRadius: AppRadius.extraLarge),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24.r),
+          ),
         ),
         onPressed: onPressed,
         child: child,

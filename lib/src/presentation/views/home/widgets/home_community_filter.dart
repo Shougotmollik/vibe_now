@@ -87,7 +87,7 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final trackWidth = constraints.maxWidth;
-                    final thumbPercent = (distance - 100) / (5000 - 100);
+                    final thumbPercent = (distance - 100) / (10000 - 100);
 
                     return Stack(
                       alignment: Alignment.centerLeft,
@@ -116,7 +116,7 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                             inactiveTrackColor: Colors.transparent,
                             thumbColor: AppColors.primaryGradient.colors.first,
                             overlayColor: AppColors.primaryGradient.colors.first
-                                .withOpacity(0.2),
+                                .withValues(alpha: 0.2),
                             trackHeight: 4.h,
                             rangeThumbShape: const RoundRangeSliderThumbShape(
                               enabledThumbRadius: 10,
@@ -124,7 +124,7 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                           ),
                           child: Slider(
                             min: 100,
-                            max: 5000,
+                            max: 10000,
                             divisions: 49,
                             value: distance,
                             label: distance < 1000
@@ -140,7 +140,7 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [Text('100 m'), Text('5 km')],
+                  children: const [Text('100 m'), Text('10 km')],
                 ),
               ],
             ),

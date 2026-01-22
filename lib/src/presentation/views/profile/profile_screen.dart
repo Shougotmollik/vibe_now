@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vibe_now/src/presentation/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/src/presentation/views/common/interest_chip.dart';
 import 'package:vibe_now/src/presentation/views/profile/unlocked_profile_screen.dart';
 import 'package:vibe_now/utils.dart' as utils;
@@ -48,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=800',
   ];
 
-  File? _selectedProfileImage;
+  Uint8List? _selectedProfileImage;
 
   final List<InterestTag> _allInterests = [
     InterestTag(label: 'Coffee', icon: Assets.icons.coffee, isSelected: true),
@@ -75,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     ),
   ];
 
-  File? _selectedImage;
+  Uint8List? _selectedImage;
   int _selectedTabIndex = 0;
 
   bool _isEditable = false;
@@ -202,9 +204,11 @@ class _ProfileScreenState extends State<ProfileScreen>
       children: [
         CircleAvatar(
           radius: 60,
-          backgroundImage: const NetworkImage(
-            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-          ),
+          backgroundImage: _selectedProfileImage != null
+              ? MemoryImage(_selectedProfileImage!)
+              : NetworkImage(
+                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
+                ),
         ),
         if (_isEditable)
           GestureDetector(
@@ -213,10 +217,14 @@ class _ProfileScreenState extends State<ProfileScreen>
                 final image = await utils.pickSingleImage(
                   context: context,
                   source: imageSource,
+                  compress: true,
                 );
-              });
-              setState(() {
-                
+
+                if (image != null) {
+                  setState(() {
+                    _selectedProfileImage = image;
+                  });
+                }
               });
             },
             child: Container(
@@ -420,25 +428,19 @@ class _ProfileScreenState extends State<ProfileScreen>
       photoItems.add(
         GestureDetector(
           onTap: () async {
-            final pickedImage = await CustomImagePicker.pickImage();
-            if (pickedImage != null) {
-              setState(() {
-                _selectedImage = File(pickedImage.path);
-              });
-            }
+            utils.showImagePickerOptions(context, (imageSource) async {
+              final image = await utils.pickSingleImage(
+                context: context,
+                source: imageSource,
+                compress: true,
+              );
 
-            // showDialog(
-            //   context: context,
-            //   builder: (context) {
-            //     return AlertDialog(
-            //       content: Row(
-            //         children: [
-            //           Icon(Icons.camera_alt, color: AppColors.primary),
-            //         ],
-            //       ),
-            //     );
-            //   },
-            // );
+              if (image != null) {
+                setState(() {
+                  _selectedImage = image;
+                });
+              }
+            });
           },
           child: DottedBorder(
             options: RoundedRectDottedBorderOptions(
@@ -466,7 +468,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     )
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(16.r),
-                      child: Image.file(
+                      child: Image.memory(
                         _selectedImage!,
                         fit: BoxFit.cover,
                         width: width,
@@ -523,64 +525,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                   onTap: () {
                     showDialog(
                       context: context,
-                      builder: (context) => AlertDialog(
-                        elevation: 0,
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        title: Container(
-                          padding: EdgeInsets.all(8.w),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 8,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: Assets.icons.delete.svg(
-                            width: 32.w,
-                            height: 32.h,
-                            color: Colors.red.shade600,
-                          ),
-                        ),
-                        content: Text(
-                          'Are you sure you want to delete this photo?',
-                        ),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: Text(
-                              'Cancel',
-                              style: TextStyle(color: AppColors.primaryVariant),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              setState(() {
-                                _photos.remove(item);
-                              });
-                              AppSnackbar.show(
-                                message: "Your photo has been deleted",
-                                type: SnackType.warning,
-                              );
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              'Delete',
-                              style: TextStyle(color: Colors.red.shade600),
-                            ),
-                          ),
-                        ],
-                      ),
+                      builder: (context) =>
+                          _buildImageDeleteAlertDialog(context, item),
                     );
                   },
                   child: Container(
-                    padding: EdgeInsets.all(10.w),
+                    padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: Colors.white.withAlpha(125),
@@ -592,9 +542,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                         ),
                       ],
                     ),
-                    child: Assets.icons.delete.svg(
-                      width: 20.w,
-                      height: 20.h,
+                    child: Assets.icons.trash.svg(
+                      width: 24.w,
+                      height: 24.h,
                       color: Colors.red.shade600,
                     ),
                   ),
@@ -608,24 +558,102 @@ class _ProfileScreenState extends State<ProfileScreen>
     return Wrap(spacing: 12.w, runSpacing: 12.w, children: photoItems);
   }
 
+  Widget _buildImageDeleteAlertDialog(BuildContext context, String item) {
+    return AlertDialog(
+      elevation: 0,
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
+      title: Container(
+        padding: EdgeInsets.all(8.w),
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black12,
+              blurRadius: 8,
+              offset: Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Assets.icons.trash.svg(
+          width: 32.w,
+          height: 32.h,
+          color: Colors.red.shade600,
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 18.h,
+        children: [
+          Text('Are you sure you want to delete this photo?'),
+          SizedBox(
+            height: 24.h,
+            child: Row(
+              spacing: 24.w,
+              children: [
+                Expanded(
+                  child: CustomElevatedButton(
+                    onTap: () => Navigator.pop(context),
+                    buttonText: 'Cancel',
+                  ),
+                ),
+                Expanded(
+                  child: PrimaryButton.text(
+                    onPressed: () {
+                      setState(() {
+                        _photos.remove(item);
+                        Navigator.pop(context);
+                      });
+                    },
+                    text: 'Delete',
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildInterestSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Text(
-            'Interests',
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w400,
-              color: Color(0xff555555),
-            ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Interests',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xff555555),
+                ),
+              ),
+              // Add new interest button
+              GestureDetector(
+                onTap: () => _showAddInterestDialog(),
+                child: Container(
+                  padding: EdgeInsets.all(6.w),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16.r),
+                    border: Border.all(color: Colors.grey[400]!, width: 1.5),
+                    gradient: AppColors.primaryGradientRotated,
+                  ),
+                  child: Icon(Icons.add, color: Colors.white, size: 20.sp),
+                ),
+              ),
+            ],
           ),
         ),
         SizedBox(height: 8.h),
         Container(
-          width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Wrap(
             spacing: 12.w,
@@ -647,6 +675,121 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
         ),
       ],
+    );
+  }
+
+  void _showAddInterestDialog() {
+    final TextEditingController _newInterestController =
+        TextEditingController();
+    SvgGenImage? selectedIcon;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            // Helper moved inside StatefulBuilder
+            Widget _buildSelectableIcon(SvgGenImage icon) {
+              final bool isSelected = selectedIcon == icon;
+              return GestureDetector(
+                onTap: () {
+                  setStateDialog(() {
+                    selectedIcon = icon;
+                  });
+                },
+                child: Container(
+                  padding: EdgeInsets.all(8.w),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+
+                gradient: isSelected ? AppColors.primaryGradient : null,
+                  ),
+                  child: icon.svg(height: 24.h, width: 24.h,color: isSelected ? Colors.white : null),
+                ),
+              );
+            }
+
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              backgroundColor: AppColors.backgroundVariant,
+              title: Text("Add New Interest"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: _newInterestController,
+                    autofocus: true,
+                    decoration: InputDecoration(
+                      hintText: "Enter interest name",
+                      hintStyle: TextStyle(
+                        color: Colors.grey[600],
+                        fontSize: 14,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: Colors.grey[400]!,
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                  Wrap(
+                    spacing: 12.w,
+                    children: [
+                      _buildSelectableIcon(Assets.icons.coffee),
+                      _buildSelectableIcon(Assets.icons.music),
+                      _buildSelectableIcon(Assets.icons.book),
+                      _buildSelectableIcon(Assets.icons.community),
+                    ],
+                  ),
+                  SizedBox(height: 18.h),
+                  SizedBox(
+                    height: 28.h,
+                    child: Row(
+                      spacing: 24.w,
+                      children: [
+                        Expanded(
+                          child: CustomElevatedButton(
+                            onTap: () => Navigator.pop(context),
+                            buttonText: 'Cancel',
+                          ),
+                        ),
+                        Expanded(
+                          child: PrimaryButton.text(
+                            onPressed: () {
+                              final newInterest = _newInterestController.text
+                                  .trim();
+                              if (newInterest.isNotEmpty) {
+                                setState(() {
+                                  _allInterests.add(
+                                    InterestTag(
+                                      label: newInterest,
+                                      icon:
+                                          selectedIcon ??
+                                          Assets.icons.community,
+                                      isSelected: true,
+                                    ),
+                                  );
+                                });
+                                Navigator.pop(context);
+                              }
+                            },
+                            text: 'Add',
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

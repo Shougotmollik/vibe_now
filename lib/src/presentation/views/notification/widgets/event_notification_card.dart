@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
-import 'package:vibe_now/src/presentation/model/community_notification.dart';
+import 'package:vibe_now/model/community_notification.dart';
 import 'package:vibe_now/src/presentation/views/notification/widgets/animated_dialog_content.dart';
 
 class EventNotificationCard extends StatefulWidget {

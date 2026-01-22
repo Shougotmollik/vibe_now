@@ -114,7 +114,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                   LayoutBuilder(
                     builder: (context, constraints) {
                       final trackWidth = constraints.maxWidth;
-                      final thumbPercent = (distance - 100) / (5000 - 100);
+                      final thumbPercent = (distance - 100) / (10000 - 100);
 
                       return Stack(
                         alignment: Alignment.centerLeft,
@@ -155,7 +155,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                             ),
                             child: Slider(
                               min: 100,
-                              max: 5000,
+                              max: 10000,
                               divisions: 49,
                               value: distance,
                               label: distance < 1000
@@ -171,7 +171,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [Text('100 m'), Text('5 km')],
+                    children: const [Text('100 m'), Text('10 km')],
                   ),
                 ],
               ),

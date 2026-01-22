@@ -6,7 +6,7 @@ import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/notification/widgets/community_notification_card.dart';
 import 'package:vibe_now/src/presentation/views/notification/widgets/event_notification_card.dart';
 import 'package:vibe_now/src/presentation/views/notification/widgets/wave_notification_card.dart';
-import 'package:vibe_now/src/presentation/model/community_notification.dart';
+import 'package:vibe_now/model/community_notification.dart';
 
 //filter enum here
 enum CommunityFilter { all, request, interest }

@@ -15,6 +15,7 @@ class QRVerificationScreen extends StatefulWidget {
 
 class _QRVerificationScreenState extends State<QRVerificationScreen> {
   bool isQRCodeTab = true;
+  
 
   @override
   Widget build(BuildContext context) {

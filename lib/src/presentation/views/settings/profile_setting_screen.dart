@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/gen/assets.gen.dart' as svgs;
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
@@ -23,6 +24,7 @@ class ProfileSettingScreen extends StatefulWidget {
 }
 
 class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
+  final TextEditingController _passwordTEController = TextEditingController();
   // File? _selectedImage;
 
   @override
@@ -37,7 +39,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header
-                CustomAppBar(title: 'Account Settings'),
+                CustomAppBar(title: 'Account Information'),
                 SizedBox(height: 16.h),
                 // Profile Section
                 Center(
@@ -132,6 +134,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
 
   Widget _buildDeleteDialog(BuildContext context) {
     return AlertDialog(
+      backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       contentPadding: EdgeInsets.all(16.w),
       content: Column(
@@ -144,7 +147,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
               shape: BoxShape.circle,
             ),
             child: Center(
-              child: Assets.icons.delete.svg(
+              child: Assets.icons.trash.svg(
                 width: 32.w,
                 height: 32.w,
                 color: Colors.white,
@@ -177,107 +180,103 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
           SizedBox(height: 24.h),
 
           // Buttons
-          Row(
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    "Cancel",
-                    style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+          SizedBox(
+            height: 28.h,
+            child: Row(
+              spacing: 24.w,
+              children: [
+                Expanded(
+                  child: CustomElevatedButton(
+                    onTap: () => Navigator.pop(context),
+                    buttonText: 'Cancel',
                   ),
                 ),
-              ),
-              Expanded(
-                child: TextButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        contentPadding: EdgeInsets.all(16.w),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              "Confirm your password to delete your account",
-                              style: TextStyle(
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
-                            ),
 
-                            SizedBox(height: 36.h),
-
-                            TextField(
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                hintText: "Enter your password",
-                                hintStyle: TextStyle(
-                                  color: Colors.grey,
-                                  fontSize: 14.sp,
+                Expanded(
+                  child: PrimaryButton.text(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          contentPadding: EdgeInsets.all(16.w),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Confirm your password to delete your account",
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
                                 ),
                               ),
-                            ),
 
-                            SizedBox(height: 18.h),
+                              SizedBox(height: 36.h),
 
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text(
-                                      "Cancel",
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: Colors.grey,
-                                      ),
+                              TextFormField(
+                                obscureText: true,
+                                controller: _passwordTEController,
+                                decoration: InputDecoration(
+                                  hintText: "Enter your password",
+                                  hintStyle: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14.sp,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    borderSide: BorderSide(
+                                      color: Colors.grey,
+                                      width: 1.w,
                                     ),
                                   ),
                                 ),
-                                Expanded(
-                                  child: TextButton(
-                                    onPressed: () {
-                                      context.pushNamed(
-                                        RouteNames.reasonScreen,
-                                      );
-                                      context.pop();
-                                      context.pop();
-                                    },
-                                    child: Text(
-                                      "Delete",
-                                      style: TextStyle(
-                                        fontSize: 16.sp,
-                                        color: Colors.red,
+                              ),
+
+                              SizedBox(height: 18.h),
+
+                              SizedBox(
+                                height: 28.h,
+                                child: Row(
+                                  spacing: 24.w,
+                                  children: [
+                                    Expanded(
+                                      child: CustomElevatedButton(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        buttonText: 'Cancel',
                                       ),
                                     ),
-                                  ),
+                                    Expanded(
+                                      child: PrimaryButton.text(
+                                        onPressed: () {
+                                          context.pushNamed(
+                                            RouteNames.reasonScreen,
+                                          );
+                                          Navigator.pop(context);
+                                          Navigator.pop(context);
+                                          _passwordTEController.clear();
+                                        },
+                                        text: 'Delete',
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ],
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-
-                    // Navigator.pop(context);
-                  },
-                  child: Text(
-                    "Delete",
-                    style: TextStyle(fontSize: 16.sp, color: Colors.red),
+                      );
+                    },
+                    text: 'Delete',
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
