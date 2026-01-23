@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -187,7 +188,8 @@ class _EventScreenState extends State<EventScreen> {
         CustomAppBar(title: 'Events'),
         Spacer(),
         GestureDetector(
-          onTap: () => context.pushNamed(RouteNames.qrVerificationScreen),
+          onTap: () => context.pushNamed(RouteNames.qrVerificationScreen,
+              extra: QRContext.event),
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(

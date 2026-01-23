@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
+import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/src/presentation/views/qr_verification/qr_screen.dart';
 
 class QRVerificationScreen extends StatefulWidget {
-  const QRVerificationScreen({super.key});
+  final QRContext qrContext;
+  const QRVerificationScreen({super.key, required this.qrContext});
 
   @override
   State<QRVerificationScreen> createState() => _QRVerificationScreenState();
@@ -15,7 +17,38 @@ class QRVerificationScreen extends StatefulWidget {
 
 class _QRVerificationScreenState extends State<QRVerificationScreen> {
   bool isQRCodeTab = true;
-  
+  String get infoText {
+    switch (widget.qrContext) {
+      case QRContext.community:
+        return 'Scan this QR code to join a community or connect with other members.';
+      case QRContext.event:
+        return 'Scan this QR code for event access or verification.';
+      case QRContext.chats:
+        return 'Scan this QR code to create a direct personal connection.';
+    }
+  }
+
+  String get titleText {
+    switch (widget.qrContext) {
+      case QRContext.community:
+        return 'Join a Community';
+      case QRContext.event:
+        return 'Event Access & Verification';
+      case QRContext.chats:
+        return 'Connect with Chats';
+    }
+  }
+
+  String get subtitleText {
+    switch (widget.qrContext) {
+      case QRContext.community:
+        return 'Let others scan this code to join the community';
+      case QRContext.event:
+        return 'Present this code for event entry or verification';
+      case QRContext.chats:
+        return 'Let them scan to connect with you instantly';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +171,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'To join the community chat, simply scan each other\'s QR codes to connect.',
+                      infoText,
                       style: TextStyle(
                         color: Colors.grey[800],
                         fontSize: 13.sp,
@@ -151,7 +184,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             ),
             const SizedBox(height: 32),
             Text(
-              'Show Your QR Code',
+              titleText,
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w600,
@@ -165,7 +198,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
                 Icon(Icons.qr_code_2, color: Colors.grey[400], size: 16.sp),
                 const SizedBox(width: 6),
                 Text(
-                  'Let them scan this code',
+                  subtitleText,
                   style: TextStyle(color: Colors.grey[600], fontSize: 14.sp),
                 ),
               ],

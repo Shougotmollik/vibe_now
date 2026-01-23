@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/src/presentation/views/auth/intro_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/sign_in_screen.dart';
@@ -99,7 +100,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/qr-verification-screen',
       name: RouteNames.qrVerificationScreen,
-      builder: (context, state) => const QRVerificationScreen(),
+      builder: (context, state) {
+        final qrContext = state.extra as QRContext;
+        return QRVerificationScreen(qrContext: qrContext);
+      },
     ),
     GoRoute(
       path: '/subscription-screen',

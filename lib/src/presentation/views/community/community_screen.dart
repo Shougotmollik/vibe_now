@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -222,7 +223,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
         CustomAppBar(title: 'Community'),
         Spacer(),
         GestureDetector(
-          onTap: () => context.pushNamed(RouteNames.qrVerificationScreen),
+          onTap: () => context.pushNamed(
+            RouteNames.qrVerificationScreen,
+            extra: QRContext.community,
+          ),
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
