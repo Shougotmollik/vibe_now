@@ -50,6 +50,17 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
     }
   }
 
+  String get scanMessage {
+    switch (widget.qrContext) {
+      case QRContext.community:
+        return 'Scan the QR code to join the community and start connecting.';
+      case QRContext.event:
+        return 'Scan the QR code to securely access the event.';
+      case QRContext.chats:
+        return 'Scan the QR code to connect instantly through chat.';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -263,7 +274,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Share this QR code with your contact both of you need to scan each other\'s codes to unlock messaging.',
+                      scanMessage,
                       style: TextStyle(
                         color: Colors.grey[800],
                         fontSize: 13.sp,
