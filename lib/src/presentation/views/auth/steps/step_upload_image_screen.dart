@@ -10,6 +10,7 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/auth/steps/step_location_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/step_page.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/step_title.dart';
+import 'package:vibe_now/utils.dart' as utils;
 
 class StepUploadImageScreen extends StatefulWidget {
   final int step;
@@ -33,16 +34,29 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
     }
 
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery,
-        imageQuality: 85,
-      );
+      // final XFile? pickedFile = await _picker.pickImage(
+      //   source: ImageSource.gallery,
+      //   imageQuality: 85,
+      // );
 
-      if (pickedFile != null) {
-        setState(() {
-          _selectedImages.add(File(pickedFile.path));
-        });
-      }
+      // if (pickedFile != null) {
+      //   setState(() {
+      //     _selectedImages.add(File(pickedFile.path));
+      //   });
+      // }
+
+      utils.showImagePickerOptions(context, (imageSource) async {
+        final file = await utils.pickSingleImage(
+          context: context,
+          source: imageSource,
+        );
+
+        if (file != null) {
+          setState(() {
+            _selectedImages.add(file);
+          });
+        }
+      });
     } catch (e) {
       ScaffoldMessenger.of(
         context,
@@ -82,7 +96,7 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
           },
           text: 'Continue',
         ),
-        isSkippable: true,
+        isSkippable: false,
         onSkip: () {
           Navigator.push(
             context,

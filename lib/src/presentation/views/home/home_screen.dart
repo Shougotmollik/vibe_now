@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -525,14 +524,18 @@ class _MapHomeScreenState extends State<HomeScreen>
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: user.isWaved == true
-                            ? null
-                            : () {
-                                setState(() {
-                                  user.isWaved = true;
-                                });
-                                // Navigator.of(context).pop();
-                              },
+                        onTap: () {
+                          if (user.isWaved == true) return;
+
+                          print('');
+                          print('Waved');
+                          print('');
+
+                          setState(() {
+                            user.isWaved = true;
+                          });
+                          // Navigator.of(context).pop();
+                        },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
@@ -559,15 +562,15 @@ class _MapHomeScreenState extends State<HomeScreen>
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                        color: Colors.grey.shade200,
-                      ),
-                      child: Assets.icons.chatting.svg(),
-                    ),
+                    // const SizedBox(width: 12),
+                    // Container(
+                    //   padding: const EdgeInsets.all(14),
+                    //   decoration: BoxDecoration(
+                    //     borderRadius: BorderRadius.circular(14),
+                    //     color: Colors.grey.shade200,
+                    //   ),
+                    //   child: Assets.icons.chatting.svg(),
+                    // ),
                   ],
                 ),
 

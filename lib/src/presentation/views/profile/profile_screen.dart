@@ -50,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?w=800',
   ];
 
-  Uint8List? _selectedProfileImage;
+  File? _selectedProfileImage;
 
   final List<InterestTag> _allInterests = [
     InterestTag(label: 'Coffee', icon: Assets.icons.coffee, isSelected: true),
@@ -77,7 +77,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     ),
   ];
 
-  Uint8List? _selectedImage;
+  File? _selectedImage;
   int _selectedTabIndex = 0;
 
   bool _isEditable = false;
@@ -205,7 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         CircleAvatar(
           radius: 60,
           backgroundImage: _selectedProfileImage != null
-              ? MemoryImage(_selectedProfileImage!)
+              ? FileImage(_selectedProfileImage!)
               : NetworkImage(
                   'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
                 ),
@@ -468,7 +468,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     )
                   : ClipRRect(
                       borderRadius: BorderRadius.circular(16.r),
-                      child: Image.memory(
+                      child: Image.file(
                         _selectedImage!,
                         fit: BoxFit.cover,
                         width: width,
@@ -702,9 +702,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
 
-                gradient: isSelected ? AppColors.primaryGradient : null,
+                    gradient: isSelected ? AppColors.primaryGradient : null,
                   ),
-                  child: icon.svg(height: 24.h, width: 24.h,color: isSelected ? Colors.white : null),
+                  child: icon.svg(
+                    height: 24.h,
+                    width: 24.h,
+                    color: isSelected ? Colors.white : null,
+                  ),
                 ),
               );
             }

@@ -37,7 +37,7 @@ Future<Uint8List> compressImage(
   return compressedData;
 }
 
-Future<Uint8List?> pickSingleImage({
+Future<File?> pickSingleImage({
   required BuildContext context,
   required ImageSource source,
   bool compress = true,
@@ -85,13 +85,25 @@ Future<Uint8List?> pickSingleImage({
   // } else {
   //   image = await File(filePath).readAsBytes();
   // }
-  final image = await File(filePath).readAsBytes();
+  
+  final imageFile = File(filePath);
+
   if (compress) {
-    final Uint8List compressedImage = await compressImage(image, 400);
-    return compressedImage;
+    final Uint8List imageData = await imageFile.readAsBytes();
+    final Uint8List compressedImageData = await compressImage(imageData, 400);
+
+    final tempDir = await getTemporaryDirectory();
+
+    final filePath =
+        '${tempDir.path}/compressed_${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final compressedFile = File(filePath);
+
+    await compressedFile.writeAsBytes(compressedImageData, flush: true);
+
+    return compressedFile;
   }
 
-  return image;
+  return imageFile;
 }
 
 Future<List<File>?> pickImageFromGallery({
@@ -196,7 +208,7 @@ void showImagePickerOptions(
                 child: Center(
                   child: SvgPicture.string(
                     galleryIcon,
-                    color:  Color(0xff242424),
+                    color: Color(0xff242424),
                     width: 72.w,
                     fit: BoxFit.fitWidth,
                   ),
