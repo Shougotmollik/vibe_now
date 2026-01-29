@@ -20,6 +20,21 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isFieldsFilled = true;
+
+  @override
+  void initState() {
+    _passwordController.addListener(_onPasswordChanged);
+    super.initState();
+  }
+
+  void _onPasswordChanged() {
+    setState(() {
+      _isFieldsFilled =
+          _emailController.text.trim().isEmpty &&
+          _passwordController.text.trim().isEmpty;
+    });
+  }
 
   @override
   void dispose() {
@@ -41,7 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 72.h),
+                  SizedBox(height: 58.h),
                   AuthTitle(title: 'Sign Up', subtitle: 'Create your account'),
                   SizedBox(height: 36.h),
                   CustomTextFormField(
@@ -56,8 +71,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(height: 24.h),
                   PrimaryButton.text(
-                    onPressed: () => context.goNamed(RouteNames.stepNameScreen),
+                    onPressed: _isFieldsFilled
+                        ? () {}
+                        : () => context.goNamed(RouteNames.stepNameScreen),
                     text: 'Get Started',
+                    isEnabled: !_isFieldsFilled,
                   ),
                   SizedBox(height: 24.h),
                   Text(

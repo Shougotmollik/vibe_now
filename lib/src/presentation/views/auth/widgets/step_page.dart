@@ -48,7 +48,7 @@ class StepPage extends StatelessWidget {
               ? TextButton(
                   onPressed: onSkip,
                   child: Text(
-                    'Skip',
+                    'later',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: AppColors.primary,
                       fontWeight: FontWeight.w600,

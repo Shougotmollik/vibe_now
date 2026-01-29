@@ -18,6 +18,25 @@ class StepBirthdayScreen extends StatefulWidget {
 
 class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
   final TextEditingController _birthdayController = TextEditingController();
+  bool _isbirthdayEmpty = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _birthdayController.addListener(_onBirthdayChanged);
+  }
+
+  void _onBirthdayChanged() {
+    setState(() {
+      _isbirthdayEmpty = _birthdayController.text.trim().isEmpty;
+    });
+  }
+
+  @override
+  void dispose() {
+    _birthdayController.dispose();
+    super.dispose();
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -36,27 +55,23 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
     return StepPage(
       currentStep: widget.step,
       footer: PrimaryButton.text(
-        onPressed: () {
-          if (_birthdayController.text.isNotEmpty) {
-            Navigator.push(
-              context,
-              PageRouteBuilder(
-                transitionDuration: Duration.zero,
-                reverseTransitionDuration: Duration.zero,
-                pageBuilder: (_, __, ___) =>
-                    StepGenderScreen(step: widget.step + 1),
-              ),
-            );
-          } else {
-            AppSnackbar.show(
-              message: 'Please enter your birthday',
-              type: SnackType.info,
-            );
-          }
-        },
+        onPressed: _isbirthdayEmpty
+            ? () {}
+            : () {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                    pageBuilder: (_, _, _) =>
+                        StepGenderScreen(step: widget.step + 1),
+                  ),
+                );
+              },
         text: 'Continue',
+        isEnabled: !_isbirthdayEmpty,
       ),
-      isSkippable: false,
+      isSkippable: true,
       onSkip: () {
         Navigator.push(
           context,

@@ -103,10 +103,87 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                   context,
                   title: 'Pause Your Account',
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DeleteReasonScreen(),
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => DeleteReasonScreen(),
+                    //   ),
+                    // );
+
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        contentPadding: EdgeInsets.all(16.w),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "Confirm your password to pause your account",
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+
+                            SizedBox(height: 36.h),
+
+                            TextFormField(
+                              obscureText: true,
+                              controller: _passwordTEController,
+                              decoration: InputDecoration(
+                                hintText: "Enter your password",
+                                hintStyle: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14.sp,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                    width: 1.w,
+                                  ),
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(height: 18.h),
+
+                            SizedBox(
+                              height: 28.h,
+                              child: Row(
+                                spacing: 24.w,
+                                children: [
+                                  Expanded(
+                                    child: CustomElevatedButton(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      buttonText: 'Cancel',
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: PrimaryButton.text(
+                                      onPressed: () {
+                                        context.pushNamed(
+                                          RouteNames.reasonScreen,
+                                        );
+                                        Navigator.pop(context);
+                                        // Navigator.pop(context);
+                                        _passwordTEController.clear();
+                                      },
+                                      text: 'Delete',
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   },

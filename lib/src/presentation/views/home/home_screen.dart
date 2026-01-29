@@ -544,12 +544,25 @@ class _MapHomeScreenState extends State<HomeScreen>
                                 : AppColors.primaryGradientRotated,
                           ),
                           child: Center(
-                            child: Text(
-                              user.isWaved == true ? 'Waved👋' : 'Wave 👋',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: 4.w,
+                              children: [
+                                Text(
+                                  user.isWaved == true ? 'Waved' : 'Wave',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Assets.icons.handWave.svg(
+                                  width: 14.w,
+                                  height: 14.h,
+                                  color: AppColors.onPrimary,
+                                ),
+                              ],
                             ),
                           ),
                         ),

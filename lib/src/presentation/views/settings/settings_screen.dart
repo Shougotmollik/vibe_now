@@ -211,11 +211,23 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SizedBox(height: 12.h),
 
                     _buildSwitchItem(
+                      icon: Assets.icons.messageCircleColor,
+                      iconColor: Colors.purple,
+                      title: 'Messages',
+                      value: messages,
+                      isTopRound: true,
+                      onChanged: (val) {
+                        setState(() {
+                          messages = val;
+                        });
+                      },
+                    ),
+
+                    _buildSwitchItem(
                       icon: Assets.icons.notificationColor,
                       iconColor: Colors.purple,
                       title: 'Waves',
                       value: waves,
-                      isTopRound: true,
                       onChanged: (val) {
                         setState(() {
                           waves = val;
@@ -224,21 +236,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
 
                     _buildSwitchItem(
-                      icon: Assets.icons.colorPaletteColor,
+                      icon: Assets.icons.communityColor,
                       iconColor: Colors.purple,
                       title: 'Community',
-                      value: matches,
-                      onChanged: (val) {
-                        setState(() {
-                          matches = val;
-                        });
-                      },
-                    ),
-
-                    _buildSwitchItem(
-                      icon: Assets.icons.messageCircleColor,
-                      iconColor: Colors.purple,
-                      title: 'Messages',
                       value: messages,
                       onChanged: (val) {
                         setState(() {

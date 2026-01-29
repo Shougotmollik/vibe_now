@@ -7,12 +7,14 @@ class PrimaryButton extends StatelessWidget {
   final Widget? _child;
   final String? _text;
   final Gradient? gradient;
+  final bool isEnabled;
 
   const PrimaryButton({
     super.key,
     required this.onPressed,
     required Widget child,
     this.gradient,
+    this.isEnabled = true,
   }) : _child = child,
        _text = null;
 
@@ -21,6 +23,7 @@ class PrimaryButton extends StatelessWidget {
     required this.onPressed,
     required String text,
     this.gradient,
+    this.isEnabled = true,
   }) : _child = null,
        _text = text;
 
@@ -31,7 +34,7 @@ class PrimaryButton extends StatelessWidget {
         Text(
           _text!,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: Colors.white,
+            color: isEnabled ? Colors.white : Colors.grey.shade600,
             fontWeight: FontWeight.w600,
             fontSize: 16.sp,
           ),
@@ -40,7 +43,8 @@ class PrimaryButton extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        gradient: gradient ?? AppColors.primaryGradient,
+        gradient: isEnabled ? (gradient ?? AppColors.primaryGradient) : null,
+        color: isEnabled ? null : Color(0xffC4A8FF),
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: ElevatedButton(
@@ -52,7 +56,7 @@ class PrimaryButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(24.r),
           ),
         ),
-        onPressed: onPressed,
+        onPressed:isEnabled ? onPressed: null,
         child: child,
       ),
     );

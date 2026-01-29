@@ -35,7 +35,8 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
           padding: EdgeInsets.all(16.w),
           child: Column(
             children: [
-              _buildAppBar(),
+              // _buildAppBar(),
+              CustomAppBar(title: "Reason", canBack: true),
 
               SizedBox(height: 14.h),
 
@@ -73,7 +74,12 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                     ),
                   ),
                   Expanded(
-                    child: PrimaryButton.text(onPressed: () {}, text: 'Save'),
+                    child: PrimaryButton.text(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      text: 'Save',
+                    ),
                   ),
                 ],
               ),
@@ -148,26 +154,25 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        CustomAppBar(title: "Reason"),
-        GestureDetector(
-          onTap: () => Navigator.pop(context),
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(40.r),
-            ),
+        // GestureDetector(
+        //   onTap: () => Navigator.pop(context),
+        //   child: Container(
+        //     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+        //     decoration: BoxDecoration(
+        //       gradient: AppColors.primaryGradient,
+        //       borderRadius: BorderRadius.circular(40.r),
+        //     ),
 
-            child: Text(
-              'Send',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w400,
-              ),
-            ),
-          ),
-        ),
+        //     child: Text(
+        //       'Send',
+        //       style: TextStyle(
+        //         color: Colors.white,
+        //         fontSize: 16.sp,
+        //         fontWeight: FontWeight.w400,
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }

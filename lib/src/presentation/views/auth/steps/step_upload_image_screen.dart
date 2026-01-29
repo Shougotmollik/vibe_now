@@ -21,7 +21,6 @@ class StepUploadImageScreen extends StatefulWidget {
 }
 
 class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
-  final ImagePicker _picker = ImagePicker();
   final List<File> _selectedImages = [];
   final int _maxImages = 4;
 
@@ -34,17 +33,6 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
     }
 
     try {
-      // final XFile? pickedFile = await _picker.pickImage(
-      //   source: ImageSource.gallery,
-      //   imageQuality: 85,
-      // );
-
-      // if (pickedFile != null) {
-      //   setState(() {
-      //     _selectedImages.add(File(pickedFile.path));
-      //   });
-      // }
-
       utils.showImagePickerOptions(context, (imageSource) async {
         final file = await utils.pickSingleImage(
           context: context,
@@ -95,6 +83,7 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
             }
           },
           text: 'Continue',
+          isEnabled: _selectedImages.isNotEmpty,
         ),
         isSkippable: false,
         onSkip: () {

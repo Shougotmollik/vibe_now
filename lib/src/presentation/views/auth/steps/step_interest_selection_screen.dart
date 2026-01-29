@@ -67,6 +67,7 @@ class _StepInterestSelectionScreenState
             // }
           },
           text: 'Continue',
+          isEnabled: selectedIndexes.isNotEmpty,
         ),
         isSkippable: true,
         onSkip: () {

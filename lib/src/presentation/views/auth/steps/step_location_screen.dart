@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -50,9 +51,29 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
 
             const StepTitle(title: 'Choose Location', subtitle: ""),
 
-            SizedBox(height: 115.h),
+            // SizedBox(height: 115.h),
 
-            Assets.icons.locationIc.svg(width: 100.w, height: 100.h),
+            // Assets.icons.locationIc.svg(width: 100.w, height: 100.h),
+            Lottie.asset(
+              'assets/lottie/Location Pin.json',
+              height: 300.w,
+              width: 300.w,
+              delegates: LottieDelegates(
+                values: [
+                  // All fills
+                  ValueDelegate.color([
+                    '**',
+                    'Fill *',
+                  ], value: Color(0xFF6750A4)),
+
+                  // All strokes
+                  ValueDelegate.color([
+                    '**',
+                    'Stroke *',
+                  ], value: Color(0xFF6750A4)),
+                ],
+              ),
+            ),
 
             SizedBox(height: 24.h),
 

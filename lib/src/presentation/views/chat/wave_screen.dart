@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lottie/lottie.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/design_system.dart';
@@ -49,10 +50,16 @@ class _WaveScreenState extends State<WaveScreen> {
                   },
                 ),
               ),
-              SizedBox(height: 56.h),
+              // SizedBox(height: 56.h),
 
-              Text('👋', style: TextStyle(fontSize: 84.sp)),
-              SizedBox(height: 16.h),
+              // Text('👋', style: TextStyle(fontSize: 84.sp)),
+              Lottie.asset(
+                "assets/lottie/Hello Lottie.json",
+                height: 200.w,
+                fit: BoxFit.cover,
+                reverse: false,
+              ),
+              // SizedBox(height: 16.h),
 
               Text(
                 '$name sent you a wave!',

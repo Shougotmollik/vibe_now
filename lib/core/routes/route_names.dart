@@ -5,6 +5,10 @@ class RouteNames {
   static const String welcomeScreen = "welcomeScreen";
   static const String signUpScreen = "signUpScreen";
   static const String signInScreen = "signInScreen";
+  static const String otpVerificationScreen = "otpVerificationScreen";
+  static const String emailVerificationScreen = "emailVerificationScreen";
+  static const String newPasswordScreen = "newPasswordScreen";
+
   static const String signUpOnBoardingScreen = "signUpOnBoardingScreen";
   static const String stepNameScreen = "stepNameScreen";
 

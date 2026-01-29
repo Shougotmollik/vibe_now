@@ -266,6 +266,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/group2.svg
   SvgGenImage get group2 => const SvgGenImage('assets/icons/group2.svg');
 
+  /// File path: assets/icons/hand-wave.svg
+  SvgGenImage get handWave => const SvgGenImage('assets/icons/hand-wave.svg');
+
   /// File path: assets/icons/hi.svg
   SvgGenImage get hi => const SvgGenImage('assets/icons/hi.svg');
 
@@ -367,6 +370,9 @@ class $AssetsIconsGen {
   SvgGenImage get subscription =>
       const SvgGenImage('assets/icons/subscription.svg');
 
+  /// File path: assets/icons/trash_ic.svg
+  SvgGenImage get trashIc => const SvgGenImage('assets/icons/trash_ic.svg');
+
   /// File path: assets/icons/unchecked-circle.svg
   SvgGenImage get uncheckedCircle =>
       const SvgGenImage('assets/icons/unchecked-circle.svg');
@@ -445,6 +451,7 @@ class $AssetsIconsGen {
     gridColor,
     group,
     group2,
+    handWave,
     hi,
     iceCream,
     imagePicker,
@@ -473,6 +480,7 @@ class $AssetsIconsGen {
     sports,
     stashQuestion,
     subscription,
+    trashIc,
     uncheckedCircle,
     unchecked,
     uploadImage,
@@ -502,6 +510,19 @@ class $AssetsImagesGen {
   List<dynamic> get values => [dialog, openForCoffee, profilePicture];
 }
 
+class $AssetsLottieGen {
+  const $AssetsLottieGen();
+
+  /// File path: assets/lottie/Hello Lottie.json
+  String get helloLottie => 'assets/lottie/Hello Lottie.json';
+
+  /// File path: assets/lottie/Location Pin.json
+  String get locationPin => 'assets/lottie/Location Pin.json';
+
+  /// List of all assets
+  List<String> get values => [helloLottie, locationPin];
+}
+
 class $AssetsMapThemeGen {
   const $AssetsMapThemeGen();
 
@@ -515,16 +536,44 @@ class $AssetsMapThemeGen {
 class $AssetsImagesOnbordingGen {
   const $AssetsImagesOnbordingGen();
 
+  /// File path: assets/images/onbording/chat.png
+  AssetGenImage get chat =>
+      const AssetGenImage('assets/images/onbording/chat.png');
+
+  /// File path: assets/images/onbording/community.png
+  AssetGenImage get community =>
+      const AssetGenImage('assets/images/onbording/community.png');
+
   /// File path: assets/images/onbording/create_event.png
   AssetGenImage get createEvent =>
       const AssetGenImage('assets/images/onbording/create_event.png');
+
+  /// File path: assets/images/onbording/event.png
+  AssetGenImage get event =>
+      const AssetGenImage('assets/images/onbording/event.png');
+
+  /// File path: assets/images/onbording/home.png
+  AssetGenImage get home =>
+      const AssetGenImage('assets/images/onbording/home.png');
 
   /// File path: assets/images/onbording/map.png
   AssetGenImage get map =>
       const AssetGenImage('assets/images/onbording/map.png');
 
+  /// File path: assets/images/onbording/profile.png
+  AssetGenImage get profile =>
+      const AssetGenImage('assets/images/onbording/profile.png');
+
   /// List of all assets
-  List<AssetGenImage> get values => [createEvent, map];
+  List<AssetGenImage> get values => [
+    chat,
+    community,
+    createEvent,
+    event,
+    home,
+    map,
+    profile,
+  ];
 }
 
 class Assets {
@@ -534,6 +583,7 @@ class Assets {
   static const $AssetsFlagsGen flags = $AssetsFlagsGen();
   static const $AssetsIconsGen icons = $AssetsIconsGen();
   static const $AssetsImagesGen images = $AssetsImagesGen();
+  static const $AssetsLottieGen lottie = $AssetsLottieGen();
   static const $AssetsMapThemeGen mapTheme = $AssetsMapThemeGen();
 
   /// List of all assets

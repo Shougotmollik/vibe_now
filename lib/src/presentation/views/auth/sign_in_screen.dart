@@ -21,6 +21,22 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  bool _isFieldsFilled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _passwordController.addListener(_onPasswordChanged);
+  }
+
+  void _onPasswordChanged() {
+    setState(() {
+      _isFieldsFilled =
+          _emailController.text.trim().isEmpty &&
+          _passwordController.text.trim().isEmpty;
+    });
+  }
+
   @override
   void dispose() {
     _emailController.dispose();
@@ -41,7 +57,7 @@ class _SignInScreenState extends State<SignInScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(height: 72.h),
+                  SizedBox(height: 58.h),
                   AuthTitle(
                     title: 'Sign In',
                     subtitle: 'Enter you credentials to continue',
@@ -57,12 +73,31 @@ class _SignInScreenState extends State<SignInScreen> {
                     hintText: 'Enter your password',
                     isPassword: true,
                   ),
-                  SizedBox(height: 24.h),
+
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () {
+                        context.pushNamed(RouteNames.emailVerificationScreen);
+                      },
+                      child: Text(
+                        'Forgot Password?',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: AppColors.primary,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 18.h),
                   PrimaryButton.text(
-                    onPressed: () {
-                      context.goNamed(RouteNames.mainNavBar);
-                    },
+                    onPressed: _isFieldsFilled
+                        ? () {}
+                        : () {
+                            context.goNamed(RouteNames.mainNavBar);
+                          },
                     text: 'Get Started',
+                    isEnabled: !_isFieldsFilled,
                   ),
                   SizedBox(height: 24.h),
                   Text(

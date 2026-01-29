@@ -1,7 +1,10 @@
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/src/presentation/views/auth/email_verification_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/intro_screen.dart';
+import 'package:vibe_now/src/presentation/views/auth/new_password_screen.dart';
+import 'package:vibe_now/src/presentation/views/auth/otp_verification_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/sign_in_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/sign_up_screen.dart';
 import 'package:vibe_now/src/presentation/views/auth/splash_screen.dart';
@@ -49,6 +52,21 @@ final GoRouter router = GoRouter(
       path: '/signup',
       name: RouteNames.signUpScreen,
       builder: (context, state) => const SignUpScreen(),
+    ),
+    GoRoute(
+      path: '/email-verification',
+      name: RouteNames.emailVerificationScreen,
+      builder: (context, state) => const EmailVerificationScreen(),
+    ),
+    GoRoute(
+      path: '/otp-verification',
+      name: RouteNames.otpVerificationScreen,
+      builder: (context, state) => OtpVerificationScreen(),
+    ),
+    GoRoute(
+      path: '/new-password',
+      name: RouteNames.newPasswordScreen,
+      builder: (context, state) => const NewPasswordScreen(),
     ),
     GoRoute(
       path: '/step-name',

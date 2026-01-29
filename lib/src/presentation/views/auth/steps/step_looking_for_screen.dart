@@ -59,6 +59,7 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
             // }
           },
           text: 'Continue',
+          isEnabled: selectedIndexes.isNotEmpty,
         ),
         isSkippable: true,
         onSkip: () {
