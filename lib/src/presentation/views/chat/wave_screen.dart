@@ -89,8 +89,8 @@ class _WaveScreenState extends State<WaveScreen> {
                       Navigator.pop(context);
                     },
                     buttonText: 'Reject',
-                    btnColor: Colors.black87,
-                    textColor: Colors.white,
+                    btnColor: Colors.grey.shade300,
+                    textColor: Color(0xff181818),
                   ),
 
                   // SizedBox(width: 18.w),

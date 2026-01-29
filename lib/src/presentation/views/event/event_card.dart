@@ -154,7 +154,7 @@ class _EventCardState extends State<EventCard> {
                                 ? null
                                 : AppColors.primaryGradientRotated,
                             color: EventStatus.interested != currentStatus
-                                ? Colors.grey.shade200
+                                ? Color(0xffC4A8FF)
                                 : null,
                           ),
                           child: Center(

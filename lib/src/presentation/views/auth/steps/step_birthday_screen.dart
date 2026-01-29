@@ -37,18 +37,26 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
       currentStep: widget.step,
       footer: PrimaryButton.text(
         onPressed: () {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              transitionDuration: Duration.zero,
-              reverseTransitionDuration: Duration.zero,
-              pageBuilder: (_, _, _) => StepGenderScreen(step: widget.step + 1),
-            ),
-          );
+          if (_birthdayController.text.isNotEmpty) {
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                transitionDuration: Duration.zero,
+                reverseTransitionDuration: Duration.zero,
+                pageBuilder: (_, __, ___) =>
+                    StepGenderScreen(step: widget.step + 1),
+              ),
+            );
+          } else {
+            AppSnackbar.show(
+              message: 'Please enter your birthday',
+              type: SnackType.info,
+            );
+          }
         },
         text: 'Continue',
       ),
-      isSkippable: true,
+      isSkippable: false,
       onSkip: () {
         Navigator.push(
           context,

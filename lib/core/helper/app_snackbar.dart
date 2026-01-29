@@ -67,9 +67,9 @@ class SnackTheme {
       svg: SnackIcons.warning,
     ),
     SnackType.info: SnackConfig(
-      primaryColor: Color(0xFF1976D2),
-      backgroundColor: Color(0xFFE3F2FD),
-      textColor: Color(0xFF0D47A1),
+      primaryColor: Color(0xFF8200DB),
+      backgroundColor: Color(0xFFffffff),
+      textColor: Color(0xFF8200DB),
       svg: SnackIcons.info,
     ),
   };

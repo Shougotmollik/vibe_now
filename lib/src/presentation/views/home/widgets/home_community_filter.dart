@@ -14,11 +14,11 @@ class HomeCommunityFilter extends StatefulWidget {
 class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
   // Filter states
   double distance = 100;
-  String selectedDate = 'Today';
+  String selectedDate = 'All';
   List<String> selectedCategories = [];
 
   // Options
-  final List<String> dateOptions = ['Today', 'This Week', 'This Month'];
+  final List<String> dateOptions = ['All', 'Today', 'This Week', 'This Month'];
   final List<String> categories = [
     'Music',
     'Sports',

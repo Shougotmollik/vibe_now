@@ -235,7 +235,7 @@ class _CommunityCardState extends State<CommunityCard> {
                             ? null
                             : AppColors.primaryGradient,
                         color: CommunityStatus.interested != currentStatus
-                            ? Colors.grey.shade200
+                            ? Color(0xffC4A8FF)
                             : null,
                       ),
                       child: Center(
@@ -243,7 +243,7 @@ class _CommunityCardState extends State<CommunityCard> {
                           buttonText,
                           style: TextStyle(
                             color: CommunityStatus.interested != currentStatus
-                                ? Colors.grey.shade600
+                                ? Colors.white
                                 : Colors.white,
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,

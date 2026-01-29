@@ -637,6 +637,43 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
               // Add new interest button
+              // GestureDetector(
+              //   onTap: () => _showAddInterestDialog(),
+              //   child: Container(
+              //     padding: EdgeInsets.all(6.w),
+              //     decoration: BoxDecoration(
+              //       borderRadius: BorderRadius.circular(16.r),
+              //       border: Border.all(color: Colors.grey[400]!, width: 1.5),
+              //       gradient: AppColors.primaryGradientRotated,
+              //     ),
+              //     child: Icon(Icons.add, color: Colors.white, size: 20.sp),
+              //   ),
+              // ),
+            ],
+          ),
+        ),
+        SizedBox(height: 8.h),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Wrap(
+            spacing: 12.w,
+            runSpacing: 12.h,
+            children: [
+              ..._allInterests.map((item) {
+                return GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      item.isSelected = !item.isSelected;
+                    });
+                  },
+                  child: InterestChip(
+                    icon: item.icon,
+                    label: item.label,
+                    isSelected: item.isSelected,
+                  ),
+                );
+              }).toList(),
+
               GestureDetector(
                 onTap: () => _showAddInterestDialog(),
                 child: Container(
@@ -650,28 +687,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
             ],
-          ),
-        ),
-        SizedBox(height: 8.h),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Wrap(
-            spacing: 12.w,
-            runSpacing: 12.h,
-            children: _allInterests.map((item) {
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    item.isSelected = !item.isSelected;
-                  });
-                },
-                child: InterestChip(
-                  icon: item.icon,
-                  label: item.label,
-                  isSelected: item.isSelected,
-                ),
-              );
-            }).toList(),
           ),
         ),
       ],
@@ -758,8 +773,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                       children: [
                         Expanded(
                           child: CustomElevatedButton(
+                            btnColor: Colors.grey.shade300,
+                            textColor: Colors.black,
                             onTap: () => Navigator.pop(context),
                             buttonText: 'Cancel',
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
                         Expanded(

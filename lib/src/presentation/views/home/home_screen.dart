@@ -527,10 +527,6 @@ class _MapHomeScreenState extends State<HomeScreen>
                         onTap: () {
                           if (user.isWaved == true) return;
 
-                          print('');
-                          print('Waved');
-                          print('');
-
                           setState(() {
                             user.isWaved = true;
                           });
@@ -540,14 +536,11 @@ class _MapHomeScreenState extends State<HomeScreen>
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14),
+                            color: user.isWaved == true
+                                ? Color(0xffC4A8FF)
+                                : null,
                             gradient: user.isWaved == true
-                                ? LinearGradient(
-                                    colors: [
-                                      AppColors.onBackground,
-                                      AppColors.onBackground,
-                                      AppColors.onBackground,
-                                    ],
-                                  )
+                                ? null
                                 : AppColors.primaryGradientRotated,
                           ),
                           child: Center(

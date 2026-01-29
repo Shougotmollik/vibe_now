@@ -8,7 +8,10 @@ class CustomElevatedButton extends StatelessWidget {
     required this.buttonText,
     this.btnColor,
     this.textColor,
+    this.fontWeight,
   });
+
+  final FontWeight? fontWeight;
   final VoidCallback onTap;
   final String buttonText;
   final Color? btnColor;
@@ -32,7 +35,7 @@ class CustomElevatedButton extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.sp,
               color: textColor ?? Color(0xFFfefefe),
-              fontWeight: FontWeight.w500,
+              fontWeight: fontWeight ?? FontWeight.w500,
             ),
             textAlign: TextAlign.center,
           ),
