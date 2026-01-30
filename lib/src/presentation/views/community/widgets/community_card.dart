@@ -8,6 +8,7 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/src/presentation/views/community/community_details_screen.dart';
 import 'package:vibe_now/src/presentation/views/common/avatar_stack.dart';
+import 'package:vibe_now/src/presentation/views/community/widgets/community_animated_dialog.dart';
 
 class CommunityCard extends StatefulWidget {
   const CommunityCard({super.key, required this.community});
@@ -218,12 +219,56 @@ class _CommunityCardState extends State<CommunityCard> {
                   child: GestureDetector(
                     onTap: () {
                       setState(() {
-                        currentStatus = CommunityStatus.requested;
-                        AppSnackbar.show(
-                          message:
-                              "Send a request to the community creator to joint the community",
-                          type: SnackType.success,
-                        );
+                        // currentStatus = CommunityStatus.requested;
+                        // AppSnackbar.show(
+                        //   message:
+                        //       "Send a request to the community creator to joint the community",
+                        //   type: SnackType.success,
+                        // );
+
+                        if (currentStatus == CommunityStatus.requested) {
+                          currentStatus = CommunityStatus.interested;
+                          showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) {
+                              return Center(
+                                child: Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                  ),
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent,
+                                  child: CommunityAnimatedDialog(
+                                    content:
+                                        'Revoke your request to join the community?',
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else {
+                          currentStatus = CommunityStatus.requested;
+                          showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) {
+                              return Center(
+                                child: Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                  ),
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent,
+                                  child: CommunityAnimatedDialog(
+                                    content:
+                                        'Send a request to the community creator to joint the community',
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
                       });
                     },
                     child: Container(

@@ -5,6 +5,8 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/src/presentation/views/event/widgets/event_animated_dialog.dart';
+import 'package:vibe_now/src/presentation/views/notification/widgets/animated_dialog_content.dart';
 
 class EventCard extends StatefulWidget {
   const EventCard({super.key, required this.event});
@@ -137,12 +139,53 @@ class _EventCardState extends State<EventCard> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            currentStatus = EventStatus.requested;
-                            AppSnackbar.show(
-                              message:
-                                  "Send a request to the event creator to joint the event",
-                              type: SnackType.success,
-                            );
+                            if (currentStatus == EventStatus.requested) {
+                              currentStatus = EventStatus.interested;
+                              showDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (context) {
+                                  return Center(
+                                    child: Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          20.r,
+                                        ),
+                                      ),
+                                      elevation: 0,
+                                      backgroundColor: Colors.transparent,
+                                      child: EventAnimatedDialog(
+                                        content:
+                                            'Revoke your request to join the event',
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            } else {
+                              currentStatus = EventStatus.requested;
+                              showDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (context) {
+                                  return Center(
+                                    child: Dialog(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          20.r,
+                                        ),
+                                      ),
+                                      elevation: 0,
+                                      backgroundColor: Colors.transparent,
+                                      child: EventAnimatedDialog(
+                                        content:
+                                            'Send a request to the event creator to joint the event',
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            }
                           });
                         },
                         child: Container(

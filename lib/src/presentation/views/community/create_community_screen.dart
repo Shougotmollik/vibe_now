@@ -9,6 +9,7 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_time_picker.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_date_picker.dart';
+import 'package:vibe_now/src/presentation/views/community/widgets/community_animated_dialog.dart';
 
 class CreateCommunityScreen extends StatefulWidget {
   const CreateCommunityScreen({super.key});
@@ -147,11 +148,30 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             ),
             child: ElevatedButton(
               onPressed: () {
-                AppSnackbar.show(
-                  message: 'Your community has been created successfully',
-                  type: SnackType.success,
-                );
+                // AppSnackbar.show(
+                //   message: 'Your community has been created successfully',
+                //   type: SnackType.success,
+                // );
                 Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) {
+                    return Center(
+                      child: Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        child: CommunityAnimatedDialog(
+                          content:
+                              'Congratulations! Your community is now live.',
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,

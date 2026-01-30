@@ -9,6 +9,7 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_time_picker.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_date_picker.dart';
+import 'package:vibe_now/src/presentation/views/event/widgets/event_animated_dialog.dart';
 
 class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({super.key});
@@ -432,7 +433,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       children: [
         Expanded(
           child: OutlinedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -459,11 +462,30 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             ),
             child: ElevatedButton(
               onPressed: () {
-                AppSnackbar.show(
-                  message: 'your event has been created successfully',
-                  type: SnackType.success,
-                );
+                // AppSnackbar.show(
+                //   message: 'your event has been created successfully',
+                //   type: SnackType.success,
+                // );
                 Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) {
+                    return Center(
+                      child: Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        child: EventAnimatedDialog(
+                          content:
+                              'Congratulations! Your event has been created.',
+                        ),
+                      ),
+                    );
+                  },
+                );
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
