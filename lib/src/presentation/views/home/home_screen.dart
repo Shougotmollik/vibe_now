@@ -238,6 +238,7 @@ class _MapHomeScreenState extends State<HomeScreen>
                 totalAttending: '10',
                 isJoined: false,
                 isMyEvent: false,
+                accessType: EventAccessType.private,
               ),
             ),
           ),

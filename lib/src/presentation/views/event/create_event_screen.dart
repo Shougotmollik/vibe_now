@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
@@ -10,6 +11,8 @@ import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_time_picker.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_date_picker.dart';
 import 'package:vibe_now/src/presentation/views/event/widgets/event_animated_dialog.dart';
+
+enum EventAccessType { public, private }
 
 class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({super.key});
@@ -54,6 +57,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   String? selectedCategory;
   Set<String> selectedCategories = {};
 
+  EventAccessType _accessType = EventAccessType.public;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,6 +98,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 const SizedBox(height: 20),
                 _buildEventCategory(),
                 const SizedBox(height: 20),
+                _buildAccessLevel(),
+                const SizedBox(height: 20),
                 _buildSelectLocation(),
                 const SizedBox(height: 20),
                 _buildDateTimeRow(),
@@ -103,6 +110,114 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 const SizedBox(height: 32),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccessLevel() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Access Level',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        Container(
+          padding: EdgeInsets.all(4.w),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(14.r),
+          ),
+          child: Row(
+            children: [
+              _accessToggleItem(
+                label: 'Public',
+                icon: Icons.people_alt_outlined,
+                isSelected: _accessType == EventAccessType.public,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    _accessType = EventAccessType.public;
+                  });
+                },
+              ),
+              _accessToggleItem(
+                label: 'Private',
+                icon: Icons.lock_person_outlined,
+                isSelected: _accessType == EventAccessType.private,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    _accessType = EventAccessType.private;
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 6),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            _accessType == EventAccessType.public
+                ? 'Anyone can discover and join this event instantly without approval.'
+                : 'People will need your approval before they can join this event.',
+            textAlign: TextAlign.start,
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _accessToggleItem({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    IconData? icon,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeInOut,
+          padding: EdgeInsets.symmetric(vertical: 10.h),
+          decoration: BoxDecoration(
+            gradient: isSelected ? AppColors.primaryGradientRotated : null,
+            color: isSelected ? null : Colors.transparent,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 6.w,
+            children: [
+              Icon(
+                icon,
+                color: isSelected ? Colors.white : Colors.grey[600],
+                size: 20.sp,
+              ),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? Colors.white : Colors.black87,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -462,10 +577,16 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             ),
             child: ElevatedButton(
               onPressed: () {
-                // AppSnackbar.show(
-                //   message: 'your event has been created successfully',
-                //   type: SnackType.success,
-                // );
+              // final event ={
+              //   'title': _titleController.text,
+              //   'description': _descriptionController.text,
+              //   'location': _locationController.text,
+              //   'date': _selectedDate,
+              //   'time': _selectedTime,
+              //   'maxAttendees': int.parse(_maxAttendeesController.text),
+              //   'category': selectedCategories,
+              //   'acessibility': _accessType,
+              // };
                 Navigator.pop(context);
                 showDialog(
                   context: context,

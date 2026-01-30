@@ -1,4 +1,6 @@
-enum EventStatus { interested, going,requested }
+enum EventStatus { interested, going, requested }
+
+enum EventAccessType { public, private }
 
 class Event {
   String name;
@@ -12,6 +14,7 @@ class Event {
   bool isJoined;
   bool isMyEvent;
   EventStatus? userStatus;
+  EventAccessType accessType;
 
   Event({
     required this.name,
@@ -25,6 +28,7 @@ class Event {
     this.isJoined = false,
     this.isMyEvent = false,
     this.userStatus,
+    required this.accessType,
   });
 
   Event copyWith({
@@ -52,6 +56,7 @@ class Event {
       isJoined: isJoined ?? this.isJoined,
       isMyEvent: isMyEvent ?? this.isMyEvent,
       userStatus: userStatus ?? this.userStatus,
+      accessType: accessType,
     );
   }
 }

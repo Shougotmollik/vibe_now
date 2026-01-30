@@ -26,7 +26,14 @@ class _EventCardState extends State<EventCard> {
     currentStatus = widget.event.userStatus;
   }
 
-  String get buttonText {
+String get buttonText {
+  if (widget.event.isMyEvent) return '';
+
+  if (widget.event.accessType == EventAccessType.public) {
+    // Public: always allow immediate join
+    return currentStatus == EventStatus.going ? 'Going' : 'Join';
+  } else {
+    // Private: request logic
     if (currentStatus == null) return 'Request';
     switch (currentStatus!) {
       case EventStatus.interested:
@@ -34,9 +41,11 @@ class _EventCardState extends State<EventCard> {
       case EventStatus.going:
         return 'Going';
       case EventStatus.requested:
-        return 'Interested';
+        return 'Requested';
     }
   }
+}
+
 
   // bool get isButtonActive {
   //   return currentStatus == EventStatus.interested;

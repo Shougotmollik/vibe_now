@@ -35,6 +35,7 @@ class _EventScreenState extends State<EventScreen> {
       isJoined: false,
       isMyEvent: false,
       userStatus: EventStatus.interested,
+      accessType: EventAccessType.private
     ),
     Event(
       name: 'Music Night',
@@ -49,6 +50,7 @@ class _EventScreenState extends State<EventScreen> {
       isJoined: true,
       isMyEvent: false,
       userStatus: EventStatus.going,
+      accessType: EventAccessType.public
     ),
     Event(
       name: 'Beach Party',
@@ -63,6 +65,7 @@ class _EventScreenState extends State<EventScreen> {
       isJoined: false,
       isMyEvent: true,
       userStatus: EventStatus.interested,
+      accessType: EventAccessType.public
     ),
     Event(
       name: 'Food Festival',
@@ -76,6 +79,7 @@ class _EventScreenState extends State<EventScreen> {
       isJoined: true,
       isMyEvent: true,
       userStatus: EventStatus.going,
+      accessType: EventAccessType.private
     ),
   ];
 

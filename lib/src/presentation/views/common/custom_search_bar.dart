@@ -18,24 +18,23 @@ class CustomSearchBar extends StatelessWidget {
       child: Center(
         child: TextField(
           controller: controller,
+          textAlignVertical: TextAlignVertical.center,
           decoration: InputDecoration(
             prefixIcon: Icon(Icons.search, color: Colors.grey[600]),
             hintText: hintText,
-            contentPadding: EdgeInsets.all(6.w),
             hintStyle: TextStyle(color: Colors.grey[600]),
+            isDense: true,
+            contentPadding: EdgeInsets.zero,
+
             border: InputBorder.none,
             focusedBorder: InputBorder.none,
             enabledBorder: InputBorder.none,
-            errorBorder: InputBorder.none,
-            disabledBorder: InputBorder.none,
 
             suffixIcon: GestureDetector(
               onTap: onFilterTap,
               child: Padding(
                 padding: EdgeInsets.all(12.w),
-                child: SizedBox(
-                  child: Assets.icons.filter.svg(width: 12.w, height: 12.h),
-                ),
+                child: Assets.icons.filter.svg(width: 12.w, height: 12.h),
               ),
             ),
           ),
