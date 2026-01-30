@@ -6,6 +6,7 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/custom_text_form_field.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
+import 'package:vibe_now/utils.dart';
 
 class EmailVerificationScreen extends StatefulWidget {
   const EmailVerificationScreen({super.key});
@@ -18,7 +19,8 @@ class EmailVerificationScreen extends StatefulWidget {
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   final TextEditingController _emailController = TextEditingController();
 
-  bool _isEmailEmpty = true;
+  // bool _isEmailEmpty = true;
+  bool _isEmailValid = false;
 
   @override
   void initState() {
@@ -27,8 +29,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   void _onEmailChanged() {
+    final email = _emailController.text.trim();
+
     setState(() {
-      _isEmailEmpty = _emailController.text.trim().isEmpty;
+      _isEmailValid = email.isNotEmpty && isValidEmail(email);
     });
   }
 
@@ -38,6 +42,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     super.dispose();
   }
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,31 +54,48 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
             children: [
               CustomAppBar(title: 'Email Verification'),
               SizedBox(height: 72.h),
-              Text(
-                'A 4 digit verification code will be sent to your email address.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.primary,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                child: Text(
+                  'A 4 digit verification code will be sent to your email address.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.primary,
+                  ),
                 ),
               ),
-              SizedBox(height: 18.h),
-              CustomTextFormField(
-                controller: _emailController,
-                hintText: 'Enter your email address',
+              SizedBox(height: 38.h),
+              Form(
+                key: _formKey,
+                child: CustomTextFormField(
+                  controller: _emailController,
+                  hintText: 'Enter your email address',
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Please enter your email address';
+                    }
+                    if (!isValidEmail(value)) {
+                      return 'Please enter a valid email address';
+                    }
+                    return null;
+                  },
+                ),
               ),
 
               Spacer(),
 
               PrimaryButton.text(
-                onPressed: _isEmailEmpty
+                onPressed: !_isEmailValid
                     ? () {}
                     : () {
-                        context.pushNamed(RouteNames.otpVerificationScreen);
+                        if (_formKey.currentState!.validate()) {
+                          context.pushNamed(RouteNames.otpVerificationScreen);
+                        }
                       },
                 text: 'Send Code',
-                isEnabled: !_isEmailEmpty,
+                isEnabled: _isEmailValid,
               ),
               SizedBox(height: 48.h),
             ],

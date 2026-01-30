@@ -19,19 +19,25 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  bool _isFieldsFilled = true;
+  // bool _isFieldsFilled = true;
+  bool _isPasswordValid = false;
 
   @override
   void initState() {
     super.initState();
-    _confirmPasswordController.addListener(_onConfirmPasswordChanged);
+    _newPasswordController.addListener(_onPasswordChanged);
+    _confirmPasswordController.addListener(_onPasswordChanged);
   }
 
-  void _onConfirmPasswordChanged() {
+  void _onPasswordChanged() {
+    final newPassword = _newPasswordController.text.trim();
+    final confirmPassword = _confirmPasswordController.text.trim();
+
     setState(() {
-      _isFieldsFilled =
-          _confirmPasswordController.text.trim().isEmpty &&
-          _newPasswordController.text.trim().isEmpty;
+      _isPasswordValid =
+          newPassword.isNotEmpty &&
+          confirmPassword.isNotEmpty &&
+          newPassword == confirmPassword;
     });
   }
 
@@ -51,12 +57,20 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 18.h,
             children: [
-              CustomAppBar(title: "Set New Password", canBack: false),
+              SizedBox(height: 24.h),
+              Text(
+                "Set New Password",
+                style: TextStyle(
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.primaryText,
+                ),
+              ),
               SizedBox(height: 24.h),
 
-              // CustomTextFormField(hintText: 'Current Password'),
               CustomTextFormField(
                 controller: _newPasswordController,
                 hintText: 'Enter New Password',
@@ -64,17 +78,23 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               CustomTextFormField(
                 controller: _confirmPasswordController,
                 hintText: 'Enter Confirm Password',
+                validator: (value) {
+                  if (value != _newPasswordController.text) {
+                    return 'Passwords do not match';
+                  }
+                  return null;
+                },
               ),
 
               Spacer(),
               PrimaryButton.text(
-                onPressed: _isFieldsFilled
+                onPressed: !_isPasswordValid
                     ? () {}
                     : () {
                         context.goNamed(RouteNames.signInScreen);
                       },
                 text: 'Set Password',
-                isEnabled: !_isFieldsFilled,
+                isEnabled: _isPasswordValid,
               ),
               SizedBox(height: 48.h),
             ],

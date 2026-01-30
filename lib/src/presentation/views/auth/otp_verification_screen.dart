@@ -33,8 +33,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   void _onOtpChanged() {
+    final otp = _otpTEController.text.trim();
     setState(() {
-      _isOtpEmpty = _otpTEController.text.trim().isEmpty;
+      // _isOtpEmpty = _otpTEController.text.trim().isEmpty;
+      _isOtpEmpty = otp.length != 4;
     });
   }
 
@@ -82,7 +84,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CustomAppBar(title: "Set New Password", canBack: true),
+              CustomAppBar(title: "", canBack: true),
               SizedBox(height: 100.h),
               Text(
                 'Enter OTP',

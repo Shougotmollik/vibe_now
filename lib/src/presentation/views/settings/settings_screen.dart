@@ -24,7 +24,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   bool locationSharing = true;
   bool waves = true;
-  bool matches = true;
+  bool communities = true;
   bool messages = true;
   bool events = true;
 
@@ -239,10 +239,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       icon: Assets.icons.communityColor,
                       iconColor: Colors.purple,
                       title: 'Community',
-                      value: messages,
+                      value: communities,
                       onChanged: (val) {
                         setState(() {
-                          messages = val;
+                          communities = val;
                         });
                       },
                     ),

@@ -231,9 +231,15 @@ class PlanCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            plan.title,
-            style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+          Row(
+            spacing: 12.w,
+            children: [
+              Text(
+                plan.title,
+                style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+              ),
+              _buildBadge(),
+            ],
           ),
           const SizedBox(height: 20),
           ...plan.features.map(
@@ -259,6 +265,45 @@ class PlanCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildBadge() {
+    String text;
+    Color bgColor;
+
+    switch (plan.title) {
+      case 'Free':
+        text = 'Standard';
+        bgColor = Colors.grey.shade400;
+        break;
+      case 'Premium':
+        text = 'Premium';
+        bgColor = Colors.orange.shade400;
+        break;
+      case 'Pro':
+        text = 'Recommended';
+        bgColor = Colors.green.shade400;
+        break;
+      default:
+        text = '';
+        bgColor = Colors.transparent;
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 12.sp,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

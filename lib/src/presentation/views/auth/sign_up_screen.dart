@@ -9,6 +9,7 @@ import 'package:vibe_now/src/presentation/views/auth/widgets/auth_title.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/custom_social_button.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/custom_text_form_field.dart';
 import 'package:vibe_now/src/presentation/views/auth/widgets/notification_permission_dialog.dart';
+import 'package:vibe_now/utils.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -20,19 +21,23 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isFieldsFilled = true;
+  // bool _isFieldsFilled = true;
+  bool _isFieldsValid = false;
 
   @override
   void initState() {
-    _passwordController.addListener(_onPasswordChanged);
     super.initState();
+    _emailController.addListener(_onFieldsChanged);
+    _passwordController.addListener(_onFieldsChanged);
   }
 
-  void _onPasswordChanged() {
+  void _onFieldsChanged() {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
     setState(() {
-      _isFieldsFilled =
-          _emailController.text.trim().isEmpty &&
-          _passwordController.text.trim().isEmpty;
+      _isFieldsValid =
+          email.isNotEmpty && isValidEmail(email) && password.isNotEmpty&& password.length >= 6;
     });
   }
 
@@ -62,20 +67,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   CustomTextFormField(
                     controller: _emailController,
                     hintText: 'Enter your email',
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      if (!isValidEmail(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 18.h),
                   CustomTextFormField(
                     controller: _passwordController,
                     hintText: 'Enter your password',
                     isPassword: true,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return 'Please enter your password';
+                      } else if (value.length < 6) {
+                        return 'Password must be at least 6 characters';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(height: 24.h),
                   PrimaryButton.text(
-                    onPressed: _isFieldsFilled
+                    onPressed: !_isFieldsValid
                         ? () {}
                         : () => context.goNamed(RouteNames.stepNameScreen),
                     text: 'Get Started',
-                    isEnabled: !_isFieldsFilled,
+                    isEnabled: _isFieldsValid,
                   ),
                   SizedBox(height: 24.h),
                   Text(

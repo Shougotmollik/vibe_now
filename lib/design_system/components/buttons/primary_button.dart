@@ -34,7 +34,7 @@ class PrimaryButton extends StatelessWidget {
         Text(
           _text!,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            color: isEnabled ? Colors.white : Colors.grey.shade600,
+            color: isEnabled ? Colors.white : Colors.white,
             fontWeight: FontWeight.w600,
             fontSize: 16.sp,
           ),
@@ -56,7 +56,7 @@ class PrimaryButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(24.r),
           ),
         ),
-        onPressed:isEnabled ? onPressed: null,
+        onPressed: isEnabled ? onPressed : null,
         child: child,
       ),
     );
