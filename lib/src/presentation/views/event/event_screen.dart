@@ -49,7 +49,7 @@ class _EventScreenState extends State<EventScreen> {
       totalAttending: '15',
       isJoined: true,
       isMyEvent: false,
-      userStatus: EventStatus.going,
+      userStatus: EventStatus.interested,
       accessType: EventAccessType.public
     ),
     Event(
@@ -64,7 +64,7 @@ class _EventScreenState extends State<EventScreen> {
       totalAttending: '20',
       isJoined: false,
       isMyEvent: true,
-      userStatus: EventStatus.interested,
+      userStatus: EventStatus.going,
       accessType: EventAccessType.public
     ),
     Event(

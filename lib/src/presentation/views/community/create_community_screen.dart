@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_time_picker.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_date_picker.dart';
@@ -64,6 +66,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   String? selectedCategory;
   Set<String> selectedCategories = {};
 
+  CommunityAccessType _accessType = CommunityAccessType.public;
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -98,6 +102,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                     SizedBox(height: 24.h),
                     _buildCommunityCategory(),
                     SizedBox(height: 24.h),
+                    _buildAccessLevel(),
+                    SizedBox(height: 24.h),
                     _buildSelectLocation(),
                     SizedBox(height: 24.h),
                     _buildDateTimeRow(),
@@ -111,6 +117,123 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAccessLevel() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Access Level',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        Container(
+          padding: EdgeInsets.all(4.w),
+          decoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(14.r),
+          ),
+          child: Row(
+            children: [
+              _accessToggleItem(
+                label: 'Public',
+                icon: Icons.people_alt_outlined,
+                isSelected: _accessType == CommunityAccessType.public,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    _accessType = CommunityAccessType.public;
+                  });
+                },
+              ),
+              _accessToggleItem(
+                label: 'Private',
+                icon: Icons.lock_person_outlined,
+                isSelected: _accessType == CommunityAccessType.private,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  setState(() {
+                    _accessType = CommunityAccessType.private;
+                  });
+                },
+              ),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 6),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Text(
+            _accessType == CommunityAccessType.public
+                ? 'Anyone can discover and join this community instantly without approval.'
+                : 'People will need your approval before they can join this community.',
+            textAlign: TextAlign.start,
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _accessToggleItem({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    IconData? icon,
+  }) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            AnimatedAlign(
+              duration: const Duration(milliseconds: 420),
+              curve: Curves.easeInOutCubic,
+              alignment: isSelected ? Alignment.center : Alignment.center,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: isSelected ? 1 : 0,
+                child: Container(
+                  height: 42.h,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradientRotated,
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                ),
+              ),
+            ),
+
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 20.sp,
+                  color: isSelected ? Colors.white : Colors.grey[600],
+                ),
+                SizedBox(width: 6.w),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

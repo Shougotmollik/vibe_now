@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
@@ -20,48 +21,53 @@ class EventCard extends StatefulWidget {
 class _EventCardState extends State<EventCard> {
   late EventStatus? currentStatus;
 
+  bool get isPublic => widget.event.accessType == EventAccessType.public;
+
+  bool get isPrivate => widget.event.accessType == EventAccessType.private;
+
+  bool get isGoing => currentStatus == EventStatus.going;
+  bool get isRequested => currentStatus == EventStatus.requested;
+  bool get isActive => isGoing || isRequested;
+
+  static const String hourglass = "assets/icons/hourglass-end.svg";
+  static const String wishlist = "assets/icons/wishlist-star.svg";
+
   @override
   void initState() {
     super.initState();
     currentStatus = widget.event.userStatus;
   }
 
-String get buttonText {
-  if (widget.event.isMyEvent) return '';
+  // String get buttonText {
+  //   if (widget.event.isMyEvent) return '';
 
-  if (widget.event.accessType == EventAccessType.public) {
-    // Public: always allow immediate join
-    return currentStatus == EventStatus.going ? 'Going' : 'Join';
-  } else {
-    // Private: request logic
-    if (currentStatus == null) return 'Request';
-    switch (currentStatus!) {
-      case EventStatus.interested:
-        return 'Interested';
-      case EventStatus.going:
-        return 'Going';
-      case EventStatus.requested:
-        return 'Requested';
-    }
-  }
-}
-
-
-  // bool get isButtonActive {
-  //   return currentStatus == EventStatus.interested;
-  // }
-
-  // void _handleButtonTap() {
-  //   if (currentStatus != EventStatus.requested) {
-  //     setState(() {
-  //       currentStatus = EventStatus.requested;
-  //     });
-  //     AppSnackbar.show(
-  //       message: "Your request to join this event has been sent",
-  //       type: SnackType.success,
-  //     );
+  //   if (widget.event.accessType == EventAccessType.public) {
+  //     // Public: always allow immediate join
+  //     return currentStatus == EventStatus.going ? 'Going' : 'Join';
+  //   } else {
+  //     // Private: request logic
+  //     if (currentStatus == null) return 'Request';
+  //     switch (currentStatus!) {
+  //       case EventStatus.interested:
+  //         return 'Interested';
+  //       case EventStatus.going:
+  //         return 'Going';
+  //       case EventStatus.requested:
+  //         return 'Requested';
+  //     }
   //   }
   // }
+
+  String get buttonText {
+    if (widget.event.isMyEvent) return '';
+
+    if (isPublic) {
+      return isGoing ? 'Going' : 'Join';
+    }
+
+    // Private
+    return isRequested ? 'Requested' : 'Request';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -77,15 +83,63 @@ String get buttonText {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Container(
-            height: 200.h,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              image: DecorationImage(
-                image: NetworkImage(widget.event.image),
-                fit: BoxFit.cover,
+          // Container(
+          //   height: 200.h,
+          //   decoration: BoxDecoration(
+          //     borderRadius: BorderRadius.circular(16),
+          //     image: DecorationImage(
+          //       image: NetworkImage(widget.event.image),
+          //       fit: BoxFit.cover,
+          //     ),
+          //   ),
+          // ),
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: Image.network(
+                  widget.event.image,
+                  height: 200.h,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
               ),
-            ),
+
+              isPrivate
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withAlpha(200),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          isActive ? hourglass : wishlist,
+                          height: 18.h,
+                          width: 18.w,
+                          color: AppColors.background,
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withAlpha(200),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          wishlist,
+                          height: 18.h,
+                          width: 18.w,
+                          color: AppColors.background,
+                        ),
+                      ),
+                    ),
+            ],
           ),
           SizedBox(height: 12.h),
           Text(
@@ -147,75 +201,65 @@ String get buttonText {
                     Expanded(
                       child: GestureDetector(
                         onTap: () {
-                          setState(() {
-                            if (currentStatus == EventStatus.requested) {
-                              currentStatus = EventStatus.interested;
-                              showDialog(
-                                context: context,
-                                barrierDismissible: true,
-                                builder: (context) {
-                                  return Center(
-                                    child: Dialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          20.r,
-                                        ),
-                                      ),
-                                      elevation: 0,
-                                      backgroundColor: Colors.transparent,
-                                      child: EventAnimatedDialog(
-                                        content:
-                                            'Revoke your request to join the event',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            } else {
+                          // PUBLIC EVENT FLOW
+                          if (isPublic && !isGoing) {
+                            setState(() {
+                              currentStatus = EventStatus.going;
+                            });
+
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (_) => Dialog(
+                                backgroundColor: Colors.transparent,
+                                child: EventAnimatedDialog(
+                                  content:
+                                      'You have joined the event successfully. See you there!',
+                                ),
+                              ),
+                            );
+
+                            return;
+                          }
+
+                          // PRIVATE EVENT FLOW
+                          if (isPrivate && !isRequested) {
+                            setState(() {
                               currentStatus = EventStatus.requested;
-                              showDialog(
-                                context: context,
-                                barrierDismissible: true,
-                                builder: (context) {
-                                  return Center(
-                                    child: Dialog(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          20.r,
-                                        ),
-                                      ),
-                                      elevation: 0,
-                                      backgroundColor: Colors.transparent,
-                                      child: EventAnimatedDialog(
-                                        content:
-                                            'Send a request to the event creator to joint the event',
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-                            }
-                          });
+                            });
+
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (_) => Dialog(
+                                backgroundColor: Colors.transparent,
+                                child: EventAnimatedDialog(
+                                  content:
+                                      'Send a request to the organizer to join the event.',
+                                ),
+                              ),
+                            );
+                          }
                         },
+
                         child: Container(
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.r),
                             border: Border.all(color: Colors.grey.shade300),
-                            gradient: EventStatus.interested != currentStatus
-                                ? null
-                                : AppColors.primaryGradientRotated,
-                            color: EventStatus.interested != currentStatus
-                                ? Color(0xffC4A8FF)
+                            gradient: !isActive
+                                ? AppColors.primaryGradientRotated
                                 : null,
+                            color: !isActive ? null : const Color(0xffC4A8FF),
                           ),
+
                           child: Center(
                             child: Text(
                               buttonText,
                               style: TextStyle(
-                                color: EventStatus.interested != currentStatus
-                                    ? Colors.grey.shade600
-                                    : Colors.white,
+                                color: !isActive
+                                    ? Colors.white
+                                    : Colors.grey.shade100,
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -227,55 +271,59 @@ String get buttonText {
                     SizedBox(width: 8.w),
                     widget.event.isMyEvent
                         ? SizedBox.shrink()
-                        : Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12.r),
-                              color: Colors.grey.shade200,
-                            ),
-                            child: PopupMenuButton(
-                              color: AppColors.surface,
-                              iconColor: Colors.grey.shade600,
-                              icon: Assets.icons.down.svg(),
-                              itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  onTap: () {
-                                    Future.delayed(Duration.zero, () {
-                                      setState(() {
-                                        currentStatus = EventStatus.interested;
-                                      });
-                                    });
-                                  },
-                                  child: Text(
-                                    "Interested",
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ),
-                                PopupMenuItem(
-                                  onTap: () {
-                                    Future.delayed(Duration.zero, () {
-                                      setState(() {
-                                        currentStatus = EventStatus.going;
-                                      });
-                                    });
-                                  },
-                                  child: Text(
-                                    "Going",
-                                    style: TextStyle(
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black54,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                        : _buildPopUpDropMenu(),
                   ],
                 ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPopUpDropMenu() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        color: Colors.grey.shade200,
+      ),
+      child: PopupMenuButton(
+        color: AppColors.surface,
+        iconColor: Colors.grey.shade600,
+        icon: Assets.icons.down.svg(),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            onTap: () {
+              Future.delayed(Duration.zero, () {
+                setState(() {
+                  currentStatus = EventStatus.interested;
+                });
+              });
+            },
+            child: Text(
+              "Interested",
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: Colors.black54,
+              ),
+            ),
+          ),
+          PopupMenuItem(
+            onTap: () {
+              Future.delayed(Duration.zero, () {
+                setState(() {
+                  currentStatus = EventStatus.going;
+                });
+              });
+            },
+            child: Text(
+              "Going",
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: Colors.black54,
+              ),
+            ),
+          ),
         ],
       ),
     );

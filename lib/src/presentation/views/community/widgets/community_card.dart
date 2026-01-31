@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
@@ -22,6 +23,28 @@ class CommunityCard extends StatefulWidget {
 class _CommunityCardState extends State<CommunityCard> {
   late CommunityStatus? currentStatus;
 
+  bool get isPublic =>
+      widget.community.accessType == CommunityAccessType.public;
+
+  bool get isPrivate =>
+      widget.community.accessType == CommunityAccessType.private;
+
+  bool get isGoing => currentStatus == CommunityStatus.going;
+  bool get isRequested => currentStatus == CommunityStatus.requested;
+  bool get isActive => isGoing || isRequested;
+
+  static const String hourglass = "assets/icons/hourglass-end.svg";
+  static const String community = "assets/icons/team-check-alt.svg";
+
+  String get buttonText {
+    if (shouldShowViewDetails) return 'View Details';
+    if (isPublic) {
+      return isGoing ? 'Going' : 'Join';
+    }
+
+    return isRequested ? 'Requested' : 'Request';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -35,23 +58,23 @@ class _CommunityCardState extends State<CommunityCard> {
         widget.community.isInterested;
   }
 
-  String get buttonText {
-    // If it's my community, joined, or interested - show "View Details"
-    if (shouldShowViewDetails) {
-      return 'View Details';
-    }
+  // String get buttonText {
+  //   // If it's my community, joined, or interested - show "View Details"
+  //   if (shouldShowViewDetails) {
+  //     return 'View Details';
+  //   }
 
-    // Otherwise show status-based text
-    if (currentStatus == null) return 'Request';
-    switch (currentStatus!) {
-      case CommunityStatus.requested:
-        return 'Interested';
-      case CommunityStatus.interested:
-        return 'Interested';
-      case CommunityStatus.going:
-        return 'Going';
-    }
-  }
+  //   // Otherwise show status-based text
+  //   if (currentStatus == null) return 'Request';
+  //   switch (currentStatus!) {
+  //     case CommunityStatus.requested:
+  //       return 'Interested';
+  //     case CommunityStatus.interested:
+  //       return 'Interested';
+  //     case CommunityStatus.going:
+  //       return 'Going';
+  //   }
+  // }
 
   // bool get isButtonActive {
   //   return currentStatus == CommunityStatus.requested;
@@ -93,14 +116,53 @@ class _CommunityCardState extends State<CommunityCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8.r),
-            child: Image.network(
-              widget.community.image,
-              width: double.infinity,
-              height: 160.h,
-              fit: BoxFit.cover,
-            ),
+          Stack(
+            alignment: Alignment.topRight,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8.r),
+                child: Image.network(
+                  widget.community.image,
+                  width: double.infinity,
+                  height: 160.h,
+                  fit: BoxFit.cover,
+                ),
+              ),
+
+              isPrivate
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withAlpha(200),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          isActive ? hourglass : community,
+                          height: 18.h,
+                          width: 18.w,
+                          color: AppColors.background,
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withAlpha(200),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          community,
+                          height: 18.h,
+                          width: 18.w,
+                          color: AppColors.background,
+                        ),
+                      ),
+                    ),
+            ],
           ),
           SizedBox(height: 12.h),
           Text(
@@ -218,59 +280,98 @@ class _CommunityCardState extends State<CommunityCard> {
                 Expanded(
                   child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        // currentStatus = CommunityStatus.requested;
-                        // AppSnackbar.show(
-                        //   message:
-                        //       "Send a request to the community creator to joint the community",
-                        //   type: SnackType.success,
-                        // );
+                      // setState(() {
+                      //   // currentStatus = CommunityStatus.requested;
+                      //   // AppSnackbar.show(
+                      //   //   message:
+                      //   //       "Send a request to the community creator to joint the community",
+                      //   //   type: SnackType.success,
+                      //   // );
 
-                        if (currentStatus == CommunityStatus.requested) {
-                          currentStatus = CommunityStatus.interested;
-                          showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (context) {
-                              return Center(
-                                child: Dialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.r),
-                                  ),
-                                  elevation: 0,
-                                  backgroundColor: Colors.transparent,
-                                  child: CommunityAnimatedDialog(
-                                    content:
-                                        'Revoke your request to join the community?',
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        } else {
+                      //   if (currentStatus == CommunityStatus.requested) {
+                      //     currentStatus = CommunityStatus.interested;
+                      //     showDialog(
+                      //       context: context,
+                      //       barrierDismissible: true,
+                      //       builder: (context) {
+                      //         return Center(
+                      //           child: Dialog(
+                      //             shape: RoundedRectangleBorder(
+                      //               borderRadius: BorderRadius.circular(20.r),
+                      //             ),
+                      //             elevation: 0,
+                      //             backgroundColor: Colors.transparent,
+                      //             child: CommunityAnimatedDialog(
+                      //               content:
+                      //                   'Revoke your request to join the community?',
+                      //             ),
+                      //           ),
+                      //         );
+                      //       },
+                      //     );
+                      //   } else {
+                      //     currentStatus = CommunityStatus.requested;
+                      //     showDialog(
+                      //       context: context,
+                      //       barrierDismissible: true,
+                      //       builder: (context) {
+                      //         return Center(
+                      //           child: Dialog(
+                      //             shape: RoundedRectangleBorder(
+                      //               borderRadius: BorderRadius.circular(20.r),
+                      //             ),
+                      //             elevation: 0,
+                      //             backgroundColor: Colors.transparent,
+                      //             child: CommunityAnimatedDialog(
+                      //               content:
+                      //                   'Send a request to the community creator to joint the community',
+                      //             ),
+                      //           ),
+                      //         );
+                      //       },
+                      //     );
+                      //   }
+                      // });
+
+                      // Public Community flow
+
+                      if (isPublic && !isGoing) {
+                        setState(() {
+                          currentStatus = CommunityStatus.going;
+                        });
+                        showDialog(
+                          context: context,
+                          builder: (_) => Dialog(
+                            backgroundColor: Colors.transparent,
+                            child: CommunityAnimatedDialog(
+                              content:
+                                  'You have joined the community successfully.',
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
+                      // Private Community flow
+
+                      if (isPrivate && !isRequested) {
+                        setState(() {
                           currentStatus = CommunityStatus.requested;
-                          showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (context) {
-                              return Center(
-                                child: Dialog(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.r),
-                                  ),
-                                  elevation: 0,
-                                  backgroundColor: Colors.transparent,
-                                  child: CommunityAnimatedDialog(
-                                    content:
-                                        'Send a request to the community creator to joint the community',
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      });
+                        });
+                        showDialog(
+                          context: context,
+                          builder: (_) => Dialog(
+                            backgroundColor: Colors.transparent,
+                            child: CommunityAnimatedDialog(
+                              content:
+                                  'Send a request to the community creator to join the community',
+                            ),
+                          ),
+                        );
+                        return;
+                      }
                     },
+
                     child: Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(

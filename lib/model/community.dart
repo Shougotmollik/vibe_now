@@ -1,3 +1,7 @@
+import 'package:vibe_now/model/event.dart';
+
+enum CommunityAccessType { public, private }
+
 enum CommunityStatus { interested, going, requested }
 
 class Community {
@@ -15,6 +19,7 @@ class Community {
   bool isJoined;
   bool isInterested;
   CommunityStatus? userStatus;
+  CommunityAccessType accessType;
 
   Community({
     required this.name,
@@ -31,6 +36,7 @@ class Community {
     this.isJoined = false,
     this.isInterested = false,
     this.userStatus,
+    required this.accessType,
   });
 
   Community copyWith({
@@ -64,6 +70,7 @@ class Community {
       isJoined: isJoined ?? this.isJoined,
       isInterested: isInterested ?? this.isInterested,
       userStatus: userStatus ?? this.userStatus,
+      accessType: accessType,
     );
   }
 }

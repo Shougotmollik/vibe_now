@@ -7,12 +7,13 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_app_bar.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_time_picker.dart';
 import 'package:vibe_now/src/presentation/views/common/custom_date_picker.dart';
 import 'package:vibe_now/src/presentation/views/event/widgets/event_animated_dialog.dart';
 
-enum EventAccessType { public, private }
+// enum EventAccessType { public, private }
 
 class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({super.key});
@@ -63,24 +64,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   leading: IconButton(
-      //     icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
-      //     onPressed: () {
-      //       Navigator.pop(context);
-      //     },
-      //   ),
-      //   title: const Text(
-      //     'Create Event',
-      //     style: TextStyle(
-      //       color: Colors.black,
-      //       fontSize: 18,
-      //       fontWeight: FontWeight.w600,
-      //     ),
-      //   ),
-      // ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -88,7 +71,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomAppBar(title: 'Create Event'),
+                const CustomAppBar(title: 'Create Event'),
                 const SizedBox(height: 24),
                 _buildHeaderCard(),
                 const SizedBox(height: 24),
@@ -188,37 +171,46 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeInOut,
-          padding: EdgeInsets.symmetric(vertical: 10.h),
-          decoration: BoxDecoration(
-            gradient: isSelected ? AppColors.primaryGradientRotated : null,
-            color: isSelected ? null : Colors.transparent,
-            borderRadius: BorderRadius.circular(12.r),
-          ),
+        child: Stack(
           alignment: Alignment.center,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            spacing: 6.w,
-            children: [
-              Icon(
-                icon,
-                color: isSelected ? Colors.white : Colors.grey[600],
-                size: 20.sp,
-              ),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w600,
-                  color: isSelected ? Colors.white : Colors.black87,
+          children: [
+            AnimatedAlign(
+              duration: const Duration(milliseconds: 420),
+              curve: Curves.easeInOutCubic,
+              alignment: isSelected ? Alignment.center : Alignment.center,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 200),
+                opacity: isSelected ? 1 : 0,
+                child: Container(
+                  height: 42.h,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradientRotated,
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
                 ),
               ),
-            ],
-          ),
+            ),
+
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 20.sp,
+                  color: isSelected ? Colors.white : Colors.grey[600],
+                ),
+                SizedBox(width: 6.w),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected ? Colors.white : Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -577,16 +569,16 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             ),
             child: ElevatedButton(
               onPressed: () {
-              // final event ={
-              //   'title': _titleController.text,
-              //   'description': _descriptionController.text,
-              //   'location': _locationController.text,
-              //   'date': _selectedDate,
-              //   'time': _selectedTime,
-              //   'maxAttendees': int.parse(_maxAttendeesController.text),
-              //   'category': selectedCategories,
-              //   'acessibility': _accessType,
-              // };
+                // final event ={
+                //   'title': _titleController.text,
+                //   'description': _descriptionController.text,
+                //   'location': _locationController.text,
+                //   'date': _selectedDate,
+                //   'time': _selectedTime,
+                //   'maxAttendees': int.parse(_maxAttendeesController.text),
+                //   'category': selectedCategories,
+                //   'acessibility': _accessType,
+                // };
                 Navigator.pop(context);
                 showDialog(
                   context: context,
@@ -630,20 +622,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       ],
     );
   }
-
-  // void _showDatePicker(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //     ),
-  //     builder: (context) => CustomDatePicker(
-  //       onDateSelected: (date) {
-  //         setState(() => _selectedDate = date);
-  //       },
-  //     ),
-  //   );
-  // }
 
   void _showTimePicker(BuildContext context) {
     showModalBottomSheet(

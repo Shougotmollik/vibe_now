@@ -209,6 +209,7 @@ class _MapHomeScreenState extends State<HomeScreen>
                   extraCount: 5,
                   isMyCommunity: true,
                   userStatus: CommunityStatus.going,
+                  accessType: CommunityAccessType.public,
                 ),
               ),
             ),
