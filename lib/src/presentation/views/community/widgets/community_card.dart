@@ -38,10 +38,12 @@ class _CommunityCardState extends State<CommunityCard> {
 
   String get buttonText {
     if (shouldShowViewDetails) return 'View Details';
+
     if (isPublic) {
       return isGoing ? 'Going' : 'Join';
     }
 
+    // Private
     return isRequested ? 'Requested' : 'Request';
   }
 
@@ -52,10 +54,26 @@ class _CommunityCardState extends State<CommunityCard> {
   }
 
   // Check if should show "View Details" button
+  // bool get shouldShowViewDetails {
+  //   return widget.community.isMyCommunity ||
+  //       widget.community.isJoined ||
+  //       widget.community.isInterested;
+  // }
   bool get shouldShowViewDetails {
-    return widget.community.isMyCommunity ||
-        widget.community.isJoined ||
-        widget.community.isInterested;
+    // My own community → always view details
+    if (widget.community.isMyCommunity) return true;
+
+    // Public: joined
+    if (isPublic && currentStatus == CommunityStatus.going) {
+      return true;
+    }
+
+    // Private: only after approved (going)
+    if (isPrivate && currentStatus == CommunityStatus.going) {
+      return true;
+    }
+
+    return false;
   }
 
   // String get buttonText {
@@ -334,6 +352,7 @@ class _CommunityCardState extends State<CommunityCard> {
                       // });
 
                       // Public Community flow
+                      if(isPrivate && isRequested) return;
 
                       if (isPublic && !isGoing) {
                         setState(() {
@@ -353,7 +372,6 @@ class _CommunityCardState extends State<CommunityCard> {
                       }
 
                       // Private Community flow
-
                       if (isPrivate && !isRequested) {
                         setState(() {
                           currentStatus = CommunityStatus.requested;
