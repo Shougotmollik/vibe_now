@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
@@ -91,6 +92,10 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 onPressed: !_isPasswordValid
                     ? () {}
                     : () {
+                        AppSnackbar.show(
+                          message: 'Password set successfully',
+                          type: SnackType.info,
+                        );
                         context.goNamed(RouteNames.signInScreen);
                       },
                 text: 'Set Password',
@@ -100,7 +105,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             ],
           ),
         ),
-      ),
+      )
     );
   }
 }
