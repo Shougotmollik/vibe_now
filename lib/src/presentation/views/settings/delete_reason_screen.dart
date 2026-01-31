@@ -26,6 +26,8 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
   int selectedIndex = -1;
 
   final TextEditingController _explainTEController = TextEditingController();
+  final TextEditingController _passwordTEController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,7 +78,96 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                   Expanded(
                     child: PrimaryButton.text(
                       onPressed: () {
-                        Navigator.pop(context);
+                        // Navigator.pop(context);
+
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            backgroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            contentPadding: EdgeInsets.all(16.w),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  "For security reasons, please confirm your password to proceed.",
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ),
+
+                                SizedBox(height: 24.h),
+
+                                TextFormField(
+                                  obscureText: true,
+                                  controller: _passwordTEController,
+                                  decoration: InputDecoration(
+                                    hintText: "Enter your password",
+                                    hintStyle: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 14.sp,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12.r),
+                                      borderSide: BorderSide(
+                                        color: Colors.grey,
+                                        width: 1.w,
+                                      ),
+                                    ),
+                                  ),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your password';
+                                    } else if (value.length < 6) {
+                                      return 'Password must be at least 6 characters';
+                                    }
+                                    return null;
+                                  },
+                                ),
+
+                                SizedBox(height: 18.h),
+
+                                SizedBox(
+                                  height: 28.h,
+                                  child: Row(
+                                    spacing: 24.w,
+                                    children: [
+                                      Expanded(
+                                        child: CustomElevatedButton(
+                                          btnColor: AppColors.disableBtn,
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          buttonText: 'Cancel',
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: PrimaryButton.text(
+                                          onPressed: () {
+                                            if (_passwordTEController
+                                                .text
+                                                .isNotEmpty) {
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            }
+
+                                            // // Navigator.pop(context);
+                                            _passwordTEController.clear();
+                                          },
+                                          text: 'Delete',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
                       },
                       text: 'Save',
                     ),
@@ -150,32 +241,32 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
     );
   }
 
-  Widget _buildAppBar() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // GestureDetector(
-        //   onTap: () => Navigator.pop(context),
-        //   child: Container(
-        //     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-        //     decoration: BoxDecoration(
-        //       gradient: AppColors.primaryGradient,
-        //       borderRadius: BorderRadius.circular(40.r),
-        //     ),
+  // Widget _buildAppBar() {
+  //   return Row(
+  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //     children: [
+  //       // GestureDetector(
+  //       //   onTap: () => Navigator.pop(context),
+  //       //   child: Container(
+  //       //     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
+  //       //     decoration: BoxDecoration(
+  //       //       gradient: AppColors.primaryGradient,
+  //       //       borderRadius: BorderRadius.circular(40.r),
+  //       //     ),
 
-        //     child: Text(
-        //       'Send',
-        //       style: TextStyle(
-        //         color: Colors.white,
-        //         fontSize: 16.sp,
-        //         fontWeight: FontWeight.w400,
-        //       ),
-        //     ),
-        //   ),
-        // ),
-      ],
-    );
-  }
+  //       //     child: Text(
+  //       //       'Send',
+  //       //       style: TextStyle(
+  //       //         color: Colors.white,
+  //       //         fontSize: 16.sp,
+  //       //         fontWeight: FontWeight.w400,
+  //       //       ),
+  //       //     ),
+  //       //   ),
+  //       // ),
+  //     ],
+  //   );
+  // }
 
   Widget _selectedCircle() {
     return Assets.icons.checkboxGradient.svg(

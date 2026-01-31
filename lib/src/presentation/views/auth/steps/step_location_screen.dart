@@ -51,12 +51,14 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
 
             const StepTitle(title: 'Choose Location', subtitle: ""),
 
+            SizedBox(height: 68.h),
+
             // SizedBox(height: 115.h),
 
             // Assets.icons.locationIc.svg(width: 100.w, height: 100.h),
             Lottie.asset(
               'assets/lottie/Location Pin.json',
-              height: 300.w,
+              height: 200.w,
               width: 300.w,
               delegates: LottieDelegates(
                 values: [
@@ -75,7 +77,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
               ),
             ),
 
-            SizedBox(height: 24.h),
+            // SizedBox(height: 24.h),
 
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.w),

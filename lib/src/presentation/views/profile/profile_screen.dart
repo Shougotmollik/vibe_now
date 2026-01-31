@@ -545,7 +545,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     child: Assets.icons.trash.svg(
                       width: 24.w,
                       height: 24.h,
-                      color: Colors.red.shade600,
+                      // color: Colors.red.shade600,
                     ),
                   ),
                 ),
@@ -579,7 +579,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         child: Assets.icons.trash.svg(
           width: 32.w,
           height: 32.h,
-          color: Colors.red.shade600,
+          // color: Colors.red.shade600,
         ),
       ),
       content: Column(
