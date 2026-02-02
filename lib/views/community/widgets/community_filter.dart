@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 
 class CommunityFilterDialog extends StatefulWidget {
@@ -27,6 +30,10 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
     'Tech',
     'Wellness',
   ];
+
+  final CommunityController communityController = Get.put(
+    CommunityController(),
+  );
 
   void toggleCategory(String category) {
     setState(() {
@@ -183,38 +190,127 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                 'Categories',
                 style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: 8),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: categories.map((category) {
-                  final isSelected = selectedCategories.contains(category);
-                  return GestureDetector(
-                    onTap: () => toggleCategory(category),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: isSelected
-                            ? AppColors.primaryGradientRotated
-                            : null,
-                        color: isSelected ? null : Colors.grey[200],
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        category,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.grey[800],
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  );
-                }).toList(),
-              ),
+              const SizedBox(height: 12),
 
+              Obx(() {
+                return Column(
+                  children: communityController.categoryGroups.map((group) {
+                    final isExpanded = communityController.expandedParents
+                        .contains(group.parent);
+                    final isSelected = communityController.isParentSelected(
+                      group,
+                    );
+                    final isPartial = communityController
+                        .isParentPartiallySelected(group);
+
+                    return Column(
+                      children: [
+                        // Parent
+                        GestureDetector(
+                          onTap: () =>
+                              communityController.toggleExpand(group.parent),
+                          child: newMethod(
+                            isSelected,
+                            isPartial,
+                            group,
+                            isExpanded,
+                          ),
+                        ),
+
+                        // Subcategories
+                        SizedBox(
+                          width: double.infinity,
+                          child: AnimatedSize(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            child: isExpanded
+                                ? Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    alignment: WrapAlignment.start,
+
+                                    children: group.children.map((sub) {
+                                      final selected = communityController
+                                          .selectedSubcategories
+                                          .contains(sub);
+
+                                      return GestureDetector(
+                                        onTap: () => communityController
+                                            .toggleSubcategory(
+                                              sub,
+                                              group.parent,
+                                            ),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 14.w,
+                                            vertical: 8.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            gradient: selected
+                                                ? AppColors
+                                                      .primaryGradientRotated
+                                                : null,
+                                            color: selected
+                                                ? null
+                                                : Colors.grey[100],
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            sub,
+                                            style: TextStyle(
+                                              fontSize: 13.sp,
+                                              color: selected
+                                                  ? Colors.white
+                                                  : Colors.grey[800],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
+                        ),
+
+                        SizedBox(height: 12.h),
+                      ],
+                    );
+                  }).toList(),
+                );
+              }),
+
+              // Wrap(
+              //   spacing: 8,
+              //   runSpacing: 8,
+              //   children: categories.map((category) {
+              //     final isSelected = selectedCategories.contains(category);
+              //     return GestureDetector(
+              //       onTap: () => toggleCategory(category),
+              //       child: Container(
+              //         padding: const EdgeInsets.symmetric(
+              //           horizontal: 16,
+              //           vertical: 8,
+              //         ),
+              //         decoration: BoxDecoration(
+              //           gradient: isSelected
+              //               ? AppColors.primaryGradientRotated
+              //               : null,
+              //           color: isSelected ? null : Colors.grey[200],
+              //           borderRadius: BorderRadius.circular(20),
+              //         ),
+              //         child: Text(
+              //           category,
+              //           style: TextStyle(
+              //             color: isSelected ? Colors.white : Colors.grey[800],
+              //             fontWeight: FontWeight.w500,
+              //           ),
+              //         ),
+              //       ),
+              //     );
+              //   }).toList(),
+              // ),
               SizedBox(height: 32.h),
 
               // Action Buttons
@@ -249,6 +345,42 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget newMethod(
+    bool isSelected,
+    bool isPartial,
+    CategoryGroup group,
+    bool isExpanded,
+  ) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        gradient: isSelected ? AppColors.primaryGradientRotated : null,
+        color: isSelected
+            ? null
+            : isPartial
+            ? Colors.transparent
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              group.parent,
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: isSelected ? Colors.white : Colors.black87,
+              ),
+            ),
+          ),
+          Icon(
+            isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+          ),
+        ],
       ),
     );
   }

@@ -3,10 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
@@ -67,6 +70,11 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   Set<String> selectedCategories = {};
 
   CommunityAccessType _accessType = CommunityAccessType.public;
+  String? _activeParentForSub;
+
+  final CommunityController communityController = Get.put(
+    CommunityController(),
+  );
 
   @override
   void dispose() {
@@ -522,75 +530,222 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Community Category',
+          'Event Category',
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 18,
             fontWeight: FontWeight.w500,
             color: Colors.black87,
           ),
         ),
         const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerLeft,
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              ...categories.map((e) {
-                final bool isSelected = selectedCategories.contains(e);
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (isSelected) {
-                        selectedCategories.remove(e);
-                      } else {
-                        selectedCategories.add(e);
-                      }
-                    });
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 12.w,
-                      vertical: 5.h,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.r),
-                      gradient: isSelected
-                          ? AppColors.primaryGradientRotated
-                          : LinearGradient(
-                              colors: [Colors.grey[100]!, Colors.grey[100]!],
-                            ),
-                    ),
-                    child: Text(
-                      e,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                        color: isSelected ? Colors.white : Color(0xff555555),
-                      ),
+
+        Obx(() {
+          return Column(
+            children: communityController.categoryGroups.map((group) {
+              final isExpanded = communityController.expandedParents.contains(
+                group.parent,
+              );
+              final isSelected = communityController.isParentSelected(group);
+              final isPartial = communityController.isParentPartiallySelected(
+                group,
+              );
+
+              return Column(
+                children: [
+                  // Parent
+                  GestureDetector(
+                    onTap: () => communityController.toggleExpand(group.parent),
+                    child: newMethod(isSelected, isPartial, group, isExpanded),
+                  ),
+
+                  // Subcategories
+                  SizedBox(
+                    width: double.infinity,
+                    child: AnimatedSize(
+                      duration: const Duration(milliseconds: 250),
+                      curve: Curves.easeInOut,
+                      child: isExpanded
+                          ? Wrap(
+                              alignment: WrapAlignment.start,
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: [
+                                ...group.children.map((sub) {
+                                  final selected = communityController
+                                      .selectedSubcategories
+                                      .contains(sub);
+
+                                  return GestureDetector(
+                                    onTap: () => communityController
+                                        .toggleSubcategory(sub, group.parent),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                        vertical: 8.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: selected
+                                            ? AppColors.primaryGradientRotated
+                                            : null,
+                                        color: selected
+                                            ? null
+                                            : Colors.grey[100],
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        sub,
+                                        style: TextStyle(
+                                          fontSize: 13.sp,
+                                          color: selected
+                                              ? Colors.white
+                                              : Colors.grey[800],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 6.0,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      _activeParentForSub = group.parent;
+                                      _showAddCategoryDialog();
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          16.r,
+                                        ),
+                                        border: Border.all(
+                                          color: Colors.grey[400]!,
+                                          width: 1.5,
+                                        ),
+                                        gradient:
+                                            AppColors.primaryGradientRotated,
+                                      ),
+                                      child: Icon(
+                                        Icons.add,
+                                        color: Colors.white,
+                                        size: 20.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : const SizedBox.shrink(),
                     ),
                   ),
-                );
-              }).toList(),
-              // Add Category Button
-              Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: GestureDetector(
-                  onTap: () => _showAddCategoryDialog(),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.r),
-                      border: Border.all(color: Colors.grey[400]!, width: 1.5),
-                      gradient: AppColors.primaryGradientRotated,
-                    ),
-                    child: Icon(Icons.add, color: Colors.white, size: 20.sp),
-                  ),
+
+                  SizedBox(height: 12.h),
+                ],
+              );
+            }).toList(),
+          );
+        }),
+        GestureDetector(
+          onTap: () {
+            _buildNewCategoryDialog();
+          },
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
+            width: 160.w,
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradientRotated,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: Center(
+              child: Text(
+                "Add New Category",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14.sp,
                 ),
               ),
-            ],
+            ),
           ),
         ),
       ],
+    );
+  }
+
+  Future<dynamic> _buildNewCategoryDialog() {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          backgroundColor: Colors.white,
+          title: Text(
+            'Add New Category',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          content: TextField(
+            controller: _categoryController,
+            autofocus: true,
+            decoration: InputDecoration(
+              hintText: 'Enter category name',
+              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              filled: true,
+              fillColor: Colors.grey[100],
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+            ),
+            textCapitalization: TextCapitalization.words,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                _categoryController.clear();
+                Navigator.pop(context);
+              },
+              child: Text(
+                'Cancel',
+                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+              ),
+            ),
+            GestureDetector(
+              onTap: () {
+                final text = _categoryController.text.trim();
+                if (text.isEmpty) return;
+
+                if (text.isNotEmpty) {
+                  communityController.addParentCategory(text);
+                }
+
+                _categoryController.clear();
+                Navigator.pop(context);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Text(
+                  'Add',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -839,6 +994,33 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                   ],
                 ),
               ),
+      ),
+    );
+  }
+
+  Widget newMethod(
+    bool isSelected,
+    bool isPartial,
+    CategoryGroup group,
+    bool isExpanded,
+  ) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              group.parent,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: isSelected ? Colors.black54 : Colors.black54,
+              ),
+            ),
+          ),
+          Icon(
+            isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+          ),
+        ],
       ),
     );
   }

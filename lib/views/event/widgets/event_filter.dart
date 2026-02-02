@@ -251,55 +251,60 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                         ),
 
                         // Subcategories
-                        AnimatedSize(
-                          duration: const Duration(milliseconds: 250),
-                          curve: Curves.easeInOut,
-                          child: isExpanded
-                              ? Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: group.children.map((sub) {
-                                  final selected = eventController
-                                      .selectedSubcategories
-                                      .contains(sub);
-                              
-                                  return GestureDetector(
-                                    onTap: () =>
-                                        eventController.toggleSubcategory(
-                                          sub,
-                                          group.parent,
+                        SizedBox(
+                          width: double.infinity,
+                          child: AnimatedSize(
+                            duration: const Duration(milliseconds: 250),
+                            curve: Curves.easeInOut,
+                            child: isExpanded
+                                ? Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    alignment: WrapAlignment.start,
+
+                                    children: group.children.map((sub) {
+                                      final selected = eventController
+                                          .selectedSubcategories
+                                          .contains(sub);
+
+                                      return GestureDetector(
+                                        onTap: () =>
+                                            eventController.toggleSubcategory(
+                                              sub,
+                                              group.parent,
+                                            ),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 14.w,
+                                            vertical: 8.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            gradient: selected
+                                                ? AppColors
+                                                      .primaryGradientRotated
+                                                : null,
+                                            color: selected
+                                                ? null
+                                                : Colors.grey[100],
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            sub,
+                                            style: TextStyle(
+                                              fontSize: 13.sp,
+                                              color: selected
+                                                  ? Colors.white
+                                                  : Colors.grey[800],
+                                            ),
+                                          ),
                                         ),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 14.w,
-                                        vertical: 8.h,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        gradient: selected
-                                            ? AppColors
-                                                  .primaryGradientRotated
-                                            : null,
-                                        color: selected
-                                            ? null
-                                            : Colors.grey[100],
-                                        borderRadius: BorderRadius.circular(
-                                          20,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        sub,
-                                        style: TextStyle(
-                                          fontSize: 13.sp,
-                                          color: selected
-                                              ? Colors.white
-                                              : Colors.grey[800],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              )
-                              : const SizedBox.shrink(),
+                                      );
+                                    }).toList(),
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
                         ),
 
                         SizedBox(height: 12.h),
@@ -365,7 +370,7 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
     );
   }
 
-  Container newMethod(
+  Widget newMethod(
     bool isSelected,
     bool isPartial,
     CategoryGroup group,

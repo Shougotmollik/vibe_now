@@ -763,67 +763,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             }).toList(),
           );
         }),
-
-        // Align(
-        //   alignment: Alignment.centerLeft,
-        //   child: Wrap(
-        //     spacing: 8,
-        //     runSpacing: 8,
-        //     children: [
-        //       ...categories.map((item) {
-        //         final bool isSelected = selectedCategories.contains(item);
-        //         return GestureDetector(
-        //           onTap: () {
-        //             setState(() {
-        //               if (isSelected) {
-        //                 selectedCategories.remove(item);
-        //               } else {
-        //                 selectedCategories.add(item);
-        //               }
-        //             });
-        //           },
-        //           child: Container(
-        //             padding: EdgeInsets.symmetric(
-        //               horizontal: 12.w,
-        //               vertical: 5.h,
-        //             ),
-        //             decoration: BoxDecoration(
-        //               borderRadius: BorderRadius.circular(16.r),
-        //               gradient: isSelected
-        //                   ? AppColors.primaryGradientRotated
-        //                   : LinearGradient(
-        //                       colors: [Colors.grey[100]!, Colors.grey[100]!],
-        //                     ),
-        //             ),
-        //             child: Text(
-        //               item,
-        //               style: TextStyle(
-        //                 fontSize: 14.sp,
-        //                 fontWeight: FontWeight.w400,
-        //                 color: isSelected ? Colors.white : Color(0xff555555),
-        //               ),
-        //             ),
-        //           ),
-        //         );
-        //       }).toList(),
-        //       // Add Category Button
-        //       Padding(
-        //         padding: const EdgeInsets.all(4.0),
-        //         child: GestureDetector(
-        //           onTap: () => _showAddCategoryDialog(),
-        //           child: Container(
-        //             decoration: BoxDecoration(
-        //               borderRadius: BorderRadius.circular(16.r),
-        //               border: Border.all(color: Colors.grey[400]!, width: 1.5),
-        //               gradient: AppColors.primaryGradientRotated,
-        //             ),
-        //             child: Icon(Icons.add, color: Colors.white, size: 20.sp),
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
         GestureDetector(
           onTap: () {
             _buildNewCategoryDialog();
