@@ -43,8 +43,10 @@ class PrimaryButton extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        gradient: isEnabled ? (gradient ?? AppColors.primaryGradient) : null,
-        color: isEnabled ? null : Color(0xffC4A8FF),
+        gradient: isEnabled
+            ? (gradient ?? AppColors.primaryGradient)
+            : AppColors.primaryGradient.withOpacity(0.5),
+        // color: isEnabled ? null : Color(0xffC4A8FF),
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: ElevatedButton(
