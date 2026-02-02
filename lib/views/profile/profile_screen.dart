@@ -488,6 +488,15 @@ class _ProfileScreenState extends State<ProfileScreen>
           children: [
             GestureDetector(
               onTap: () => _openFullImage(item, context),
+              onLongPress: () {
+                if (isMyProfile) {
+                  showDialog(
+                    context: context,
+                    builder: (context) =>
+                        _buildImageDeleteAlertDialog(context, item),
+                  );
+                }
+              },
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16.r),
                 child: Image.network(
@@ -517,39 +526,39 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
 
             // Delete icon only if my profile
-            if (isMyProfile)
-              Positioned(
-                top: 8.h,
-                right: 8.h,
-                child: GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) =>
-                          _buildImageDeleteAlertDialog(context, item),
-                    );
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white.withAlpha(125),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 8,
-                          offset: Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: Assets.icons.trash.svg(
-                      width: 24.w,
-                      height: 24.h,
-                      // color: Colors.red.shade600,
-                    ),
-                  ),
-                ),
-              ),
+            // if (isMyProfile)
+            //   Positioned(
+            //     top: 8.h,
+            //     right: 8.h,
+            //     child: GestureDetector(
+            //       onTap: () {
+            //         showDialog(
+            //           context: context,
+            //           builder: (context) =>
+            //               _buildImageDeleteAlertDialog(context, item),
+            //         );
+            //       },
+            //       child: Container(
+            //         padding: EdgeInsets.all(8.w),
+            //         decoration: BoxDecoration(
+            //           shape: BoxShape.circle,
+            //           color: Colors.white.withAlpha(125),
+            //           boxShadow: [
+            //             BoxShadow(
+            //               color: Colors.black12,
+            //               blurRadius: 8,
+            //               offset: Offset(0, 3),
+            //             ),
+            //           ],
+            //         ),
+            //         child: Assets.icons.trash.svg(
+            //           width: 24.w,
+            //           height: 24.h,
+            //           // color: Colors.red.shade600,
+            //         ),
+            //       ),
+            //     ),
+            //   ),
           ],
         );
       }),
@@ -590,12 +599,14 @@ class _ProfileScreenState extends State<ProfileScreen>
         children: [
           Text('Are you sure you want to delete this photo?'),
           SizedBox(
-            height: 24.h,
+            height: 32.h,
             child: Row(
               spacing: 24.w,
               children: [
                 Expanded(
                   child: CustomElevatedButton(
+                    btnColor: Colors.grey.shade300,
+                    textColor: Color(0xff181818),
                     onTap: () => Navigator.pop(context),
                     buttonText: 'Cancel',
                   ),

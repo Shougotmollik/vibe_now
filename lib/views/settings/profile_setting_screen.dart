@@ -188,7 +188,8 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
               children: [
                 Expanded(
                   child: CustomElevatedButton(
-                    btnColor: AppColors.disableBtn,
+                    btnColor: Colors.grey.shade300,
+                    textColor: Color(0xff181818),
                     onTap: () => Navigator.pop(context),
                     buttonText: 'Cancel',
                   ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
@@ -132,13 +133,14 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                 SizedBox(height: 18.h),
 
                                 SizedBox(
-                                  height: 28.h,
+                                  height: 32.h,
                                   child: Row(
                                     spacing: 24.w,
                                     children: [
                                       Expanded(
                                         child: CustomElevatedButton(
-                                          btnColor: AppColors.disableBtn,
+                                          btnColor: Colors.grey.shade300,
+                                          textColor: Color(0xff181818),
                                           onTap: () {
                                             Navigator.pop(context);
                                           },
@@ -153,6 +155,12 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                                 .isNotEmpty) {
                                               Navigator.pop(context);
                                               Navigator.pop(context);
+                                            } else {
+                                              AppSnackbar.show(
+                                                message:
+                                                    'Please enter your password',
+                                                type: SnackType.info,
+                                              );
                                             }
 
                                             // // Navigator.pop(context);
