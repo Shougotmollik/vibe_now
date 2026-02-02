@@ -6,7 +6,7 @@ class EventController extends GetxController {
 
   final RxSet<String> selectedSubcategories = <String>{}.obs;
 
-  final List<CategoryGroup> categoryGroups = [
+  final RxList<CategoryGroup> categoryGroups = [
     CategoryGroup(
       parent: 'Social & Connection',
       children: [
@@ -32,7 +32,26 @@ class EventController extends GetxController {
       parent: 'Food & Drink',
       children: ['Dinner', 'Lunch', 'Desserts', 'Drinks', 'Snacks'],
     ),
-  ];
+  ].obs;
+
+  void addParentCategory(String name) {
+    final exists = categoryGroups.any((e) => e.parent == name);
+    if (exists) return;
+
+    categoryGroups.add(CategoryGroup(parent: name, children: []));
+  }
+
+  void addSubCategory({required String parent, required String subCategory}) {
+    final index = categoryGroups.indexWhere((e) => e.parent == parent);
+    if (index == -1) return;
+
+    final children = categoryGroups[index].children;
+
+    if (!children.contains(subCategory)) {
+      children.add(subCategory);
+      categoryGroups.refresh();
+    }
+  }
 
   void toggleExpand(String parent) {
     expandedParents.contains(parent)
