@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
@@ -773,41 +774,52 @@ class SentImageMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child: Image.file(
-                  File(imagePath),
-                  width: 200.w,
-                  height: 240.h,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              if (status == MessageStatus.sending)
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.3),
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: const Center(
-                      child: CircularProgressIndicator(color: Colors.white),
-                    ),
+      child: GestureDetector(
+        onLongPress: () => _buildMoreOption(
+          context,
+          onDelete: () {
+            Navigator.pop(context);
+          },
+          onEdit: () {
+            Navigator.pop(context);
+          },
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.file(
+                    File(imagePath),
+                    width: 200.w,
+                    height: 240.h,
+                    fit: BoxFit.cover,
                   ),
                 ),
-            ],
-          ),
-          if (caption != null && caption!.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(top: 6),
-              child: SentMessage(message: caption!, status: status),
+                if (status == MessageStatus.sending)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-          _MessageStatusIndicator(status: status),
-        ],
+            if (caption != null && caption!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: SentMessage(message: caption!, status: status),
+              ),
+            _MessageStatusIndicator(status: status),
+          ],
+        ),
       ),
     );
   }
@@ -896,21 +908,35 @@ class SentMessage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Container(
-            constraints: BoxConstraints(maxWidth: 280.w),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: const BoxDecoration(
-              gradient: AppColors.primaryGradientRotated,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(4),
+          GestureDetector(
+            onLongPress: () {
+              // _openMoreOptions(context);
+              _buildMoreOption(
+                context,
+                onDelete: () {
+                  Navigator.pop(context);
+                },
+                onEdit: () {
+                  Navigator.pop(context);
+                },
+              );
+            },
+            child: Container(
+              constraints: BoxConstraints(maxWidth: 280.w),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: const BoxDecoration(
+                gradient: AppColors.primaryGradientRotated,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(4),
+                ),
               ),
-            ),
-            child: Text(
-              message,
-              style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              child: Text(
+                message,
+                style: TextStyle(color: Colors.white, fontSize: 14.sp),
+              ),
             ),
           ),
           _MessageStatusIndicator(status: status),
@@ -934,49 +960,60 @@ class SentVoiceMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Align(
       alignment: Alignment.centerRight,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: const BoxDecoration(
-              gradient: AppColors.primaryGradientRotated,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(4),
-              ),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  isPaused ? Icons.play_arrow : Icons.pause,
-                  color: Colors.white,
-                  size: 20,
+      child: GestureDetector(
+        onLongPress: () => _buildMoreOption(
+          context,
+          onDelete: () {
+            Navigator.pop(context);
+          },
+          onEdit: () {
+            Navigator.pop(context);
+          },
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: const BoxDecoration(
+                gradient: AppColors.primaryGradientRotated,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(4),
                 ),
-                const SizedBox(width: 8),
-                SizedBox(
-                  width: 100.w,
-                  height: 24.h,
-                  child: CustomPaint(
-                    painter: WaveformPainter(
-                      isAnimating: !isPaused,
-                      isWhite: true,
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isPaused ? Icons.play_arrow : Icons.pause,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  SizedBox(
+                    width: 100.w,
+                    height: 24.h,
+                    child: CustomPaint(
+                      painter: WaveformPainter(
+                        isAnimating: !isPaused,
+                        isWhite: true,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '0:15',
-                  style: TextStyle(color: Colors.white, fontSize: 12.sp),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  Text(
+                    '0:15',
+                    style: TextStyle(color: Colors.white, fontSize: 12.sp),
+                  ),
+                ],
+              ),
             ),
-          ),
-          _MessageStatusIndicator(status: status),
-        ],
+            _MessageStatusIndicator(status: status),
+          ],
+        ),
       ),
     );
   }
@@ -1103,4 +1140,99 @@ class WaveformPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => isAnimating;
+}
+
+Future<dynamic> _buildMoreOption(
+  BuildContext context, {
+  required VoidCallback onDelete,
+  required VoidCallback onEdit,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent, // Rounded corners
+    builder: (context) {
+      return SafeArea(
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: AppColors.backgroundVariant,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                onTap: onDelete,
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 4.w,
+                    children: [
+                      Assets.icons.trash.svg(
+                        width: 20.w,
+                        height: 20.h,
+                        color: Colors.red,
+                      ),
+                      Text(
+                        'Delete Chat',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const Divider(height: 1),
+
+              InkWell(
+                onTap: onEdit,
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 4.w,
+                    children: [
+                      Icon(
+                        Icons.edit_note_rounded,
+                        color: Colors.grey[600],
+                        size: 20.sp,
+                      ),
+
+                      Text(
+                        'Edit',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
