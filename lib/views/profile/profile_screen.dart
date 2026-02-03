@@ -1,32 +1,25 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vibe_now/model/category.dart';
+import 'package:vibe_now/model/interest_model.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
 import 'package:vibe_now/views/profile/unlocked_profile_screen.dart';
 import 'package:vibe_now/utils.dart' as utils;
-
-class InterestTag {
-  final String label;
-  final SvgGenImage icon;
-  bool isSelected;
-
-  InterestTag({
-    required this.label,
-    required this.icon,
-    required this.isSelected,
-  });
-}
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.isMyProfile = true});
@@ -39,7 +32,9 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
-  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController(
+    text: 'Coffee enthusiast. Music lover. Avid traveler. Foodie.',
+  );
 
   final _tabs = ['Photos', 'Posts'];
 
@@ -81,6 +76,9 @@ class _ProfileScreenState extends State<ProfileScreen>
   int _selectedTabIndex = 0;
 
   bool _isEditable = false;
+  String? _activeParent;
+
+  final ProfileController profileController = Get.put(ProfileController());
 
   @override
   void initState() {
@@ -279,7 +277,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               decoration: InputDecoration(
                 counterText: "",
                 hintText:
-                    "Coffee enthusiast. Music lover. Avid traveler. Foodie.",
+                    "Enter your bio here. It will be visible to your friends",
                 hintStyle: TextStyle(fontSize: 14.sp, color: Color(0xff202020)),
                 contentPadding: EdgeInsets.symmetric(
                   vertical: 12.h,
@@ -524,41 +522,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ),
               ),
             ),
-
-            // Delete icon only if my profile
-            // if (isMyProfile)
-            //   Positioned(
-            //     top: 8.h,
-            //     right: 8.h,
-            //     child: GestureDetector(
-            //       onTap: () {
-            //         showDialog(
-            //           context: context,
-            //           builder: (context) =>
-            //               _buildImageDeleteAlertDialog(context, item),
-            //         );
-            //       },
-            //       child: Container(
-            //         padding: EdgeInsets.all(8.w),
-            //         decoration: BoxDecoration(
-            //           shape: BoxShape.circle,
-            //           color: Colors.white.withAlpha(125),
-            //           boxShadow: [
-            //             BoxShadow(
-            //               color: Colors.black12,
-            //               blurRadius: 8,
-            //               offset: Offset(0, 3),
-            //             ),
-            //           ],
-            //         ),
-            //         child: Assets.icons.trash.svg(
-            //           width: 24.w,
-            //           height: 24.h,
-            //           // color: Colors.red.shade600,
-            //         ),
-            //       ),
-            //     ),
-            //   ),
           ],
         );
       }),
@@ -585,11 +548,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ],
         ),
-        child: Assets.icons.trash.svg(
-          width: 32.w,
-          height: 32.h,
-          // color: Colors.red.shade600,
-        ),
+        child: Assets.icons.trash.svg(width: 32.w, height: 32.h),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -631,76 +590,288 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _buildInterestSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Interests',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0xff555555),
-                ),
-              ),
-              // Add new interest button
-              // GestureDetector(
-              //   onTap: () => _showAddInterestDialog(),
-              //   child: Container(
-              //     padding: EdgeInsets.all(6.w),
-              //     decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(16.r),
-              //       border: Border.all(color: Colors.grey[400]!, width: 1.5),
-              //       gradient: AppColors.primaryGradientRotated,
-              //     ),
-              //     child: Icon(Icons.add, color: Colors.white, size: 20.sp),
-              //   ),
-              // ),
-            ],
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 14.0.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Interests',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: Colors.black87,
+            ),
           ),
-        ),
-        SizedBox(height: 8.h),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 16.w),
-          child: Wrap(
-            spacing: 12.w,
-            runSpacing: 12.h,
-            children: [
-              ..._allInterests.map((item) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      item.isSelected = !item.isSelected;
-                    });
-                  },
-                  child: InterestChip(
-                    icon: item.icon,
-                    label: item.label,
-                    isSelected: item.isSelected,
+          const SizedBox(height: 8),
+
+          Obx(() {
+            return Column(
+              children: profileController.interestGroups.map((group) {
+                final isExpanded = profileController.expandedParents.contains(
+                  group.parent,
+                );
+                final isSelected = profileController.isParentSelected(group);
+
+                final isPartial = profileController.isParentPartiallySelected(
+                  group,
+                );
+
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 4.0),
+                  child: Column(
+                    children: [
+                      // Parent
+                      GestureDetector(
+                        onTap: () =>
+                            profileController.toggleExpand(group.parent),
+                        child: newMethod(
+                          isSelected,
+                          isPartial,
+                          group,
+                          isExpanded,
+                        ),
+                      ),
+
+                      // Subcategories
+                      SizedBox(
+                        width: double.infinity,
+                        child: AnimatedSize(
+                          duration: const Duration(milliseconds: 250),
+                          curve: Curves.easeInOut,
+                          child: isExpanded
+                              ? Wrap(
+                                  alignment: WrapAlignment.start,
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    ...group.children.map((sub) {
+                                      final selected = profileController
+                                          .selectedSubcategories
+                                          .contains(sub.name);
+
+                                      return GestureDetector(
+                                        onTap: () =>
+                                            profileController.toggleSubcategory(
+                                              sub.name,
+                                              group.parent,
+                                            ),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12.w,
+                                            vertical: 8.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            gradient: selected
+                                                ? AppColors
+                                                      .primaryGradientRotated
+                                                : null,
+                                            color: selected
+                                                ? null
+                                                : Colors.grey[200],
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            spacing: 4.w,
+                                            children: [
+                                              sub.icon.svg(
+                                                height: 16.h,
+                                                width: 16.h,
+                                                color: selected
+                                                    ? Colors.white
+                                                    : Colors.grey[800],
+                                              ),
+                                              Text(
+                                                sub.name,
+                                                style: TextStyle(
+                                                  fontSize: 13.sp,
+                                                  color: selected
+                                                      ? Colors.white
+                                                      : Colors.grey[800],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 6.0,
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          _activeParent = group.parent;
+                                          // _showAddCategoryDialog();
+
+                                          _showAddInterestDialog();
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              16.r,
+                                            ),
+                                            border: Border.all(
+                                              color: Colors.grey[400]!,
+                                              width: 1.5,
+                                            ),
+                                            gradient: AppColors
+                                                .primaryGradientRotated,
+                                          ),
+                                          child: Icon(
+                                            Icons.add,
+                                            color: Colors.white,
+                                            size: 20.sp,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                        ),
+                      ),
+
+                      SizedBox(height: 12.h),
+                    ],
                   ),
                 );
               }).toList(),
-
-              GestureDetector(
-                onTap: () => _showAddInterestDialog(),
-                child: Container(
-                  padding: EdgeInsets.all(6.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(color: Colors.grey[400]!, width: 1.5),
-                    gradient: AppColors.primaryGradientRotated,
+            );
+          }),
+          GestureDetector(
+            onTap: () {
+              _showAddParentInterestDialog();
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
+              width: 160.w,
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradientRotated,
+                borderRadius: BorderRadius.circular(16.r),
+              ),
+              child: Center(
+                child: Text(
+                  "Add New Interest",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 14.sp,
                   ),
-                  child: Icon(Icons.add, color: Colors.white, size: 20.sp),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddParentInterestDialog() {
+    final TextEditingController controller = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: AppColors.backgroundVariant,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          title: const Text(
+            'Add Interest Category',
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            spacing: 12.h,
+            children: [
+              TextField(
+                controller: controller,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: "Enter interest name",
+                  hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Colors.grey[400]!,
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(
+                height: 32.h,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  spacing: 18.w,
+                  children: [
+                    Expanded(
+                      child: CustomElevatedButton(
+                        btnColor: Colors.grey.shade300,
+                        textColor: Colors.black,
+                        fontWeight: FontWeight.w500,
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        buttonText: 'Cancel',
+                      ),
+                    ),
+                    Expanded(
+                      child: PrimaryButton.text(
+                        onPressed: () {
+                          final value = controller.text.trim();
+                          if (value.isNotEmpty) {
+                            profileController.addParentInterest(
+                              parentName: value,
+                            );
+                            Navigator.pop(context);
+                          }
+                        },
+                        text: "Add",
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-        ),
-      ],
+        );
+      },
+    );
+  }
+
+  Widget newMethod(
+    bool isSelected,
+    bool isPartial,
+    Interest group,
+    bool isExpanded,
+  ) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              group.parent,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: isSelected ? Colors.black54 : Colors.black54,
+              ),
+            ),
+          ),
+          Icon(
+            isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            color: isSelected ? Colors.black54 : Colors.black54,
+          ),
+        ],
+      ),
     );
   }
 
@@ -744,7 +915,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 borderRadius: BorderRadius.circular(16.r),
               ),
               backgroundColor: AppColors.backgroundVariant,
-              title: Text("Add New Interest"),
+              title: Text("Add Sub Interest"),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -797,17 +968,29 @@ class _ProfileScreenState extends State<ProfileScreen>
                               final newInterest = _newInterestController.text
                                   .trim();
                               if (newInterest.isNotEmpty) {
-                                setState(() {
-                                  _allInterests.add(
-                                    InterestTag(
-                                      label: newInterest,
+                                // setState(() {
+                                //   _allInterests.add(
+                                //     InterestTag(
+                                //       label: newInterest,
+                                //       icon:
+                                //           selectedIcon ??
+                                //           Assets.icons.community,
+                                //       isSelected: true,
+                                //     ),
+                                //   );
+                                // });
+
+                                if (_activeParent != null) {
+                                  profileController.addSubInterest(
+                                    parent: _activeParent!,
+                                    subInterest: SubInterest(
+                                      name: newInterest,
                                       icon:
                                           selectedIcon ??
                                           Assets.icons.community,
-                                      isSelected: true,
                                     ),
                                   );
-                                });
+                                }
                                 Navigator.pop(context);
                               }
                             },
@@ -853,119 +1036,14 @@ void _openFullImage(String imageUrl, BuildContext context) {
   );
 }
 
-class PostsTab extends StatefulWidget {
-  const PostsTab({super.key});
+class InterestTag {
+  final String label;
+  final SvgGenImage icon;
+  bool isSelected;
 
-  @override
-  State<PostsTab> createState() => _PostsTabState();
-}
-
-class _PostsTabState extends State<PostsTab> {
-  final List<Map<String, dynamic>> _posts = [
-    {"is_liked": true},
-    {"is_liked": false},
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: _posts.map((item) {
-        return PostItem(
-          isLiked: item["is_liked"],
-          onLikeTap: () {
-            setState(() => item["is_liked"] = !item["is_liked"]);
-          },
-        );
-      }).toList(),
-    );
-  }
-}
-
-class PostItem extends StatelessWidget {
-  final bool isLiked;
-  final VoidCallback onLikeTap;
-
-  const PostItem({super.key, required this.isLiked, required this.onLikeTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.symmetric(vertical: 12.h),
-      decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: Colors.grey.shade300, width: 1),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const CircleAvatar(
-                radius: 25,
-                backgroundImage: NetworkImage(
-                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-                ),
-              ),
-              const SizedBox(width: 12),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Jenny smith',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                  Row(
-                    children: [
-                      Assets.icons.earth.svg(
-                        width: 16,
-                        height: 16,
-                        color: Color(0xFF9D9D9D),
-                      ),
-                      const SizedBox(width: 5),
-                      const Text(
-                        ' 20 Oct',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Color(0xFF9D9D9D),
-                          height: 1.5,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const Spacer(),
-              Column(
-                spacing: 8.h,
-                children: [
-                  GestureDetector(
-                    onTap: onLikeTap,
-                    child: Icon(
-                      isLiked ? Icons.favorite : Icons.favorite_border,
-                      color: isLiked ? Colors.red : Colors.grey,
-                      size: 30,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () => context.pushNamed(RouteNames.likeScreen),
-                    child: Text(
-                      '100',
-                      style: TextStyle(color: Colors.grey.shade600),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'Anybody wants to have coffee?',
-            style: TextStyle(fontSize: 16),
-          ),
-        ],
-      ),
-    );
-  }
+  InterestTag({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+  });
 }

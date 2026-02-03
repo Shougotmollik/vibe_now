@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/model/category.dart';
 
 class EventController extends GetxController {
+  
   final RxSet<String> expandedParents = <String>{}.obs;
 
   final RxSet<String> selectedSubcategories = <String>{}.obs;
