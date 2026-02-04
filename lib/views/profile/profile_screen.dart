@@ -18,8 +18,8 @@ import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/interest_model.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
-import 'package:vibe_now/views/profile/unlocked_profile_screen.dart';
 import 'package:vibe_now/utils.dart' as utils;
+import 'package:vibe_now/views/profile/widget/post_tab.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.isMyProfile = true});
@@ -310,35 +310,36 @@ class _ProfileScreenState extends State<ProfileScreen>
             alignment: Alignment.center,
             children: [
               _profilePicWidget(),
-              Positioned(
-                right: 16.w,
-                bottom: 0,
-                child: GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _isEditable = !_isEditable;
-                    });
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.shade200,
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Icon(
-                      _isEditable ? Icons.done_all : Icons.edit,
-                      color: Colors.grey.shade600,
+              if (widget.isMyProfile)
+                Positioned(
+                  right: 16.w,
+                  bottom: 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _isEditable = !_isEditable;
+                      });
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.shade200,
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Icon(
+                        _isEditable ? Icons.done_all : Icons.edit,
+                        color: Colors.grey.shade600,
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -487,7 +488,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             GestureDetector(
               onTap: () => _openFullImage(item, context),
               onLongPress: () {
-                if (isMyProfile) {
+                if (isMyProfile && _isEditable) {
                   showDialog(
                     context: context,
                     builder: (context) =>
@@ -563,11 +564,20 @@ class _ProfileScreenState extends State<ProfileScreen>
               spacing: 24.w,
               children: [
                 Expanded(
-                  child: CustomElevatedButton(
-                    btnColor: Colors.grey.shade300,
-                    textColor: Color(0xff181818),
-                    onTap: () => Navigator.pop(context),
-                    buttonText: 'Cancel',
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24.r),
+                      border: Border.all(
+                        color: Color(0xffAEAEAE),
+                        width: 1.5.w,
+                      ),
+                    ),
+                    child: CustomElevatedButton(
+                      btnColor: Colors.white,
+                      textColor: Color(0xff181818),
+                      onTap: () => Navigator.pop(context),
+                      buttonText: 'Cancel',
+                    ),
                   ),
                 ),
                 Expanded(
@@ -813,14 +823,23 @@ class _ProfileScreenState extends State<ProfileScreen>
                   spacing: 18.w,
                   children: [
                     Expanded(
-                      child: CustomElevatedButton(
-                        btnColor: Colors.grey.shade300,
-                        textColor: Colors.black,
-                        fontWeight: FontWeight.w500,
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        buttonText: 'Cancel',
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24.r),
+                          border: Border.all(
+                            color: Colors.grey[400]!,
+                            width: 1.5,
+                          ),
+                        ),
+                        child: CustomElevatedButton(
+                          btnColor: Colors.white,
+                          textColor: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          buttonText: 'Cancel',
+                        ),
                       ),
                     ),
                     Expanded(
@@ -954,12 +973,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                       spacing: 24.w,
                       children: [
                         Expanded(
-                          child: CustomElevatedButton(
-                            btnColor: Colors.grey.shade300,
-                            textColor: Colors.black,
-                            onTap: () => Navigator.pop(context),
-                            buttonText: 'Cancel',
-                            fontWeight: FontWeight.w400,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(24.r),
+                              border: Border.all(
+                                color: Color(0xffAEAEAE),
+                                width: 1.5.w,
+                              ),
+                            ),
+                            child: CustomElevatedButton(
+                              btnColor: Colors.white,
+                              textColor: Colors.black,
+                              onTap: () => Navigator.pop(context),
+                              buttonText: 'Cancel',
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
                         ),
                         Expanded(

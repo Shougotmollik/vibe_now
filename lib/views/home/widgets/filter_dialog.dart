@@ -217,12 +217,21 @@ class _FilterDialogState extends State<FilterDialog> {
                   spacing: 18.w,
                   children: [
                     Expanded(
-                      child: CustomElevatedButton(
-                        btnColor: Colors.grey[200],
-                        textColor: Colors.black87,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24.r),
+                          border: Border.all(
+                            color: Color(0xffAEAEAE),
+                            width: 1.5.w,
+                          ),
+                        ),
+                        child: CustomElevatedButton(
+                          btnColor: Colors.white,
+                          textColor: Colors.black87,
 
-                        onTap: clearFilters,
-                        buttonText: 'Clear',
+                          onTap: clearFilters,
+                          buttonText: 'Clear',
+                        ),
                       ),
                     ),
 

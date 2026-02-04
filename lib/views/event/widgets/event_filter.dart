@@ -340,11 +340,20 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                 child: Row(
                   children: [
                     Expanded(
-                      child: CustomElevatedButton(
-                        btnColor: Colors.grey[200],
-                        textColor: Colors.black87,
-                        onTap: clearFilters,
-                        buttonText: 'Clear',
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(24.r),
+                          border: Border.all(
+                            color: Color(0xffAEAEAE),
+                            width: 1.5.w,
+                          ),
+                        ),
+                        child: CustomElevatedButton(
+                          btnColor: Colors.white,
+                          textColor: Colors.black87,
+                          onTap: clearFilters,
+                          buttonText: 'Clear',
+                        ),
                       ),
                     ),
                     SizedBox(width: 16.w),
@@ -376,17 +385,8 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
     CategoryGroup group,
     bool isExpanded,
   ) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        gradient: isSelected ? AppColors.primaryGradientRotated : null,
-        color: isSelected
-            ? null
-            : isPartial
-            ? Colors.transparent
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 12.0),
       child: Row(
         children: [
           Expanded(

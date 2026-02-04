@@ -42,4 +42,6 @@ class RouteNames {
 
   static const String profileScreen = "profileScreen";
   static const String waveScreen = "waveScreen";
+
+  static const String deleteConfirmScreen = "deleteConfirmScreen";
 }

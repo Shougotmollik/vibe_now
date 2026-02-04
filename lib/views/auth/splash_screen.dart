@@ -97,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
           AnimatedFadeUpText(
             delay: 2000,
-            text: 'vibe.now',
+            text: 'vybin',
             fontSize: 28.sp,
             fontWeight: FontWeight.w700,
           ),

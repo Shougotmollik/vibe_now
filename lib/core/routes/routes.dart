@@ -24,8 +24,8 @@ import 'package:vibe_now/views/notification/notification_screen.dart';
 import 'package:vibe_now/views/profile/like_list_screen.dart';
 import 'package:vibe_now/views/profile/locked_profile_screen.dart';
 import 'package:vibe_now/views/profile/profile_screen.dart';
-import 'package:vibe_now/views/profile/unlocked_profile_screen.dart';
 import 'package:vibe_now/views/qr_verification/qr_verification_screen.dart';
+import 'package:vibe_now/views/settings/delete_confirm_screen.dart';
 import 'package:vibe_now/views/settings/delete_reason_screen.dart';
 import 'package:vibe_now/views/settings/settings_screen.dart';
 import 'package:vibe_now/views/subscription/subscription_screen.dart';
@@ -178,6 +178,12 @@ final GoRouter router = GoRouter(
       path: '/reason-screen',
       name: RouteNames.reasonScreen,
       builder: (context, state) => const DeleteReasonScreen(),
+    ),
+
+    GoRoute(
+      path: '/delete-confirm-screen',
+      name: RouteNames.deleteConfirmScreen,
+      builder: (context, state) => const DeleteConfirmScreen(),
     ),
   ],
 );

@@ -29,14 +29,15 @@ class _IntroScreenState extends State<IntroScreen>
   late List<AnimationController> _controllers;
   late List<Animation<Offset>> _slideAnimations;
   late List<Animation<double>> _fadeAnimations;
+
   late AnimationController _buttonController;
   late Animation<Offset> _buttonSlideAnimation;
   late Animation<double> _buttonFadeAnimation;
+
   late AnimationController _titleController;
   late Animation<Offset> _titleSlideAnimation;
   late Animation<double> _titleFadeAnimation;
 
-  // List of intro tiles
   List<IntroTileModel> get introItems => [
     IntroTileModel(
       title: "Discover vibes happening around you",
@@ -64,15 +65,15 @@ class _IntroScreenState extends State<IntroScreen>
   void initState() {
     super.initState();
 
-    // Title animation
+    //Title animation
     _titleController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1100),
       vsync: this,
     );
 
     _titleSlideAnimation =
         Tween<Offset>(begin: const Offset(0, -0.3), end: Offset.zero).animate(
-          CurvedAnimation(parent: _titleController, curve: Curves.easeOutQuart),
+          CurvedAnimation(parent: _titleController, curve: Curves.easeOutCubic),
         );
 
     _titleFadeAnimation = Tween<double>(
@@ -80,11 +81,11 @@ class _IntroScreenState extends State<IntroScreen>
       end: 1.0,
     ).animate(CurvedAnimation(parent: _titleController, curve: Curves.easeOut));
 
-    // Tiles animations
+    //Tile animations
     _controllers = List.generate(
       introItems.length,
-      (index) => AnimationController(
-        duration: const Duration(milliseconds: 800),
+      (_) => AnimationController(
+        duration: const Duration(milliseconds: 1000),
         vsync: this,
       ),
     );
@@ -94,7 +95,7 @@ class _IntroScreenState extends State<IntroScreen>
         begin: const Offset(0, 0.8),
         end: Offset.zero,
       ).animate(
-        CurvedAnimation(parent: controller, curve: Curves.easeOutQuart),
+        CurvedAnimation(parent: controller, curve: Curves.easeOutCubic),
       );
     }).toList();
 
@@ -102,14 +103,14 @@ class _IntroScreenState extends State<IntroScreen>
       return Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
           parent: controller,
-          curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
+          curve: const Interval(0.0, 0.85, curve: Curves.easeOut),
         ),
       );
     }).toList();
 
     // Button animation
     _buttonController = AnimationController(
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
 
@@ -117,7 +118,7 @@ class _IntroScreenState extends State<IntroScreen>
         Tween<Offset>(begin: const Offset(0, 1.0), end: Offset.zero).animate(
           CurvedAnimation(
             parent: _buttonController,
-            curve: Curves.easeOutQuart,
+            curve: Curves.easeOutCubic,
           ),
         );
 
@@ -128,26 +129,25 @@ class _IntroScreenState extends State<IntroScreen>
       ),
     );
 
-    // Start animations one after another
     _startAnimations();
   }
 
-  void _startAnimations() async {
-    // Animate title first
+  Future<void> _startAnimations() async {
+    //Title first
     _titleController.forward();
 
-    await Future.delayed(const Duration(milliseconds: 200));
+    await Future.delayed(const Duration(milliseconds: 300));
 
-    // Animate tiles
+    // Tiles staggered
     for (int i = 0; i < _controllers.length; i++) {
-      await Future.delayed(const Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 180));
       if (mounted) {
         _controllers[i].forward();
       }
     }
 
-    // Animate button last
-    await Future.delayed(const Duration(milliseconds: 200));
+    // Button last
+    await Future.delayed(const Duration(milliseconds: 350));
     if (mounted) {
       _buttonController.forward();
     }
@@ -156,7 +156,7 @@ class _IntroScreenState extends State<IntroScreen>
   @override
   void dispose() {
     _titleController.dispose();
-    for (var controller in _controllers) {
+    for (final controller in _controllers) {
       controller.dispose();
     }
     _buttonController.dispose();
@@ -174,12 +174,14 @@ class _IntroScreenState extends State<IntroScreen>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(height: 52.h),
+
+              /// Title
               SlideTransition(
                 position: _titleSlideAnimation,
                 child: FadeTransition(
                   opacity: _titleFadeAnimation,
                   child: Text(
-                    "Connect with real people nearby",
+                    "Let’s vibe together",
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -188,8 +190,10 @@ class _IntroScreenState extends State<IntroScreen>
                   ),
                 ),
               ),
+
               SizedBox(height: 32.h),
 
+              // Intro tiles
               Column(
                 children: List.generate(
                   introItems.length,
@@ -208,6 +212,7 @@ class _IntroScreenState extends State<IntroScreen>
 
               SizedBox(height: 80.h),
 
+              // Button
               SlideTransition(
                 position: _buttonSlideAnimation,
                 child: FadeTransition(
@@ -227,7 +232,6 @@ class _IntroScreenState extends State<IntroScreen>
     );
   }
 
-  // Intro tile widget
   Widget buildIntroTile(IntroTileModel model) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
@@ -236,7 +240,6 @@ class _IntroScreenState extends State<IntroScreen>
         borderRadius: BorderRadius.circular(40.r),
       ),
       child: Row(
-        spacing: 8.w,
         children: [
           Container(
             padding: EdgeInsets.all(8.w),
@@ -250,6 +253,7 @@ class _IntroScreenState extends State<IntroScreen>
               color: model.iconColor,
             ),
           ),
+          SizedBox(width: 8.w),
           Expanded(
             child: Text(
               model.title,

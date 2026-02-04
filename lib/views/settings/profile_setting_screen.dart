@@ -12,6 +12,7 @@ import 'package:vibe_now/gen/assets.gen.dart' as svgs;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
+import 'package:vibe_now/views/settings/delete_confirm_screen.dart';
 import 'package:vibe_now/views/settings/delete_reason_screen.dart';
 import 'package:vibe_now/views/settings/edit_profile_screen.dart';
 import 'package:vibe_now/views/settings/manage_password.dart';
@@ -107,7 +108,8 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DeleteReasonScreen(),
+                        builder: (context) =>
+                            DeleteReasonScreen(isPaused: true),
                       ),
                     );
                   },
@@ -118,12 +120,6 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                   title: 'Delete Your Account',
                   onTap: () {
                     context.pushNamed(RouteNames.reasonScreen);
-                    // showDialog(
-                    //   context: context,
-                    //   builder: (context) {
-                    //     return _buildDeleteDialog(context);
-                    //   },
-                    // );
                   },
                 ),
               ],

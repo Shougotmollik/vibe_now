@@ -59,10 +59,10 @@ class _WaveScreenState extends State<WaveScreen> {
                 fit: BoxFit.cover,
                 reverse: false,
               ),
-              // SizedBox(height: 16.h),
 
+              // SizedBox(height: 16.h),
               Text(
-                '$name sent you a wave!',
+                '$name wants to meet you.',
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
@@ -71,9 +71,8 @@ class _WaveScreenState extends State<WaveScreen> {
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 8.h),
-
               Text(
-                'Would you like to start chatting?',
+                'Accept to suggest a time and place for a quick meetup',
                 style: TextStyle(fontSize: 14.sp, color: Colors.black54),
                 textAlign: TextAlign.center,
               ),
@@ -91,13 +90,19 @@ class _WaveScreenState extends State<WaveScreen> {
                     },
                     text: 'Accept',
                   ),
-                  CustomElevatedButton(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    buttonText: 'Reject',
-                    btnColor: Colors.grey.shade300,
-                    textColor: Color(0xff181818),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(24.r),
+                      border: Border.all(color: Color(0xffAEAEAE), width: 1.w),
+                    ),
+                    child: CustomElevatedButton(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      buttonText: 'Reject',
+                      btnColor: Colors.white,
+                      textColor: Color(0xff181818),
+                    ),
                   ),
 
                   // SizedBox(width: 18.w),

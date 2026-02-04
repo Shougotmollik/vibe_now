@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/auth/widgets/step_page.dart';
 import 'package:vibe_now/views/auth/widgets/step_title.dart';
@@ -27,11 +28,19 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
         spacing: 28.w,
         children: [
           Expanded(
-            child: CustomElevatedButton(
-              onTap: () {
-                context.pushNamed(RouteNames.mainNavBar);
-              },
-              buttonText: 'Not Now',
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(24.r),
+                border: Border.all(color: Color(0xffAEAEAE), width: 1.w),
+              ),
+              child: CustomElevatedButton(
+                btnColor: Colors.white,
+                textColor: Colors.black,
+                onTap: () {
+                  context.pushNamed(RouteNames.mainNavBar);
+                },
+                buttonText: 'Not Now',
+              ),
             ),
           ),
           Expanded(
@@ -78,7 +87,6 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
             ),
 
             // SizedBox(height: 24.h),
-
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: Text(

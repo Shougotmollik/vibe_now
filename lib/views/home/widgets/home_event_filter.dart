@@ -196,11 +196,14 @@ class _HomeEventFilterState extends State<HomeEventFilter> {
                       // Parent
                       GestureDetector(
                         onTap: () => eventController.toggleExpand(group.parent),
-                        child: newMethod(
-                          isSelected,
-                          isPartial,
-                          group,
-                          isExpanded,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 12.0),
+                          child: newMethod(
+                            isSelected,
+                            isPartial,
+                            group,
+                            isExpanded,
+                          ),
                         ),
                       ),
 
@@ -319,39 +322,25 @@ class _HomeEventFilterState extends State<HomeEventFilter> {
     );
   }
 
-  Container newMethod(
+  Widget newMethod(
     bool isSelected,
     bool isPartial,
     CategoryGroup group,
     bool isExpanded,
   ) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        gradient: isSelected ? AppColors.primaryGradientRotated : null,
-        color: isSelected
-            ? null
-            : isPartial
-            ? Colors.transparent
-            : Colors.transparent,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              group.parent,
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : Colors.black87,
-              ),
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            group.parent,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: isSelected ? Colors.white : Colors.black87,
             ),
           ),
-          Icon(
-            isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-          ),
-        ],
-      ),
+        ),
+        Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+      ],
     );
   }
 

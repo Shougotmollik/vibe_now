@@ -7,6 +7,7 @@ import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/create_vibe/vibe_animated_dialog.dart';
 
 class CreateVibeScreen extends StatefulWidget {
   const CreateVibeScreen({super.key});
@@ -97,9 +98,25 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
             ),
             child: ElevatedButton(
               onPressed: () {
-                AppSnackbar.show(
-                  message: 'Your vibe has been created',
-                  type: SnackType.success,
+                // Navigator.pop(context);
+                showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) {
+                    return Center(
+                      child: Dialog(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        child: VibeAnimatedDialog(
+                          content:
+                              "Congratulations! You have created a new vibe.",
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
               style: ElevatedButton.styleFrom(

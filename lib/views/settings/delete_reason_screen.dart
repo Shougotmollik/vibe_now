@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
+import 'package:vibe_now/views/settings/delete_confirm_screen.dart';
 
 class DeleteReasonScreen extends StatefulWidget {
-  const DeleteReasonScreen({super.key});
+  const DeleteReasonScreen({super.key, this.isPaused});
+
+  final bool? isPaused;
 
   @override
   State<DeleteReasonScreen> createState() => _DeleteReasonScreenState();
@@ -106,6 +111,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                 TextFormField(
                                   obscureText: true,
                                   controller: _passwordTEController,
+                                  autofocus: true,
                                   decoration: InputDecoration(
                                     hintText: "Enter your password",
                                     hintStyle: TextStyle(
@@ -138,13 +144,23 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                     spacing: 24.w,
                                     children: [
                                       Expanded(
-                                        child: CustomElevatedButton(
-                                          btnColor: Colors.grey.shade300,
-                                          textColor: Color(0xff181818),
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                          buttonText: 'Cancel',
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Color(0xffAEAEAE),
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              24.r,
+                                            ),
+                                          ),
+                                          child: CustomElevatedButton(
+                                            btnColor: Colors.white,
+                                            textColor: Color(0xff181818),
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            buttonText: 'Cancel',
+                                          ),
                                         ),
                                       ),
                                       Expanded(
@@ -153,8 +169,23 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                             if (_passwordTEController
                                                 .text
                                                 .isNotEmpty) {
-                                              Navigator.pop(context);
-                                              Navigator.pop(context);
+                                              // Navigator.pop(context);
+                                              // Navigator.pop(context);
+                                              // context.pushNamed(
+                                              //   RouteNames.deleteConfirmScreen,
+                                              //   extra: {
+                                              //     'isPaused': true,},
+                                              // );
+
+                                              Navigator.of(context).push(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DeleteConfirmScreen(
+                                                        isPaused:
+                                                            widget.isPaused,
+                                                      ),
+                                                ),
+                                              );
                                             } else {
                                               AppSnackbar.show(
                                                 message:
@@ -162,11 +193,10 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                                 type: SnackType.info,
                                               );
                                             }
-
                                             // // Navigator.pop(context);
                                             _passwordTEController.clear();
                                           },
-                                          text: 'Delete',
+                                          text: 'Confirm',
                                         ),
                                       ),
                                     ],
@@ -248,33 +278,6 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
       ),
     );
   }
-
-  // Widget _buildAppBar() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: [
-  //       // GestureDetector(
-  //       //   onTap: () => Navigator.pop(context),
-  //       //   child: Container(
-  //       //     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-  //       //     decoration: BoxDecoration(
-  //       //       gradient: AppColors.primaryGradient,
-  //       //       borderRadius: BorderRadius.circular(40.r),
-  //       //     ),
-
-  //       //     child: Text(
-  //       //       'Send',
-  //       //       style: TextStyle(
-  //       //         color: Colors.white,
-  //       //         fontSize: 16.sp,
-  //       //         fontWeight: FontWeight.w400,
-  //       //       ),
-  //       //     ),
-  //       //   ),
-  //       // ),
-  //     ],
-  //   );
-  // }
 
   Widget _selectedCircle() {
     return Assets.icons.checkboxGradient.svg(
