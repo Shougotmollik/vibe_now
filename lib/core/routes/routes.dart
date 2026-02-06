@@ -7,6 +7,7 @@ import 'package:vibe_now/views/auth/new_password_screen.dart';
 import 'package:vibe_now/views/auth/otp_verification_screen.dart';
 import 'package:vibe_now/views/auth/sign_in_screen.dart';
 import 'package:vibe_now/views/auth/sign_up_screen.dart';
+import 'package:vibe_now/views/auth/signup_otp_verification_screen.dart';
 import 'package:vibe_now/views/auth/splash_screen.dart';
 import 'package:vibe_now/views/auth/steps/step_name_screen.dart';
 import 'package:vibe_now/views/chat/chat_inbox_screen.dart';
@@ -57,6 +58,12 @@ final GoRouter router = GoRouter(
       path: '/email-verification',
       name: RouteNames.emailVerificationScreen,
       builder: (context, state) => const EmailVerificationScreen(),
+    ),
+
+    GoRoute(
+      path: "/signup-otp-verification",
+      name: RouteNames.signupOtpVerificationScreen,
+      builder: (context, state) => const SignupOtpVerificationScreen(),
     ),
     GoRoute(
       path: '/otp-verification',

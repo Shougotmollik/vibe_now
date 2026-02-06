@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/model/interest_model.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 
 class HomeVibeFilter extends StatefulWidget {
@@ -19,30 +22,23 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
   List<String> selectedCategories = [];
   String selectedGender = 'Women';
 
+  final ProfileController profileController = Get.put(ProfileController());
+
   // Options
   final List<String> lookingForOptions = [
     'Friendship',
     'Relationship',
     "I'm not sure yet",
   ];
-  final List<String> interestOptions = [
-    'Music',
-    'Sports',
-    'Food',
-    'Art',
-    'Tech',
-    'Wellness',
-  ];
-
-  void toggleCategory(String category) {
-    setState(() {
-      if (selectedCategories.contains(category)) {
-        selectedCategories.remove(category);
-      } else {
-        selectedCategories.add(category);
-      }
-    });
-  }
+  // void toggleCategory(String category) {
+  //   setState(() {
+  //     if (selectedCategories.contains(category)) {
+  //       selectedCategories.remove(category);
+  //     } else {
+  //       selectedCategories.add(category);
+  //     }
+  //   });
+  // }
 
   void clearFilters() {
     setState(() {
@@ -64,116 +60,11 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
             SizedBox(height: 16.h),
 
             // Distance Slider with gradient track
-            Column(
-              children: [
-                Row(
-                  spacing: 8.w,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      'Distance',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-
-                    Text(
-                      distance < 1000
-                          ? 'under: ${distance.round()} m'
-                          : 'under: ${(distance / 1000).toStringAsFixed(1)} km',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8.h),
-
-                // Show selected distance
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final trackWidth = constraints.maxWidth;
-                    final thumbPercent = (distance - 100) / (10000 - 100);
-
-                    return Stack(
-                      alignment: Alignment.centerLeft,
-                      children: [
-                        // Full track (gray)
-                        Container(
-                          height: 4.h,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                        // Gradient track up to thumb
-                        Container(
-                          width: trackWidth * thumbPercent,
-                          height: 4.h,
-                          decoration: BoxDecoration(
-                            gradient: AppColors.primaryGradientRotated,
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                        // Slider itself
-                        SliderTheme(
-                          data: SliderThemeData(
-                            activeTrackColor: Colors.transparent,
-                            inactiveTrackColor: Colors.transparent,
-                            thumbColor: AppColors.primaryGradient.colors.first,
-                            overlayColor: AppColors.primaryGradient.colors.first
-                                .withOpacity(0.2),
-                            trackHeight: 4.h,
-                            rangeThumbShape: const RoundRangeSliderThumbShape(
-                              enabledThumbRadius: 10,
-                            ),
-                          ),
-                          child: Slider(
-                            min: 100,
-                            max: 10000,
-                            divisions: 49,
-                            value: distance,
-                            label: distance < 1000
-                                ? '${distance.round()} m'
-                                : '${(distance / 1000).toStringAsFixed(1)} km',
-                            onChanged: (value) =>
-                                setState(() => distance = value),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [Text('100 m'), Text('10 km')],
-                ),
-              ],
-            ),
+            _buildDistanceSection(),
 
             SizedBox(height: 16.h),
 
-            Text(
-              'Gender',
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: 8.h),
-            Column(
-              children: [
-                _buildRadioOption('Women', selectedGender, (value) {
-                  setState(() => selectedGender = value);
-                }),
-                _buildRadioOption('Men', selectedGender, (value) {
-                  setState(() => selectedGender = value);
-                }),
-                _buildRadioOption('Beyond Binary', selectedGender, (value) {
-                  setState(() => selectedGender = value);
-                }),
-              ],
-            ),
+            _buildGenderSection(),
             SizedBox(height: 16.h),
             Text(
               'Age',
@@ -184,61 +75,145 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
             SizedBox(height: 24.h),
 
             // Date Filter (Radio)
-            Text(
-              'Looking For',
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-            ),
-            SizedBox(height: 8.h),
-            Column(
-              children: lookingForOptions.map((date) {
-                return _buildRadioOption(date, selectedDate, (value) {
-                  setState(() {
-                    selectedDate = value;
-                  });
-                });
-              }).toList(),
-            ),
+            _buildLookingForSection(),
             const SizedBox(height: 16),
-
-            // Categories
-            Text(
-              'Interests',
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: interestOptions.map((category) {
-                final isSelected = selectedCategories.contains(category);
-                return GestureDetector(
-                  onTap: () => toggleCategory(category),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: isSelected
-                          ? AppColors.primaryGradientRotated
-                          : null,
-                      color: isSelected ? null : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      category,
-                      style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.grey[800],
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
+            _buildInterestSection(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildLookingForSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Looking For',
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+        ),
+        SizedBox(height: 8.h),
+        Column(
+          children: lookingForOptions.map((date) {
+            return _buildRadioOption(date, selectedDate, (value) {
+              setState(() {
+                selectedDate = value;
+              });
+            });
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGenderSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Gender',
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+        ),
+        SizedBox(height: 8.h),
+        Column(
+          children: [
+            _buildRadioOption('Women', selectedGender, (value) {
+              setState(() => selectedGender = value);
+            }),
+            _buildRadioOption('Men', selectedGender, (value) {
+              setState(() => selectedGender = value);
+            }),
+            _buildRadioOption('Beyond Binary', selectedGender, (value) {
+              setState(() => selectedGender = value);
+            }),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDistanceSection() {
+    return Column(
+      children: [
+        Row(
+          spacing: 8.w,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              'Distance',
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+            ),
+
+            Text(
+              distance < 1000
+                  ? 'under: ${distance.round()} m'
+                  : 'under: ${(distance / 1000).toStringAsFixed(1)} km',
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
+        SizedBox(height: 8.h),
+
+        // Show selected distance
+        LayoutBuilder(
+          builder: (context, constraints) {
+            final trackWidth = constraints.maxWidth;
+            final thumbPercent = (distance - 100) / (10000 - 100);
+
+            return Stack(
+              alignment: Alignment.centerLeft,
+              children: [
+                // Full track (gray)
+                Container(
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                // Gradient track up to thumb
+                Container(
+                  width: trackWidth * thumbPercent,
+                  height: 4.h,
+                  decoration: BoxDecoration(
+                    gradient: AppColors.primaryGradientRotated,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                // Slider itself
+                SliderTheme(
+                  data: SliderThemeData(
+                    activeTrackColor: Colors.transparent,
+                    inactiveTrackColor: Colors.transparent,
+                    thumbColor: AppColors.primaryGradient.colors.first,
+                    overlayColor: AppColors.primaryGradient.colors.first
+                        .withOpacity(0.2),
+                    trackHeight: 4.h,
+                    rangeThumbShape: const RoundRangeSliderThumbShape(
+                      enabledThumbRadius: 10,
+                    ),
+                  ),
+                  child: Slider(
+                    min: 100,
+                    max: 10000,
+                    divisions: 49,
+                    value: distance,
+                    label: distance < 1000
+                        ? '${distance.round()} m'
+                        : '${(distance / 1000).toStringAsFixed(1)} km',
+                    onChanged: (value) => setState(() => distance = value),
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: const [Text('100 m'), Text('10 km')],
+        ),
+      ],
     );
   }
 
@@ -366,6 +341,156 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
           ],
         );
       },
+    );
+  }
+
+  Widget _buildInterestSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Interests',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        Obx(() {
+          return Column(
+            children: profileController.interestGroups.map((group) {
+              final isExpanded = profileController.expandedParents.contains(
+                group.parent,
+              );
+              final isSelected = profileController.isParentSelected(group);
+
+              final isPartial = profileController.isParentPartiallySelected(
+                group,
+              );
+
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 4.0),
+                child: Column(
+                  children: [
+                    // Parent
+                    GestureDetector(
+                      onTap: () => profileController.toggleExpand(group.parent),
+                      child: newMethod(
+                        isSelected,
+                        isPartial,
+                        group,
+                        isExpanded,
+                      ),
+                    ),
+
+                    // Subcategories
+                    SizedBox(
+                      width: double.infinity,
+                      child: AnimatedSize(
+                        duration: const Duration(milliseconds: 250),
+                        curve: Curves.easeInOut,
+                        child: isExpanded
+                            ? Wrap(
+                                alignment: WrapAlignment.start,
+                                spacing: 8,
+                                runSpacing: 8,
+                                children: [
+                                  ...group.children.map((sub) {
+                                    final selected = profileController
+                                        .selectedSubcategories
+                                        .contains(sub.name);
+
+                                    return GestureDetector(
+                                      onTap: () =>
+                                          profileController.toggleSubcategory(
+                                            sub.name,
+                                            group.parent,
+                                          ),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12.w,
+                                          vertical: 8.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          gradient: selected
+                                              ? AppColors.primaryGradientRotated
+                                              : null,
+                                          color: selected
+                                              ? null
+                                              : Colors.grey[200],
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          spacing: 4.w,
+                                          children: [
+                                            sub.icon.svg(
+                                              height: 16.h,
+                                              width: 16.h,
+                                              color: selected
+                                                  ? Colors.white
+                                                  : Colors.grey[800],
+                                            ),
+                                            Text(
+                                              sub.name,
+                                              style: TextStyle(
+                                                fontSize: 13.sp,
+                                                color: selected
+                                                    ? Colors.white
+                                                    : Colors.grey[800],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  }).toList(),
+                                ],
+                              )
+                            : const SizedBox.shrink(),
+                      ),
+                    ),
+
+                    SizedBox(height: 12.h),
+                  ],
+                ),
+              );
+            }).toList(),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget newMethod(
+    bool isSelected,
+    bool isPartial,
+    Interest group,
+    bool isExpanded,
+  ) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.h),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              group.parent,
+              style: TextStyle(
+                fontWeight: FontWeight.w500,
+                color: isSelected ? Colors.black54 : Colors.black54,
+              ),
+            ),
+          ),
+          Icon(
+            isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            color: isSelected ? Colors.black54 : Colors.black54,
+          ),
+        ],
+      ),
     );
   }
 }

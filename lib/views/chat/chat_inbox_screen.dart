@@ -605,12 +605,13 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
         ],
       ),
       child: Row(
+        spacing: 8.w,
         children: [
           Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: IconButton(
-              icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
+            padding: EdgeInsets.only(left: 16.w),
+            child: GestureDetector(
+              child: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              onTap: () => Navigator.pop(context),
             ),
           ),
           GestureDetector(
@@ -1149,7 +1150,7 @@ Future<dynamic> _buildMoreOption(
 }) {
   return showModalBottomSheet(
     context: context,
-    backgroundColor: Colors.transparent, // Rounded corners
+    backgroundColor: Colors.transparent,
     builder: (context) {
       return SafeArea(
         child: Container(
@@ -1181,7 +1182,7 @@ Future<dynamic> _buildMoreOption(
                       Assets.icons.trash.svg(
                         width: 20.w,
                         height: 20.h,
-                        color: Colors.red,
+                        // color: Colors.red,
                       ),
                       Text(
                         'Delete Chat',

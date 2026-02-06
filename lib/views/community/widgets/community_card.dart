@@ -440,57 +440,61 @@ class _CommunityCardState extends State<CommunityCard> {
                   ),
                 ),
                 SizedBox(width: 8.w),
-                widget.community.isMyCommunity
-                    ? SizedBox.shrink()
-                    : Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12.r),
-                          color: Colors.grey.shade200,
-                        ),
-                        child: PopupMenuButton(
-                          color: AppColors.surface,
-                          iconColor: Colors.grey.shade600,
-                          icon: Assets.icons.down.svg(),
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              onTap: () {
-                                Future.delayed(Duration.zero, () {
-                                  setState(() {
-                                    currentStatus = CommunityStatus.interested;
-                                  });
-                                });
-                              },
-                              child: Text(
-                                "Interested",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ),
-                            PopupMenuItem(
-                              onTap: () {
-                                Future.delayed(Duration.zero, () {
-                                  setState(() {
-                                    currentStatus = CommunityStatus.going;
-                                  });
-                                });
-                              },
-                              child: Text(
-                                "Going",
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black54,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                // widget.community.isMyCommunity
+                //     ? SizedBox.shrink()
+                //     : _buildPopUpMenuSection(),
               ],
             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPopUpMenuSection() {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        color: Colors.grey.shade200,
+      ),
+      child: PopupMenuButton(
+        color: AppColors.surface,
+        iconColor: Colors.grey.shade600,
+        icon: Assets.icons.down.svg(),
+        itemBuilder: (context) => [
+          PopupMenuItem(
+            onTap: () {
+              Future.delayed(Duration.zero, () {
+                setState(() {
+                  currentStatus = CommunityStatus.interested;
+                });
+              });
+            },
+            child: Text(
+              "Interested",
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: Colors.black54,
+              ),
+            ),
+          ),
+          PopupMenuItem(
+            onTap: () {
+              Future.delayed(Duration.zero, () {
+                setState(() {
+                  currentStatus = CommunityStatus.going;
+                });
+              });
+            },
+            child: Text(
+              "Going",
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: Colors.black54,
+              ),
+            ),
+          ),
         ],
       ),
     );

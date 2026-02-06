@@ -306,10 +306,10 @@ class _EventCardState extends State<EventCard> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 8.w),
-                    widget.event.isMyEvent
-                        ? SizedBox.shrink()
-                        : _buildPopUpDropMenu(),
+                    // SizedBox(width: 8.w),
+                    // widget.event.isMyEvent
+                    //     ? SizedBox.shrink()
+                    //     : _buildPopUpDropMenu(),
                   ],
                 ),
         ],

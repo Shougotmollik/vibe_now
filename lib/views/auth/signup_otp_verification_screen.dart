@@ -11,14 +11,16 @@ import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 
-class OtpVerificationScreen extends StatefulWidget {
-  const OtpVerificationScreen({super.key});
+class SignupOtpVerificationScreen extends StatefulWidget {
+  const SignupOtpVerificationScreen({super.key});
 
   @override
-  State<OtpVerificationScreen> createState() => _OtpVerificationScreenState();
+  State<SignupOtpVerificationScreen> createState() =>
+      _SignupOtpVerificationScreenState();
 }
 
-class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
+class _SignupOtpVerificationScreenState
+    extends State<SignupOtpVerificationScreen> {
   int _secondsRemaining = 60;
   Timer? _timer;
   bool _canResend = false;
@@ -183,7 +185,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             type: SnackType.info,
                           );
                         } else {
-                          context.goNamed(RouteNames.newPasswordScreen);
+                          context.goNamed(RouteNames.stepNameScreen);
                         }
                       },
                 text: 'Verify',

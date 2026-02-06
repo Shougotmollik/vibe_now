@@ -37,7 +37,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     setState(() {
       _isFieldsValid =
-          email.isNotEmpty && isValidEmail(email) && password.isNotEmpty&& password.length >= 6;
+          email.isNotEmpty &&
+          isValidEmail(email) &&
+          password.isNotEmpty &&
+          password.length >= 6;
     });
   }
 
@@ -95,7 +98,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   PrimaryButton.text(
                     onPressed: !_isFieldsValid
                         ? () {}
-                        : () => context.goNamed(RouteNames.stepNameScreen),
+                        : () {
+                            // context.goNamed(RouteNames.stepNameScreen);
+                            context.goNamed(
+                              RouteNames.signupOtpVerificationScreen,
+                            );
+                          },
                     text: 'Get Started',
                     isEnabled: _isFieldsValid,
                   ),

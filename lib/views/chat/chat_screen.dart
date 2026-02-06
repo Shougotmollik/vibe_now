@@ -72,9 +72,10 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 Spacer(),
                 GestureDetector(
-                  onTap: () =>
-                      context.pushNamed(RouteNames.qrVerificationScreen,
-                          extra: QRContext.chats),
+                  onTap: () => context.pushNamed(
+                    RouteNames.qrVerificationScreen,
+                    extra: QRContext.chats,
+                  ),
                   child: Container(
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
@@ -129,17 +130,17 @@ class _ChatScreenState extends State<ChatScreen> {
               child: Column(
                 children: _chatList
                     .map(
-                      (e) => ChatListItem(
-                        chat: e,
+                      (item) => ChatListItem(
+                        chat: item,
                         onTap: () {
-                          e.wave == true
+                          item.wave == true
                               ? context.pushNamed(
                                   RouteNames.waveScreen,
-                                  extra: e,
+                                  extra: item,
                                 )
                               : context.pushNamed(
                                   RouteNames.chatInboxScreen,
-                                  extra: e,
+                                  extra: item,
                                 );
                         },
                       ),
@@ -152,6 +153,100 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
+}
+
+Future<dynamic> _buildMoreOption(
+  BuildContext context, {
+  required VoidCallback onDelete,
+  required VoidCallback onBlockUser,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      return SafeArea(
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: AppColors.backgroundVariant,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                onTap: onDelete,
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 4.w,
+                    children: [
+                      Assets.icons.trash.svg(
+                        width: 20.w,
+                        height: 20.h,
+                        // color: Colors.red,
+                      ),
+                      Text(
+                        'Delete Chat',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.red,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const Divider(height: 1),
+
+              InkWell(
+                onTap: onBlockUser,
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 4.w,
+                    children: [
+                      Assets.icons.block.svg(
+                        width: 20.w,
+                        height: 20.w,
+                        color: AppColors.primary,
+                      ),
+                      Text(
+                        'Block User',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
 }
 
 class Chat {
@@ -183,6 +278,15 @@ class ChatListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
+      onLongPress: () => _buildMoreOption(
+        context,
+        onDelete: () {
+          Navigator.pop(context);
+        },
+        onBlockUser: () {
+          Navigator.pop(context);
+        },
+      ),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
