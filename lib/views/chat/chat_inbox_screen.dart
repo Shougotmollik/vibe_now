@@ -673,7 +673,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                 onTap: () {
                   Future.delayed(
                     Duration.zero,
-                    () => context.pushNamed(RouteNames.reportScreen),
+                    () => context.pushNamed(RouteNames.blockScreen),
                   );
                 },
               ),

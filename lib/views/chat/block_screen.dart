@@ -8,8 +8,8 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 
-class ReportScreen extends StatelessWidget {
-  const ReportScreen({super.key});
+class BlockScreen extends StatelessWidget {
+  const BlockScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +64,7 @@ class ReportScreen extends StatelessWidget {
           GestureDetector(
             onTap: () {
               AppSnackbar.show(
-                message: 'you have reported the user',
+                message: 'you blocked the user',
                 type: SnackType.info,
               );
               context.pushNamed(RouteNames.chatScreen);
