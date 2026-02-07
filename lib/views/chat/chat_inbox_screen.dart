@@ -1179,16 +1179,48 @@ Future<dynamic> _buildMoreOption(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: 4.w,
                     children: [
+                      Icon(
+                        Icons.file_copy_outlined,
+                        color: AppColors.primary,
+                        size: 20.w,
+                      ),
+                      Text(
+                        'Copy',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              Divider(height: 1.h),
+              InkWell(
+                onTap: onDelete,
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 4.w,
+                    children: [
                       Assets.icons.trash.svg(
                         width: 20.w,
                         height: 20.h,
                         // color: Colors.red,
                       ),
                       Text(
-                        'Delete Chat',
+                        'Delete',
                         style: TextStyle(
                           fontSize: 16.sp,
-                          color: Colors.red,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -1213,8 +1245,8 @@ Future<dynamic> _buildMoreOption(
                     spacing: 4.w,
                     children: [
                       Icon(
-                        Icons.edit_note_rounded,
-                        color: Colors.grey[600],
+                        Icons.edit_outlined,
+                        color: AppColors.primary,
                         size: 20.sp,
                       ),
 
@@ -1222,8 +1254,8 @@ Future<dynamic> _buildMoreOption(
                         'Edit',
                         style: TextStyle(
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black87,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
                         ),
                       ),
                     ],

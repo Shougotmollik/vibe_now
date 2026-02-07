@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -191,6 +192,38 @@ Future<dynamic> _buildMoreOption(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: 4.w,
                     children: [
+                      Icon(
+                        Icons.notifications_off_outlined,
+                        size: 20.sp,
+                        color: AppColors.primary,
+                      ),
+                      Text(
+                        'Mute',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              Divider(height: 1.5.h),
+              InkWell(
+                onTap: onDelete,
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 4.w,
+                    children: [
                       Assets.icons.trash.svg(
                         width: 20.w,
                         height: 20.h,
@@ -200,7 +233,7 @@ Future<dynamic> _buildMoreOption(
                         'Delete Chat',
                         style: TextStyle(
                           fontSize: 16.sp,
-                          color: Colors.red,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -209,7 +242,7 @@ Future<dynamic> _buildMoreOption(
                 ),
               ),
 
-              const Divider(height: 1),
+              Divider(height: 1.h),
 
               InkWell(
                 onTap: onBlockUser,
@@ -281,10 +314,12 @@ class ChatListItem extends StatelessWidget {
       onLongPress: () => _buildMoreOption(
         context,
         onDelete: () {
+          AppSnackbar.show(message: 'Chat deleted successfully');
           Navigator.pop(context);
         },
         onBlockUser: () {
-          Navigator.pop(context);
+          context.pushNamed(RouteNames.blockScreen);
+          context.pop();
         },
       ),
       child: Container(

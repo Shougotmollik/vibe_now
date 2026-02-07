@@ -64,10 +64,12 @@ class BlockScreen extends StatelessWidget {
           GestureDetector(
             onTap: () {
               AppSnackbar.show(
-                message: 'you blocked the user',
+                message: 'You blocked the user',
                 type: SnackType.info,
               );
-              context.pushNamed(RouteNames.chatScreen);
+              // context.pushNamed(RouteNames.chatScreen);
+              context.pop();
+              context.pop();
             },
             child: Container(
               width: 80.w,

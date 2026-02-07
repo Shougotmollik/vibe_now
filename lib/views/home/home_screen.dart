@@ -170,11 +170,11 @@ class _MapHomeScreenState extends State<HomeScreen>
       duration: const Duration(seconds: 2),
     )..repeat();
 
-    DefaultAssetBundle.of(context).loadString(Assets.mapTheme.pinkTheme).then((
-      themeValue,
-    ) {
-      mapTheme = themeValue;
-    });
+    // DefaultAssetBundle.of(context).loadString(Assets.mapTheme.pinkTheme).then((
+    //   themeValue,
+    // ) {
+    //   mapTheme = themeValue;
+    // });
 
     _loadMarkers();
     Future.delayed(const Duration(seconds: 2), () {
@@ -749,6 +749,7 @@ class _MapHomeScreenState extends State<HomeScreen>
       initialCameraPosition: CameraPosition(target: _currentLocation, zoom: 14),
       myLocationEnabled: false,
       zoomControlsEnabled: false,
+      mapType: MapType.normal,
       markers: _markers,
       onMapCreated: (controller) {
         controller.setMapStyle(mapTheme);

@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       builder: (context, child) {
         return MaterialApp.router(
           debugShowCheckedModeBanner: false,
-          title: 'Vibe Now',
+          title: 'Vybin',
           scaffoldMessengerKey: rootScaffoldMessengerKey,
           themeMode: ThemeMode.light,
           routerConfig: router,

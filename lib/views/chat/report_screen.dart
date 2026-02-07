@@ -64,10 +64,12 @@ class ReportScreen extends StatelessWidget {
           GestureDetector(
             onTap: () {
               AppSnackbar.show(
-                message: 'you have reported the user',
+                message: 'You have reported the user',
                 type: SnackType.info,
               );
-              context.pushNamed(RouteNames.chatScreen);
+              // context.pushNamed(RouteNames.chatScreen);
+              context.pop();
+              context.pop();
             },
             child: Container(
               width: 80.w,

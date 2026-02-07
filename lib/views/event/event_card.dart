@@ -106,39 +106,41 @@ class _EventCardState extends State<EventCard> {
                 ),
               ),
 
-              // isPrivate
-              //     ? Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: AppColors.primary.withAlpha(200),
-              //           ),
-              //           padding: const EdgeInsets.all(10),
-              //           child: SvgPicture.asset(
-              //             isActive ? hourglass : wishlist,
-              //             height: 18.h,
-              //             width: 18.w,
-              //             color: AppColors.background,
-              //           ),
-              //         ),
-              //       )
-              //     : Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: AppColors.primary.withAlpha(200),
-              //           ),
-              //           padding: const EdgeInsets.all(10),
-              //           child: SvgPicture.asset(
-              //             wishlist,
-              //             height: 18.h,
-              //             width: 18.w,
-              //             color: AppColors.background,
-              //           ),
-              //         ),
-              //       ),
+              isPrivate
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withAlpha(200),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          isActive ? wishlist : wishlist,
+                          height: 18.h,
+                          width: 18.w,
+                          color: isActive
+                              ? AppColors.background
+                              : AppColors.background.withAlpha(100),
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withAlpha(200),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          wishlist,
+                          height: 18.h,
+                          width: 18.w,
+                          color: AppColors.background,
+                        ),
+                      ),
+                    ),
             ],
           ),
           SizedBox(height: 12.h),
@@ -261,35 +263,20 @@ class _EventCardState extends State<EventCard> {
                               spacing: 8.w,
                               children: [
                                 isPrivate
-                                    ? Container(
-                                        // decoration: BoxDecoration(
-                                        //   shape: BoxShape.circle,
-                                        //   color: AppColors.primary.withAlpha(
-                                        //     200,
-                                        //   ),
-                                        // ),
-                                        child: SvgPicture.asset(
-                                          isActive ? hourglass : wishlist,
-                                          height: 16.h,
-                                          width: 16.w,
-                                          color: AppColors.background,
-                                        ),
+                                    ? SvgPicture.asset(
+                                        isActive ? hourglass : "",
+                                        height: isActive ? 16.h : 0.h,
+                                        width: isActive ? 16.w : 0.w,
+                                        color: AppColors.background,
                                       )
-                                    : Container(
-                                        // decoration: BoxDecoration(
-                                        //   shape: BoxShape.circle,
-                                        //   color: AppColors.primary.withAlpha(
-                                        //     200,
-                                        //   ),
-                                        // ),
-                                        child: SvgPicture.asset(
-                                          wishlist,
-                                          height: 16.h,
-                                          width: 16.w,
-                                          color: AppColors.background,
-                                        ),
-                                      ),
+                                    : SizedBox(),
 
+                                // : SvgPicture.asset(
+                                //     "",
+                                //     height: 16.h,
+                                //     width: 16.w,
+                                //     color: AppColors.background,
+                                //   ),
                                 Text(
                                   buttonText,
                                   style: TextStyle(

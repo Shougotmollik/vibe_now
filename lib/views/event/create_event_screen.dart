@@ -12,6 +12,7 @@ import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
 import 'package:vibe_now/views/common/custom_date_picker.dart';
@@ -252,12 +253,20 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   Widget _buildImageUploadSection() {
     return GestureDetector(
       onTap: () async {
-        final File? image = await CustomImagePicker.pickImage();
-        if (image != null) {
-          setState(() {
-            _selectedImage = image;
-          });
-        }
+        utils.showImagePickerOptions(context, (imageSource) async {
+          final image = await utils.pickSingleImage(
+            context: context,
+            source: imageSource,
+          );
+
+          if (image != null) {
+            setState(() {
+              _selectedImage = image;
+            });
+          } else {
+            AppSnackbar.show(message: 'Failed to pick image');
+          }
+        });
       },
       child: Container(
         width: double.infinity,

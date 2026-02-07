@@ -147,39 +147,41 @@ class _CommunityCardState extends State<CommunityCard> {
                 ),
               ),
 
-              // isPrivate
-              //     ? Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: AppColors.primary.withAlpha(200),
-              //           ),
-              //           padding: const EdgeInsets.all(10),
-              //           child: SvgPicture.asset(
-              //             isActive ? hourglass : wishlist,
-              //             height: 18.h,
-              //             width: 18.w,
-              //             color: AppColors.background,
-              //           ),
-              //         ),
-              //       )
-              //     : Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: AppColors.primary.withAlpha(200),
-              //           ),
-              //           padding: const EdgeInsets.all(10),
-              //           child: SvgPicture.asset(
-              //             wishlist,
-              //             height: 18.h,
-              //             width: 18.w,
-              //             color: AppColors.background,
-              //           ),
-              //         ),
-              //       ),
+              isPrivate
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withAlpha(200),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          isActive ? wishlist : wishlist,
+                          height: 18.h,
+                          width: 18.w,
+                          color: isActive
+                              ? AppColors.background
+                              : AppColors.background.withAlpha(100),
+                        ),
+                      ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: AppColors.primary.withAlpha(200),
+                        ),
+                        padding: const EdgeInsets.all(10),
+                        child: SvgPicture.asset(
+                          wishlist,
+                          height: 18.h,
+                          width: 18.w,
+                          color: AppColors.background,
+                        ),
+                      ),
+                    ),
             ],
           ),
           SizedBox(height: 12.h),
@@ -411,17 +413,18 @@ class _CommunityCardState extends State<CommunityCard> {
                           children: [
                             isPrivate
                                 ? SvgPicture.asset(
-                                    isActive ? hourglass : wishlist,
-                                    height: 18.h,
-                                    width: 18.w,
+                                    isActive ? hourglass : "",
+                                    height: isActive ? 18.h : 0,
+                                    width: isActive ? 18.w : 0,
                                     color: AppColors.background,
                                   )
-                                : SvgPicture.asset(
-                                    wishlist,
-                                    height: 18.h,
-                                    width: 18.w,
-                                    color: AppColors.background,
-                                  ),
+                                : SizedBox(),
+                            // : SvgPicture.asset(
+                            //     wishlist,
+                            //     height: 18.h,
+                            //     width: 18.w,
+                            //     color: AppColors.background,
+                            //   ),
                             Text(
                               buttonText,
                               style: TextStyle(
