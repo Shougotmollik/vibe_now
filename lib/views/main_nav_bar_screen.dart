@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/create_vibe/create_vibe_screen.dart';
 import 'package:vibe_now/views/event/event_or_community_screen.dart';
 import 'package:vibe_now/views/home/home_screen.dart';
+import 'package:vibe_now/views/home/widgets/google_map.dart';
 import 'package:vibe_now/views/profile/profile_screen.dart';
 import 'package:vibe_now/views/settings/settings_screen.dart';
 
@@ -21,8 +23,9 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
   int selectedIndex = 0;
   DateTime? lastBackPressed;
 
-  final List<Widget> screens = const [
-    HomeScreen(),
+  final List<Widget> screens = [
+    // HomeScreen(),
+    GoogleMapScreen(apiKey: EnvHandler.google_map_api_key),
     EventOrCommunityScreen(),
     CreateVibeScreen(),
     ChatScreen(),

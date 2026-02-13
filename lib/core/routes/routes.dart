@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/env.dart';
 import 'package:vibe_now/views/auth/email_verification_screen.dart';
 import 'package:vibe_now/views/auth/intro_screen.dart';
 import 'package:vibe_now/views/auth/new_password_screen.dart';
@@ -21,6 +22,7 @@ import 'package:vibe_now/views/community/create_community_screen.dart';
 import 'package:vibe_now/views/community/member_screen.dart';
 import 'package:vibe_now/views/event/create_event_screen.dart';
 import 'package:vibe_now/views/event/event_screen.dart';
+import 'package:vibe_now/views/home/widgets/google_map.dart';
 import 'package:vibe_now/views/main_nav_bar_screen.dart';
 import 'package:vibe_now/views/notification/notification_screen.dart';
 import 'package:vibe_now/views/profile/like_list_screen.dart';
@@ -39,6 +41,14 @@ final GoRouter router = GoRouter(
       name: RouteNames.splashScreen,
       builder: (context, state) => const SplashScreen(),
     ),
+    // GoRoute(
+    //   path: '/',
+    //   name: RouteNames.splashScreen,
+    //   builder: (context, state) => GoogleMapScreen(
+    //     apiKey: EnvHandler.google_map_api_key,
+    //     withScaffold: true,
+    //   ),
+    // ),
     GoRoute(
       path: '/intro',
       name: RouteNames.introScreen,

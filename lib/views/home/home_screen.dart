@@ -2,13 +2,16 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/instance_manager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:vibe_now/controller/home_controller.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/model/nearby_user.dart';
 import 'package:vibe_now/views/community/widgets/community_card.dart';
 import 'package:vibe_now/views/event/event_card.dart';
 import 'package:vibe_now/views/home/widgets/cloud_container.dart';
@@ -19,29 +22,7 @@ import 'package:vibe_now/views/home/widgets/user_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/wave_animated_dialog.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
-class NearbyUser {
-  final String id;
-  final String name;
-  final String imageUrl;
-  final String bio;
-  final String interest;
-  final double distanceKm;
-  final double lat;
-  final double lng;
-  bool? isWaved;
 
-  NearbyUser({
-    required this.id,
-    required this.name,
-    required this.imageUrl,
-    required this.bio,
-    required this.interest,
-    required this.distanceKm,
-    required this.lat,
-    required this.lng,
-    this.isWaved,
-  });
-}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,6 +36,8 @@ class _MapHomeScreenState extends State<HomeScreen>
   final _mapController = Completer<GoogleMapController>();
   late AnimationController _pulseController;
 
+  final HomeController homeController =Get.put(HomeController());
+
   final Set<Marker> _markers = {};
 
   final LatLng _currentLocation = const LatLng(
@@ -63,104 +46,7 @@ class _MapHomeScreenState extends State<HomeScreen>
   );
 
   String? mapTheme;
-  final List<NearbyUser> nearbyUsers = [
-    NearbyUser(
-      id: 'u1',
-      name: 'Jhon Gomes',
-      imageUrl:
-          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
-      bio: 'Coffee lover ☕ | Weekend explorer | Always down for deep talks',
-      interest: 'Coffee & Music',
-      distanceKm: 0.3,
-      lat: 23.780887,
-      lng: 90.279237,
-      isWaved: false,
-    ),
-    NearbyUser(
-      id: 'u2',
-      name: 'Ariana Lewis',
-      imageUrl:
-          'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400',
-      bio: 'Yoga, sunsets, and good energy 🌿',
-      interest: 'Wellness',
-      distanceKm: 0.7,
-      lat: 23.781912,
-      lng: 90.280541,
-      isWaved: true,
-    ),
-    NearbyUser(
-      id: 'u3',
-      name: 'Jhon Gomes',
-      imageUrl:
-          'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
-      bio: 'Coffee lover ☕ | Weekend explorer | Always down for deep talks',
-      interest: 'Coffee & Music',
-      distanceKm: 0.3,
-      lat: 23.780887,
-      lng: 90.279237,
-      isWaved: false,
-    ),
-    NearbyUser(
-      id: 'u4',
-      name: 'Daniel Cruz',
-      imageUrl:
-          'https://images.unsplash.com/photo-1527980965255-d3b416303d12?w=400',
-      bio: 'Tech by day, guitarist by night 🎸',
-      interest: 'Music & Tech',
-      distanceKm: 1.2,
-      lat: 23.779421,
-      lng: 90.277843,
-      isWaved: true,
-    ),
-    NearbyUser(
-      id: 'u5',
-      name: 'Maya Chen',
-      imageUrl:
-          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
-      bio: 'Photography addict 📸 | Capturing small moments',
-      interest: 'Photography',
-      distanceKm: 1.8,
-      lat: 23.782334,
-      lng: 90.281992,
-      isWaved: false,
-    ),
-    NearbyUser(
-      id: 'u5',
-      name: 'Maya Chen',
-      imageUrl:
-          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
-      bio: 'Photography addict 📸 | Capturing small moments',
-      interest: 'Photography',
-      distanceKm: 1.8,
-      lat: 23.782334,
-      lng: 90.281992,
-      isWaved: false,
-    ),
-    NearbyUser(
-      id: 'u5',
-      name: 'Maya Chen',
-      imageUrl:
-          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
-      bio: 'Photography addict 📸 | Capturing small moments',
-      interest: 'Photography',
-      distanceKm: 1.8,
-      lat: 23.782334,
-      lng: 90.281992,
-      isWaved: false,
-    ),
-    NearbyUser(
-      id: 'u5',
-      name: 'Maya Chen',
-      imageUrl:
-          'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=400',
-      bio: 'Photography addict 📸 | Capturing small moments',
-      interest: 'Photography',
-      distanceKm: 1.8,
-      lat: 23.782334,
-      lng: 90.281992,
-      isWaved: false,
-    ),
-  ];
+
 
   @override
   void initState() {
@@ -263,7 +149,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, nearbyUsers[0], hasVibe: true);
+          showUserProfileDialog(context, homeController.nearbyUsers[0], hasVibe: true);
         },
       ),
     );
@@ -280,7 +166,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, nearbyUsers[1]);
+          showUserProfileDialog(context, homeController.nearbyUsers[1]);
         },
       ),
     );
@@ -313,7 +199,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, nearbyUsers[3], hasVibe: true);
+          showUserProfileDialog(context, homeController.nearbyUsers[3], hasVibe: true);
         },
       ),
     );
@@ -332,7 +218,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, nearbyUsers[4]);
+          showUserProfileDialog(context, homeController.nearbyUsers[4]);
         },
       ),
     );

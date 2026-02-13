@@ -92,8 +92,8 @@ class _WaveAnimatedDialogState extends State<WaveAnimatedDialog>
                   children: [
                     Lottie.asset(
                       "assets/lottie/Hello Lottie.json",
-                      width: 80.w,
-                      height: 80.h,
+                      width: 140.w,
+                      height: 140.h,
                       fit: BoxFit.cover,
                     ),
                     SizedBox(height: 15.h),
