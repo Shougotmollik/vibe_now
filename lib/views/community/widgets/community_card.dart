@@ -35,6 +35,9 @@ class _CommunityCardState extends State<CommunityCard> {
 
   static const String hourglass = "assets/icons/hourglass-end.svg";
   static const String wishlist = "assets/icons/wishlist-star.svg";
+  static const String wishlistFilled = "assets/icons/wishlist-star-fill.svg";
+  static const String private = "assets/icons/private.svg";
+  static const String public = "assets/icons/public.svg";
 
   String get buttonText {
     if (shouldShowViewDetails) return 'View Details';
@@ -157,12 +160,12 @@ class _CommunityCardState extends State<CommunityCard> {
                         ),
                         padding: const EdgeInsets.all(10),
                         child: SvgPicture.asset(
-                          isActive ? wishlist : wishlist,
+                          isActive && !widget.community.isMyCommunity
+                              ? wishlistFilled
+                              : wishlist,
                           height: 18.h,
                           width: 18.w,
-                          color: isActive
-                              ? AppColors.background
-                              : AppColors.background.withAlpha(100),
+                          color: AppColors.background,
                         ),
                       ),
                     )
@@ -175,13 +178,49 @@ class _CommunityCardState extends State<CommunityCard> {
                         ),
                         padding: const EdgeInsets.all(10),
                         child: SvgPicture.asset(
-                          wishlist,
+                          isActive && !widget.community.isMyCommunity
+                              ? wishlistFilled
+                              : wishlist,
                           height: 18.h,
                           width: 18.w,
                           color: AppColors.background,
                         ),
                       ),
                     ),
+
+              Positioned(
+                top: 10.h,
+                left: 12.w,
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withAlpha(200),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    spacing: 4.w,
+                    children: [
+                      SvgPicture.asset(
+                        isPublic ? public : private,
+                        height: 14.h,
+                        width: 14.w,
+                        color: AppColors.background,
+                      ),
+                      Text(
+                        isPublic ? "Public" : "Private",
+                        style: TextStyle(
+                          color: AppColors.background,
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
           ),
           SizedBox(height: 12.h),
@@ -384,7 +423,7 @@ class _CommunityCardState extends State<CommunityCard> {
                             backgroundColor: Colors.transparent,
                             child: CommunityAnimatedDialog(
                               content:
-                                  'Send a request to the community creator to join the community',
+                                  'Request sent. Wait for the organizer to confirm it.',
                             ),
                           ),
                         );

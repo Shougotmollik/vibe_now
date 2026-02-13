@@ -112,8 +112,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                         elevation: 0,
                         backgroundColor: Colors.transparent,
                         child: VibeAnimatedDialog(
-                          content:
-                              "Congratulations! You have created a new vibe.",
+                          content: "Congratulations! Your Vibe is now live.",
                         ),
                       ),
                     );

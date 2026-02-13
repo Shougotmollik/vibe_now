@@ -119,10 +119,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 0),
               child: Row(
                 children: [
-                  Text(
-                    'Create Event or Community',
-                    style: TextStyle(fontSize: 18),
-                  ),
+                  Text('Create something new', style: TextStyle(fontSize: 18)),
                 ],
               ),
             ),
@@ -150,17 +147,17 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
 
                     // Title
                     Text(
-                      'What do you want to create?',
+                      'Start an event or build a community.',
                       style: TextStyle(fontSize: 20.sp),
                     ),
-                    Text(
-                      'Choose the type of vibe you want to share',
-                      style: TextStyle(
-                        color: Colors.grey.shade700,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
+                    // Text(
+                    //   'Choose the type of vibe you want to share',
+                    //   style: TextStyle(
+                    //     color: Colors.grey.shade700,
+                    //     fontSize: 14.sp,
+                    //     fontWeight: FontWeight.w400,
+                    //   ),
+                    // ),
                     SizedBox(height: 32.h),
 
                     // Event Card

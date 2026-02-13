@@ -16,6 +16,7 @@ import 'package:vibe_now/views/home/widgets/community_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/event_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/filter_dialog.dart';
 import 'package:vibe_now/views/home/widgets/user_location_pin.dart';
+import 'package:vibe_now/views/home/widgets/wave_animated_dialog.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
 class NearbyUser {
@@ -532,7 +533,15 @@ class _MapHomeScreenState extends State<HomeScreen>
                           setState(() {
                             user.isWaved = true;
                           });
-                          // Navigator.of(context).pop();
+
+                          Navigator.of(context).pop();
+                          showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) => WaveAnimatedDialog(
+                              content: 'You have wave to ${user.name}',
+                            ),
+                          );
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 14),

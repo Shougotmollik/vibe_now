@@ -272,6 +272,10 @@ class $AssetsIconsGen {
   /// File path: assets/icons/hi.svg
   SvgGenImage get hi => const SvgGenImage('assets/icons/hi.svg');
 
+  /// File path: assets/icons/hourglass-end.svg
+  SvgGenImage get hourglassEnd =>
+      const SvgGenImage('assets/icons/hourglass-end.svg');
+
   /// File path: assets/icons/ice-cream.svg
   SvgGenImage get iceCream => const SvgGenImage('assets/icons/ice-cream.svg');
 
@@ -349,6 +353,12 @@ class $AssetsIconsGen {
   SvgGenImage get peopleColor =>
       const SvgGenImage('assets/icons/people_color.svg');
 
+  /// File path: assets/icons/private.svg
+  SvgGenImage get private => const SvgGenImage('assets/icons/private.svg');
+
+  /// File path: assets/icons/public.svg
+  SvgGenImage get public => const SvgGenImage('assets/icons/public.svg');
+
   /// File path: assets/icons/relation_ship.svg
   SvgGenImage get relationShip =>
       const SvgGenImage('assets/icons/relation_ship.svg');
@@ -370,6 +380,10 @@ class $AssetsIconsGen {
   SvgGenImage get subscription =>
       const SvgGenImage('assets/icons/subscription.svg');
 
+  /// File path: assets/icons/team-check-alt.svg
+  SvgGenImage get teamCheckAlt =>
+      const SvgGenImage('assets/icons/team-check-alt.svg');
+
   /// File path: assets/icons/trash_ic.svg
   SvgGenImage get trashIc => const SvgGenImage('assets/icons/trash_ic.svg');
 
@@ -390,6 +404,14 @@ class $AssetsIconsGen {
   /// File path: assets/icons/vivenowlogo.png
   AssetGenImage get vivenowlogo =>
       const AssetGenImage('assets/icons/vivenowlogo.png');
+
+  /// File path: assets/icons/wishlist-star-fill.svg
+  SvgGenImage get wishlistStarFill =>
+      const SvgGenImage('assets/icons/wishlist-star-fill.svg');
+
+  /// File path: assets/icons/wishlist-star.svg
+  SvgGenImage get wishlistStar =>
+      const SvgGenImage('assets/icons/wishlist-star.svg');
 
   /// List of all assets
   List<dynamic> get values => [
@@ -453,6 +475,7 @@ class $AssetsIconsGen {
     group2,
     handWave,
     hi,
+    hourglassEnd,
     iceCream,
     imagePicker,
     kitty,
@@ -474,18 +497,23 @@ class $AssetsIconsGen {
     pausePuple,
     people,
     peopleColor,
+    private,
+    public,
     relationShip,
     report,
     scan,
     sports,
     stashQuestion,
     subscription,
+    teamCheckAlt,
     trashIc,
     uncheckedCircle,
     unchecked,
     uploadImage,
     users,
     vivenowlogo,
+    wishlistStarFill,
+    wishlistStar,
   ];
 }
 
@@ -513,14 +541,29 @@ class $AssetsImagesGen {
 class $AssetsLottieGen {
   const $AssetsLottieGen();
 
+  /// File path: assets/lottie/Calendar Event.json
+  String get calendarEvent => 'assets/lottie/Calendar Event.json';
+
+  /// File path: assets/lottie/Community.json
+  String get community => 'assets/lottie/Community.json';
+
   /// File path: assets/lottie/Hello Lottie.json
   String get helloLottie => 'assets/lottie/Hello Lottie.json';
 
   /// File path: assets/lottie/Location Pin.json
   String get locationPin => 'assets/lottie/Location Pin.json';
 
+  /// File path: assets/lottie/star lottie.json
+  String get starLottie => 'assets/lottie/star lottie.json';
+
   /// List of all assets
-  List<String> get values => [helloLottie, locationPin];
+  List<String> get values => [
+    calendarEvent,
+    community,
+    helloLottie,
+    locationPin,
+    starLottie,
+  ];
 }
 
 class $AssetsMapThemeGen {

@@ -34,7 +34,7 @@ class _FilterDialogState extends State<FilterDialog> {
   List<String> selectedCommunityTypes = [];
   bool onlineOnly = false;
 
-  final List<String> tabs = ['Vibe', 'Events', 'Community'];
+  final List<String> tabs = ['Vibe', 'Events', 'Communities'];
 
   final List<String> interests = [
     'Social',
@@ -206,7 +206,7 @@ class _FilterDialogState extends State<FilterDialog> {
               // Tab Content
               if (selectedTab == 'Vibe') HomeVibeFilter(),
               if (selectedTab == 'Events') HomeEventFilter(),
-              if (selectedTab == 'Community') HomeCommunityFilter(),
+              if (selectedTab == 'Communities') HomeCommunityFilter(),
 
               SizedBox(height: 32.h),
 

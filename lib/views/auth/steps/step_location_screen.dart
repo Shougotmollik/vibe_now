@@ -58,7 +58,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
           children: [
             SizedBox(height: 32.h),
 
-            const StepTitle(title: 'Choose Location', subtitle: ""),
+            const StepTitle(title: 'Location access', subtitle: ""),
 
             SizedBox(height: 68.h),
 
@@ -90,7 +90,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: Text(
-                'Allow location to connect with people, events, and communities around you.',
+                'Used to connect you with what’s nearby.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16.sp,
@@ -101,7 +101,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
             ),
             SizedBox(height: 8.h),
             Text(
-              'We only use your location while you’re using the app.',
+              'Only while using the app.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,

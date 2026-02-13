@@ -607,8 +607,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         elevation: 0,
                         backgroundColor: Colors.transparent,
                         child: EventAnimatedDialog(
-                          content:
-                              'Congratulations! Your event has been created.',
+                          content: 'Congratulations! Your event is live.',
                         ),
                       ),
                     );

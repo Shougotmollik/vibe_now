@@ -87,7 +87,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               CustomAppBar(title: "", canBack: true),
               SizedBox(height: 100.h),
               Text(
-                'Enter OTP',
+                'Check your inbox',
                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                   fontSize: 28.sp,
                   fontWeight: FontWeight.w700,
@@ -99,14 +99,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  text: 'A 4 digit verification code has been sent to ',
+                  text: 'We sent you a 4-digit code to\n',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: AppColors.primaryText,
                     fontSize: 14.sp,
                   ),
                   children: [
                     TextSpan(
-                      text: 'example@gmail.com',
+                      text: 'example@mail.com',
                       style: TextStyle(
                         color: AppColors.primary,
                         fontWeight: FontWeight.w600,
