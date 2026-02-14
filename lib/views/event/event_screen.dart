@@ -35,7 +35,8 @@ class _EventScreenState extends State<EventScreen> {
       isJoined: false,
       isMyEvent: false,
       userStatus: EventStatus.interested,
-      accessType: EventAccessType.private
+      accessType: EventAccessType.private,
+      isFavorite: false,
     ),
     Event(
       name: 'Music Night',
@@ -50,7 +51,8 @@ class _EventScreenState extends State<EventScreen> {
       isJoined: true,
       isMyEvent: false,
       userStatus: EventStatus.interested,
-      accessType: EventAccessType.public
+      accessType: EventAccessType.public,
+      isFavorite: false,
     ),
     Event(
       name: 'Beach Party',
@@ -65,7 +67,8 @@ class _EventScreenState extends State<EventScreen> {
       isJoined: false,
       isMyEvent: true,
       userStatus: EventStatus.going,
-      accessType: EventAccessType.public
+      accessType: EventAccessType.public,
+      isFavorite: true,
     ),
     Event(
       name: 'Food Festival',
@@ -79,7 +82,8 @@ class _EventScreenState extends State<EventScreen> {
       isJoined: true,
       isMyEvent: true,
       userStatus: EventStatus.going,
-      accessType: EventAccessType.private
+      accessType: EventAccessType.private,
+      isFavorite: false,
     ),
   ];
 
@@ -192,8 +196,10 @@ class _EventScreenState extends State<EventScreen> {
         CustomAppBar(title: 'Events'),
         Spacer(),
         GestureDetector(
-          onTap: () => context.pushNamed(RouteNames.qrVerificationScreen,
-              extra: QRContext.event),
+          onTap: () => context.pushNamed(
+            RouteNames.qrVerificationScreen,
+            extra: QRContext.event,
+          ),
           child: Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(

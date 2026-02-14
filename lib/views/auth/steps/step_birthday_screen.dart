@@ -39,11 +39,13 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final DateTime now = DateTime.now();
+    final DateTime initialDate = DateTime(now.year - 14, now.month, now.day);
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      initialDate: initialDate,
+      firstDate: DateTime(1970),
+      lastDate: initialDate,
     );
     if (picked != null) {
       _birthdayController.text = DateFormat('dd/MM/yyyy').format(picked);

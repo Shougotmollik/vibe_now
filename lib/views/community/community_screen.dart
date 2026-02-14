@@ -43,6 +43,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       isInterested: false,
       userStatus: CommunityStatus.interested,
       accessType: CommunityAccessType.private,
+      isFavorite: false,
     ),
     Community(
       name: "Morning Yoga Session",
@@ -63,6 +64,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       isInterested: false,
       userStatus: CommunityStatus.interested,
       accessType: CommunityAccessType.public,
+      isFavorite: false,
     ),
     Community(
       name: "Book Club Reading",
@@ -83,6 +85,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       isInterested: true,
       userStatus: CommunityStatus.interested,
       accessType: CommunityAccessType.public,
+      isFavorite: false,
     ),
     Community(
       name: "Tech Networking Event",
@@ -103,6 +106,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       isInterested: false,
       userStatus: CommunityStatus.going,
       accessType: CommunityAccessType.private,
+      isFavorite: true,
     ),
     Community(
       name: "My Community Event",
@@ -123,6 +127,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       isInterested: false,
       userStatus: CommunityStatus.interested,
       accessType: CommunityAccessType.private,
+      isFavorite: false,
     ),
   ];
 

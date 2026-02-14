@@ -20,6 +20,7 @@ class Community {
   bool isInterested;
   CommunityStatus? userStatus;
   CommunityAccessType accessType;
+  bool isFavorite;
 
   Community({
     required this.name,
@@ -37,6 +38,7 @@ class Community {
     this.isInterested = false,
     this.userStatus,
     required this.accessType,
+    this.isFavorite = false,
   });
 
   Community copyWith({
@@ -54,6 +56,8 @@ class Community {
     bool? isJoined,
     bool? isInterested,
     CommunityStatus? userStatus,
+    CommunityAccessType? accessType,
+    bool? isFavorite,
   }) {
     return Community(
       name: name ?? this.name,
@@ -70,7 +74,8 @@ class Community {
       isJoined: isJoined ?? this.isJoined,
       isInterested: isInterested ?? this.isInterested,
       userStatus: userStatus ?? this.userStatus,
-      accessType: accessType,
+      accessType: accessType ?? this.accessType,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 }

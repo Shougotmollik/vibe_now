@@ -109,39 +109,69 @@ class _EventCardState extends State<EventCard> {
                 ),
               ),
 
-              isPrivate
-                  ? Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primary.withAlpha(200),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        child: SvgPicture.asset(
-                          isActive ? wishlistFilled : wishlist,
-                          height: 18.h,
-                          width: 18.w,
-                          color: AppColors.background,
-                        ),
-                      ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.primary.withAlpha(200),
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        child: SvgPicture.asset(
-                          isActive ? wishlistFilled : wishlist,
-                          height: 18.h,
-                          width: 18.w,
-                          color: AppColors.background,
-                        ),
-                      ),
+              // isPrivate
+              //     ? Padding(
+              //         padding: const EdgeInsets.all(8.0),
+              //         child: Container(
+              //           decoration: BoxDecoration(
+              //             shape: BoxShape.circle,
+              //             color: AppColors.primary.withAlpha(200),
+              //           ),
+              //           padding: const EdgeInsets.all(10),
+              //           child: SvgPicture.asset(
+              //             isActive ? wishlistFilled : wishlist,
+              //             height: 18.h,
+              //             width: 18.w,
+              //             color: AppColors.background,
+              //           ),
+              //         ),
+              //       )
+              //     : Padding(
+              //         padding: const EdgeInsets.all(8.0),
+              //         child: Container(
+              //           decoration: BoxDecoration(
+              //             shape: BoxShape.circle,
+              //             color: AppColors.primary.withAlpha(200),
+              //           ),
+              //           padding: const EdgeInsets.all(10),
+              //           child: SvgPicture.asset(
+              //             isActive ? wishlistFilled : wishlist,
+              //             height: 18.h,
+              //             width: 18.w,
+              //             color: AppColors.background,
+              //           ),
+              //         ),
+              //       ),
+              GestureDetector(
+                onTap: () {
+                  // setState(() {
+                  //   if (currentStatus == EventStatus.interested) {
+                  //     currentStatus = null;
+                  //   } else {
+                  //     currentStatus = EventStatus.interested;
+                  //   }
+                  // });
+                  setState(() {
+                    widget.event.isFavorite = !widget.event.isFavorite;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.primary.withAlpha(200),
                     ),
+                    padding: const EdgeInsets.all(10),
+                    child: SvgPicture.asset(
+                      widget.event.isFavorite ? wishlistFilled : wishlist,
+                      height: 18.h,
+                      width: 18.w,
+                      color: AppColors.background,
+                    ),
+                  ),
+                ),
+              ),
 
               Positioned(
                 top: 10.h,

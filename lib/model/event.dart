@@ -15,6 +15,7 @@ class Event {
   bool isMyEvent;
   EventStatus? userStatus;
   EventAccessType accessType;
+  bool isFavorite;
 
   Event({
     required this.name,
@@ -29,6 +30,7 @@ class Event {
     this.isMyEvent = false,
     this.userStatus,
     required this.accessType,
+    this.isFavorite = false,
   });
 
   Event copyWith({
@@ -43,6 +45,8 @@ class Event {
     bool? isJoined,
     bool? isMyEvent,
     EventStatus? userStatus,
+    EventAccessType? accessType,
+    bool? isFavorite,
   }) {
     return Event(
       name: name ?? this.name,
@@ -56,7 +60,8 @@ class Event {
       isJoined: isJoined ?? this.isJoined,
       isMyEvent: isMyEvent ?? this.isMyEvent,
       userStatus: userStatus ?? this.userStatus,
-      accessType: accessType,
+      accessType: accessType ?? this.accessType,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 }

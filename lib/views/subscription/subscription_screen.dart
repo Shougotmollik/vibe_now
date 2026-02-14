@@ -1,3 +1,4 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
@@ -12,8 +13,9 @@ class SubscriptionScreen extends StatefulWidget {
 }
 
 class _SubscriptionScreenState extends State<SubscriptionScreen> {
-  int currentPage = 0;
-  final PageController pageController = PageController();
+  int currentPage = 1; // Start with Premium (middle card)
+  final CarouselSliderController carouselController =
+      CarouselSliderController();
 
   final List<PlanData> plans = [
     PlanData(
@@ -28,7 +30,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         'Filters: Age, gender, 1—2 interests',
         'Visibility: Standard, no prioritization',
       ],
-      isSelected: true,
+      isSelected: false,
     ),
     PlanData(
       title: 'Premium',
@@ -42,7 +44,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         'Filters: All filters available',
         'Visibility: Priority in search',
       ],
-      isSelected: false,
+      isSelected: true,
     ),
     PlanData(
       title: 'Pro',
@@ -56,14 +58,9 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
         'Filters: Advanced filters + AI matching',
         'Visibility: Top priority + verified badge',
       ],
+      isSelected: false,
     ),
   ];
-
-  @override
-  void dispose() {
-    pageController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,23 +73,42 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
               padding: const EdgeInsets.only(left: 16),
               child: CustomAppBar(title: "Upgrade plan"),
             ),
-            const SizedBox(height: 30),
+            const SizedBox(height: 20),
             Expanded(
-              child: PageView.builder(
-                controller: pageController,
-                onPageChanged: (index) {
-                  setState(() => currentPage = index);
-                },
+              child: CarouselSlider.builder(
+                carouselController: carouselController,
                 itemCount: plans.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 18),
-                    child: PlanCard(plan: plans[index]),
+                itemBuilder: (context, index, realIndex) {
+                  // Calculate rotation based on distance from center
+                  double rotationAngle = (currentPage - index) * 0.3;
+                  
+                  return Transform(
+                    transform: Matrix4.identity()
+                      ..setEntry(3, 2, 0.001) // perspective
+                      ..rotateY(rotationAngle),
+                    alignment: Alignment.center,
+                    child: PlanCard(
+                      plan: plans[index],
+                      isCenter: currentPage == index,
+                    ),
                   );
                 },
+                options: CarouselOptions(
+                  height: MediaQuery.of(context).size.height * 0.70,
+                  viewportFraction: 0.8,
+                  aspectRatio: 1.2,
+                  enlargeCenterPage: true,
+                  enlargeFactor: 0.3,
+                  enableInfiniteScroll: false,
+                  initialPage: 1,
+                  autoPlay: false,
+                  onPageChanged: (index, reason) {
+                    setState(() => currentPage = index);
+                  },
+                ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
             _pageIndicator(),
             const SizedBox(height: 30),
           ],
@@ -106,26 +122,24 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(
         plans.length,
-        (index) => AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          width: currentPage == index ? 8 : 8,
-          height: currentPage == index ? 8 : 8,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-
-            gradient: currentPage == index
-                ? AppColors.primaryGradient
-                : const LinearGradient(
-                    colors: [
-                      Color(0xffE0E0E0),
-                      Color(0xffE0E0E0),
-                      Color(0xffE0E0E0),
-                    ],
-                  ),
-            // color: currentPage == index
-            //     ? const Color(0xFF8B5CF6)
-            //     : const Color(0xFFE0E0E0),
+        (index) => GestureDetector(
+          onTap: () => carouselController.animateToPage(index),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            margin: const EdgeInsets.symmetric(horizontal: 4),
+            width: currentPage == index ? 8 : 8,
+            height: 8,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(4),
+              gradient: currentPage == index
+                  ? AppColors.primaryGradient
+                  : const LinearGradient(
+                      colors: [
+                        Color(0xffE0E0E0),
+                        Color(0xffE0E0E0),
+                      ],
+                    ),
+            ),
           ),
         ),
       ),
@@ -151,28 +165,44 @@ class PlanData {
 
 class PlanCard extends StatelessWidget {
   final PlanData plan;
+  final bool isCenter;
 
-  const PlanCard({super.key, required this.plan});
+  const PlanCard({
+    super.key,
+    required this.plan,
+    required this.isCenter,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        padding: EdgeInsets.all(1.5.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16.r),
-          gradient: const LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xff8663F6), Color(0xff57C2FF), Color(0xffC470F5)],
-          ),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 8.h),
+      padding: EdgeInsets.all(1.5.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16.r),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xff8663F6), Color(0xff57C2FF), Color(0xffC470F5)],
         ),
-        child: Container(
-          padding: EdgeInsets.all(16.w),
-          decoration: BoxDecoration(
-            color: plan.isSelected ? Colors.grey.shade100 : Colors.white,
-            borderRadius: BorderRadius.circular(14.r),
-          ),
+        boxShadow: isCenter
+            ? [
+                BoxShadow(
+                  color: Color(0xff8663F6).withValues(alpha: 0.3),
+                  blurRadius: 20,
+                  offset: Offset(0, 10),
+                  spreadRadius: 0,
+                ),
+              ]
+            : [],
+      ),
+      child: Container(
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: plan.isSelected ? Colors.grey.shade100 : Colors.white,
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+        child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -279,12 +309,12 @@ class PlanCard extends StatelessWidget {
         bgColor = Colors.grey.shade400;
         break;
       case 'Premium':
-        text = 'Premium';
-        bgColor = Colors.orange.shade400;
-        break;
-      case 'Pro':
         text = 'Recommended';
         bgColor = Colors.green.shade400;
+        break;
+      case 'Pro':
+        text = 'Premium';
+        bgColor = Colors.orange.shade400;
         break;
       default:
         text = '';
@@ -311,7 +341,7 @@ class PlanCard extends StatelessWidget {
   Widget _upgradeButton() {
     return Container(
       width: double.infinity,
-      height: 50.h,
+      height: 42.h,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8.r),
         color: plan.isSelected ? Colors.grey : null,
