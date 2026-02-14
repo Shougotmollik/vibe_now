@@ -272,7 +272,7 @@ class _EventCardState extends State<EventCard> {
                                 backgroundColor: Colors.transparent,
                                 child: EventAnimatedDialog(
                                   content:
-                                      'Send a request to the organizer to join the event.',
+                                      'Request sent. Wait for the organizer to confirm it.',
                                 ),
                               ),
                             );
