@@ -55,7 +55,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   }
 
   String _searchLocationIcon() {
-    return '<?xml version="1.0" ?><svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg"><path fill="#DB5C51" d="M192 0C85.97 0 0 85.97 0 192c0 77.41 26.97 99.03 172.3 309.7c9.531 13.77 29.91 13.77 39.44 0C357 291 384 269.4 384 192C384 85.97 298 0 192 0zM192 271.1c-44.13 0-80-35.88-80-80S147.9 111.1 192 111.1s80 35.88 80 80S236.1 271.1 192 271.1z"/></svg>';
+    return '<?xml version="1.0" ?><svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg"><path fill="#181818" d="M192 0C85.97 0 0 85.97 0 192c0 77.41 26.97 99.03 172.3 309.7c9.531 13.77 29.91 13.77 39.44 0C357 291 384 269.4 384 192C384 85.97 298 0 192 0zM192 271.1c-44.13 0-80-35.88-80-80S147.9 111.1 192 111.1s80 35.88 80 80S236.1 271.1 192 271.1z"/></svg>';
   }
 
   Future<void> _saveToHistory(GoogleMapSearchModel item) async {
@@ -209,7 +209,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
               height: 36.w,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color:Colors.white,
+                color: Colors.white,
               ),
               child: Icon(
                 Icons.arrow_back_ios_new_rounded,

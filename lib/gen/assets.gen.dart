@@ -122,6 +122,9 @@ class $AssetsIconsGen {
   SvgGenImage get usersColor =>
       const SvgGenImage('assets/icons/Users_color.svg');
 
+  /// File path: assets/icons/accept.svg
+  SvgGenImage get accept => const SvgGenImage('assets/icons/accept.svg');
+
   /// File path: assets/icons/accept_ic.svg
   SvgGenImage get acceptIc => const SvgGenImage('assets/icons/accept_ic.svg');
 
@@ -206,6 +209,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/creation_star.svg
   SvgGenImage get creationStar =>
       const SvgGenImage('assets/icons/creation_star.svg');
+
+  /// File path: assets/icons/decline.svg
+  SvgGenImage get decline => const SvgGenImage('assets/icons/decline.svg');
 
   /// File path: assets/icons/delete.svg
   SvgGenImage get delete => const SvgGenImage('assets/icons/delete.svg');
@@ -430,6 +436,7 @@ class $AssetsIconsGen {
     userColor,
     user,
     usersColor,
+    accept,
     acceptIc,
     add,
     aiGame,
@@ -455,6 +462,7 @@ class $AssetsIconsGen {
     communityLight,
     communityPin,
     creationStar,
+    decline,
     delete,
     deniedIc,
     dialogIcon,

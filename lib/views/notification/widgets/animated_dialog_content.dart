@@ -4,7 +4,12 @@ import 'package:vibe_now/gen/assets.gen.dart';
 
 class AnimatedDialogContent extends StatefulWidget {
   final String content;
-  const AnimatedDialogContent({super.key, required this.content});
+  final bool accept;
+  const AnimatedDialogContent({
+    super.key,
+    required this.content,
+    this.accept = true,
+  });
 
   @override
   State<AnimatedDialogContent> createState() => _AnimatedDialogContentState();
@@ -66,11 +71,17 @@ class _AnimatedDialogContentState extends State<AnimatedDialogContent>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Assets.icons.dialogCheck.svg(
-                width: 50.w,
-                height: 50.h,
-                fit: BoxFit.cover,
-              ),
+              widget.accept
+                  ? Assets.icons.dialogCheck.svg(
+                      width: 50.w,
+                      height: 50.h,
+                      fit: BoxFit.cover,
+                    )
+                  : Assets.icons.decline.svg(
+                      width: 50.w,
+                      height: 50.h,
+                      fit: BoxFit.cover,
+                    ),
               SizedBox(height: 15.h),
               Text(
                 widget.content,

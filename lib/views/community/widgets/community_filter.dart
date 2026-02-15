@@ -367,12 +367,12 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
       decoration: BoxDecoration(
-        gradient: isSelected ? AppColors.primaryGradientRotated : null,
-        color: isSelected
-            ? null
-            : isPartial
-            ? Colors.transparent
-            : Colors.transparent,
+        // gradient: isSelected ? AppColors.primaryGradientRotated : null,
+        // color: isSelected
+        //     ? null
+        //     : isPartial
+        //     ? Colors.transparent
+        //     : Colors.transparent,
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -382,7 +382,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
               group.parent,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : Colors.black87,
+                color: isSelected ? Colors.black87 : Colors.black87,
               ),
             ),
           ),

@@ -253,7 +253,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
       children: [
         Expanded(
           child: OutlinedButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pop(context);
+            },
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
