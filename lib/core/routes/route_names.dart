@@ -6,7 +6,8 @@ class RouteNames {
   static const String signUpScreen = "signUpScreen";
   static const String signInScreen = "signInScreen";
   static const String otpVerificationScreen = "otpVerificationScreen";
-  static const String signupOtpVerificationScreen = "signupOtpVerificationScreen";
+  static const String signupOtpVerificationScreen =
+      "signupOtpVerificationScreen";
   static const String emailVerificationScreen = "emailVerificationScreen";
   static const String newPasswordScreen = "newPasswordScreen";
 
@@ -24,7 +25,7 @@ class RouteNames {
   static const String communityDetailsScreen = "communityDetailsScreen";
   static const String createCommunityScreen = "createCommunityScreen";
 
-  static const String memberScreen = "memberScreen";
+  static const String communityMemberScreen = "communityMemberScreen";
 
   static const String subscriptionScreen = "subscriptionScreen";
 
@@ -32,6 +33,7 @@ class RouteNames {
 
   static const String chatInboxScreen = "chatInboxScreen";
   static const String chatScreen = "chatScreen";
+  static const String communityChatScreen = "communityChatScreen";
 
   static const String reportScreen = "reportScreen";
   static const String blockScreen = "blockScreen";

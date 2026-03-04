@@ -14,12 +14,13 @@ import 'package:vibe_now/views/auth/steps/step_name_screen.dart';
 import 'package:vibe_now/views/chat/block_screen.dart';
 import 'package:vibe_now/views/chat/chat_inbox_screen.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
+import 'package:vibe_now/views/chat/community_chat_inbox_screen.dart';
 import 'package:vibe_now/views/chat/report_screen.dart';
 import 'package:vibe_now/views/chat/wave_screen.dart';
 import 'package:vibe_now/views/community/community_details_screen.dart';
 import 'package:vibe_now/views/community/community_screen.dart';
 import 'package:vibe_now/views/community/create_community_screen.dart';
-import 'package:vibe_now/views/community/member_screen.dart';
+import 'package:vibe_now/views/community/community_member_screen.dart';
 import 'package:vibe_now/views/event/create_event_screen.dart';
 import 'package:vibe_now/views/event/event_screen.dart';
 import 'package:vibe_now/views/home/widgets/google_map.dart';
@@ -94,8 +95,8 @@ final GoRouter router = GoRouter(
 
     GoRoute(
       path: '/member-screen',
-      name: RouteNames.memberScreen,
-      builder: (context, state) => const MemberScreen(),
+      name: RouteNames.communityMemberScreen,
+      builder: (context, state) => const CommunityMemberScreen(),
     ),
 
     GoRoute(
@@ -161,6 +162,11 @@ final GoRouter router = GoRouter(
       path: '/chat-inbox-screen',
       name: RouteNames.chatInboxScreen,
       builder: (context, state) => const ChatInboxScreen(),
+    ),
+    GoRoute(
+      path: '/community-chat-screen',
+      name: RouteNames.communityChatScreen,
+      builder: (context, state) => const CommunityChatInboxScreen(),
     ),
     GoRoute(
       path: '/report-screen',

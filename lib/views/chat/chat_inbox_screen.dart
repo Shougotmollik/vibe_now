@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 
 // Message model
@@ -160,14 +161,14 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
   Widget build(BuildContext context) {
     final extra = GoRouterState.of(context).extra as Chat;
     final name = extra.name;
-    final avatar = extra.avatar;
+    final avatar = extra.avatars;
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            _buildAppBar(context, avatar, name),
+            _buildAppBar(context, avatar.first, name),
             Expanded(
               child: GestureDetector(
                 onTap: () => FocusScope.of(context).unfocus(),

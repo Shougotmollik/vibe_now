@@ -5,6 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/design_system.dart';
+import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 
@@ -20,7 +21,7 @@ class _WaveScreenState extends State<WaveScreen> {
   Widget build(BuildContext context) {
     final extra = GoRouterState.of(context).extra as Chat;
     final name = extra.name;
-    final avatar = extra.avatar;
+    final avatar = extra.avatars;
     return Scaffold(
       backgroundColor: Colors.white,
       body: Padding(
@@ -33,7 +34,7 @@ class _WaveScreenState extends State<WaveScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(50.r),
                 child: Image.network(
-                  avatar,
+                  avatar[0],
                   width: 80.w,
                   height: 80.h,
                   fit: BoxFit.cover,

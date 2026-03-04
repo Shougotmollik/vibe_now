@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["isbirthday"]
+  "cSpell.words": ["isbirthday"],
+  "cmake.ignoreCMakeListsMissing": true
 }

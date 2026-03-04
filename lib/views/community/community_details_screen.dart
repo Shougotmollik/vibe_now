@@ -155,7 +155,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                             ),
                             TextButton(
                               onPressed: () {
-                                context.pushNamed(RouteNames.memberScreen);
+                                context.pushNamed(
+                                  RouteNames.communityMemberScreen,
+                                );
                               },
                               child: Text(
                                 "View all",

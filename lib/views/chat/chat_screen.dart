@@ -6,6 +6,8 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/chat.dart';
+import 'package:vibe_now/views/chat/chat_list_item.dart';
 import 'package:vibe_now/views/qr_verification/qr_verification_screen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -18,38 +20,73 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _searchController = TextEditingController();
 
+  // final List<Chat> _chatList = [
+  //   Chat(
+  //     avatar: ['https://randomuser.me/api/portraits/women/10.jpg'],
+  //     name: 'Sammy Smith',
+  //     message: 'Send You a Wave',
+  //     time: '10:30 AM',
+  //     unreadCount: 0,
+  //     wave: true,
+  //     isCommunity: false,
+  //   ),
+  //   Chat(
+  //     avatar: ['https://randomuser.me/api/portraits/women/11.jpg'],
+  //     name: 'Jane Doe',
+  //     message: 'Hello, how are you?',
+  //     time: '10:30 AM',
+  //     unreadCount: 1,
+  //     wave: false,
+  //     isCommunity: false,
+  //   ),
+  //   Chat(
+  //     avatar: ['https://randomuser.me/api/portraits/women/12.jpg'],
+  //     name: 'kyaliace baker',
+  //     message: 'what are you doing? bro',
+  //     time: '11:30 AM',
+  //     unreadCount: 2,
+  //     wave: false,
+  //     isCommunity: false,
+  //   ),
+  //   Chat(
+  //     avatar: [
+  //       'https://randomuser.me/api/portraits/women/13.jpg',
+  //       'https://randomuser.me/api/portraits/women/14.jpg',
+  //       'https://randomuser.me/api/portraits/women/15.jpg',
+  //     ],
+  //     name: 'stephanie smith',
+  //     message: 'Are you there?',
+  //     time: '11:30 AM',
+  //     unreadCount: 4,
+  //     wave: false,
+  //     isCommunity: true,
+  //   ),
+  // ];
+  // ! chat dummy data
   final List<Chat> _chatList = [
     Chat(
-      avatar: 'https://randomuser.me/api/portraits/women/10.jpg',
+      avatars: ['https://randomuser.me/api/portraits/women/12.jpg'],
       name: 'Sammy Smith',
-      message: 'Send You a Wave',
+      message: 'Sent you a wave!',
       time: '10:30 AM',
-      unreadCount: 0,
-      wave: true,
+      type: ChatType.wave,
     ),
     Chat(
-      avatar: 'https://randomuser.me/api/portraits/women/11.jpg',
-      name: 'Jane Doe',
-      message: 'Hello, how are you?',
-      time: '10:30 AM',
-      unreadCount: 1,
-      wave: false,
+      name: "smith jane",
+      message: "my work is done please check it out",
+      time: "11:00 AM",
+      avatars: ['https://randomuser.me/api/portraits/women/14.jpg'],
+      type: ChatType.single,
     ),
     Chat(
-      avatar: 'https://randomuser.me/api/portraits/women/12.jpg',
-      name: 'kyaliace baker',
-      message: 'what are you doing? bro',
-      time: '11:30 AM',
-      unreadCount: 2,
-      wave: false,
-    ),
-    Chat(
-      avatar: 'https://randomuser.me/api/portraits/women/13.jpg',
-      name: 'stephanie smith',
-      message: 'Are you there?',
-      time: '11:30 AM',
-      unreadCount: 4,
-      wave: false,
+      avatars: [
+        'https://randomuser.me/api/portraits/men/32.jpg',
+        'https://randomuser.me/api/portraits/women/44.jpg',
+      ],
+      name: 'Coffee Meetup at Central Park',
+      message: 'Join us for a coffee meetup at Central Park',
+      time: '11:00 AM',
+      type: ChatType.community,
     ),
   ];
 
@@ -134,21 +171,52 @@ class _ChatScreenState extends State<ChatScreen> {
                       (item) => ChatListItem(
                         chat: item,
                         onTap: () {
-                          item.wave == true
-                              ? context.pushNamed(
-                                  RouteNames.waveScreen,
-                                  extra: item,
-                                )
-                              : context.pushNamed(
-                                  RouteNames.chatInboxScreen,
-                                  extra: item,
-                                );
+                          switch (item.type) {
+                            case ChatType.wave:
+                              context.pushNamed(
+                                RouteNames.waveScreen,
+                                extra: item,
+                              );
+                            case ChatType.community:
+                              context.pushNamed(
+                                RouteNames.communityChatScreen,
+                                extra: item,
+                              );
+                            case ChatType.single:
+                              context.pushNamed(
+                                RouteNames.chatInboxScreen,
+                                extra: item,
+                              );
+                          }
                         },
                       ),
                     )
                     .toList(),
               ),
             ),
+
+            // Expanded(
+            //   child: Column(
+            //     children: _chatList
+            //         .map(
+            //           (item) => ChatListItem(
+            //             chat: item,
+            //             onTap: () {
+            //               item.wave == true
+            //                   ? context.pushNamed(
+            //                       RouteNames.waveScreen,
+            //                       extra: item,
+            //                     )
+            //                   : context.pushNamed(
+            //                       RouteNames.chatInboxScreen,
+            //                       extra: item,
+            //                     );
+            //             },
+            //           ),
+            //         )
+            //         .toList(),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -156,242 +224,172 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-Future<dynamic> _buildMoreOption(
-  BuildContext context, {
-  required VoidCallback onDelete,
-  required VoidCallback onBlockUser,
-}) {
-  return showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    builder: (context) {
-      return SafeArea(
-        child: Container(
-          margin: const EdgeInsets.all(16),
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          decoration: BoxDecoration(
-            color: AppColors.backgroundVariant,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: [
-              BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
-            ],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              InkWell(
-                onTap: onDelete,
-                splashColor: Colors.transparent,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 4.w,
-                    children: [
-                      Icon(
-                        Icons.notifications_off_outlined,
-                        size: 20.sp,
-                        color: AppColors.primary,
-                      ),
-                      Text(
-                        'Mute',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+// class Chat {
+//   final String name;
+//   final String message;
+//   final String time;
+//   final List<String> avatar;
+//   final int? unreadCount;
+//   final bool wave;
+//   final bool isCommunity;
+//   Chat({
+//     required this.name,
+//     required this.message,
+//     required this.time,
+//     required this.avatar,
+//     this.unreadCount,
+//     required this.wave,
+//     this.isCommunity = false,
+//   });
+// }
 
-              Divider(height: 1.5.h),
-              InkWell(
-                onTap: onDelete,
-                splashColor: Colors.transparent,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 4.w,
-                    children: [
-                      Assets.icons.trash.svg(
-                        width: 20.w,
-                        height: 20.h,
-                        // color: Colors.red,
-                      ),
-                      Text(
-                        'Delete Chat',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+// class ChatListItem extends StatelessWidget {
+//   final VoidCallback onTap;
 
-              Divider(height: 1.h),
+//   final Chat chat;
 
-              InkWell(
-                onTap: onBlockUser,
-                splashColor: Colors.transparent,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 4.w,
-                    children: [
-                      Assets.icons.block.svg(
-                        width: 20.w,
-                        height: 20.w,
-                        color: AppColors.primary,
-                      ),
-                      Text(
-                        'Block User',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    },
-  );
-}
+//   const ChatListItem({super.key, required this.chat, required this.onTap});
 
-class Chat {
-  final String name;
-  final String message;
-  final String time;
-  final String avatar;
-  final int? unreadCount;
-  final bool wave;
+//   @override
+//   Widget build(BuildContext context) {
+//     return InkWell(
+//       onTap: onTap,
+//       onLongPress: () => _buildMoreOption(
+//         context,
+//         onDelete: () {
+//           AppSnackbar.show(message: 'Chat deleted successfully');
+//           Navigator.pop(context);
+//         },
+//         onBlockUser: () {
+//           context.pushNamed(RouteNames.blockScreen);
+//           context.pop();
+//         },
+//       ),
+//       child: Container(
+//         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+//         decoration: BoxDecoration(
+//           color: chat.wave ? AppColors.backgroundVariant : Colors.white,
+//         ),
+//         child: Row(
+//           children: [
+//             chat.isCommunity
+//                 ? CommunityAvatar(avatars: chat.avatar)
+//                 : ClipRRect(
+//                     borderRadius: BorderRadius.circular(50),
+//                     child: Image.network(
+//                       chat.avatar[0],
+//                       width: 50.w,
+//                       height: 50.w,
+//                       fit: BoxFit.cover,
+//                     ),
+//                   ),
+//             const SizedBox(width: 12),
 
-  Chat({
-    required this.name,
-    required this.message,
-    required this.time,
-    required this.avatar,
-    this.unreadCount,
-    required this.wave,
-  });
-}
+//             Expanded(
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   Text(
+//                     chat.name,
+//                     style: TextStyle(
+//                       fontSize: 16.sp,
+//                       fontWeight: FontWeight.w500,
+//                       color: Color(0xff303030),
+//                     ),
+//                   ),
+//                   const SizedBox(height: 4),
+//                   Text(
+//                     chat.message,
+//                     style: TextStyle(fontSize: 14.sp, color: Color(0xff585858)),
+//                     maxLines: 1,
+//                     overflow: TextOverflow.ellipsis,
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             // Time and unread badge
+//             Column(
+//               crossAxisAlignment: CrossAxisAlignment.end,
+//               children: [
+//                 Text(
+//                   chat.time,
+//                   style: TextStyle(fontSize: 12.sp, color: Colors.grey[500]),
+//                 ),
+//                 if (chat.unreadCount! > 0) ...[
+//                   const SizedBox(height: 4),
+//                   Container(
+//                     padding: const EdgeInsets.all(6),
+//                     decoration: BoxDecoration(
+//                       gradient: AppColors.primaryGradient,
+//                       shape: BoxShape.circle,
+//                     ),
+//                     child: Text(
+//                       chat.unreadCount.toString(),
+//                       style: TextStyle(
+//                         color: Colors.white,
+//                         fontSize: 14.sp,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                   ),
+//                 ],
+//               ],
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
-class ChatListItem extends StatelessWidget {
-  final VoidCallback onTap;
+class CommunityAvatar extends StatelessWidget {
+  final List<String> avatars;
+  final double size;
 
-  final Chat chat;
-
-  const ChatListItem({super.key, required this.chat, required this.onTap});
+  const CommunityAvatar({super.key, required this.avatars, this.size = 50});
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      onLongPress: () => _buildMoreOption(
-        context,
-        onDelete: () {
-          AppSnackbar.show(message: 'Chat deleted successfully');
-          Navigator.pop(context);
-        },
-        onBlockUser: () {
-          context.pushNamed(RouteNames.blockScreen);
-          context.pop();
-        },
-      ),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: chat.wave ? AppColors.backgroundVariant : Colors.white,
-        ),
-        child: Row(
-          children: [
-            ClipRRect(
+    return SizedBox(
+      width: size.w,
+      height: size.w,
+      child: Stack(
+        children: [
+          // Background/First Avatar (slightly offset)
+          Positioned(
+            top: 0,
+            left: 0,
+            child: ClipRRect(
               borderRadius: BorderRadius.circular(50),
               child: Image.network(
-                chat.avatar,
-                width: 50.w,
-                height: 50.w,
+                avatars[0],
+                width: (size * 0.8).w,
+                height: (size * 0.8).w,
                 fit: BoxFit.cover,
               ),
             ),
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    chat.name,
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff303030),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    chat.message,
-                    style: TextStyle(fontSize: 14.sp, color: Color(0xff585858)),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
+          ),
+          // Foreground/Second Avatar (bottom right)
+          Positioned(
+            bottom: 0,
+            right: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: Image.network(
+                  avatars.length > 1 ? avatars[1] : avatars[0],
+                  width: (size * 0.7).w,
+                  height: (size * 0.7).w,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
-            // Time and unread badge
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  chat.time,
-                  style: TextStyle(fontSize: 12.sp, color: Colors.grey[500]),
-                ),
-                if (chat.unreadCount! > 0) ...[
-                  const SizedBox(height: 4),
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      gradient: AppColors.primaryGradient,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Text(
-                      chat.unreadCount.toString(),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
