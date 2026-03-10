@@ -13,6 +13,7 @@ import 'package:vibe_now/views/settings/manage_password.dart';
 import 'package:vibe_now/views/settings/profile_setting_screen.dart';
 import 'package:vibe_now/views/settings/terms_and_privacy.dart';
 import 'package:vibe_now/views/settings/theme_selection_screen.dart';
+import 'package:vibe_now/views/settings/widget/respect_score_card.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -59,25 +60,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
                                 ),
                               ),
-                              // Positioned(
-                              //   bottom: 0,
-                              //   right: 0,
-                              //   child: Container(
-                              //     padding: EdgeInsets.all(6.w),
-                              //     decoration: BoxDecoration(
-                              //       color: Colors.white,
-                              //       shape: BoxShape.circle,
-                              //       boxShadow: [
-                              //         BoxShadow(
-                              //           color: Colors.black.withOpacity(0.1),
-                              //           blurRadius: 4,
-                              //           offset: const Offset(0, 2),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //     // child: Assets.icons.camera2.svg(),
-                              //   ),
-                              // ),
                             ],
                           ),
                           SizedBox(height: 16.h),
@@ -120,7 +102,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     SizedBox(height: 32.h),
-
+                    RespectScoreCard(),
+                    SizedBox(height: 24.h),
                     // Profile Information
                     _buildMenuItem(
                       icon: Assets.icons.userColor,
