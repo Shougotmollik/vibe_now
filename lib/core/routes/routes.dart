@@ -1,7 +1,9 @@
+import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/env.dart';
+import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/auth/email_verification_screen.dart';
 import 'package:vibe_now/views/auth/intro_screen.dart';
 import 'package:vibe_now/views/auth/new_password_screen.dart';
@@ -22,6 +24,8 @@ import 'package:vibe_now/views/community/community_screen.dart';
 import 'package:vibe_now/views/community/create_community_screen.dart';
 import 'package:vibe_now/views/community/community_member_screen.dart';
 import 'package:vibe_now/views/event/create_event_screen.dart';
+import 'package:vibe_now/views/event/edit_event_screen.dart';
+import 'package:vibe_now/views/event/event_details_screen.dart';
 import 'package:vibe_now/views/event/event_screen.dart';
 import 'package:vibe_now/views/home/widgets/google_map.dart';
 import 'package:vibe_now/views/main_nav_bar_screen.dart';
@@ -126,6 +130,22 @@ final GoRouter router = GoRouter(
       path: '/event-screen',
       name: RouteNames.eventScreen,
       builder: (context, state) => const EventScreen(),
+    ),
+
+    GoRoute(
+      path: '/event-details-screen',
+      name: RouteNames.eventDetailsScreen,
+      builder: (context, state) =>
+          EventDetailsScreen(event: state.extra as Event),
+    ),
+
+    GoRoute(
+      path: "/edit-event-screen",
+      name: RouteNames.editEventScreen,
+      builder: (context, state) {
+        final event = state.extra as Event;
+        return EditEventScreen(event: event);
+      },
     ),
 
     GoRoute(

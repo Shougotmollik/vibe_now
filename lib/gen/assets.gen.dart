@@ -137,6 +137,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/apple_ic.svg
   SvgGenImage get appleIc => const SvgGenImage('assets/icons/apple_ic.svg');
 
+  /// File path: assets/icons/archive.svg
+  SvgGenImage get archive => const SvgGenImage('assets/icons/archive.svg');
+
   /// File path: assets/icons/attached_file.svg
   SvgGenImage get attachedFile =>
       const SvgGenImage('assets/icons/attached_file.svg');
@@ -238,6 +241,9 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/earth.svg
   SvgGenImage get earth => const SvgGenImage('assets/icons/earth.svg');
+
+  /// File path: assets/icons/edit.svg
+  SvgGenImage get edit => const SvgGenImage('assets/icons/edit.svg');
 
   /// File path: assets/icons/facebook_ic.svg
   SvgGenImage get facebookIc =>
@@ -352,6 +358,9 @@ class $AssetsIconsGen {
   SvgGenImage get pausePuple =>
       const SvgGenImage('assets/icons/pause _puple.svg');
 
+  /// File path: assets/icons/paypal.svg
+  SvgGenImage get paypal => const SvgGenImage('assets/icons/paypal.svg');
+
   /// File path: assets/icons/people.svg
   SvgGenImage get people => const SvgGenImage('assets/icons/people.svg');
 
@@ -382,9 +391,15 @@ class $AssetsIconsGen {
   SvgGenImage get stashQuestion =>
       const SvgGenImage('assets/icons/stash_question.svg');
 
+  /// File path: assets/icons/stripe.svg
+  SvgGenImage get stripe => const SvgGenImage('assets/icons/stripe.svg');
+
   /// File path: assets/icons/subscription.svg
   SvgGenImage get subscription =>
       const SvgGenImage('assets/icons/subscription.svg');
+
+  /// File path: assets/icons/succes.svg
+  SvgGenImage get succes => const SvgGenImage('assets/icons/succes.svg');
 
   /// File path: assets/icons/team-check-alt.svg
   SvgGenImage get teamCheckAlt =>
@@ -441,6 +456,7 @@ class $AssetsIconsGen {
     add,
     aiGame,
     appleIc,
+    archive,
     attachedFile,
     block,
     book,
@@ -471,6 +487,7 @@ class $AssetsIconsGen {
     dumbbell2,
     dumbbell,
     earth,
+    edit,
     facebookIc,
     filmWheel,
     filter,
@@ -503,6 +520,7 @@ class $AssetsIconsGen {
     organicFood,
     paintBoard,
     pausePuple,
+    paypal,
     people,
     peopleColor,
     private,
@@ -512,7 +530,9 @@ class $AssetsIconsGen {
     scan,
     sports,
     stashQuestion,
+    stripe,
     subscription,
+    succes,
     teamCheckAlt,
     trashIc,
     uncheckedCircle,

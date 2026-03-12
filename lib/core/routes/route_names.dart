@@ -18,6 +18,8 @@ class RouteNames {
 
   static const String eventScreen = "eventScreen";
   static const String createEventScreen = "createEventScreen";
+  static const String eventDetailsScreen = "eventDetailsScreen";
+  static const String editEventScreen = "editEventScreen";
 
   static const String qrVerificationScreen = "qrVerificationScreen";
 

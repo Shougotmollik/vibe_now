@@ -3,9 +3,12 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/views/event/event_details_screen.dart';
 import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
@@ -41,26 +44,6 @@ class _EventCardState extends State<EventCard> {
     currentStatus = widget.event.userStatus;
   }
 
-  // String get buttonText {
-  //   if (widget.event.isMyEvent) return '';
-
-  //   if (widget.event.accessType == EventAccessType.public) {
-  //     // Public: always allow immediate join
-  //     return currentStatus == EventStatus.going ? 'Going' : 'Join';
-  //   } else {
-  //     // Private: request logic
-  //     if (currentStatus == null) return 'Request';
-  //     switch (currentStatus!) {
-  //       case EventStatus.interested:
-  //         return 'Interested';
-  //       case EventStatus.going:
-  //         return 'Going';
-  //       case EventStatus.requested:
-  //         return 'Requested';
-  //     }
-  //   }
-  // }
-
   String get buttonText {
     if (widget.event.isMyEvent) return '';
 
@@ -86,16 +69,6 @@ class _EventCardState extends State<EventCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Container(
-          //   height: 200.h,
-          //   decoration: BoxDecoration(
-          //     borderRadius: BorderRadius.circular(16),
-          //     image: DecorationImage(
-          //       image: NetworkImage(widget.event.image),
-          //       fit: BoxFit.cover,
-          //     ),
-          //   ),
-          // ),
           Stack(
             alignment: Alignment.topRight,
             children: [
@@ -109,48 +82,8 @@ class _EventCardState extends State<EventCard> {
                 ),
               ),
 
-              // isPrivate
-              //     ? Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: AppColors.primary.withAlpha(200),
-              //           ),
-              //           padding: const EdgeInsets.all(10),
-              //           child: SvgPicture.asset(
-              //             isActive ? wishlistFilled : wishlist,
-              //             height: 18.h,
-              //             width: 18.w,
-              //             color: AppColors.background,
-              //           ),
-              //         ),
-              //       )
-              //     : Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: AppColors.primary.withAlpha(200),
-              //           ),
-              //           padding: const EdgeInsets.all(10),
-              //           child: SvgPicture.asset(
-              //             isActive ? wishlistFilled : wishlist,
-              //             height: 18.h,
-              //             width: 18.w,
-              //             color: AppColors.background,
-              //           ),
-              //         ),
-              //       ),
               GestureDetector(
                 onTap: () {
-                  // setState(() {
-                  //   if (currentStatus == EventStatus.interested) {
-                  //     currentStatus = null;
-                  //   } else {
-                  //     currentStatus = EventStatus.interested;
-                  //   }
-                  // });
                   setState(() {
                     widget.event.isFavorite = !widget.event.isFavorite;
                   });
@@ -261,8 +194,18 @@ class _EventCardState extends State<EventCard> {
             ],
           ),
           SizedBox(height: 12),
+          // Event Button section
           widget.event.isMyEvent
-              ? SizedBox.shrink()
+              ? PrimaryButton.text(
+                  onPressed: () {
+                    context.pushNamed(
+                      RouteNames.eventDetailsScreen,
+                      extra: widget.event,
+                    );
+                  },
+                  text: "View Details",
+                  gradient: AppColors.primaryGradientRotated,
+                )
               : Row(
                   children: [
                     Expanded(
