@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/community.dart';
@@ -367,175 +368,190 @@ class _CommunityCardState extends State<CommunityCard> {
           //   )
           // else
           // Otherwise show request button with dropdown
-          Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    // setState(() {
-                    //   // currentStatus = CommunityStatus.requested;
-                    //   // AppSnackbar.show(
-                    //   //   message:
-                    //   //       "Send a request to the community creator to joint the community",
-                    //   //   type: SnackType.success,
-                    //   // );
-
-                    //   if (currentStatus == CommunityStatus.requested) {
-                    //     currentStatus = CommunityStatus.interested;
-                    //     showDialog(
-                    //       context: context,
-                    //       barrierDismissible: true,
-                    //       builder: (context) {
-                    //         return Center(
-                    //           child: Dialog(
-                    //             shape: RoundedRectangleBorder(
-                    //               borderRadius: BorderRadius.circular(20.r),
-                    //             ),
-                    //             elevation: 0,
-                    //             backgroundColor: Colors.transparent,
-                    //             child: CommunityAnimatedDialog(
-                    //               content:
-                    //                   'Revoke your request to join the community?',
-                    //             ),
-                    //           ),
-                    //         );
-                    //       },
-                    //     );
-                    //   } else {
-                    //     currentStatus = CommunityStatus.requested;
-                    //     showDialog(
-                    //       context: context,
-                    //       barrierDismissible: true,
-                    //       builder: (context) {
-                    //         return Center(
-                    //           child: Dialog(
-                    //             shape: RoundedRectangleBorder(
-                    //               borderRadius: BorderRadius.circular(20.r),
-                    //             ),
-                    //             elevation: 0,
-                    //             backgroundColor: Colors.transparent,
-                    //             child: CommunityAnimatedDialog(
-                    //               content:
-                    //                   'Send a request to the community creator to joint the community',
-                    //             ),
-                    //           ),
-                    //         );
-                    //       },
-                    //     );
-                    //   }
-                    // });
-
-                    // Public Community flow
-                    // if (isPrivate && isRequested) return;
-
-                    // if (isPublic && !isGoing) {
-                    //   setState(() {
-                    //     currentStatus = CommunityStatus.going;
-                    //   });
-                    //   showDialog(
-                    //     context: context,
-                    //     builder: (_) => Dialog(
-                    //       backgroundColor: Colors.transparent,
-                    //       child: CommunityAnimatedDialog(
-                    //         content:
-                    //             'You have joined the community successfully.',
-                    //       ),
-                    //     ),
-                    //   );
-                    //   return;
-                    // }
-                    if (isRequested) return;
-                    setState(() {
-                      currentStatus = CommunityStatus.requested;
-                    });
-                    showDialog(
-                      context: context,
-                      builder: (_) => Dialog(
-                        backgroundColor: Colors.transparent,
-                        child: CommunityAnimatedDialog(
-                          content:
-                              'Request sent. Wait for the organizer to confirm it.',
-                        ),
-                      ),
+          widget.community.isMyCommunity
+              ? PrimaryButton.text(
+                  radius: 12.r,
+                  onPressed: () {
+                    context.pushNamed(
+                      RouteNames.communityDetailsScreen,
+                      extra: widget.community,
                     );
-
-                    // // Private Community flow
-                    // if (isPrivate && !isRequested) {
-                    //   setState(() {
-                    //     currentStatus = CommunityStatus.requested;
-                    //   });
-                    //   showDialog(
-                    //     context: context,
-                    //     builder: (_) => Dialog(
-                    //       backgroundColor: Colors.transparent,
-                    //       child: CommunityAnimatedDialog(
-                    //         content:
-                    //             'Request sent. Wait for the organizer to confirm it.',
-                    //       ),
-                    //     ),
-                    //   );
-                    //   return;
-                    // }
                   },
+                  text: "View Details",
+                )
+              : Row(
+                  children: [
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          // setState(() {
+                          //   // currentStatus = CommunityStatus.requested;
+                          //   // AppSnackbar.show(
+                          //   //   message:
+                          //   //       "Send a request to the community creator to joint the community",
+                          //   //   type: SnackType.success,
+                          //   // );
 
-                  child: Container(
-                    padding: EdgeInsets.all(12.w),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: Colors.grey.shade300),
-                      gradient: !isActive ? AppColors.primaryGradient : null,
-                      color: isActive ? Color(0xffC4A8FF) : null,
-                    ),
-                    child: Center(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 8.w,
-                        children: [
-                          // isPrivate
-                          //     ? SvgPicture.asset(
-                          //         isActive ? hourglass : "",
-                          //         height: isActive ? 18.h : 0,
-                          //         width: isActive ? 18.w : 0,
-                          //         color: AppColors.background,
-                          //       )
-                          //     : SizedBox(),
-                          // // : SvgPicture.asset(
-                          // //     wishlist,
-                          // //     height: 18.h,
-                          // //     width: 18.w,
-                          // //     color: AppColors.background,
-                          // //   ),
-                          if (isActive)
-                            SvgPicture.asset(
-                              hourglass,
-                              height: 18.h,
-                              width: 18.w,
-                              color: AppColors.background,
+                          //   if (currentStatus == CommunityStatus.requested) {
+                          //     currentStatus = CommunityStatus.interested;
+                          //     showDialog(
+                          //       context: context,
+                          //       barrierDismissible: true,
+                          //       builder: (context) {
+                          //         return Center(
+                          //           child: Dialog(
+                          //             shape: RoundedRectangleBorder(
+                          //               borderRadius: BorderRadius.circular(20.r),
+                          //             ),
+                          //             elevation: 0,
+                          //             backgroundColor: Colors.transparent,
+                          //             child: CommunityAnimatedDialog(
+                          //               content:
+                          //                   'Revoke your request to join the community?',
+                          //             ),
+                          //           ),
+                          //         );
+                          //       },
+                          //     );
+                          //   } else {
+                          //     currentStatus = CommunityStatus.requested;
+                          //     showDialog(
+                          //       context: context,
+                          //       barrierDismissible: true,
+                          //       builder: (context) {
+                          //         return Center(
+                          //           child: Dialog(
+                          //             shape: RoundedRectangleBorder(
+                          //               borderRadius: BorderRadius.circular(20.r),
+                          //             ),
+                          //             elevation: 0,
+                          //             backgroundColor: Colors.transparent,
+                          //             child: CommunityAnimatedDialog(
+                          //               content:
+                          //                   'Send a request to the community creator to joint the community',
+                          //             ),
+                          //           ),
+                          //         );
+                          //       },
+                          //     );
+                          //   }
+                          // });
+
+                          // Public Community flow
+                          // if (isPrivate && isRequested) return;
+
+                          // if (isPublic && !isGoing) {
+                          //   setState(() {
+                          //     currentStatus = CommunityStatus.going;
+                          //   });
+                          //   showDialog(
+                          //     context: context,
+                          //     builder: (_) => Dialog(
+                          //       backgroundColor: Colors.transparent,
+                          //       child: CommunityAnimatedDialog(
+                          //         content:
+                          //             'You have joined the community successfully.',
+                          //       ),
+                          //     ),
+                          //   );
+                          //   return;
+                          // }
+                          if (isRequested) return;
+                          setState(() {
+                            currentStatus = CommunityStatus.requested;
+                          });
+                          showDialog(
+                            context: context,
+                            builder: (_) => Dialog(
+                              backgroundColor: Colors.transparent,
+                              child: CommunityAnimatedDialog(
+                                content:
+                                    'Request sent. Wait for the organizer to confirm it.',
+                              ),
                             ),
-                          Text(
-                            buttonText,
-                            style: TextStyle(
-                              color: CommunityStatus.interested != currentStatus
-                                  ? Colors.white
-                                  : Colors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
+                          );
+
+                          // // Private Community flow
+                          // if (isPrivate && !isRequested) {
+                          //   setState(() {
+                          //     currentStatus = CommunityStatus.requested;
+                          //   });
+                          //   showDialog(
+                          //     context: context,
+                          //     builder: (_) => Dialog(
+                          //       backgroundColor: Colors.transparent,
+                          //       child: CommunityAnimatedDialog(
+                          //         content:
+                          //             'Request sent. Wait for the organizer to confirm it.',
+                          //       ),
+                          //     ),
+                          //   );
+                          //   return;
+                          // }
+                        },
+
+                        child: Container(
+                          padding: EdgeInsets.all(12.w),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(color: Colors.grey.shade300),
+                            gradient: !isActive
+                                ? AppColors.primaryGradient
+                                : null,
+                            color: isActive ? Color(0xffC4A8FF) : null,
+                          ),
+                          child: Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              spacing: 8.w,
+                              children: [
+                                // isPrivate
+                                //     ? SvgPicture.asset(
+                                //         isActive ? hourglass : "",
+                                //         height: isActive ? 18.h : 0,
+                                //         width: isActive ? 18.w : 0,
+                                //         color: AppColors.background,
+                                //       )
+                                //     : SizedBox(),
+                                // // : SvgPicture.asset(
+                                // //     wishlist,
+                                // //     height: 18.h,
+                                // //     width: 18.w,
+                                // //     color: AppColors.background,
+                                // //   ),
+                                if (isActive)
+                                  SvgPicture.asset(
+                                    hourglass,
+                                    height: 18.h,
+                                    width: 18.w,
+                                    color: AppColors.background,
+                                  ),
+                                Text(
+                                  buttonText,
+                                  style: TextStyle(
+                                    color:
+                                        CommunityStatus.interested !=
+                                            currentStatus
+                                        ? Colors.white
+                                        : Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  ),
+                    SizedBox(width: 8.w),
+                    // widget.community.isMyCommunity
+                    //     ? SizedBox.shrink()
+                    //     : _buildPopUpMenuSection(),
+                  ],
                 ),
-              ),
-              SizedBox(width: 8.w),
-              // widget.community.isMyCommunity
-              //     ? SizedBox.shrink()
-              //     : _buildPopUpMenuSection(),
-            ],
-          ),
         ],
       ),
     );

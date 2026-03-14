@@ -3,12 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/community.dart';
+import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
+import 'package:vibe_now/views/community/community_plan_meetup_screen.dart';
+import 'package:vibe_now/views/community/edit_community_screen.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
-  const CommunityDetailsScreen({super.key});
+  const CommunityDetailsScreen({super.key, required this.community});
+  final Community community;
 
   @override
   State<CommunityDetailsScreen> createState() => _CommunityDetailsScreenState();
@@ -88,13 +94,39 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                           ),
                         ),
 
-                        Text(
-                          "Neighbors Get Together",
-                          style: TextStyle(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w500,
-                            color: const Color(0xff303030),
-                          ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                "Neighbors Get Together",
+                                style: TextStyle(
+                                  fontSize: 20.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xff303030),
+                                ),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatScreen(),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(6.w),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff_F0F7FF),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Assets.icons.chatting.svg(
+                                  width: 24.w,
+                                  height: 24.h,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 10.h),
 
@@ -175,23 +207,20 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 8.h),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12.r),
-
+                              child: SizedBox(
+                                height: 42.h,
+                                child: PrimaryButton.text(
                                   gradient: AppColors.primaryGradientRotated,
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Assets.icons.chattingLight.svg(
-                                      width: 24.w,
-                                      height: 24.h,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(width: 8.w),
-                                  ],
+                                  radius: 12.r,
+                                  onPressed: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CommunityPlanMeetupScreen(),
+                                      ),
+                                    );
+                                  },
+                                  text: "Plan meetup",
                                 ),
                               ),
                             ),
@@ -216,7 +245,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                         Assets.icons.leave.svg(
                                           width: 24.w,
                                           height: 24.h,
-                                          color: Colors.black54,
+                                          color: AppColors.primary,
                                         ),
                                         SizedBox(width: 8.w),
                                         Text(
@@ -224,7 +253,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                           style: TextStyle(
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.w400,
-                                            color: Colors.black54,
+                                            color: AppColors.primary,
                                           ),
                                         ),
                                       ],
@@ -258,78 +287,78 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                         SizedBox(height: 20.h),
 
                         // Experiences Section
-                        Text(
-                          'Experiences',
-                          style: TextStyle(
-                            fontSize: 18.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
-                        // Experience Card
-                        Container(
-                          padding: EdgeInsets.all(16.w),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 20.r,
-                                    backgroundImage: const NetworkImage(
-                                      'https://i.pravatar.cc/150?img=5',
-                                    ),
-                                  ),
-                                  SizedBox(width: 12.w),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        'Jenny smith',
-                                        style: TextStyle(
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      Row(
-                                        children: [
-                                          Icon(
-                                            Icons.celebration_outlined,
-                                            size: 14.sp,
-                                            color: Colors.grey.shade600,
-                                          ),
-                                          SizedBox(width: 4.w),
-                                          Text(
-                                            '20 Oct',
-                                            style: TextStyle(
-                                              fontSize: 12.sp,
-                                              color: Colors.grey.shade600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 12.h),
-                              Text(
-                                'Had a wonderful day with you guys 😊',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Colors.grey.shade800,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // Text(
+                        //   'Experiences',
+                        //   style: TextStyle(
+                        //     fontSize: 18.sp,
+                        //     fontWeight: FontWeight.bold,
+                        //     color: Colors.black,
+                        //   ),
+                        // ),
+                        // SizedBox(height: 16.h),
+                        // // Experience Card
+                        // Container(
+                        //   padding: EdgeInsets.all(16.w),
+                        //   decoration: BoxDecoration(
+                        //     color: Colors.grey.shade50,
+                        //     borderRadius: BorderRadius.circular(12.r),
+                        //   ),
+                        //   child: Column(
+                        //     crossAxisAlignment: CrossAxisAlignment.start,
+                        //     children: [
+                        //       Row(
+                        //         children: [
+                        //           CircleAvatar(
+                        //             radius: 20.r,
+                        //             backgroundImage: const NetworkImage(
+                        //               'https://i.pravatar.cc/150?img=5',
+                        //             ),
+                        //           ),
+                        //           SizedBox(width: 12.w),
+                        //           Column(
+                        //             crossAxisAlignment:
+                        //                 CrossAxisAlignment.start,
+                        //             children: [
+                        //               Text(
+                        //                 'Jenny smith',
+                        //                 style: TextStyle(
+                        //                   fontSize: 16.sp,
+                        //                   fontWeight: FontWeight.w600,
+                        //                   color: Colors.black,
+                        //                 ),
+                        //               ),
+                        //               Row(
+                        //                 children: [
+                        //                   Icon(
+                        //                     Icons.celebration_outlined,
+                        //                     size: 14.sp,
+                        //                     color: Colors.grey.shade600,
+                        //                   ),
+                        //                   SizedBox(width: 4.w),
+                        //                   Text(
+                        //                     '20 Oct',
+                        //                     style: TextStyle(
+                        //                       fontSize: 12.sp,
+                        //                       color: Colors.grey.shade600,
+                        //                     ),
+                        //                   ),
+                        //                 ],
+                        //               ),
+                        //             ],
+                        //           ),
+                        //         ],
+                        //       ),
+                        //       SizedBox(height: 12.h),
+                        //       Text(
+                        //         'Had a wonderful day with you guys 😊',
+                        //         style: TextStyle(
+                        //           fontSize: 14.sp,
+                        //           color: Colors.grey.shade800,
+                        //         ),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
                       ],
                     ),
                   ),
@@ -339,10 +368,38 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
           ),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.only(left: 20.0),
-              child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: const Icon(Icons.arrow_back_ios, color: Colors.white),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(
+                      Icons.arrow_back_ios,
+                      color: Colors.white,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EditCommunityScreen(community: widget.community),
+                        ),
+                      );
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      child: Assets.icons.edit.svg(
+                        color: Colors.black,
+                        fit: BoxFit.cover,
+                        height: 24.w,
+                        width: 24.w,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/env.dart';
+import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/auth/email_verification_screen.dart';
 import 'package:vibe_now/views/auth/intro_screen.dart';
@@ -123,7 +124,10 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/community-details-screen',
       name: RouteNames.communityDetailsScreen,
-      builder: (context, state) => const CommunityDetailsScreen(),
+      builder: (context, state) {
+        final community = state.extra as Community;
+        return CommunityDetailsScreen(community: community);
+      },
     ),
 
     GoRoute(

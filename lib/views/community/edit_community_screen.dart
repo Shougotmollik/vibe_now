@@ -1,30 +1,35 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
+import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/utils.dart' as utils;
+import 'package:vibe_now/views/common/confirmation_dialog.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
 import 'package:vibe_now/views/common/custom_date_picker.dart';
 import 'package:vibe_now/views/community/widgets/community_animated_dialog.dart';
+import 'package:vibe_now/views/community/widgets/edit_community_action.dart';
+import 'package:vibe_now/views/event/widgets/edit_event_action.dart';
+import 'package:vibe_now/views/event/widgets/user_profile_tile.dart';
 
-class CreateCommunityScreen extends StatefulWidget {
-  const CreateCommunityScreen({super.key});
+class EditCommunityScreen extends StatefulWidget {
+  const EditCommunityScreen({super.key, required this.community});
+  final Community community;
 
   @override
-  State<CreateCommunityScreen> createState() => _CreateCommunityScreenState();
+  State<EditCommunityScreen> createState() => _EditCommunityScreenState();
 }
 
-class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
+class _EditCommunityScreenState extends State<EditCommunityScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _maxAttendeesController = TextEditingController(
@@ -92,107 +97,216 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: EdgeInsets.all(16.w),
-                child: Column(
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const CustomAppBar(title: "Create Community"),
-                    SizedBox(height: 16.h),
-                    _buildCommunityHeaderSection(),
-                    SizedBox(height: 16.h),
-                    _buildImageUploadSection(),
-                    SizedBox(height: 24.h),
-                    _buildCommunityTitle(),
-                    SizedBox(height: 24.h),
-                    _buildCommunityDescription(),
-                    SizedBox(height: 24.h),
-                    _buildCommunityCategory(),
-                    SizedBox(height: 24.h),
-                    // _buildAccessLevel(),
-                    // SizedBox(height: 24.h),
-                    _buildSelectLocation(),
-                    SizedBox(height: 24.h),
-                    _buildDateTimeRow(),
-                    SizedBox(height: 24.h),
-                    _buildMaxAttendees(),
-                    SizedBox(height: 24.h),
-                    _buildActionButtons(),
-                    SizedBox(height: 24.h),
+                    const CustomAppBar(title: "Community info"),
+                    GestureDetector(
+                      onTap: () {
+                        editCommunityAction(
+                          context: context,
+                          onDelete: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ConfirmationDialog(
+                                  title: 'Are you sure you want to Delete it?',
+                                  confirmBtnText: 'Delete',
+                                  onConfirm: () {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                  onCancel: () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          onArchive: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ConfirmationDialog(
+                                  title: 'Are you sure you want to Archive it?',
+                                  confirmBtnText: 'Yes',
+                                  onConfirm: () {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  },
+                                  onCancel: () {
+                                    Navigator.pop(context);
+                                  },
+                                );
+                              },
+                            );
+                          },
+                          onCancel: () {
+                            Navigator.pop(context);
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                      child: Icon(Icons.more_vert),
+                    ),
                   ],
                 ),
-              ),
-            ],
+                SizedBox(height: 16.h),
+                _buildAdminCard(),
+                SizedBox(height: 16.h),
+                _buildImageUploadSection(context),
+                SizedBox(height: 24.h),
+                _buildCommunityTitle(),
+                SizedBox(height: 24.h),
+                _buildCommunityDescription(),
+                SizedBox(height: 24.h),
+                _buildCommunityCategory(),
+                SizedBox(height: 24.h),
+                // _buildAccessLevel(),
+                // SizedBox(height: 24.h),
+                _buildSelectLocation(),
+                SizedBox(height: 24.h),
+                _buildDateTimeRow(),
+                SizedBox(height: 24.h),
+                _buildMaxAttendees(),
+                SizedBox(height: 24.h),
+                _buildCommunityRules(),
+                SizedBox(height: 24.h),
+                _buildCommunityMember(),
+                SizedBox(height: 24.h),
+                PrimaryButton.text(onPressed: () {}, text: "Update"),
+                SizedBox(height: 24.h),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAccessLevel() {
+  Widget _buildCommunityMember() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Access Level',
+        Text(
+          "Members(24)",
           style: TextStyle(
-            fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        Container(
-          padding: EdgeInsets.all(4.w),
-          decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(14.r),
-          ),
-          child: Row(
-            children: [
-              _accessToggleItem(
-                label: 'Public',
-                icon: Icons.people_alt_outlined,
-                isSelected: _accessType == CommunityAccessType.public,
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  setState(() {
-                    _accessType = CommunityAccessType.public;
-                  });
-                },
-              ),
-              _accessToggleItem(
-                label: 'Private',
-                icon: Icons.lock_person_outlined,
-                isSelected: _accessType == CommunityAccessType.private,
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  setState(() {
-                    _accessType = CommunityAccessType.private;
-                  });
-                },
-              ),
-            ],
+            fontSize: 14.sp,
+            color: AppColors.primaryText,
           ),
         ),
 
-        const SizedBox(height: 6),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            _accessType == CommunityAccessType.public
-                ? 'Anyone can discover and join this community instantly without approval.'
-                : 'People will need your approval before they can join this community.',
-            textAlign: TextAlign.start,
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
-          ),
-        ),
+        Column(children: List.generate(3, (index) => UserProfileTile())),
       ],
     );
   }
+
+  Widget _buildAdminCard() {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradientRotated,
+        borderRadius: BorderRadius.circular(50.r),
+      ),
+      child: Row(
+        spacing: 8.w,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadiusGeometry.circular(20.r),
+            child: Image.asset(
+              "assets/images/profile_picture.jpg",
+              height: 30.w,
+              width: 30.w,
+              fit: BoxFit.cover,
+            ),
+          ),
+          Text(
+            "You are an Admin",
+            style: TextStyle(
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(width: 20.w),
+        ],
+      ),
+    );
+  }
+
+  // Widget _buildAccessLevel() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       const Text(
+  //         'Access Level',
+  //         style: TextStyle(
+  //           fontSize: 15,
+  //           fontWeight: FontWeight.w500,
+  //           color: Colors.black87,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 8),
+
+  //       Container(
+  //         padding: EdgeInsets.all(4.w),
+  //         decoration: BoxDecoration(
+  //           color: Colors.grey[100],
+  //           borderRadius: BorderRadius.circular(14.r),
+  //         ),
+  //         child: Row(
+  //           children: [
+  //             _accessToggleItem(
+  //               label: 'Public',
+  //               icon: Icons.people_alt_outlined,
+  //               isSelected: _accessType == CommunityAccessType.public,
+  //               onTap: () {
+  //                 HapticFeedback.selectionClick();
+  //                 setState(() {
+  //                   _accessType = CommunityAccessType.public;
+  //                 });
+  //               },
+  //             ),
+  //             _accessToggleItem(
+  //               label: 'Private',
+  //               icon: Icons.lock_person_outlined,
+  //               isSelected: _accessType == CommunityAccessType.private,
+  //               onTap: () {
+  //                 HapticFeedback.selectionClick();
+  //                 setState(() {
+  //                   _accessType = CommunityAccessType.private;
+  //                 });
+  //               },
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+
+  //       const SizedBox(height: 6),
+  //       Padding(
+  //         padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //         child: Text(
+  //           _accessType == CommunityAccessType.public
+  //               ? 'Anyone can discover and join this community instantly without approval.'
+  //               : 'People will need your approval before they can join this community.',
+  //           textAlign: TextAlign.start,
+  //           style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Widget _accessToggleItem({
     required String label,
@@ -879,6 +993,54 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
+  Widget _buildCommunityRules() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Rules',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _descriptionController,
+          maxLines: 8,
+          decoration: InputDecoration(
+            hintText: 'What are the rules of this community?',
+            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            filled: true,
+            fillColor: Colors.grey[100],
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+          ),
+        ),
+        SizedBox(height: 6.h),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            "${_descriptionController.value.text.length} / 500",
+            style: TextStyle(
+              fontSize: 12,
+              color: _descriptionController.text.length > 500
+                  ? Colors.red
+                  : Colors.grey,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildCommunityTitle() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -913,98 +1075,94 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildImageUploadSection() {
-    return GestureDetector(
-      onTap: () async {
-        utils.showImagePickerOptions(context, (imageSource) async {
-          final image = await utils.pickSingleImage(
-            context: context,
-            source: imageSource,
-          );
-
-          if (image != null) {
-            setState(() {
-              _selectedImage = image;
-            });
-          } else {
-            AppSnackbar.show(message: 'Failed to pick image');
-          }
-        });
-      },
-      child: Container(
-        width: double.infinity,
-        height: 172.h,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
-          ),
-          borderRadius: BorderRadius.circular(14.r),
-        ),
-        child: _selectedImage != null
-            ? Stack(
-                alignment: Alignment.center,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(14.r),
-                    child: Image.file(
-                      _selectedImage!,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity,
+  Widget _buildImageUploadSection(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8.r),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          _selectedImage != null
+              ? Image.file(
+                  _selectedImage!,
+                  height: 160.h,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                )
+              : Image.network(
+                  widget.community.image,
+                  height: 160.h,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 160.h,
+                    color: Colors.grey[900],
+                    child: const Icon(
+                      Icons.image_not_supported,
+                      color: Colors.white,
                     ),
                   ),
-                  Positioned(
-                    top: 8.w,
-                    right: 8.w,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _selectedImage = null;
-                        });
-                      },
-                      child: Container(
-                        padding: EdgeInsets.all(4.w),
-                        decoration: BoxDecoration(
-                          color: Color.fromRGBO(24, 23, 24, 0.3),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.close,
-                          color: Colors.white,
-                          size: 16.w,
-                        ),
-                      ),
+                ),
+
+          Container(
+            height: 160.0,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.5),
+                ],
+              ),
+            ),
+          ),
+
+          GestureDetector(
+            onTap: () {
+              utils.showImagePickerOptions(context, (imageSource) async {
+                final image = await utils.pickSingleImage(
+                  context: context,
+                  source: imageSource,
+                );
+
+                if (image != null) {
+                  setState(() {
+                    _selectedImage = image;
+                  });
+                } else {
+                  AppSnackbar.show(
+                    message: 'Failed to pick image',
+                    type: SnackType.warning,
+                  );
+                }
+              });
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.white24),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.photo_camera_rounded, color: Colors.white),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Change',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ],
-              )
-            : Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Assets.icons.uploadImage.svg(width: 40.w, height: 40.h),
-                    SizedBox(height: 8.h),
-                    Text(
-                      "Upload Cover Image",
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0XFF364153),
-                      ),
-                    ),
-                    Text(
-                      "Click to browse",
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Color(0XFF4A5565),
-                      ),
-                    ),
-                  ],
-                ),
               ),
+            ),
+          ),
+        ],
       ),
     );
   }

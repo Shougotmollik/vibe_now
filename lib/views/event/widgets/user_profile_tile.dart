@@ -54,7 +54,7 @@ class UserProfileTile extends StatelessWidget {
           const PopupMenuItem(
             value: 'remove',
             child: Text(
-              'Remove from event',
+              'Remove Member',
               style: TextStyle(color: AppColors.primaryVariant),
             ),
           ),
