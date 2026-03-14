@@ -197,6 +197,7 @@ class _EventCardState extends State<EventCard> {
           // Event Button section
           widget.event.isMyEvent
               ? PrimaryButton.text(
+                  radius: 12.r,
                   onPressed: () {
                     context.pushNamed(
                       RouteNames.eventDetailsScreen,

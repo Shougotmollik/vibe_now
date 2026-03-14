@@ -180,6 +180,21 @@ class $AssetsIconsGen {
   SvgGenImage get checkboxGradient =>
       const SvgGenImage('assets/icons/checkbox-gradient.svg');
 
+  /// File path: assets/icons/checkcongrass.png
+  AssetGenImage get checkcongrass =>
+      const AssetGenImage('assets/icons/checkcongrass.png');
+
+  /// File path: assets/icons/checkin.svg
+  SvgGenImage get checkin => const SvgGenImage('assets/icons/checkin.svg');
+
+  /// File path: assets/icons/checkinpin.svg
+  SvgGenImage get checkinpin =>
+      const SvgGenImage('assets/icons/checkinpin.svg');
+
+  /// File path: assets/icons/chekingcongrass.svg
+  SvgGenImage get chekingcongrass =>
+      const SvgGenImage('assets/icons/chekingcongrass.svg');
+
   /// File path: assets/icons/coffee-mug.svg
   SvgGenImage get coffeeMug => const SvgGenImage('assets/icons/coffee-mug.svg');
 
@@ -244,6 +259,10 @@ class $AssetsIconsGen {
 
   /// File path: assets/icons/edit.svg
   SvgGenImage get edit => const SvgGenImage('assets/icons/edit.svg');
+
+  /// File path: assets/icons/eventCheckOut.svg
+  SvgGenImage get eventCheckOut =>
+      const SvgGenImage('assets/icons/eventCheckOut.svg');
 
   /// File path: assets/icons/facebook_ic.svg
   SvgGenImage get facebookIc =>
@@ -469,6 +488,10 @@ class $AssetsIconsGen {
     chatting,
     chattingLight,
     checkboxGradient,
+    checkcongrass,
+    checkin,
+    checkinpin,
+    chekingcongrass,
     coffeeMug,
     coffee,
     coffeeBlack,
@@ -488,6 +511,7 @@ class $AssetsIconsGen {
     dumbbell,
     earth,
     edit,
+    eventCheckOut,
     facebookIc,
     filmWheel,
     filter,

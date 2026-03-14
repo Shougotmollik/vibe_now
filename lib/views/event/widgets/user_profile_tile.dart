@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
+import 'package:vibe_now/views/common/member_confirmation_dialog.dart';
 
 class UserProfileTile extends StatelessWidget {
   const UserProfileTile({super.key, this.onTap});
@@ -35,11 +36,18 @@ class UserProfileTile extends StatelessWidget {
         color: AppColors.background,
         icon: const Icon(Icons.more_horiz, color: Colors.grey),
         onSelected: (value) {
-          print("Selected: $value");
-
-          AppSnackbar.show(
-            message: "You removed Jenny Smith from the event",
-            type: SnackType.info,
+          showDialog(
+            context: context,
+            builder: (context) => MemberConfirmationDialog(
+              confirmBtnText: "Remove",
+              onCancel: () {
+                Navigator.pop(context);
+              },
+              onConfirm: () {
+                Navigator.pop(context);
+              },
+              title: "Give a reason for removing the  member",
+            ),
           );
         },
         itemBuilder: (BuildContext context) => [

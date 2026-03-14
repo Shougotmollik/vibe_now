@@ -7,6 +7,8 @@ import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
+import 'package:vibe_now/views/event/event_chat_screen.dart';
+import 'package:vibe_now/views/event/event_member_screen.dart';
 
 class EventDetailsScreen extends StatelessWidget {
   const EventDetailsScreen({super.key, required this.event});
@@ -187,7 +189,16 @@ class EventDetailsScreen extends StatelessWidget {
                             extraCount: 5,
                           ),
                         ),
-                        TextButton(onPressed: () {}, child: Text("View all")),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => EventMembersScreen(),
+                              ),
+                            );
+                          },
+                          child: Text("View all"),
+                        ),
                       ],
                     ),
 
@@ -196,17 +207,26 @@ class EventDetailsScreen extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: Container(
-                            width: double.infinity,
-                            padding: EdgeInsets.all(10.w),
-                            decoration: BoxDecoration(
-                              gradient: AppColors.primaryGradientRotated,
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Assets.icons.chatting.svg(
-                              width: 24.w,
-                              height: 24.h,
-                              color: AppColors.surface,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => EventChatScreen(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(10.w),
+                              decoration: BoxDecoration(
+                                gradient: AppColors.primaryGradientRotated,
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              child: Assets.icons.chatting.svg(
+                                width: 24.w,
+                                height: 24.h,
+                                color: AppColors.surface,
+                              ),
                             ),
                           ),
                         ),

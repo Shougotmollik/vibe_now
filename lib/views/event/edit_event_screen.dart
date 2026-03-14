@@ -4,13 +4,16 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/utils.dart' as utils;
+import 'package:vibe_now/views/common/confirmation_dialog.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
 import 'package:vibe_now/views/event/widgets/edit_event_action.dart';
 import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
@@ -76,15 +79,44 @@ class _EditEventScreenState extends State<EditEventScreen> {
                       editEventAction(
                         context: context,
                         onDelete: () {
-                          AppSnackbar.show(message: "Event has been deleted");
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                          Navigator.pop(context);
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ConfirmationDialog(
+                                title: 'Are you sure you want to Delete it?',
+                                confirmBtnText: 'Delete',
+                                onConfirm: () {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                onCancel: () {
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          );
                         },
                         onArchive: () {
-                          AppSnackbar.show(message: "Event has been archived");
-                          Navigator.pop(context);
-                          Navigator.pop(context);
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ConfirmationDialog(
+                                title: 'Are you sure you want to Archive it?',
+                                confirmBtnText: 'Yes',
+                                onConfirm: () {
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                },
+                                onCancel: () {
+                                  Navigator.pop(context);
+                                },
+                              );
+                            },
+                          );
                         },
                         onCancel: () {
                           Navigator.pop(context);
@@ -113,7 +145,29 @@ class _EditEventScreenState extends State<EditEventScreen> {
               const SizedBox(height: 20),
               _buildEventMember(),
               const SizedBox(height: 20),
-              _buildActionButtons(),
+              // _buildActionButtons(),
+              PrimaryButton.text(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return ConfirmationDialog(
+                        title:
+                            'Updating it will notify all meeting participants.\nAre you sure?',
+                        confirmBtnText: 'Yes',
+                        onConfirm: () {
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        },
+                        onCancel: () {
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  );
+                },
+                text: "Update",
+              ),
               const SizedBox(height: 32),
             ],
           ),
@@ -814,78 +868,60 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradientRotated,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: ElevatedButton(
-              onPressed: () {
-                // final event ={
-                //   'title': _titleController.text,
-                //   'description': _descriptionController.text,
-                //   'location': _locationController.text,
-                //   'date': _selectedDate,
-                //   'time': _selectedTime,
-                //   'maxAttendees': int.parse(_maxAttendeesController.text),
-                //   'category': selectedCategories,
-                //   'acessibility': _accessType,
-                // };
-                // Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (context) {
-                    return Center(
-                      child: Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        elevation: 0,
-                        backgroundColor: Colors.transparent,
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20.r),
-                          ),
-                          child: const Text(
-                            'Event updated successfully',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: const Text(
-                'Update',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget _buildActionButtons() {
+  //   return Row(
+  //     children: [
+  //       Expanded(
+  //         child: Container(
+  //           decoration: BoxDecoration(
+  //             gradient: AppColors.primaryGradientRotated,
+  //             borderRadius: BorderRadius.circular(30),
+  //           ),
+  //           child: ElevatedButton(
+  //             onPressed: () {
+  //               // final event ={
+  //               //   'title': _titleController.text,
+  //               //   'description': _descriptionController.text,
+  //               //   'location': _locationController.text,
+  //               //   'date': _selectedDate,
+  //               //   'time': _selectedTime,
+  //               //   'maxAttendees': int.parse(_maxAttendeesController.text),
+  //               //   'category': selectedCategories,
+  //               //   'acessibility': _accessType,
+  //               // };
+  //               // Navigator.pop(context);
+  //               showDialog(
+  //                 context: context,
+  //                 builder: (context) {
+  //                   return ConfirmationDialog(
+  //                     title:
+  //                         'Updating it will notify all meeting participants.\nAre you sure?',
+  //                     confirmBtnText: 'Yes',
+  //                     onConfirm: () {},
+  //                   );
+  //                 },
+  //               );
+  //             },
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: Colors.transparent,
+  //               shadowColor: Colors.transparent,
+  //               padding: const EdgeInsets.symmetric(vertical: 16),
+  //               shape: RoundedRectangleBorder(
+  //                 borderRadius: BorderRadius.circular(30),
+  //               ),
+  //             ),
+  //             child: const Text(
+  //               'Update',
+  //               style: TextStyle(
+  //                 color: Colors.white,
+  //                 fontSize: 15,
+  //                 fontWeight: FontWeight.w600,
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }

@@ -8,11 +8,13 @@ class PrimaryButton extends StatelessWidget {
   final String? _text;
   final Gradient? gradient;
   final bool isEnabled;
+  final double? radius;
 
   const PrimaryButton({
     super.key,
     required this.onPressed,
     required Widget child,
+    this.radius,
     this.gradient,
     this.isEnabled = true,
   }) : _child = child,
@@ -23,6 +25,7 @@ class PrimaryButton extends StatelessWidget {
     required this.onPressed,
     required String text,
     this.gradient,
+    this.radius,
     this.isEnabled = true,
   }) : _child = null,
        _text = text;
@@ -47,7 +50,7 @@ class PrimaryButton extends StatelessWidget {
             ? (gradient ?? AppColors.primaryGradient)
             : AppColors.primaryGradient.withOpacity(0.5),
         // color: isEnabled ? null : Color(0xffC4A8FF),
-        borderRadius: BorderRadius.circular(24.r),
+        borderRadius: BorderRadius.circular(radius ?? 24.r),
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
@@ -55,7 +58,7 @@ class PrimaryButton extends StatelessWidget {
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24.r),
+            borderRadius: BorderRadius.circular(radius ?? 24.r),
           ),
         ),
         onPressed: isEnabled ? onPressed : null,
