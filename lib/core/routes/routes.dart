@@ -101,7 +101,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/member-screen',
       name: RouteNames.communityMemberScreen,
-      builder: (context, state) => const CommunityMemberScreen(),
+      builder: (context, state) => const CommunityMembersScreen(),
     ),
 
     GoRoute(

@@ -98,6 +98,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/Plus.svg
   SvgGenImage get plus => const SvgGenImage('assets/icons/Plus.svg');
 
+  /// File path: assets/icons/Scanner.svg
+  SvgGenImage get scanner => const SvgGenImage('assets/icons/Scanner.svg');
+
   /// File path: assets/icons/Send.svg
   SvgGenImage get send => const SvgGenImage('assets/icons/Send.svg');
 
@@ -463,6 +466,7 @@ class $AssetsIconsGen {
     logoutColor,
     messageCircleColor,
     plus,
+    scanner,
     send,
     shieldColor,
     timeCircle,
@@ -586,8 +590,11 @@ class $AssetsImagesGen {
   AssetGenImage get profilePicture =>
       const AssetGenImage('assets/images/profile_picture.jpg');
 
+  /// File path: assets/images/qrcode.png
+  AssetGenImage get qrcode => const AssetGenImage('assets/images/qrcode.png');
+
   /// List of all assets
-  List<dynamic> get values => [dialog, openForCoffee, profilePicture];
+  List<dynamic> get values => [dialog, openForCoffee, profilePicture, qrcode];
 }
 
 class $AssetsLottieGen {

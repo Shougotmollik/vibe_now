@@ -375,6 +375,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/community/community_awaiting_qrscreen.dart';
 import 'package:vibe_now/views/community/community_details_screen.dart';
 import 'package:vibe_now/views/notification/community_notification_screen.dart';
 import 'package:vibe_now/views/notification/event_notification_screen.dart';
@@ -675,8 +676,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ...List.generate(
                   3,
                   (index) => CommunityNotificationCard(
-                    acceptOnTap: () {
-                      showDialog(
+                    acceptOnTap: () async {
+                      await showDialog(
                         context: context,
                         barrierDismissible: true,
                         builder: (context) {
@@ -696,6 +697,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           );
                         },
                       );
+
+                      if (context.mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CommunityAwaitingQrScreen(),
+                          ),
+                        );
+                      }
                     },
                     rejectOnTap: () {
                       showDialog(
