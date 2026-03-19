@@ -5,7 +5,7 @@ import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
-import 'package:vibe_now/views/create_vibe/create_vibe_screen.dart';
+import 'package:vibe_now/views/vibe/create_vibe_screen.dart';
 import 'package:vibe_now/views/event/event_or_community_screen.dart';
 import 'package:vibe_now/views/home/home_screen.dart';
 import 'package:vibe_now/views/home/widgets/google_map.dart';

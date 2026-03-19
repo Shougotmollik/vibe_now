@@ -1,15 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ffi' hide Size;
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' hide Size;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe_now/controller/home_controller.dart';
@@ -21,6 +21,8 @@ import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/model/nearby_user.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/community/widgets/community_card.dart';
+import 'package:vibe_now/views/vibe/my_vibe_screen.dart';
+import 'package:vibe_now/views/vibe/user_vibe_screen.dart';
 import 'package:vibe_now/views/event/event_card.dart';
 import 'package:vibe_now/views/home/widgets/community_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/event_location_pin.dart';
@@ -109,13 +111,14 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
 
       _handleTap(widget.initialPosition!);
     } else {
-      _initialPosition = CameraPosition(
-        target: _currentLocation,
-        zoom: 14,
-      );
+      _initialPosition = CameraPosition(target: _currentLocation, zoom: 14);
     }
 
     _loadMarkers();
+
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   showUserVibeDialog(context: context, user: someNearbyUser, hasVibe: true);
+    // });
   }
 
   bool _gettingMyLocation = false;
@@ -760,6 +763,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
           ),
           _searchWidget(),
           if (_selectedPlaceDetails != null) _selectedPositionDetailsWidget(),
+          _buildAllVibeButton(),
         ],
       ),
     );
@@ -769,6 +773,110 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     } else {
       return buildWidget;
     }
+  }
+
+  Widget _buildAllVibeButton() {
+    return Positioned(
+      bottom: 120.h,
+      right: 20.w,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (context) => UserVibeScreen()));
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+          decoration: BoxDecoration(
+            color: AppColors.background,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Row(
+            spacing: 5.w,
+            children: [
+              Assets.icons.creationStar.svg(width: 18.w, height: 18.h),
+              Text(
+                "All Vibes",
+                style: TextStyle(
+                  color: AppColors.primaryText,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void showUserVibeDialog({
+    required BuildContext context,
+    required NearbyUser user,
+    required bool hasVibe,
+  }) {
+    showDialog(
+      context: context,
+      animationStyle: AnimationStyle(curve: Curves.easeInOut),
+      builder: (context) => Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MyVibeScreen()),
+              );
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 28,
+                  backgroundImage: NetworkImage(user.imageUrl),
+                ),
+                const SizedBox(width: 16),
+
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.name,
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Text(
+                          "Coffee break",
+                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                        ),
+                        const SizedBox(width: 4),
+                        const Text("☕", style: TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    const Text(
+                      "Expires in 20min",
+                      style: TextStyle(fontSize: 14, color: Colors.black38),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   void showUserProfileDialog(
@@ -965,11 +1073,11 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(14),
-                            color: user.isWaved == true
-                                ? Color(0xffC4A8FF)
-                                : null,
+                            // color: user.isWaved == true
+                            //     ? Color(0xffC4A8FF)
+                            //     : null,
                             gradient: user.isWaved == true
-                                ? null
+                                ? AppColors.primaryGradient.withOpacity(0.5)
                                 : AppColors.primaryGradientRotated,
                           ),
                           child: Center(
@@ -1058,9 +1166,9 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(
-            context,
-            homeController.nearbyUsers[0],
+          showUserVibeDialog(
+            context: context,
+            user: homeController.nearbyUsers[0],
             hasVibe: true,
           );
         },
@@ -1074,12 +1182,23 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
         icon:
             await UserLocationPin(
               imagePath: 'https://i.pravatar.cc/150?img=12',
+              hasVibe: false,
             ).toBitmapDescriptor(
               logicalSize: const Size(300, 300),
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, homeController.nearbyUsers[1]);
+          // showUserVibeDialog(
+          //   context: context,
+          //   user: homeController.nearbyUsers[1],
+          //   hasVibe: true,
+          // );
+
+          showUserProfileDialog(
+            context,
+            homeController.nearbyUsers[1],
+            hasVibe: false,
+          );
         },
       ),
     );
@@ -1112,9 +1231,9 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(
-            context,
-            homeController.nearbyUsers[3],
+          showUserVibeDialog(
+            context: context,
+            user: homeController.nearbyUsers[3],
             hasVibe: true,
           );
         },
@@ -1130,12 +1249,23 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
         icon:
             await UserLocationPin(
               imagePath: 'https://i.pravatar.cc/150?img=14',
+              hasVibe: false,
             ).toBitmapDescriptor(
               logicalSize: const Size(300, 300),
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, homeController.nearbyUsers[4]);
+          // showUserVibeDialog(
+          //   context: context,
+          //   user: homeController.nearbyUsers[4],
+          //   hasVibe: true,
+          // );
+
+          showUserProfileDialog(
+            context,
+            homeController.nearbyUsers[4],
+            hasVibe: false,
+          );
         },
       ),
     );

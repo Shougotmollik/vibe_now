@@ -503,8 +503,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 ...List.generate(
                   3,
                   (index) => EventNotificationCard(
-                    acceptOnTap: () {
-                      showDialog(
+                    acceptOnTap: () async {
+                      await showDialog(
                         context: context,
                         barrierDismissible: true,
                         builder: (context) {
@@ -517,13 +517,22 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               backgroundColor: Colors.transparent,
                               child: AnimatedDialogContent(
                                 content:
-                                    'You have accepted jenny smith\'s event request.',
+                                    'You have accepted jenny smith\'s event join request.',
                                 accept: true,
                               ),
                             ),
                           );
                         },
                       );
+
+                      if (context.mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CommunityAwaitingQrScreen(),
+                          ),
+                        );
+                      }
                     },
                     rejectOnTap: () {
                       showDialog(

@@ -8,15 +8,16 @@ import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
+import 'package:vibe_now/views/vibe/vibe_connect_screen.dart';
 
-class WaveScreen extends StatefulWidget {
-  const WaveScreen({super.key});
+class ChatWaveScreen extends StatefulWidget {
+  const ChatWaveScreen({super.key});
 
   @override
-  State<WaveScreen> createState() => _WaveScreenState();
+  State<ChatWaveScreen> createState() => _ChatWaveScreenState();
 }
 
-class _WaveScreenState extends State<WaveScreen> {
+class _ChatWaveScreenState extends State<ChatWaveScreen> {
   @override
   Widget build(BuildContext context) {
     final extra = GoRouterState.of(context).extra as Chat;
@@ -84,9 +85,15 @@ class _WaveScreenState extends State<WaveScreen> {
                 children: [
                   PrimaryButton.text(
                     onPressed: () {
-                      context.pushNamed(
-                        RouteNames.chatInboxScreen,
-                        extra: extra,
+                      // context.pushNamed(
+                      //   RouteNames.chatInboxScreen,
+                      //   extra: extra,
+                      // );
+
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => VibeConnectScreen(),
+                        ),
                       );
                     },
                     text: 'Accept',

@@ -8,8 +8,9 @@ import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/utils.dart' as utils;
+import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
-import 'package:vibe_now/views/create_vibe/vibe_animated_dialog.dart';
+import 'package:vibe_now/views/vibe/vibe_animated_dialog.dart';
 
 class CreateVibeScreen extends StatefulWidget {
   const CreateVibeScreen({super.key});
@@ -64,23 +65,9 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              side: BorderSide(color: Colors.grey[300]!),
-            ),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
+          child: CancelButton(
+            btnText: "Cancel",
+            onTap: () => Navigator.of(context).maybePop(),
           ),
         ),
         const SizedBox(width: 12),

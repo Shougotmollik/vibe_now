@@ -2,10 +2,14 @@ import 'dart:async'; // Required for Timer
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
+import 'package:vibe_now/core/constant/qrcontext_enum.dart';
+import 'package:vibe_now/views/community/community_welcome_screen.dart';
 import 'package:vibe_now/views/event/event_checkin_screen.dart';
 
 class QrScreen extends StatefulWidget {
-  const QrScreen({super.key});
+  const QrScreen({super.key, required this.qrContext});
+
+  final QRContext qrContext;
 
   @override
   State<QrScreen> createState() => _QrScreenState();
@@ -33,13 +37,34 @@ class _QrScreenState extends State<QrScreen> {
     _demoTimer?.cancel();
     controller?.pauseCamera();
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => EventCheckinScreen()),
-    ).then((_) {
-      setState(() => _hasRedirected = false);
-      controller?.resumeCamera();
-    });
+    switch (widget.qrContext) {
+      case QRContext.chats:
+        Navigator.pop(context, code);
+        Navigator.pop(context, code);
+
+        break;
+      case QRContext.community:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CommunityWelcomeScreen(),
+          ),
+        );
+        break;
+
+      case QRContext.event:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const EventCheckinScreen()),
+        ).then((_) {
+          // If they come back, reset the camera
+          if (mounted) {
+            setState(() => _hasRedirected = false);
+            controller?.resumeCamera();
+          }
+        });
+        break;
+    }
   }
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/views/common/custom_app_bar.dart';
 
 class CommunityAwaitingQrScreen extends StatelessWidget {
   const CommunityAwaitingQrScreen({super.key});
@@ -15,20 +16,8 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
           children: [
             const SafeArea(
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  children: [
-                    Icon(Icons.arrow_back_ios_new, size: 20),
-                    SizedBox(width: 10),
-                    Text(
-                      "Awaiting Meetup",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: CustomAppBar(title: "Awaiting QR", canBack: true),
               ),
             ),
 

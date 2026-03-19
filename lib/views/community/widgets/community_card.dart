@@ -8,6 +8,7 @@ import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/community.dart';
+import 'package:vibe_now/views/common/request_sent_dialog.dart';
 import 'package:vibe_now/views/community/community_details_screen.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
 import 'package:vibe_now/views/community/widgets/community_animated_dialog.dart';
@@ -460,14 +461,26 @@ class _CommunityCardState extends State<CommunityCard> {
                           setState(() {
                             currentStatus = CommunityStatus.requested;
                           });
+                          // showDialog(
+                          //   context: context,
+                          //   builder: (_) => Dialog(
+                          //     backgroundColor: Colors.transparent,
+                          //     child: CommunityAnimatedDialog(
+                          //       content:
+                          //           'Request sent. Wait for the organizer to confirm it.',
+                          //     ),
+                          //   ),
+                          // );
+
                           showDialog(
                             context: context,
-                            builder: (_) => Dialog(
-                              backgroundColor: Colors.transparent,
-                              child: CommunityAnimatedDialog(
-                                content:
-                                    'Request sent. Wait for the organizer to confirm it.',
-                              ),
+                            builder: (context) => RequestSentDialog(
+                              onWithDrawTap: () {
+                                setState(() {
+                                  currentStatus = CommunityStatus.interested;
+                                });
+                                Navigator.pop(context);
+                              },
                             ),
                           );
 

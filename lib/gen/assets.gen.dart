@@ -212,6 +212,10 @@ class $AssetsIconsGen {
   SvgGenImage get coffeeColor =>
       const SvgGenImage('assets/icons/coffee_color.svg');
 
+  /// File path: assets/icons/color_clock.svg
+  SvgGenImage get colorClock =>
+      const SvgGenImage('assets/icons/color_clock.svg');
+
   /// File path: assets/icons/community.svg
   SvgGenImage get community => const SvgGenImage('assets/icons/community.svg');
 
@@ -226,6 +230,9 @@ class $AssetsIconsGen {
   /// File path: assets/icons/community_pin.svg
   SvgGenImage get communityPin =>
       const SvgGenImage('assets/icons/community_pin.svg');
+
+  /// File path: assets/icons/confetti.svg
+  SvgGenImage get confetti => const SvgGenImage('assets/icons/confetti.svg');
 
   /// File path: assets/icons/creation_star.svg
   SvgGenImage get creationStar =>
@@ -500,10 +507,12 @@ class $AssetsIconsGen {
     coffee,
     coffeeBlack,
     coffeeColor,
+    colorClock,
     community,
     communityColor,
     communityLight,
     communityPin,
+    confetti,
     creationStar,
     decline,
     delete,
@@ -606,6 +615,12 @@ class $AssetsLottieGen {
   /// File path: assets/lottie/Community.json
   String get community => 'assets/lottie/Community.json';
 
+  /// File path: assets/lottie/Confetti - Full Screen.json
+  String get confettiFullScreen => 'assets/lottie/Confetti - Full Screen.json';
+
+  /// File path: assets/lottie/Confetti.json
+  String get confetti => 'assets/lottie/Confetti.json';
+
   /// File path: assets/lottie/Hello Lottie.json
   String get helloLottie => 'assets/lottie/Hello Lottie.json';
 
@@ -619,6 +634,8 @@ class $AssetsLottieGen {
   List<String> get values => [
     calendarEvent,
     community,
+    confettiFullScreen,
+    confetti,
     helloLottie,
     locationPin,
     starLottie,

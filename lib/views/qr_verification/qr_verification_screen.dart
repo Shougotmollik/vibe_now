@@ -304,7 +304,9 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => QrScreen()),
+                  MaterialPageRoute(
+                    builder: (context) => QrScreen(qrContext: widget.qrContext),
+                  ),
                 );
               },
               child: Container(

@@ -8,6 +8,7 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/views/common/request_sent_dialog.dart';
 import 'package:vibe_now/views/event/event_details_screen.dart';
 import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
@@ -218,15 +219,27 @@ class _EventCardState extends State<EventCard> {
                               currentStatus = EventStatus.going;
                             });
 
+                            // showDialog(
+                            //   context: context,
+                            //   barrierDismissible: true,
+                            //   builder: (_) => Dialog(
+                            //     backgroundColor: Colors.transparent,
+                            //     child: EventAnimatedDialog(
+                            //       content:
+                            //           'You have joined the event successfully. See you there!',
+                            //     ),
+                            //   ),
+                            // );
+
                             showDialog(
                               context: context,
-                              barrierDismissible: true,
-                              builder: (_) => Dialog(
-                                backgroundColor: Colors.transparent,
-                                child: EventAnimatedDialog(
-                                  content:
-                                      'You have joined the event successfully. See you there!',
-                                ),
+                              builder: (context) => RequestSentDialog(
+                                onWithDrawTap: () {
+                                  setState(() {
+                                    currentStatus = EventStatus.interested;
+                                  });
+                                  Navigator.pop(context);
+                                },
                               ),
                             );
 
@@ -241,13 +254,13 @@ class _EventCardState extends State<EventCard> {
 
                             showDialog(
                               context: context,
-                              barrierDismissible: true,
-                              builder: (_) => Dialog(
-                                backgroundColor: Colors.transparent,
-                                child: EventAnimatedDialog(
-                                  content:
-                                      'Request sent. Wait for the organizer to confirm it.',
-                                ),
+                              builder: (context) => RequestSentDialog(
+                                onWithDrawTap: () {
+                                  setState(() {
+                                    currentStatus = EventStatus.interested;
+                                  });
+                                  Navigator.pop(context);
+                                },
                               ),
                             );
                           }

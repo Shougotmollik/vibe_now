@@ -149,7 +149,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, homeController.nearbyUsers[0], hasVibe: true);
+          // showUserProfileDialog(context, homeController.nearbyUsers[0], hasVibe: true);
         },
       ),
     );
@@ -166,7 +166,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, homeController.nearbyUsers[1]);
+          // showUserProfileDialog(context, homeController.nearbyUsers[1]);
         },
       ),
     );
@@ -199,7 +199,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, homeController.nearbyUsers[3], hasVibe: true);
+          // showUserProfileDialog(context, homeController.nearbyUsers[3], hasVibe: true);
         },
       ),
     );
@@ -218,7 +218,7 @@ class _MapHomeScreenState extends State<HomeScreen>
               imageSize: const Size(300, 300),
             ),
         onTap: () {
-          showUserProfileDialog(context, homeController.nearbyUsers[4]);
+          // showUserProfileDialog(context, homeController.nearbyUsers[4]);
         },
       ),
     );
@@ -239,252 +239,252 @@ class _MapHomeScreenState extends State<HomeScreen>
     setState(() {});
   }
 
-  void showUserProfileDialog(
-    BuildContext context,
-    NearbyUser user, {
-    bool hasVibe = false,
-  }) {
-    showDialog(
-      context: context,
-      // isScrollControlled: true,
-      // backgroundColor: Colors.transparent,
-      builder: (_) {
-        return Center(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16),
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  blurRadius: 20,
-                  offset: const Offset(0, -8),
-                ),
-              ],
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 16),
+  // void showUserProfileDialog(
+  //   BuildContext context,
+  //   NearbyUser user, {
+  //   bool hasVibe = false,
+  // }) {
+  //   showDialog(
+  //     context: context,
+  //     // isScrollControlled: true,
+  //     // backgroundColor: Colors.transparent,
+  //     builder: (_) {
+  //       return Center(
+  //         child: Container(
+  //           // margin: const EdgeInsets.symmetric(horizontal: 16),
+  //           // padding: const EdgeInsets.all(16),
+  //           // decoration: BoxDecoration(
+  //           //   color: Colors.white,
+  //           //   borderRadius: BorderRadius.circular(24),
+  //           //   boxShadow: [
+  //           //     BoxShadow(
+  //           //       color: Colors.black.withValues(alpha: 0.15),
+  //           //       blurRadius: 20,
+  //           //       offset: const Offset(0, -8),
+  //           //     ),
+  //           //   ],
+  //           // ),
+  //           // child: Column(
+  //           //   mainAxisSize: MainAxisSize.min,
+  //           //   children: [
+  //           //     const SizedBox(height: 16),
 
-                // avatar
-                Stack(
-                  children: [
-                    GestureDetector(
-                      onTap: hasVibe
-                          ? () => _openFullImage(user.imageUrl, context)
-                          : () {
-                              if (user.isWaved == true) {
-                                context.pushNamed(RouteNames.profileScreen);
-                              } else {
-                                context.pushNamed(
-                                  RouteNames.lockedProfileScreen,
-                                );
-                              }
-                            },
-                      child: Container(
-                        padding: EdgeInsets.all(2.w),
-                        decoration: hasVibe
-                            ? BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: SweepGradient(
-                                  colors: [
-                                    AppColors.primaryVariant,
-                                    Color(0xffC470F5),
-                                    Color(0xff8663F6),
-                                    Color(0xff57C2FF),
-                                    AppColors.primaryVariant,
-                                  ],
-                                ),
-                              )
-                            : null,
-                        child: Container(
-                          padding: EdgeInsets.all(2.w),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          child: CircleAvatar(
-                            radius: 48,
-                            backgroundImage: NetworkImage(user.imageUrl),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Positioned(
-                    //   bottom: 0,
-                    //   right: 0,
-                    //   child: Container(
-                    //     padding: const EdgeInsets.all(6),
-                    //     decoration: BoxDecoration(
-                    //       shape: BoxShape.circle,
-                    //       gradient: AppColors.primaryGradient,
-                    //       border: Border.all(color: Colors.white, width: 2),
-                    //     ),
-                    //     child: Assets.icons.location.svg(height: 14),
-                    //   ),
-                    // ),
-                  ],
-                ),
-                SizedBox(height: 12.h),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 12.w,
-                    horizontal: 18.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
+  //           //     // avatar
+  //           //     Stack(
+  //           //       children: [
+  //           //         GestureDetector(
+  //           //           onTap: hasVibe
+  //           //               ? () => _openFullImage(user.imageUrl, context)
+  //           //               : () {
+  //           //                   if (user.isWaved == true) {
+  //           //                     context.pushNamed(RouteNames.profileScreen);
+  //           //                   } else {
+  //           //                     context.pushNamed(
+  //           //                       RouteNames.lockedProfileScreen,
+  //           //                     );
+  //           //                   }
+  //           //                 },
+  //           //           child: Container(
+  //           //             padding: EdgeInsets.all(2.w),
+  //           //             decoration: hasVibe
+  //           //                 ? BoxDecoration(
+  //           //                     shape: BoxShape.circle,
+  //           //                     gradient: SweepGradient(
+  //           //                       colors: [
+  //           //                         AppColors.primaryVariant,
+  //           //                         Color(0xffC470F5),
+  //           //                         Color(0xff8663F6),
+  //           //                         Color(0xff57C2FF),
+  //           //                         AppColors.primaryVariant,
+  //           //                       ],
+  //           //                     ),
+  //           //                   )
+  //           //                 : null,
+  //           //             child: Container(
+  //           //               padding: EdgeInsets.all(2.w),
+  //           //               decoration: BoxDecoration(
+  //           //                 shape: BoxShape.circle,
+  //           //                 color: Colors.white,
+  //           //               ),
+  //           //               child: CircleAvatar(
+  //           //                 radius: 48,
+  //           //                 backgroundImage: NetworkImage(user.imageUrl),
+  //           //               ),
+  //           //             ),
+  //           //           ),
+  //           //         ),
+  //           //         // Positioned(
+  //           //         //   bottom: 0,
+  //           //         //   right: 0,
+  //           //         //   child: Container(
+  //           //         //     padding: const EdgeInsets.all(6),
+  //           //         //     decoration: BoxDecoration(
+  //           //         //       shape: BoxShape.circle,
+  //           //         //       gradient: AppColors.primaryGradient,
+  //           //         //       border: Border.all(color: Colors.white, width: 2),
+  //           //         //     ),
+  //           //         //     child: Assets.icons.location.svg(height: 14),
+  //           //         //   ),
+  //           //         // ),
+  //           //       ],
+  //           //     ),
+  //           //     SizedBox(height: 12.h),
+  //           //     Container(
+  //           //       padding: EdgeInsets.symmetric(
+  //           //         vertical: 12.w,
+  //           //         horizontal: 18.w,
+  //           //       ),
+  //           //       decoration: BoxDecoration(
+  //           //         color: Colors.grey.shade200,
 
-                    borderRadius: BorderRadius.circular(24.r),
-                    // border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: const Text(
-                    "sunday coffee vibes - who's in? 🌞",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, color: Colors.black),
-                  ),
-                ),
+  //           //         borderRadius: BorderRadius.circular(24.r),
+  //           //         // border: Border.all(color: Colors.grey.shade300),
+  //           //       ),
+  //           //       child: const Text(
+  //           //         "sunday coffee vibes - who's in? 🌞",
+  //           //         textAlign: TextAlign.center,
+  //           //         style: TextStyle(fontSize: 13, color: Colors.black),
+  //           //       ),
+  //           //     ),
 
-                // SizedBox(height: 6.h),
-                const SizedBox(height: 12),
+  //           //     // SizedBox(height: 6.h),
+  //           //     const SizedBox(height: 12),
 
-                // name
-                Text(
-                  user.name,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+  //           //     // name
+  //           //     Text(
+  //           //       user.name,
+  //           //       style: const TextStyle(
+  //           //         fontSize: 20,
+  //           //         fontWeight: FontWeight.w600,
+  //           //       ),
+  //           //     ),
 
-                const SizedBox(height: 4),
+  //           //     const SizedBox(height: 4),
 
-                // interests row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Assets.icons.coffeeColor.svg(height: 14),
-                    const SizedBox(width: 4),
-                    Text(
-                      user.interest,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      "• ${user.distanceKm} km away",
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
-                  ],
-                ),
+  //           //     // interests row
+  //           //     Row(
+  //           //       mainAxisAlignment: MainAxisAlignment.center,
+  //           //       children: [
+  //           //         Assets.icons.coffeeColor.svg(height: 14),
+  //           //         const SizedBox(width: 4),
+  //           //         Text(
+  //           //           user.interest,
+  //           //           style: TextStyle(
+  //           //             fontSize: 13,
+  //           //             color: Colors.grey.shade600,
+  //           //           ),
+  //           //         ),
+  //           //         const SizedBox(width: 8),
+  //           //         Text(
+  //           //           "• ${user.distanceKm} km away",
+  //           //           style: TextStyle(
+  //           //             fontSize: 13,
+  //           //             color: Colors.grey.shade600,
+  //           //           ),
+  //           //         ),
+  //           //       ],
+  //           //     ),
 
-                const SizedBox(height: 16),
+  //           //     const SizedBox(height: 16),
 
-                // bio
-                !hasVibe
-                    ? Container(
-                        padding: const EdgeInsets.all(14),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        child: Text(
-                          user.bio,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                      )
-                    : Container(),
+  //           //     // bio
+  //           //     !hasVibe
+  //           //         ? Container(
+  //           //             padding: const EdgeInsets.all(14),
+  //           //             decoration: BoxDecoration(
+  //           //               borderRadius: BorderRadius.circular(16),
+  //           //               border: Border.all(color: Colors.grey.shade300),
+  //           //             ),
+  //           //             child: Text(
+  //           //               user.bio,
+  //           //               textAlign: TextAlign.center,
+  //           //               style: TextStyle(
+  //           //                 fontSize: 13,
+  //           //                 color: Colors.grey.shade700,
+  //           //               ),
+  //           //             ),
+  //           //           )
+  //           //         : Container(),
 
-                const SizedBox(height: 16),
+  //           //     const SizedBox(height: 16),
 
-                // action buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          if (user.isWaved == true) return;
+  //           //     // action buttons
+  //           //     Row(
+  //           //       children: [
+  //           //         Expanded(
+  //           //           child: GestureDetector(
+  //           //             onTap: () {
+  //           //               if (user.isWaved == true) return;
 
-                          setState(() {
-                            user.isWaved = true;
-                          });
+  //           //               setState(() {
+  //           //                 user.isWaved = true;
+  //           //               });
 
-                          Navigator.of(context).pop();
-                          showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (context) => WaveAnimatedDialog(
-                              content: 'You have wave to ${user.name}',
-                            ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            color: user.isWaved == true
-                                ? Color(0xffC4A8FF)
-                                : null,
-                            gradient: user.isWaved == true
-                                ? null
-                                : AppColors.primaryGradientRotated,
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              spacing: 4.w,
-                              children: [
-                                Text(
-                                  user.isWaved == true ? 'Waved' : 'Wave',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                Assets.icons.handWave.svg(
-                                  width: 14.w,
-                                  height: 14.h,
-                                  color: AppColors.onPrimary,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // const SizedBox(width: 12),
-                    // Container(
-                    //   padding: const EdgeInsets.all(14),
-                    //   decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.circular(14),
-                    //     color: Colors.grey.shade200,
-                    //   ),
-                    //   child: Assets.icons.chatting.svg(),
-                    // ),
-                  ],
-                ),
+  //           //               Navigator.of(context).pop();
+  //           //               showDialog(
+  //           //                 context: context,
+  //           //                 barrierDismissible: true,
+  //           //                 builder: (context) => WaveAnimatedDialog(
+  //           //                   content: 'You have wave to ${user.name}',
+  //           //                 ),
+  //           //               );
+  //           //             },
+  //           //             child: Container(
+  //           //               padding: const EdgeInsets.symmetric(vertical: 14),
+  //           //               decoration: BoxDecoration(
+  //           //                 borderRadius: BorderRadius.circular(14),
+  //           //                 color: user.isWaved == true
+  //           //                     ? Color(0xffC4A8FF)
+  //           //                     : null,
+  //           //                 gradient: user.isWaved == true
+  //           //                     ? null
+  //           //                     : AppColors.primaryGradientRotated,
+  //           //               ),
+  //           //               child: Center(
+  //           //                 child: Row(
+  //           //                   mainAxisAlignment: MainAxisAlignment.center,
+  //           //                   mainAxisSize: MainAxisSize.min,
+  //           //                   crossAxisAlignment: CrossAxisAlignment.center,
+  //           //                   spacing: 4.w,
+  //           //                   children: [
+  //           //                     Text(
+  //           //                       user.isWaved == true ? 'Waved' : 'Wave',
+  //           //                       style: TextStyle(
+  //           //                         color: Colors.white,
+  //           //                         fontWeight: FontWeight.w600,
+  //           //                       ),
+  //           //                     ),
+  //           //                     Assets.icons.handWave.svg(
+  //           //                       width: 14.w,
+  //           //                       height: 14.h,
+  //           //                       color: AppColors.onPrimary,
+  //           //                     ),
+  //           //                   ],
+  //           //                 ),
+  //           //               ),
+  //           //             ),
+  //           //           ),
+  //           //         ),
+  //           //         // const SizedBox(width: 12),
+  //           //         // Container(
+  //           //         //   padding: const EdgeInsets.all(14),
+  //           //         //   decoration: BoxDecoration(
+  //           //         //     borderRadius: BorderRadius.circular(14),
+  //           //         //     color: Colors.grey.shade200,
+  //           //         //   ),
+  //           //         //   child: Assets.icons.chatting.svg(),
+  //           //         // ),
+  //           //       ],
+  //           //     ),
 
-                const SizedBox(height: 12),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  //           //     const SizedBox(height: 12),
+  //           //   ],
+  //           // ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   void _openFullImage(String imageUrl, BuildContext context) {
     Navigator.push(

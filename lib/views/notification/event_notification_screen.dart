@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/community/community_awaiting_qrscreen.dart';
 import 'package:vibe_now/views/notification/notification_screen.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 import 'package:vibe_now/views/notification/widgets/event_notification_card.dart';
@@ -11,6 +12,7 @@ class EventNotificationScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -22,8 +24,8 @@ class EventNotificationScreen extends StatelessWidget {
                 ...List.generate(
                   3,
                   (index) => EventNotificationCard(
-                    acceptOnTap: () {
-                      showDialog(
+                    acceptOnTap: () async {
+                      await showDialog(
                         context: context,
                         barrierDismissible: true,
                         builder: (context) {
@@ -36,13 +38,22 @@ class EventNotificationScreen extends StatelessWidget {
                               backgroundColor: Colors.transparent,
                               child: AnimatedDialogContent(
                                 content:
-                                    'You have accepted jenny smith\'s event request.',
+                                    'You have accepted jenny smith\'s event join request.',
                                 accept: true,
                               ),
                             ),
                           );
                         },
                       );
+
+                      if (context.mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CommunityAwaitingQrScreen(),
+                          ),
+                        );
+                      }
                     },
                     rejectOnTap: () {
                       showDialog(

@@ -19,7 +19,7 @@ import 'package:vibe_now/views/chat/chat_inbox_screen.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/chat/community_chat_inbox_screen.dart';
 import 'package:vibe_now/views/chat/report_screen.dart';
-import 'package:vibe_now/views/chat/wave_screen.dart';
+import 'package:vibe_now/views/chat/chat_wave_screen.dart';
 import 'package:vibe_now/views/community/community_details_screen.dart';
 import 'package:vibe_now/views/community/community_screen.dart';
 import 'package:vibe_now/views/community/create_community_screen.dart';
@@ -225,7 +225,7 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/wave-screen',
       name: RouteNames.waveScreen,
-      builder: (context, state) => const WaveScreen(),
+      builder: (context, state) => const ChatWaveScreen(),
     ),
     GoRoute(
       path: '/reason-screen',
