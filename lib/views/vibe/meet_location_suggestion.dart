@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibe_now/design_system/design_system.dart';
+import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/vibe/meet_confirm_screen.dart'; // Assuming your AppColors/Buttons are here
 
@@ -126,19 +127,17 @@ class _MeetLocationSuggestionScreenState
                 SizedBox(height: 25.h),
 
                 _buildLocationOption(
-                  icon: Icons.home_outlined,
+                  icon: Assets.icons.home,
                   title: "Meet at my location",
                   subtitle: "Here and now",
-                  iconColor: const Color(0xFF9D59FF),
                 ),
 
                 SizedBox(height: 15.h),
 
                 _buildLocationOption(
-                  icon: Icons.location_on_outlined,
+                  icon: Assets.icons.locationColor,
                   title: "Suggest midpoint",
                   subtitle: "Pick location on map",
-                  iconColor: const Color(0xFF9D59FF),
                 ),
 
                 SizedBox(height: 24.h),
@@ -183,20 +182,20 @@ class _MeetLocationSuggestionScreenState
   }
 
   Widget _buildLocationOption({
-    required IconData icon,
+    required SvgGenImage icon,
     required String title,
     required String subtitle,
-    required Color iconColor,
   }) {
     return Row(
       children: [
         Container(
           padding: EdgeInsets.all(10.w),
           decoration: BoxDecoration(
-            color: iconColor.withOpacity(0.1),
+            color: const Color(0xFF9D59FF).withOpacity(0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: iconColor, size: 24.sp),
+          child: icon.svg(width: 24.w, height: 24.h),
+          // child: Icon(icon, color: iconColor, size: 24.sp),
         ),
         SizedBox(width: 16.w),
         Column(

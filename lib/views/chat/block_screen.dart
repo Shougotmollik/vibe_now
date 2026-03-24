@@ -7,6 +7,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
 class BlockScreen extends StatelessWidget {
   const BlockScreen({super.key});
@@ -62,10 +63,26 @@ class BlockScreen extends StatelessWidget {
         children: [
           CustomAppBar(title: 'What happened?'),
           GestureDetector(
-            onTap: () {
-              AppSnackbar.show(
-                message: 'You blocked the user',
-                type: SnackType.info,
+            onTap: () async {
+              await showDialog(
+                context: context,
+                barrierDismissible: true,
+                builder: (context) {
+                  return Center(
+                    child: Dialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      child: AnimatedDialogContent(
+                        content:
+                            'You have blocked Jenny Smith. You will not receive any notifications from this user.',
+                        accept: false,
+                      ),
+                    ),
+                  );
+                },
               );
               // context.pushNamed(RouteNames.chatScreen);
               context.pop();

@@ -5,7 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
-import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/cancel_button.dart';
@@ -72,16 +72,11 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: ElevatedButton(
-              onPressed: () {
-                // Navigator.pop(context);
-                showDialog(
+          child: SizedBox(
+            height: 55.h,
+            child: PrimaryButton.text(
+              onPressed: () async {
+                await showDialog(
                   context: context,
                   barrierDismissible: true,
                   builder: (context) {
@@ -99,26 +94,61 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                     );
                   },
                 );
+                Navigator.pop(context);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: const Text(
-                'Create',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              text: "Create",
+              radius: 30.r,
             ),
           ),
         ),
+        // Expanded(
+        //   child: Container(
+        //     decoration: BoxDecoration(
+        //       gradient: AppColors.primaryGradient,
+
+        //       borderRadius: BorderRadius.circular(30),
+        //     ),
+        //     child: ElevatedButton(
+        //       onPressed: () {
+        //         // Navigator.pop(context);
+        //         showDialog(
+        //           context: context,
+        //           barrierDismissible: true,
+        //           builder: (context) {
+        //             return Center(
+        //               child: Dialog(
+        //                 shape: RoundedRectangleBorder(
+        //                   borderRadius: BorderRadius.circular(20.r),
+        //                 ),
+        //                 elevation: 0,
+        //                 backgroundColor: Colors.transparent,
+        //                 child: VibeAnimatedDialog(
+        //                   content: "Your Vibe is now live.",
+        //                 ),
+        //               ),
+        //             );
+        //           },
+        //         );
+        //       },
+        //       style: ElevatedButton.styleFrom(
+        //         backgroundColor: Colors.transparent,
+        //         shadowColor: Colors.transparent,
+        //         padding: const EdgeInsets.symmetric(vertical: 16),
+        //         shape: RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(30),
+        //         ),
+        //       ),
+        //       child: const Text(
+        //         'Create',
+        //         style: TextStyle(
+        //           color: Colors.white,
+        //           fontSize: 15,
+        //           fontWeight: FontWeight.w600,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -401,68 +431,71 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
           ),
 
           const SizedBox(height: 16),
-          SizedBox(
-            height: 44,
-            child: FixedTimeline.tileBuilder(
-              theme: TimelineThemeData(
-                direction: Axis.horizontal,
-                connectorTheme: const ConnectorThemeData(
-                  color: _connectorColor,
-                  thickness: 2,
-                ),
-              ),
-              builder: TimelineTileBuilder.connected(
-                itemCount: _durations.length,
-                connectionDirection: ConnectionDirection.before,
-                connectorBuilder: (context, index, type) => const SizedBox(
-                  width: 8,
-                  child: SolidLineConnector(
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: SizedBox(
+              height: 44,
+              child: FixedTimeline.tileBuilder(
+                theme: TimelineThemeData(
+                  direction: Axis.horizontal,
+                  connectorTheme: const ConnectorThemeData(
                     color: _connectorColor,
                     thickness: 2,
                   ),
                 ),
-
-                indicatorBuilder: (context, index) {
-                  final isSelected = index == _selectedIndex;
-                  return GestureDetector(
-                    onTap: () => setState(() => _selectedIndex = index),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 100),
-                      curve: Curves.easeInOut,
-                      width: 60.w,
-                      height: 40.w,
-                      decoration: BoxDecoration(
-                        gradient: isSelected
-                            ? AppColors.primaryGradientRotated
-                            : null,
-                        color: isSelected ? null : _inactiveColor,
-                        borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                          color: isSelected
-                              ? Colors.transparent
-                              : (Colors.grey.shade300),
-                        ),
-                      ),
-                      alignment: Alignment.center,
-                      child: AnimatedDefaultTextStyle(
-                        duration: const Duration(milliseconds: 220),
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: isSelected
-                              ? FontWeight.w700
-                              : FontWeight.w500,
-                          color: isSelected
-                              ? Colors.white
-                              : const Color(0xFF6B7280),
-                          letterSpacing: -0.1,
-                        ),
-                        child: Text(_durations[index]),
-                      ),
+                builder: TimelineTileBuilder.connected(
+                  itemCount: _durations.length,
+                  connectionDirection: ConnectionDirection.before,
+                  connectorBuilder: (context, index, type) => const SizedBox(
+                    width: 8,
+                    child: SolidLineConnector(
+                      color: _connectorColor,
+                      thickness: 2,
                     ),
-                  );
-                },
-                contentsBuilder: (_, __) => const SizedBox.shrink(),
-                oppositeContentsBuilder: (_, __) => const SizedBox.shrink(),
+                  ),
+
+                  indicatorBuilder: (context, index) {
+                    final isSelected = index == _selectedIndex;
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedIndex = index),
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 100),
+                        curve: Curves.easeInOut,
+                        width: 60.w,
+                        height: 40.w,
+                        decoration: BoxDecoration(
+                          gradient: isSelected
+                              ? AppColors.primaryGradientRotated
+                              : null,
+                          color: isSelected ? null : _inactiveColor,
+                          borderRadius: BorderRadius.circular(8.r),
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.transparent
+                                : (Colors.grey.shade300),
+                          ),
+                        ),
+                        alignment: Alignment.center,
+                        child: AnimatedDefaultTextStyle(
+                          duration: const Duration(milliseconds: 220),
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: isSelected
+                                ? FontWeight.w700
+                                : FontWeight.w500,
+                            color: isSelected
+                                ? Colors.white
+                                : const Color(0xFF6B7280),
+                            letterSpacing: -0.1,
+                          ),
+                          child: Text(_durations[index]),
+                        ),
+                      ),
+                    );
+                  },
+                  contentsBuilder: (_, __) => const SizedBox.shrink(),
+                  oppositeContentsBuilder: (_, __) => const SizedBox.shrink(),
+                ),
               ),
             ),
           ),

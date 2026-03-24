@@ -102,7 +102,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                     ),
                     SizedBox(height: 32.h),
-                    RespectScoreCard(),
+                    TrustScoreCard(),
                     SizedBox(height: 24.h),
                     // Profile Information
                     _buildMenuItem(

@@ -146,7 +146,13 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
             padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 40.h),
             child: Column(
               children: [
-                CancelButton(onTap: () {}, btnText: "Cancel Meetup"),
+                CancelButton(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  btnText: "Cancel Meetup",
+                ),
                 SizedBox(height: 14.h),
                 Text(
                   "Great, see you soon!",

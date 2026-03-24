@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 
-class RespectScoreCard extends StatelessWidget {
-  const RespectScoreCard({super.key});
+class TrustScoreCard extends StatelessWidget {
+  const TrustScoreCard({super.key});
 
   @override
   Widget build(BuildContext context) {

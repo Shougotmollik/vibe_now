@@ -8,6 +8,7 @@ import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
+import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 import 'package:vibe_now/views/vibe/vibe_connect_screen.dart';
 
 class ChatWaveScreen extends StatefulWidget {
@@ -106,6 +107,27 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                     child: CustomElevatedButton(
                       onTap: () {
                         Navigator.pop(context);
+
+                        showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (context) {
+                            return Center(
+                              child: Dialog(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                elevation: 0,
+                                backgroundColor: Colors.transparent,
+                                child: AnimatedDialogContent(
+                                  content:
+                                      'You have rejected Sammy Smith Wave request.',
+                                  accept: false,
+                                ),
+                              ),
+                            );
+                          },
+                        );
                       },
                       buttonText: 'Reject',
                       btnColor: Colors.white,

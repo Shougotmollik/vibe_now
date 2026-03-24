@@ -20,6 +20,7 @@ import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/profile/widget/post_tab.dart';
+import 'package:vibe_now/views/settings/widget/respect_score_card.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key, this.isMyProfile = true});
@@ -97,14 +98,14 @@ class _ProfileScreenState extends State<ProfileScreen>
     final _tabWidgets = [_buildPhotosTab(widget.isMyProfile), PostsTab()];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
             SafeArea(bottom: false, child: SizedBox(height: 12.h)),
             _buildAppBar(context, widget.isMyProfile),
-
             _buildProfileHeader(),
+            TrustScoreCard(),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: _tabs.map((item) {

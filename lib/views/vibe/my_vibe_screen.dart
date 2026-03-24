@@ -20,11 +20,9 @@ class MyVibeScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomAppBar(title: "My Vibe"),
+                  const CustomAppBar(title: "My Vibe"),
                   GestureDetector(
-                    onTap: () {
-                      showEndVibeDialog(context: context);
-                    },
+                    onTap: () => showEndVibeDialog(context: context),
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         vertical: 8.h,
@@ -47,13 +45,10 @@ class MyVibeScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             SizedBox(height: 18.h),
-
-            Column(children: [...List.generate(1, (index) => VibeCard())]),
-
-            // VibeCard(),
-            // Spacer(),
+            Column(
+              children: [...List.generate(1, (index) => const VibeCard())],
+            ),
           ],
         ),
       ),
@@ -61,9 +56,7 @@ class MyVibeScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: PrimaryButton.text(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             text: "View on Map",
           ),
         ),
@@ -77,10 +70,12 @@ class MyVibeScreen extends StatelessWidget {
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.white,
+          insetPadding: const EdgeInsets.symmetric(horizontal: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28.0),
           ),
-          child: Padding(
+          child: Container(
+            width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -95,7 +90,6 @@ class MyVibeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-
                 const Text(
                   'End Vibe Early?',
                   style: TextStyle(
@@ -105,7 +99,6 @@ class MyVibeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-
                 const Text(
                   'Your Vibe will disappear immediately from the map',
                   textAlign: TextAlign.center,
@@ -116,25 +109,26 @@ class MyVibeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Expanded(
-                      child: CancelButton(
-                        onTap: () {
-                          Navigator.pop(context);
-                        },
-                        btnText: "Cancel",
+                      child: SizedBox(
+                        child: CancelButton(
+                          onTap: () => Navigator.pop(context),
+                          btnText: "Cancel",
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
-
                     Expanded(
-                      child: PrimaryButton.text(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        text: "End Now",
+                      child: SizedBox(
+                        height: 58.h,
+                        child: PrimaryButton.text(
+                          onPressed: () => Navigator.pop(context),
+                          radius: 50.r,
+                          text: "End Now",
+                        ),
                       ),
                     ),
                   ],
@@ -169,7 +163,7 @@ class VibeCard extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
                 child: Image.network(
                   'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
-                  height: 200,
+                  height: 180.h,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -184,8 +178,8 @@ class VibeCard extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.black.withValues(alpha: 0.1),
-                        Colors.black.withValues(alpha: 0.6),
+                        Colors.black.withOpacity(0.1),
+                        Colors.black.withOpacity(0.6),
                       ],
                     ),
                   ),
@@ -205,8 +199,11 @@ class VibeCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      CircleAvatar(radius: 4, backgroundColor: Colors.white),
-                      SizedBox(width: 6),
+                      const CircleAvatar(
+                        radius: 4,
+                        backgroundColor: Colors.white,
+                      ),
+                      const SizedBox(width: 6),
                       Text(
                         'LIVE',
                         style: TextStyle(
@@ -234,7 +231,7 @@ class VibeCard extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       'Sunday coffee vibes - who’s in?',
                       style: TextStyle(color: Colors.white, fontSize: 16.sp),
@@ -244,7 +241,6 @@ class VibeCard extends StatelessWidget {
               ),
             ],
           ),
-
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(

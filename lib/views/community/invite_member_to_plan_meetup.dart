@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/community/widgets/invitation_success_dialog.dart';
 
-// 1. Simple Member Model to hold data
 class MemberModel {
   final String id;
   final String name;
@@ -27,7 +27,7 @@ class InviteMemberToPlanMeetup extends StatefulWidget {
 }
 
 class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
-  // 2. Mock Data
+  //  Mock Data
   final List<MemberModel> _members = [
     MemberModel(
       id: '1',
@@ -94,9 +94,15 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: PrimaryButton.text(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
+            onPressed: () async {
+              await showDialog(
+                context: context,
+                builder: (context) => const InviteSuccessDialog(),
+              );
+              if (mounted) {
+                Navigator.pop(context);
+                Navigator.pop(context);
+              }
             },
             text: "Send Invitation",
           ),

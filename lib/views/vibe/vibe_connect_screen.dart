@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
-import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/vibe/meet_location_suggestion.dart';
 
@@ -17,22 +17,22 @@ class VibeConnectScreen extends StatelessWidget {
           onTap: () => Navigator.pop(context),
           child: const Icon(Icons.arrow_back_ios, color: Colors.black),
         ),
-        // title: const Text(
-        //   'QR Verification',
-        //   style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
-        // ),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
       body: Stack(
         children: [
-          // Background Decorations (Confetti/Shapes)
-          // _buildDecorations(),
-          Assets.icons.confetti.svg(
-            width: double.infinity,
+          SizedBox(
             height: 180.h,
-            fit: BoxFit.cover,
+            width: double.infinity,
+            child: Lottie.asset(
+              'assets/lottie/Confetti - Full Screen.json',
+              width: double.infinity,
+              repeat: true,
+              fit: BoxFit.cover,
+            ),
           ),
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
@@ -40,7 +40,6 @@ class VibeConnectScreen extends StatelessWidget {
               children: [
                 const Spacer(flex: 3),
 
-                // Header Text
                 const Text(
                   "It's a Vibe",
                   style: TextStyle(
@@ -56,12 +55,11 @@ class VibeConnectScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
 
-                // Profile Image
                 const CircleAvatar(
                   radius: 55,
                   backgroundImage: NetworkImage(
                     'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-                  ), // Replace with actual image
+                  ),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -90,7 +88,6 @@ class VibeConnectScreen extends StatelessWidget {
 
                 const Spacer(flex: 3),
 
-                // Action Buttons
                 PrimaryButton.text(
                   onPressed: () {
                     Navigator.of(context).push(
@@ -113,7 +110,13 @@ class VibeConnectScreen extends StatelessWidget {
 
                 const Spacer(flex: 3),
 
-                CancelButton(onTap: () {}, btnText: "Cancel"),
+                CancelButton(
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  btnText: "Cancel",
+                ),
 
                 SizedBox(height: 48.h),
               ],
@@ -123,28 +126,4 @@ class VibeConnectScreen extends StatelessWidget {
       ),
     );
   }
-
-  // // Helper to place decorative icons
-  // Widget _buildDecorations() {
-  //   return Stack(
-  //     children: const [
-  //       Positioned(
-  //         top: 50,
-  //         left: 100,
-  //         child: Icon(Icons.auto_awesome, color: Colors.pinkAccent, size: 20),
-  //       ),
-  //       Positioned(
-  //         top: 80,
-  //         right: 80,
-  //         child: Icon(Icons.star, color: Colors.orangeAccent, size: 15),
-  //       ),
-  //       Positioned(
-  //         top: 150,
-  //         left: 40,
-  //         child: Icon(Icons.gesture, color: Colors.blueAccent, size: 24),
-  //       ),
-
-  //     ],
-  //   );
-  // }
 }

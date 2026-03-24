@@ -80,6 +80,9 @@ class $AssetsIconsGen {
   SvgGenImage get colorPaletteColor =>
       const SvgGenImage('assets/icons/Color Palette-color.svg');
 
+  /// File path: assets/icons/Home.svg
+  SvgGenImage get home => const SvgGenImage('assets/icons/Home.svg');
+
   /// File path: assets/icons/Location-color.svg
   SvgGenImage get locationColor =>
       const SvgGenImage('assets/icons/Location-color.svg');
@@ -468,6 +471,7 @@ class $AssetsIconsGen {
     basketballColor,
     calendarColor,
     colorPaletteColor,
+    home,
     locationColor,
     location,
     logoutColor,

@@ -80,15 +80,19 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
           ),
         ),
         Expanded(
-          child: PrimaryButton.text(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => InviteMemberToPlanMeetup(),
-                ),
-              );
-            },
-            text: "Create",
+          child: SizedBox(
+            height: 55.h,
+            child: PrimaryButton.text(
+              radius: 30.r,
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => InviteMemberToPlanMeetup(),
+                  ),
+                );
+              },
+              text: "Create",
+            ),
           ),
         ),
       ],
