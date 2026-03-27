@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
+import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
 import 'package:vibe_now/views/community/invite_member_to_plan_meetup.dart';
@@ -22,6 +27,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
 
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
+  File? _selectedImage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +38,8 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
           child: Column(
             children: [
               CustomAppBar(title: "Plan a Meetup", canBack: true),
+              SizedBox(height: 24.h),
+              _buildImageUploadSection(),
               SizedBox(height: 24.h),
               _buildMeetupTitle(),
               SizedBox(height: 24.h),
@@ -96,6 +104,103 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildImageUploadSection() {
+    return GestureDetector(
+      onTap: () async {
+        utils.showImagePickerOptions(context, (imageSource) async {
+          final image = await utils.pickSingleImage(
+            context: context,
+            source: imageSource,
+          );
+
+          if (image != null) {
+            setState(() {
+              _selectedImage = image;
+            });
+          } else {
+            AppSnackbar.show(message: 'Failed to pick image');
+          }
+        });
+      },
+      child: Container(
+        width: double.infinity,
+        height: 172.h,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+          ),
+          borderRadius: BorderRadius.circular(14.r),
+        ),
+        child: _selectedImage != null
+            ? Stack(
+                alignment: Alignment.center,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(14.r),
+                    child: Image.file(
+                      _selectedImage!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      height: double.infinity,
+                    ),
+                  ),
+                  Positioned(
+                    top: 8.w,
+                    right: 8.w,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedImage = null;
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(4.w),
+                        decoration: BoxDecoration(
+                          color: Color.fromRGBO(24, 23, 24, 0.3),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 16.w,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Assets.icons.uploadImage.svg(width: 40.w, height: 40.h),
+                    SizedBox(height: 8.h),
+
+                    Text(
+                      "Upload Cover Image",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0XFF364153),
+                      ),
+                    ),
+                    Text(
+                      "Click to browse",
+                      style: TextStyle(
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0XFF4A5565),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+      ),
     );
   }
 

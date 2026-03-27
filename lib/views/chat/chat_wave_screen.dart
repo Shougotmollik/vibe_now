@@ -107,7 +107,6 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                     child: CustomElevatedButton(
                       onTap: () {
                         Navigator.pop(context);
-
                         showDialog(
                           context: context,
                           barrierDismissible: true,

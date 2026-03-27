@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
 class AnimatedDialogContent extends StatefulWidget {
@@ -81,6 +82,7 @@ class _AnimatedDialogContentState extends State<AnimatedDialogContent>
                       width: 50.w,
                       height: 50.h,
                       fit: BoxFit.cover,
+                      color: AppColors.primary,
                     ),
               SizedBox(height: 15.h),
               Text(

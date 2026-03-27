@@ -7,10 +7,14 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/community.dart';
+import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
+import 'package:vibe_now/views/community/community_manage_member_screen.dart';
 import 'package:vibe_now/views/community/community_plan_meetup_screen.dart';
 import 'package:vibe_now/views/community/edit_community_screen.dart';
+import 'package:vibe_now/views/community/widgets/meetup_card.dart';
+import 'package:vibe_now/views/event/event_card.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
   const CommunityDetailsScreen({super.key, required this.community});
@@ -108,10 +112,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => ChatScreen(),
-                                  ),
+                                context.pushNamed(
+                                  RouteNames.communityChatScreen,
+                                  extra: widget.community,
                                 );
                               },
                               child: Container(
@@ -187,8 +190,12 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                             ),
                             TextButton(
                               onPressed: () {
-                                context.pushNamed(
-                                  RouteNames.communityMemberScreen,
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const CommunityManageMemberScreen(),
+                                  ),
                                 );
                               },
                               child: Text(
@@ -268,7 +275,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
 
                         // About Event
                         Text(
-                          'About Event',
+                          'About Community',
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
@@ -286,79 +293,37 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                         ),
                         SizedBox(height: 20.h),
 
-                        // Experiences Section
-                        // Text(
-                        //   'Experiences',
-                        //   style: TextStyle(
-                        //     fontSize: 18.sp,
-                        //     fontWeight: FontWeight.bold,
-                        //     color: Colors.black,
-                        //   ),
-                        // ),
-                        // SizedBox(height: 16.h),
-                        // // Experience Card
-                        // Container(
-                        //   padding: EdgeInsets.all(16.w),
-                        //   decoration: BoxDecoration(
-                        //     color: Colors.grey.shade50,
-                        //     borderRadius: BorderRadius.circular(12.r),
-                        //   ),
-                        //   child: Column(
-                        //     crossAxisAlignment: CrossAxisAlignment.start,
-                        //     children: [
-                        //       Row(
-                        //         children: [
-                        //           CircleAvatar(
-                        //             radius: 20.r,
-                        //             backgroundImage: const NetworkImage(
-                        //               'https://i.pravatar.cc/150?img=5',
-                        //             ),
-                        //           ),
-                        //           SizedBox(width: 12.w),
-                        //           Column(
-                        //             crossAxisAlignment:
-                        //                 CrossAxisAlignment.start,
-                        //             children: [
-                        //               Text(
-                        //                 'Jenny smith',
-                        //                 style: TextStyle(
-                        //                   fontSize: 16.sp,
-                        //                   fontWeight: FontWeight.w600,
-                        //                   color: Colors.black,
-                        //                 ),
-                        //               ),
-                        //               Row(
-                        //                 children: [
-                        //                   Icon(
-                        //                     Icons.celebration_outlined,
-                        //                     size: 14.sp,
-                        //                     color: Colors.grey.shade600,
-                        //                   ),
-                        //                   SizedBox(width: 4.w),
-                        //                   Text(
-                        //                     '20 Oct',
-                        //                     style: TextStyle(
-                        //                       fontSize: 12.sp,
-                        //                       color: Colors.grey.shade600,
-                        //                     ),
-                        //                   ),
-                        //                 ],
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         ],
-                        //       ),
-                        //       SizedBox(height: 12.h),
-                        //       Text(
-                        //         'Had a wonderful day with you guys 😊',
-                        //         style: TextStyle(
-                        //           fontSize: 14.sp,
-                        //           color: Colors.grey.shade800,
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        // Upcoming Events
+                        Text(
+                          'Planed Meetup',
+                          style: TextStyle(
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        GestureDetector(
+                          onTap: () {
+                            context.pushNamed(RouteNames.communityMemberScreen);
+                          },
+                          child: MeetupCard(
+                            event: Event(
+                              name: 'Community Meetup ',
+                              location: '123 Main St, New York, NY 10001',
+                              date: '21 Nov',
+                              time: '8PM - 11PM',
+                              description: '10 Interested • 16 Going',
+                              image:
+                                  'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800',
+                              attending: '5',
+                              totalAttending: '10',
+                              isJoined: true,
+                              isMyEvent: true,
+                              accessType: EventAccessType.public,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

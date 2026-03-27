@@ -314,7 +314,6 @@ class _EventChatScreenState extends State<EventChatScreen> {
   }
 
   Widget _buildBottomArea() {
-    // 1. Non-admin view (Already looks good!)
     if (!isAdmin) {
       return Container(
         padding: const EdgeInsets.all(18),
@@ -341,11 +340,8 @@ class _EventChatScreenState extends State<EventChatScreen> {
     }
 
     return Container(
-      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade200)),
-      ),
+      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
+      decoration: BoxDecoration(color: Colors.white),
       child: Row(
         children: [
           Assets.icons.trash.svg(height: 26.sp, width: 26.sp),
@@ -688,12 +684,10 @@ class _ReactionChips extends StatelessWidget {
                   ? const Color(0xFFE7F0FD)
                   : const Color(0xFFF0F2F5),
               border: Border.all(
-                color: r.reactedByMe
-                    ? const Color(0xFF1877F2)
-                    : Colors.transparent,
-                width: 1.5,
+                color: r.reactedByMe ? AppColors.primary : Colors.transparent,
+                width: 1.w,
               ),
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(50.r),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -719,9 +713,7 @@ class _ReactionChips extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────
-//  Reaction Overlay (Facebook-style popup)
-// ─────────────────────────────────────────
+//  Reaction Overlay
 
 class _ReactionOverlay extends StatefulWidget {
   final ChatMessage message;
@@ -873,15 +865,15 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
   }
 }
 
-// ─────────────────────────────────────────
-//  Entry Point (for standalone testing)
-// ─────────────────────────────────────────
+// // ─────────────────────────────────────────
+// //  Entry Point (for standalone testing)
+// // ─────────────────────────────────────────
 
-void main() {
-  runApp(
-    const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: EventChatScreen(),
-    ),
-  );
-}
+// void main() {
+//   runApp(
+//     const MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       home: EventChatScreen(),
+//     ),
+//   );
+// }

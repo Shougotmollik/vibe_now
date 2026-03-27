@@ -28,35 +28,35 @@ class _CommunityMembersScreenState extends State<CommunityMembersScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomAppBar(title: "Members", canBack: true),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const CommunityManageMemberScreen(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 6.h,
-                        horizontal: 12.w,
-                      ),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        gradient: AppColors.primaryGradientRotated,
-                      ),
-                      child: Text(
-                        "Manage",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // GestureDetector(
+                  //   onTap: () {
+                  //     Navigator.push(
+                  //       context,
+                  //       MaterialPageRoute(
+                  //         builder: (context) =>
+                  //             const CommunityManageMemberScreen(),
+                  //       ),
+                  //     );
+                  //   },
+                  //   child: Container(
+                  //     padding: EdgeInsets.symmetric(
+                  //       vertical: 6.h,
+                  //       horizontal: 12.w,
+                  //     ),
+                  //     decoration: BoxDecoration(
+                  //       borderRadius: BorderRadius.circular(40),
+                  //       gradient: AppColors.primaryGradientRotated,
+                  //     ),
+                  //     child: Text(
+                  //       "Manage",
+                  //       style: TextStyle(
+                  //         fontSize: 14.sp,
+                  //         fontWeight: FontWeight.w600,
+                  //         color: Colors.white,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

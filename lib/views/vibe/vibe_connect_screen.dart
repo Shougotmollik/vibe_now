@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/vibe/meet_location_suggestion.dart';
 
@@ -100,13 +103,23 @@ class VibeConnectScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
 
-                CancelButton(
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.pop(context);
-                  },
-                  btnText: "Chat with Jhon Gomes",
-                ),
+                // CancelButton(
+                //   onTap: () {
+                //     context.pushNamed(
+                //       RouteNames.chatInboxScreen,
+                //       extra: Chat(
+                //         avatars: [
+                //           'https://randomuser.me/api/portraits/women/12.jpg',
+                //         ],
+                //         name: 'Jhon Gomes',
+                //         message: 'Sent you a wave!',
+                //         time: '10:30 AM',
+                //         type: ChatType.wave,
+                //       ),
+                //     );
+                //   },
+                //   btnText: "Chat with Jhon Gomes",
+                // ),
 
                 const Spacer(flex: 3),
 

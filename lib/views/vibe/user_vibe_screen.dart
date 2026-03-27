@@ -5,6 +5,7 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/home/widgets/wave_animated_dialog.dart';
+import 'package:vibe_now/views/vibe/my_vibe_screen.dart';
 
 class UserVibeScreen extends StatefulWidget {
   const UserVibeScreen({super.key});
@@ -22,9 +23,18 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SafeArea(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomAppBar(title: "All Vibes"),
               SizedBox(height: 20.h),
+              VibeCard(),
+              SizedBox(height: 12.h),
+
+              Text(
+                "Other Vibes",
+                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
+              ),
+              SizedBox(height: 12.h),
               Column(
                 spacing: 12.h,
                 children: List.generate(4, (index) => UserVibeCard()),

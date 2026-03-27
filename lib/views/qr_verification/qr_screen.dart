@@ -1,8 +1,12 @@
 import 'dart:async'; // Required for Timer
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/model/chat.dart';
+import 'package:vibe_now/views/chat/chat_inbox_screen.dart';
 import 'package:vibe_now/views/community/community_welcome_screen.dart';
 import 'package:vibe_now/views/event/event_checkin_screen.dart';
 
@@ -39,9 +43,18 @@ class _QrScreenState extends State<QrScreen> {
 
     switch (widget.qrContext) {
       case QRContext.chats:
-        Navigator.pop(context, code);
-        Navigator.pop(context, code);
-
+        // Navigator.pop(context, code);
+        // Navigator.pop(context, code);
+        context.pushNamed(
+          RouteNames.chatInboxScreen,
+          extra: Chat(
+            avatars: ['https://randomuser.me/api/portraits/women/12.jpg'],
+            name: 'Sammy Smith',
+            message: 'Sent you a wave!',
+            time: '10:30 AM',
+            type: ChatType.wave,
+          ),
+        );
         break;
       case QRContext.community:
         Navigator.pushReplacement(

@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibe_now/design_system/design_system.dart';
+import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
+import 'package:vibe_now/views/home/widgets/google_map.dart';
+import 'package:vibe_now/views/home/widgets/map_search_screen.dart';
 import 'package:vibe_now/views/vibe/meet_confirm_screen.dart'; // Assuming your AppColors/Buttons are here
 
 class MeetLocationSuggestionScreen extends StatefulWidget {
@@ -126,18 +129,42 @@ class _MeetLocationSuggestionScreenState
 
                 SizedBox(height: 25.h),
 
-                _buildLocationOption(
-                  icon: Assets.icons.home,
-                  title: "Meet at my location",
-                  subtitle: "Here and now",
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GoogleMapScreen(
+                          apiKey: EnvHandler.google_map_api_key,
+                        ),
+                      ),
+                    );
+                  },
+                  child: _buildLocationOption(
+                    icon: Assets.icons.home,
+                    title: "Meet at my location",
+                    subtitle: "Here and now",
+                  ),
                 ),
 
                 SizedBox(height: 15.h),
 
-                _buildLocationOption(
-                  icon: Assets.icons.locationColor,
-                  title: "Suggest midpoint",
-                  subtitle: "Pick location on map",
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GoogleMapScreen(
+                          apiKey: EnvHandler.google_map_api_key,
+                        ),
+                      ),
+                    );
+                  },
+                  child: _buildLocationOption(
+                    icon: Assets.icons.locationColor,
+                    title: "Suggest midpoint",
+                    subtitle: "Pick location on map",
+                  ),
                 ),
 
                 SizedBox(height: 24.h),

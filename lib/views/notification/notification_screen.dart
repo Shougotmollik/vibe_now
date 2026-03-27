@@ -525,14 +525,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         },
                       );
 
-                      if (context.mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CommunityAwaitingQrScreen(),
-                          ),
-                        );
-                      }
+                      // if (context.mounted) {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => CommunityAwaitingQrScreen(),
+                      //     ),
+                      //   );
+                      // }
                     },
                     rejectOnTap: () {
                       showDialog(
@@ -707,14 +707,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         },
                       );
 
-                      if (context.mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CommunityAwaitingQrScreen(),
-                          ),
-                        );
-                      }
+                      // if (context.mounted) {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (context) => CommunityAwaitingQrScreen(),
+                      //     ),
+                      //   );
+                      // }
                     },
                     rejectOnTap: () {
                       showDialog(
