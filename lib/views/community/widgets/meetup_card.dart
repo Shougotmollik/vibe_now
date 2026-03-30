@@ -8,7 +8,9 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/views/common/meetup_join_dialog.dart';
 import 'package:vibe_now/views/common/request_sent_dialog.dart';
+import 'package:vibe_now/views/community/meetup_details_screen.dart';
 import 'package:vibe_now/views/event/event_details_screen.dart';
 import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
@@ -25,35 +27,14 @@ class MeetupCard extends StatefulWidget {
 class _MeetupCardState extends State<MeetupCard> {
   late EventStatus? currentStatus;
 
-  bool get isPublic => widget.event.accessType == EventAccessType.public;
-
-  bool get isPrivate => widget.event.accessType == EventAccessType.private;
-
-  bool get isGoing => currentStatus == EventStatus.going;
-  bool get isRequested => currentStatus == EventStatus.requested;
-  bool get isActive => isGoing || isRequested;
-
-  static const String hourglass = "assets/icons/hourglass-end.svg";
-  static const String wishlist = "assets/icons/wishlist-star.svg";
-  static const String wishlistFilled = "assets/icons/wishlist-star-fill.svg";
-  static const String private = "assets/icons/private.svg";
-  static const String public = "assets/icons/public.svg";
+  bool get isJoined => currentStatus == EventStatus.going;
+  bool get isPending => currentStatus == EventStatus.requested;
+  bool get cannotJoin => isJoined || isPending;
 
   @override
   void initState() {
     super.initState();
     currentStatus = widget.event.userStatus;
-  }
-
-  String get buttonText {
-    if (widget.event.isMyEvent) return '';
-
-    if (isPublic) {
-      return isGoing ? 'Going' : 'Join';
-    }
-
-    // Private
-    return isRequested ? 'Requested' : 'Request';
   }
 
   @override
@@ -183,7 +164,39 @@ class _MeetupCardState extends State<MeetupCard> {
               ),
             ],
           ),
-          SizedBox(height: 6.h),
+          SizedBox(height: 12.h),
+
+          PrimaryButton.text(
+            onPressed: isJoined
+                ? () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MeetupDetailsScreen(),
+                      ),
+                    );
+                  }
+                : () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => MeetupSentDialog(
+                        onWithDrawTap: () {
+                          setState(
+                            () => currentStatus = EventStatus.interested,
+                          );
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ).then((_) {
+                      setState(() {
+                        currentStatus = EventStatus.going;
+                      });
+                    });
+                  },
+            text: isJoined ? "View Details" : "Join",
+            gradient: AppColors.primaryGradientRotated,
+            radius: 12.r,
+          ),
           // Row(
           //   children: [
           //     Assets.icons.users.svg(),

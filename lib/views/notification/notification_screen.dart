@@ -398,6 +398,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         child: Column(
           children: [
             SafeArea(child: CustomAppBar(title: "Notification")),
+            SizedBox(height: 24.h),
             _buildEventSection(),
             SizedBox(height: 28.h),
             _buildCommunitySection(),
@@ -498,7 +499,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
 
             child: Column(
-              spacing: 8.h,
+              // spacing: 8.h,
               children: [
                 ...List.generate(
                   3,
@@ -680,7 +681,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             ),
 
             child: Column(
-              spacing: 8.h,
+              // spacing: 8.h,
               children: [
                 ...List.generate(
                   3,
@@ -785,7 +786,7 @@ class EventNotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(color: const Color(0xffE0E0E0), width: 1.w),
@@ -794,8 +795,8 @@ class EventNotificationCard extends StatelessWidget {
       child: Row(
         spacing: 8.w,
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(50.r),
@@ -810,7 +811,7 @@ class EventNotificationCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 180.w,
+                width: 240.w,
                 child: Text(
                   "Jenny Smith is interested in your event",
                   style: TextStyle(
@@ -843,29 +844,29 @@ class EventNotificationCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(
-            child: Row(
-              spacing: 8.w,
-              children: [
-                GestureDetector(
-                  onTap: acceptOnTap,
-                  child: Assets.icons.accept.svg(
-                    width: 20.w,
-                    height: 20.h,
-                    color: AppColors.primary,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: rejectOnTap,
-                  child: Assets.icons.decline.svg(
-                    width: 22.w,
-                    height: 22.h,
-                    // color: AppColors.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // SizedBox(
+          //   child: Row(
+          //     spacing: 8.w,
+          //     children: [
+          //       GestureDetector(
+          //         onTap: acceptOnTap,
+          //         child: Assets.icons.accept.svg(
+          //           width: 20.w,
+          //           height: 20.h,
+          //           color: AppColors.primary,
+          //         ),
+          //       ),
+          //       GestureDetector(
+          //         onTap: rejectOnTap,
+          //         child: Assets.icons.decline.svg(
+          //           width: 22.w,
+          //           height: 22.h,
+          //           // color: AppColors.primary,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
@@ -884,7 +885,7 @@ class CommunityNotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(color: const Color(0xffE0E0E0), width: 1.w),
@@ -893,8 +894,8 @@ class CommunityNotificationCard extends StatelessWidget {
       child: Row(
         spacing: 8.w,
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(50.r),
@@ -909,7 +910,7 @@ class CommunityNotificationCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(
-                width: 180.w,
+                width: 240.w,
                 child: Text(
                   "Jhon snow is interested in your community",
                   style: TextStyle(
@@ -942,29 +943,29 @@ class CommunityNotificationCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(
-            child: Row(
-              spacing: 8.w,
-              children: [
-                GestureDetector(
-                  onTap: acceptOnTap,
-                  child: Assets.icons.accept.svg(
-                    width: 20.w,
-                    height: 20.h,
-                    color: AppColors.primary,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: rejectOnTap,
-                  child: Assets.icons.decline.svg(
-                    width: 22.w,
-                    height: 22.h,
-                    // color: AppColors.primary,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // SizedBox(
+          //   child: Row(
+          //     spacing: 8.w,
+          //     children: [
+          //       GestureDetector(
+          //         onTap: acceptOnTap,
+          //         child: Assets.icons.accept.svg(
+          //           width: 20.w,
+          //           height: 20.h,
+          //           color: AppColors.primary,
+          //         ),
+          //       ),
+          //       GestureDetector(
+          //         onTap: rejectOnTap,
+          //         child: Assets.icons.decline.svg(
+          //           width: 22.w,
+          //           height: 22.h,
+          //           // color: AppColors.primary,
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );

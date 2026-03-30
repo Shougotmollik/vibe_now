@@ -162,7 +162,7 @@ class VibeCard extends StatelessWidget {
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
                 child: Image.network(
-                  'https://images.unsplash.com/photo-1509042239860-f550ce710b93',
+                  'https://content3.jdmagicbox.com/comp/def_content/coffee_shops/default-coffee-shops-7.jpg',
                   height: 180.h,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -178,8 +178,8 @@ class VibeCard extends StatelessWidget {
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                       colors: [
-                        Colors.black.withOpacity(0.1),
-                        Colors.black.withOpacity(0.6),
+                        Colors.black.withValues(alpha: 0.2),
+                        Colors.black.withValues(alpha: 0.8),
                       ],
                     ),
                   ),

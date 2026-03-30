@@ -13,7 +13,7 @@ import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/model/nearby_user.dart';
 import 'package:vibe_now/views/community/widgets/community_card.dart';
-import 'package:vibe_now/views/event/event_card.dart';
+import 'package:vibe_now/views/event/widgets/event_card.dart';
 import 'package:vibe_now/views/home/widgets/cloud_container.dart';
 import 'package:vibe_now/views/home/widgets/community_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/event_location_pin.dart';

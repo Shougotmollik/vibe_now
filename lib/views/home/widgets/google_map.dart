@@ -23,7 +23,7 @@ import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/community/widgets/community_card.dart';
 import 'package:vibe_now/views/vibe/my_vibe_screen.dart';
 import 'package:vibe_now/views/vibe/user_vibe_screen.dart';
-import 'package:vibe_now/views/event/event_card.dart';
+import 'package:vibe_now/views/event/widgets/event_card.dart';
 import 'package:vibe_now/views/home/widgets/community_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/event_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/filter_dialog.dart';

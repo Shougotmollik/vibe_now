@@ -193,7 +193,7 @@ class EventDetailsScreen extends StatelessWidget {
                           onPressed: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => EventMembersScreen(),
+                                builder: (context) => EventMemberScreen(),
                               ),
                             );
                           },
@@ -231,17 +231,60 @@ class EventDetailsScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 8.w),
-                        Container(
-                          padding: EdgeInsets.all(10.w),
-                          decoration: BoxDecoration(
-                            color: Color(0xff_F4F4F4),
+
+                        // Container(
+                        //   padding: EdgeInsets.all(10.w),
+                        //   decoration: BoxDecoration(
+                        //     color: Color(0xff_F4F4F4),
+                        //     borderRadius: BorderRadius.circular(12.r),
+                        //   ),
+                        //   child: Assets.icons.archive.svg(
+                        //     width: 24.w,
+                        //     height: 24.h,
+                        //     color: AppColors.primaryText,
+                        //   ),
+                        // ),
+                        PopupMenuButton<int>(
+                          icon: Icon(
+                            Icons.more_vert,
+                            color: const Color(0xFF050505),
+                            size: 24.sp,
+                          ),
+
+                          offset: Offset(0, 45.h),
+                          shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12.r),
                           ),
-                          child: Assets.icons.archive.svg(
-                            width: 24.w,
-                            height: 24.h,
-                            color: AppColors.primaryText,
-                          ),
+                          onSelected: (value) {
+                            if (value == 1) {
+                              // // Logic for leaving event
+                              // print("User left the event");
+                              Navigator.of(context).pop();
+                            }
+                          },
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 1,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.logout_rounded,
+                                    color: AppColors.primary,
+                                    size: 20.sp,
+                                  ),
+                                  SizedBox(width: 10.w),
+                                  Text(
+                                    'Leave Event',
+                                    style: TextStyle(
+                                      color: AppColors.primary,
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

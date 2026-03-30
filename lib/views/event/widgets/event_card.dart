@@ -10,6 +10,7 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/common/request_sent_dialog.dart';
 import 'package:vibe_now/views/event/event_details_screen.dart';
+import 'package:vibe_now/views/event/event_request_screen.dart';
 import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
@@ -252,17 +253,26 @@ class _EventCardState extends State<EventCard> {
                               currentStatus = EventStatus.requested;
                             });
 
-                            showDialog(
-                              context: context,
-                              builder: (context) => RequestSentDialog(
-                                onWithDrawTap: () {
-                                  setState(() {
-                                    currentStatus = EventStatus.interested;
-                                  });
-                                  Navigator.pop(context);
-                                },
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventRequestScreen(
+                                  event: widget.event,
+                                ),
                               ),
                             );
+
+                            // showDialog(
+                            //   context: context,
+                            //   builder: (context) => RequestSentDialog(
+                            //     onWithDrawTap: () {
+                            //       setState(() {
+                            //         currentStatus = EventStatus.interested;
+                            //       });
+                            //       Navigator.pop(context);
+                            //     },
+                            //   ),
+                            // );
                           }
                         },
 
@@ -273,8 +283,8 @@ class _EventCardState extends State<EventCard> {
                             border: Border.all(color: Colors.grey.shade300),
                             gradient: !isActive
                                 ? AppColors.primaryGradientRotated
-                                : null,
-                            color: !isActive ? null : const Color(0xffC4A8FF),
+                                : AppColors.primaryGradient.withOpacity(0.5),
+                            // color: !isActive ? null : const Color(0xffC4A8FF),
                           ),
 
                           child: Center(

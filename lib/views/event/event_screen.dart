@@ -10,7 +10,7 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_search_bar.dart';
-import 'package:vibe_now/views/event/event_card.dart';
+import 'package:vibe_now/views/event/widgets/event_card.dart';
 import 'package:vibe_now/views/event/widgets/event_filter.dart';
 
 class EventScreen extends StatefulWidget {

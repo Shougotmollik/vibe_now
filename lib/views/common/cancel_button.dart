@@ -20,14 +20,12 @@ class CancelButton extends StatelessWidget {
           border: Border.all(color: Colors.grey[300]!, width: 1),
         ),
         child: Center(
-          child: Expanded(
-            child: Text(
-              btnText,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-              ),
+          child: Text(
+            btnText,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ),

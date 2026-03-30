@@ -18,6 +18,7 @@ class EventNotificationScreen extends StatelessWidget {
         child: Column(
           children: [
             SafeArea(child: CustomAppBar(title: "Event Notifications")),
+            SizedBox(height: 18.h),
             Column(
               spacing: 8.h,
               children: [

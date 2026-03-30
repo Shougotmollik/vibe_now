@@ -5,14 +5,14 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
-class EventMemberScreen extends StatefulWidget {
-  const EventMemberScreen({super.key});
+class CommunityMemberScreen extends StatefulWidget {
+  const CommunityMemberScreen({super.key});
 
   @override
-  State<EventMemberScreen> createState() => _EventMemberScreenState();
+  State<CommunityMemberScreen> createState() => _CommunityMemberScreenState();
 }
 
-class _EventMemberScreenState extends State<EventMemberScreen> {
+class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
   String selectedStatus = "Active";
 
   @override
@@ -114,7 +114,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                             backgroundColor: Colors.transparent,
                             child: AnimatedDialogContent(
                               content:
-                                  'You have accepted jenny smith\'s event join request.',
+                                  'You have accepted jenny smith\'s community join request.',
                               accept: true,
                             ),
                           ),
@@ -143,7 +143,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                             backgroundColor: Colors.transparent,
                             child: AnimatedDialogContent(
                               content:
-                                  'You have rejected jenny smith\'s event join request.',
+                                  'You have rejected jenny smith\'s community join request.',
                               accept: false,
                             ),
                           ),

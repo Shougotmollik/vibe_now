@@ -510,8 +510,8 @@ class _CommunityCardState extends State<CommunityCard> {
                             border: Border.all(color: Colors.grey.shade300),
                             gradient: !isActive
                                 ? AppColors.primaryGradient
-                                : null,
-                            color: isActive ? Color(0xffC4A8FF) : null,
+                                : AppColors.primaryGradient.withOpacity(0.5),
+                            // color: isActive ? Color(0xffC4A8FF) : null,
                           ),
                           child: Center(
                             child: Row(

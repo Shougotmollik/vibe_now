@@ -203,7 +203,7 @@ class _UserVibeCardState extends State<UserVibeCard> {
               padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
               decoration: BoxDecoration(
                 gradient: isWaved
-                    ? LinearGradient(colors: [Colors.black54, Colors.black54])
+                    ? AppColors.primaryGradientRotated.withOpacity(0.5)
                     : AppColors.primaryGradientRotated,
                 borderRadius: BorderRadius.circular(20.r),
               ),

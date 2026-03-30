@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
-import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
-import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
+import 'package:vibe_now/views/community/community_awaiting_qrscreen.dart';
 
-class EventMemberScreen extends StatefulWidget {
-  const EventMemberScreen({super.key});
+class MeetupMemberScreen extends StatefulWidget {
+  const MeetupMemberScreen({super.key});
 
   @override
-  State<EventMemberScreen> createState() => _EventMemberScreenState();
+  State<MeetupMemberScreen> createState() => _MeetupMemberScreenState();
 }
 
-class _EventMemberScreenState extends State<EventMemberScreen> {
+class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
   String selectedStatus = "Active";
 
   @override
@@ -25,7 +24,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: CustomAppBar(title: "Manage Request"),
+              child: CustomAppBar(title: "Meetup Members"),
             ),
             const SizedBox(height: 16),
 
@@ -37,9 +36,9 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                 children: [
                   _buildTabTrigger("Active"),
                   const SizedBox(width: 12),
-                  _buildTabTrigger("Requested"),
+                  _buildTabTrigger("Invited"),
                   const SizedBox(width: 12),
-                  // _buildTabTrigger("Awaiting Meetup"),
+                  _buildTabTrigger("Awaiting Meetup"),
                 ],
               ),
             ),
@@ -94,70 +93,12 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
             style: TextStyle(fontWeight: FontWeight.w500),
           ),
           subtitle: const Text("Open for small talk"),
-          trailing: SizedBox(
-            width: 60.w,
-            child: Row(
-              spacing: 8.w,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: true,
-                      builder: (context) {
-                        return Center(
-                          child: Dialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.r),
-                            ),
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            child: AnimatedDialogContent(
-                              content:
-                                  'You have accepted jenny smith\'s event join request.',
-                              accept: true,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Assets.icons.accept.svg(
-                    width: 20.w,
-                    height: 20.h,
-                    color: AppColors.primary,
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: true,
-                      builder: (context) {
-                        return Center(
-                          child: Dialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.r),
-                            ),
-                            elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            child: AnimatedDialogContent(
-                              content:
-                                  'You have rejected jenny smith\'s event join request.',
-                              accept: false,
-                            ),
-                          ),
-                        );
-                      },
-                    );
-                  },
-                  child: Assets.icons.decline.svg(
-                    width: 22.w,
-                    height: 22.h,
-                    // color: AppColors.primary,
-                  ),
-                ),
-              ],
+          trailing: Text(
+            "Pending",
+            style: TextStyle(
+              color: AppColors.primary,
+              fontWeight: FontWeight.w500,
+              fontSize: 12.sp,
             ),
           ),
         );
@@ -165,16 +106,21 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
     );
   }
 
-  Widget _buildAwaitingMeetupView(String text) {
-    return Center(
-      child: Text(text, style: const TextStyle(color: Colors.grey)),
-    );
-  }
-
   Widget _buildTabTrigger(String label) {
     bool isActive = selectedStatus == label;
     return GestureDetector(
-      onTap: () => setState(() => selectedStatus = label),
+      onTap: () {
+        setState(() => selectedStatus = label);
+
+        if (label == "Awaiting Meetup") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const CommunityAwaitingQrScreen(),
+            ),
+          );
+        }
+      },
       child: _buildStatusTab(label, isActive),
     );
   }

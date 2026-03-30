@@ -94,7 +94,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                     );
                   },
                 );
-                Navigator.pop(context);
+                Navigator.of(context).maybePop();
               },
               text: "Create",
               radius: 30.r,

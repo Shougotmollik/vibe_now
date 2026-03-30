@@ -46,7 +46,7 @@ class EventChatScreen extends StatefulWidget {
 }
 
 class _EventChatScreenState extends State<EventChatScreen> {
-  bool isAdmin = true;
+  bool isAdmin = false;
   final TextEditingController _controller = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   bool _hasText = false;
@@ -115,8 +115,6 @@ class _EventChatScreenState extends State<EventChatScreen> {
     super.dispose();
   }
 
-  // ── Overlay helpers ──────────────────────
-
   void _removeOverlay() {
     _overlayEntry?.remove();
     _overlayEntry = null;
@@ -140,8 +138,6 @@ class _EventChatScreenState extends State<EventChatScreen> {
 
     Overlay.of(context).insert(_overlayEntry!);
   }
-
-  // ── Business logic ───────────────────────
 
   void _toggleReaction(ChatMessage msg, String emoji) {
     setState(() {
@@ -189,8 +185,6 @@ class _EventChatScreenState extends State<EventChatScreen> {
 
   String _formatTime(DateTime t) =>
       '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
-
-  // ── Build ────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -269,14 +263,56 @@ class _EventChatScreenState extends State<EventChatScreen> {
             ),
           ],
         ),
-        IconButton(
-          icon: const Icon(
-            Icons.more_horiz_rounded,
-            color: Color(0xFF050505),
-            size: 22,
-          ),
-          onPressed: () {},
-        ),
+
+        // PopupMenuButton<int>(
+
+        //   icon: Icon(
+        //     Icons.more_vert,
+        //     color: const Color(0xFF050505),
+        //     size: 24.sp,
+        //   ),
+
+        //   offset: Offset(0, 45.h),
+        //   shape: RoundedRectangleBorder(
+        //     borderRadius: BorderRadius.circular(12.r),
+        //   ),
+        //   onSelected: (value) {
+        //     if (value == 1) {
+
+        //     }
+        //   },
+        //   itemBuilder: (context) => [
+        //     PopupMenuItem(
+        //       value: 1,
+        //       child: Row(
+        //         children: [
+        //           Icon(
+        //             Icons.logout_rounded,
+        //             color: AppColors.primary,
+        //             size: 20.sp,
+        //           ),
+        //           SizedBox(width: 10.w),
+        //           Text(
+        //             'Leave Event',
+        //             style: TextStyle(
+        //               color: AppColors.primary,
+        //               fontSize: 14.sp,
+        //               fontWeight: FontWeight.w500,
+        //             ),
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ],
+        // ),
+        // IconButton(
+        //   icon: const Icon(
+        //     Icons.more_vert,
+        //     color: Color(0xFF050505),
+        //     size: 22,
+        //   ),
+        //   onPressed: () {},
+        // ),
       ],
     );
   }
@@ -308,6 +344,14 @@ class _EventChatScreenState extends State<EventChatScreen> {
           formatTime: _formatTime,
           onLongPress: _showReactionOverlay,
           onToggleReaction: _toggleReaction,
+          onMoreOptions: (msg) => _buildMoreOption(
+            context,
+            onDelete: () {
+              Navigator.pop(context);
+              setState(() => _messages.remove(msg));
+            },
+            onEdit: () => Navigator.pop(context),
+          ),
         );
       },
     );
@@ -523,12 +567,14 @@ class _MessageTile extends StatefulWidget {
   final String Function(DateTime) formatTime;
   final void Function(ChatMessage, Offset) onLongPress;
   final void Function(ChatMessage, String) onToggleReaction;
+  final void Function(ChatMessage) onMoreOptions;
 
   const _MessageTile({
     required this.message,
     required this.formatTime,
     required this.onLongPress,
     required this.onToggleReaction,
+    required this.onMoreOptions,
   });
 
   @override
@@ -587,8 +633,14 @@ class _MessageTileState extends State<_MessageTile>
                 _scaleCtrl.forward();
               },
               onLongPress: () {
+                // _scaleCtrl.reverse();
+                // widget.onLongPress(msg, _getBubbleTopCenter());
                 _scaleCtrl.reverse();
-                widget.onLongPress(msg, _getBubbleTopCenter());
+                if (isMe) {
+                  widget.onMoreOptions(msg);
+                } else {
+                  widget.onLongPress(msg, _getBubbleTopCenter());
+                }
               },
               onLongPressCancel: () => _scaleCtrl.reverse(),
               child: ScaleTransition(
@@ -658,9 +710,7 @@ class _MessageTileState extends State<_MessageTile>
   }
 }
 
-// ─────────────────────────────────────────
 //  Reaction Chips
-// ─────────────────────────────────────────
 
 class _ReactionChips extends StatelessWidget {
   final List<Reaction> reactions;
@@ -865,15 +915,115 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
   }
 }
 
-// // ─────────────────────────────────────────
-// //  Entry Point (for standalone testing)
-// // ─────────────────────────────────────────
-
-// void main() {
-//   runApp(
-//     const MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       home: EventChatScreen(),
-//     ),
-//   );
-// }
+Future<dynamic> _buildMoreOption(
+  BuildContext context, {
+  required VoidCallback onDelete,
+  required VoidCallback onEdit,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (context) {
+      return SafeArea(
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: AppColors.backgroundVariant,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: const [
+              BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              InkWell(
+                onTap: onDelete,
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.file_copy_outlined,
+                        color: AppColors.primary,
+                        size: 20.w,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Copy',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Divider(height: 1.h),
+              InkWell(
+                onTap: onDelete,
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    children: [
+                      Assets.icons.trash.svg(width: 20.w, height: 20.h),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Delete',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const Divider(height: 1),
+              InkWell(
+                onTap: onEdit,
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.edit_outlined,
+                        color: AppColors.primary,
+                        size: 20.sp,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Edit',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}

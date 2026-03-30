@@ -16,7 +16,8 @@ class CommunityNotificationScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            SafeArea(child: CustomAppBar(title: "Community Notification")),
+            SafeArea(child: CustomAppBar(title: "Community Notifications")),
+            SizedBox(height: 18.h),
 
             ...List.generate(
               2,

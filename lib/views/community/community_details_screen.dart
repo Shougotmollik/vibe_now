@@ -13,8 +13,10 @@ import 'package:vibe_now/views/common/avatar_stack.dart';
 import 'package:vibe_now/views/community/community_manage_member_screen.dart';
 import 'package:vibe_now/views/community/community_plan_meetup_screen.dart';
 import 'package:vibe_now/views/community/edit_community_screen.dart';
+import 'package:vibe_now/views/community/meetup_details_screen.dart';
+import 'package:vibe_now/views/community/Community_member_screen.dart';
 import 'package:vibe_now/views/community/widgets/meetup_card.dart';
-import 'package:vibe_now/views/event/event_card.dart';
+import 'package:vibe_now/views/event/widgets/event_card.dart';
 
 class CommunityDetailsScreen extends StatefulWidget {
   const CommunityDetailsScreen({super.key, required this.community});
@@ -194,7 +196,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        const CommunityManageMemberScreen(),
+                                        const CommunityMemberScreen(),
                                   ),
                                 );
                               },
@@ -305,7 +307,14 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                         SizedBox(height: 12.h),
                         GestureDetector(
                           onTap: () {
-                            context.pushNamed(RouteNames.communityMemberScreen);
+                            // context.pushNamed(RouteNames.communityMemberScreen);
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) =>
+                            //         const MeetupDetailsScreen(),
+                            //   ),
+                            // );
                           },
                           child: MeetupCard(
                             event: Event(

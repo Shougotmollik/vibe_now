@@ -811,13 +811,11 @@ class _MessageTileState extends State<_MessageTile>
           ? CrossAxisAlignment.end
           : CrossAxisAlignment.start,
       children: [
-        // Bubble
         GestureDetector(
           onLongPressStart: (_) => _scaleCtrl.forward(),
           onLongPress: () {
             _scaleCtrl.reverse();
-            // For sent messages: show more options (delete/edit/copy)
-            // For received messages: show emoji reaction bar
+
             if (msg.isSent) {
               widget.onMoreOptions(msg);
             } else {
@@ -825,7 +823,7 @@ class _MessageTileState extends State<_MessageTile>
             }
           },
           onLongPressCancel: () => _scaleCtrl.reverse(),
-          // Allow sent messages to also show reaction bar via double tap
+
           onDoubleTap: () => widget.onLongPress(msg, _getBubbleTopCenter()),
           child: ScaleTransition(
             scale: _scaleAnim,
@@ -959,9 +957,7 @@ class _ReceivedTextBubble extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 //  Reaction Chips
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _ReactionChips extends StatelessWidget {
   final List<Reaction> reactions;
@@ -1013,10 +1009,6 @@ class _ReactionChips extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Reaction Overlay (Facebook-style floating emoji bar)
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _ReactionOverlay extends StatefulWidget {
   final ChatMessage message;
@@ -1157,10 +1149,6 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Existing message widgets (unchanged design)
-// ─────────────────────────────────────────────────────────────────────────────
 
 class SentImageMessage extends StatelessWidget {
   final String imagePath;
@@ -1364,10 +1352,6 @@ class ReceivedVoiceMessage extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-//  Shared helpers
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _MessageStatusIndicator extends StatelessWidget {
   final MessageStatus status;
