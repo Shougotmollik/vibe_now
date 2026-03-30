@@ -72,18 +72,18 @@ class _AnimatedDialogContentState extends State<AnimatedDialogContent>
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              widget.accept
-                  ? Assets.icons.dialogCheck.svg(
-                      width: 50.w,
-                      height: 50.h,
-                      fit: BoxFit.cover,
-                    )
-                  : Assets.icons.decline.svg(
-                      width: 50.w,
-                      height: 50.h,
-                      fit: BoxFit.cover,
-                      color: AppColors.primary,
-                    ),
+              // widget.accept
+              //     ? Assets.icons.dialogCheck.svg(
+              //         width: 50.w,
+              //         height: 50.h,
+              //         fit: BoxFit.cover,
+              //       )
+              //     : Assets.icons.decline.svg(
+              //         width: 50.w,
+              //         height: 50.h,
+              //         fit: BoxFit.cover,
+              //         color: AppColors.primary,
+              //       ),
               SizedBox(height: 15.h),
               Text(
                 widget.content,
