@@ -1,13 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/model/notification.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/community/community_awaiting_qrscreen.dart';
 import 'package:vibe_now/views/notification/notification_screen.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 import 'package:vibe_now/views/notification/widgets/event_notification_card.dart';
 
-class EventNotificationScreen extends StatelessWidget {
+class EventNotificationScreen extends StatefulWidget {
   const EventNotificationScreen({super.key});
+
+  @override
+  State<EventNotificationScreen> createState() =>
+      _EventNotificationScreenState();
+}
+
+class _EventNotificationScreenState extends State<EventNotificationScreen> {
+  final List<NotificationModel> events = [
+    NotificationModel(
+      title: 'Jenny smith is interested in your event',
+      distance: '160',
+    ),
+    NotificationModel(
+      title: 'Engin Accepted your event join request',
+      distance: '90',
+    ),
+    NotificationModel(title: 'Metin Sent you a Wave', distance: '20'),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -24,61 +43,7 @@ class EventNotificationScreen extends StatelessWidget {
               children: [
                 ...List.generate(
                   3,
-                  (index) => EventNotificationCard(
-                    acceptOnTap: () async {
-                      await showDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (context) {
-                          return Center(
-                            child: Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              child: AnimatedDialogContent(
-                                content:
-                                    'You have accepted jenny smith\'s event join request.',
-                                accept: true,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-
-                      if (context.mounted) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => CommunityAwaitingQrScreen(),
-                          ),
-                        );
-                      }
-                    },
-                    rejectOnTap: () {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (context) {
-                          return Center(
-                            child: Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.r),
-                              ),
-                              elevation: 0,
-                              backgroundColor: Colors.transparent,
-                              child: AnimatedDialogContent(
-                                content:
-                                    'You have rejected jenny smith\'s event request.',
-                                accept: false,
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
+                  (index) => EventNotificationCard(notification: events[index]),
                 ),
               ],
             ),

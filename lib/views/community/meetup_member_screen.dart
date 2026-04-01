@@ -12,7 +12,7 @@ class MeetupMemberScreen extends StatefulWidget {
 }
 
 class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
-  String selectedStatus = "Active";
+  String selectedStatus = "Participants";
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +34,18 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  _buildTabTrigger("Active"),
+                  _buildTabTrigger("Participants"),
                   const SizedBox(width: 12),
                   _buildTabTrigger("Invited"),
-                  const SizedBox(width: 12),
-                  _buildTabTrigger("Awaiting Meetup"),
+                  // const SizedBox(width: 12),
+                  // _buildTabTrigger("Awaiting Meetup"),
                 ],
               ),
             ),
             const SizedBox(height: 20),
 
             Expanded(
-              child: selectedStatus == "Active"
+              child: selectedStatus == "Participants"
                   ? _buildActiveList()
                   : _buildPendingList(),
             ),

@@ -13,7 +13,7 @@ class EventMemberScreen extends StatefulWidget {
 }
 
 class _EventMemberScreenState extends State<EventMemberScreen> {
-  String selectedStatus = "Active";
+  String selectedStatus = "Participant";
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +35,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
-                  _buildTabTrigger("Active"),
+                  _buildTabTrigger("Participant"),
                   const SizedBox(width: 12),
                   _buildTabTrigger("Requested"),
                   const SizedBox(width: 12),
@@ -46,7 +46,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
             const SizedBox(height: 20),
 
             Expanded(
-              child: selectedStatus == "Active"
+              child: selectedStatus == "Participant"
                   ? _buildActiveList()
                   : _buildPendingList(),
             ),

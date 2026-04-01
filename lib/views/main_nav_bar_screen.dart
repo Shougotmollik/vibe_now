@@ -131,7 +131,6 @@ class CustomNavBar extends StatelessWidget {
         clipBehavior: Clip.none,
         alignment: Alignment.bottomCenter,
         children: [
-          /// BACKGROUND WHITE BAR
           Positioned(
             bottom: 0,
             left: 0,

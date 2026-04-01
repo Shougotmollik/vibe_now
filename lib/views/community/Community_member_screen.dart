@@ -199,12 +199,6 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
     );
   }
 
-  Widget _buildAwaitingMeetupView(String text) {
-    return Center(
-      child: Text(text, style: const TextStyle(color: Colors.grey)),
-    );
-  }
-
   Widget _buildTabTrigger(String label) {
     bool isActive = selectedStatus == label;
     return GestureDetector(

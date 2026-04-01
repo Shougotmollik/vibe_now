@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/community/community_awaiting_qrscreen.dart';
+import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
 class CommunityManageMemberScreen extends StatefulWidget {
   const CommunityManageMemberScreen({super.key});
@@ -15,8 +17,39 @@ class CommunityManageMemberScreen extends StatefulWidget {
 
 class _CommunityManageMemberScreenState
     extends State<CommunityManageMemberScreen> {
-  // Flag to toggle content only
   bool isApproved = false;
+
+  DateTime selectedDate = DateTime.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
+
+  Future<void> _selectDateTime() async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+      helpText: 'SELECT MEETUP DATE',
+      cancelText: 'CANCEL',
+      confirmText: 'CONFIRM',
+    );
+
+    if (pickedDate != null) {
+      final TimeOfDay? pickedTime = await showTimePicker(
+        context: context,
+        initialTime: selectedTime,
+        helpText: 'SELECT MEETUP TIME',
+        cancelText: 'CANCEL',
+        confirmText: 'CONFIRM',
+      );
+
+      if (pickedTime != null) {
+        setState(() {
+          selectedDate = pickedDate;
+          selectedTime = pickedTime;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,11 +76,8 @@ class _CommunityManageMemberScreenState
         child: Column(
           children: [
             const SizedBox(height: 10),
-            // The tabs now stay constant or you can manually control them
             _buildToggleTabs(),
             const SizedBox(height: 40),
-
-            // Only this content area swaps
             isApproved ? _buildApprovedView() : _buildPendingView(),
           ],
         ),
@@ -124,15 +154,37 @@ class _CommunityManageMemberScreenState
         const SizedBox(height: 25),
         _buildInfoCard(
           children: [
-            _buildIconTextRow(
-              Assets.icons.calendarColor,
-              "Wed, June 12 at 4:00",
+            GestureDetector(
+              onTap: _selectDateTime,
+              child: _buildIconTextRow(
+                Assets.icons.calendarColor,
+                "${DateFormat('EEE, MMM d').format(selectedDate)} at ${selectedTime.format(context)}",
+              ),
             ),
           ],
         ),
         const SizedBox(height: 30),
         PrimaryButton.text(
-          onPressed: () {
+          onPressed: () async {
+            await showDialog(
+              context: context,
+              barrierDismissible: true,
+              builder: (context) {
+                return Center(
+                  child: Dialog(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    child: AnimatedDialogContent(
+                      content: 'You have scheduled a meetup with Jhon.',
+                      accept: false,
+                    ),
+                  ),
+                );
+              },
+            );
             Navigator.pop(context);
           },
           text: "Schedule Meetup",
@@ -150,8 +202,6 @@ class _CommunityManageMemberScreenState
       ],
     );
   }
-
-  // --- Refined Helpers ---
 
   Widget _buildToggleTabs() {
     return Container(
