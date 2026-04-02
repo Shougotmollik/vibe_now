@@ -318,7 +318,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                           },
                           child: MeetupCard(
                             event: Event(
-                              name: 'Community Meetup ',
+                              name: '  ',
                               location: '123 Main St, New York, NY 10001',
                               date: '21 Nov',
                               time: '8PM - 11PM',
