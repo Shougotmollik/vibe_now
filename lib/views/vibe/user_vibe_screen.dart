@@ -27,7 +27,13 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
             children: [
               CustomAppBar(title: "All Vibes"),
               SizedBox(height: 20.h),
-              VibeCard(),
+              GestureDetector(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyVibeScreen()),
+                ),
+                child: VibeCard(),
+              ),
               SizedBox(height: 12.h),
 
               Text(

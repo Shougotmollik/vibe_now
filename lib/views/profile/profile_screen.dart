@@ -709,37 +709,37 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         ),
                                       );
                                     }).toList(),
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 6.0,
-                                      ),
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          _activeParent = group.parent;
-                                          // _showAddCategoryDialog();
+                                    // Padding(
+                                    //   padding: const EdgeInsets.symmetric(
+                                    //     vertical: 6.0,
+                                    //   ),
+                                    //   child: GestureDetector(
+                                    //     onTap: () {
+                                    //       _activeParent = group.parent;
+                                    //       // _showAddCategoryDialog();
 
-                                          _showAddInterestDialog();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(
-                                              16.r,
-                                            ),
-                                            border: Border.all(
-                                              color: Colors.grey[400]!,
-                                              width: 1.5,
-                                            ),
-                                            gradient: AppColors
-                                                .primaryGradientRotated,
-                                          ),
-                                          child: Icon(
-                                            Icons.add,
-                                            color: Colors.white,
-                                            size: 20.sp,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                    //       _showAddInterestDialog();
+                                    //     },
+                                    //     child: Container(
+                                    //       decoration: BoxDecoration(
+                                    //         borderRadius: BorderRadius.circular(
+                                    //           16.r,
+                                    //         ),
+                                    //         border: Border.all(
+                                    //           color: Colors.grey[400]!,
+                                    //           width: 1.5,
+                                    //         ),
+                                    //         gradient: AppColors
+                                    //             .primaryGradientRotated,
+                                    //       ),
+                                    //       child: Icon(
+                                    //         Icons.add,
+                                    //         color: Colors.white,
+                                    //         size: 20.sp,
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    // ),
                                   ],
                                 )
                               : const SizedBox.shrink(),
@@ -753,29 +753,29 @@ class _ProfileScreenState extends State<ProfileScreen>
               }).toList(),
             );
           }),
-          GestureDetector(
-            onTap: () {
-              _showAddParentInterestDialog();
-            },
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
-              width: 160.w,
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradientRotated,
-                borderRadius: BorderRadius.circular(16.r),
-              ),
-              child: Center(
-                child: Text(
-                  "Add New Interest",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          // GestureDetector(
+          //   onTap: () {
+          //     _showAddParentInterestDialog();
+          //   },
+          //   child: Container(
+          //     padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
+          //     width: 160.w,
+          //     decoration: BoxDecoration(
+          //       gradient: AppColors.primaryGradientRotated,
+          //       borderRadius: BorderRadius.circular(16.r),
+          //     ),
+          //     child: Center(
+          //       child: Text(
+          //         "Add New Interest",
+          //         style: TextStyle(
+          //           color: Colors.white,
+          //           fontWeight: FontWeight.w500,
+          //           fontSize: 14.sp,
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -5,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/chat/chat_screen.dart';
 
 //  Models
@@ -65,6 +68,11 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
   OverlayEntry? _overlayEntry;
 
   bool _hasText = false;
+
+  bool _isRecording = false;
+  bool _isSending = false;
+  String? _recordingPath;
+  File? _selectedProfileImage;
 
   final List<ChatMessage> _messages = [
     ChatMessage(
@@ -329,48 +337,190 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
   // ── Input Area ───────────────────────────
 
   Widget _buildInputArea() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 8.h),
-      decoration: BoxDecoration(color: Colors.white),
-      child: Row(
-        children: [
-          Assets.icons.trash.svg(height: 26.sp, width: 26.sp),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 14.w),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: Colors.grey),
-              ),
-              child: Row(
-                children: [
-                  Icon(Icons.keyboard_voice_outlined, color: AppColors.primary),
-                  SizedBox(width: 10.w),
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      style: const TextStyle(color: Colors.black87),
-                      decoration: const InputDecoration(
-                        hintText: 'Type a message',
-                        hintStyle: TextStyle(color: AppColors.primaryText),
-                        border: InputBorder.none,
-                      ),
-                      onSubmitted: (_) => _sendMessage(),
-                    ),
-                  ),
-                ],
+    final canSend = (_isRecording || _hasText) && !_isSending;
+
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withValues(alpha: 0.1),
+              blurRadius: 5,
+              offset: const Offset(0, -1),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            /// 📎 Attachment (optional)
+            GestureDetector(
+              onTap: _isSending
+                  ? null
+                  : () {
+                      utils.showImagePickerOptions(context, (
+                        imageSource,
+                      ) async {
+                        final image = await utils.pickSingleImage(
+                          context: context,
+                          source: imageSource,
+                          compress: true,
+                        );
+
+                        if (image != null) {
+                          setState(() {
+                            _selectedProfileImage = image;
+                          });
+                        }
+                      });
+                    },
+              child: Assets.icons.attachedFile.svg(
+                width: 24.w,
+                height: 24.h,
+                color: _isSending
+                    ? Colors.grey.withValues(alpha: 0.5)
+                    : AppColors.primary,
               ),
             ),
-          ),
-          SizedBox(width: 12.w),
-          GestureDetector(
-            onTap: _hasText ? _sendMessage : null,
-            child: Assets.icons.send.svg(height: 26.sp, width: 26.sp),
-          ),
-        ],
+
+            SizedBox(width: 10.w),
+
+            /// 🧠 Input Container
+            Expanded(
+              child: Container(
+                padding: !_isRecording
+                    ? const EdgeInsets.all(2)
+                    : EdgeInsets.zero,
+                decoration: !_isRecording
+                    ? BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(30),
+                      )
+                    : null,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: !_isRecording ? Colors.white : null,
+                    gradient: _isRecording ? AppColors.primaryGradient : null,
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: Row(
+                    children: [
+                      /// 🎤 Mic Button
+                      IconButton(
+                        icon: Icon(
+                          _isRecording ? Icons.pause : Icons.mic,
+                          color: _isRecording
+                              ? Colors.white
+                              : AppColors.primary,
+                        ),
+                        onPressed: _isSending ? null : _toggleRecording,
+                      ),
+
+                      /// ✍️ Text OR Waveform
+                      Expanded(
+                        child: SizedBox(
+                          height: 30,
+                          child: _isRecording
+                              ? CustomPaint(
+                                  painter: _WaveformPainter(
+                                    isWhite: true,
+                                    isAnimating: true,
+                                  ),
+                                )
+                              : TextField(
+                                  controller: _messageController,
+                                  enabled: !_isSending,
+                                  style: const TextStyle(color: Colors.black87),
+                                  decoration: const InputDecoration(
+                                    hintText: 'Message...',
+                                    hintStyle: TextStyle(
+                                      color: AppColors.primaryText,
+                                    ),
+                                    border: InputBorder.none,
+                                    isDense: true,
+                                  ),
+                                  onSubmitted: (_) {
+                                    if (canSend) _sendMessage();
+                                  },
+                                ),
+                        ),
+                      ),
+
+                      const SizedBox(width: 8),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(width: 10.w),
+
+            /// 🚀 Send Button
+            _isSending
+                ? SizedBox(
+                    width: 24.w,
+                    height: 24.h,
+                    child: const CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : GestureDetector(
+                    onTap: canSend
+                        ? () {
+                            if (_isRecording) {
+                              _sendVoiceMessage();
+                            } else {
+                              _sendMessage();
+                            }
+                          }
+                        : null,
+                    child: Assets.icons.send.svg(
+                      width: 24.w,
+                      height: 24.h,
+                      color: canSend ? null : Colors.grey,
+                    ),
+                  ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _toggleRecording() {
+    setState(() {
+      _isRecording = !_isRecording;
+
+      if (_isRecording) {
+        FocusScope.of(context).unfocus();
+      }
+    });
+  }
+
+  Future<void> _sendVoiceMessage() async {
+    if (_isSending) return;
+
+    setState(() {
+      _isSending = true;
+      _isRecording = false;
+    });
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    setState(() {
+      _messages.add(
+        ChatMessage(
+          text: '🎤 Voice message',
+          senderAvatar: '',
+          senderName: 'Me',
+          isMe: true,
+          type: MessageType.audio,
+          mediaUrl: 'voice_path',
+          time: DateTime.now(),
+        ),
+      );
+      _isSending = false;
+    });
+
+    _scrollToBottom();
   }
 }
 

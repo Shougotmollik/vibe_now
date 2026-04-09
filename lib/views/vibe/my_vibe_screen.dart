@@ -47,6 +47,7 @@ class MyVibeScreen extends StatelessWidget {
             ),
             SizedBox(height: 18.h),
             Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [...List.generate(1, (index) => const VibeCard())],
             ),
           ],
@@ -120,10 +121,10 @@ class MyVibeScreen extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 18),
                     Expanded(
                       child: SizedBox(
-                        height: 58.h,
+                        height: 48.h,
                         child: PrimaryButton.text(
                           onPressed: () => Navigator.pop(context),
                           radius: 50.r,

@@ -12,8 +12,17 @@ class ThemeSelectionScreen extends StatefulWidget {
 }
 
 class _ThemeSelectionScreenState extends State<ThemeSelectionScreen> {
-  bool lightValue = true;
+  bool lightValue = false;
   bool darkValue = false;
+  bool systemValue = true;
+
+  void _setTheme({bool system = false, bool light = false, bool dark = false}) {
+    setState(() {
+      systemValue = system;
+      lightValue = light;
+      darkValue = dark;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,36 +34,48 @@ class _ThemeSelectionScreenState extends State<ThemeSelectionScreen> {
           child: Column(
             children: [
               const CustomAppBar(title: "Mode"),
-
               SizedBox(height: 20.h),
 
               Container(
                 padding: EdgeInsets.symmetric(vertical: 8.h),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xffE0E0E0), width: 1.5),
+                  border: Border.all(
+                    color: const Color(0xffE0E0E0),
+                    width: 1.5,
+                  ),
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Column(
                   children: [
                     _buildThemeSwitcher(
-                      title: "Light",
-                      value: lightValue,
+                      title: "System",
+                      value: systemValue,
                       onChanged: (value) {
-                        setState(() {
-                          lightValue = value;
-                          if (value) darkValue = false;
-                        });
+                        if (value) {
+                          _setTheme(system: true);
+                        }
                       },
                     ),
                     Divider(height: 1.h, color: Colors.black12),
+
+                    _buildThemeSwitcher(
+                      title: "Light",
+                      value: lightValue,
+                      onChanged: (value) {
+                        if (value) {
+                          _setTheme(light: true);
+                        }
+                      },
+                    ),
+                    Divider(height: 1.h, color: Colors.black12),
+
                     _buildThemeSwitcher(
                       title: "Dark",
                       value: darkValue,
                       onChanged: (value) {
-                        setState(() {
-                          darkValue = value;
-                          if (value) lightValue = false;
-                        });
+                        if (value) {
+                          _setTheme(dark: true);
+                        }
                       },
                     ),
                   ],

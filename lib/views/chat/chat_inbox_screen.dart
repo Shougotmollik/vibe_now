@@ -9,6 +9,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/chat.dart';
+import 'package:vibe_now/utils.dart' as utils;
 
 // ─────────────────────────────────────────────────────────────────────────────
 //  Enums & Models
@@ -118,6 +119,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
   final FocusNode _textFocusNode = FocusNode();
+  File? _selectedProfileImage;
 
   // Overlay for emoji reaction bar
   OverlayEntry? _overlayEntry;
@@ -423,7 +425,25 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
               )
             else
               GestureDetector(
-                onTap: _isSending ? null : _showImagePickerSheet,
+                onTap: _isSending
+                    ? null
+                    : () {
+                        utils.showImagePickerOptions(context, (
+                          imageSource,
+                        ) async {
+                          final image = await utils.pickSingleImage(
+                            context: context,
+                            source: imageSource,
+                            compress: true,
+                          );
+
+                          if (image != null) {
+                            setState(() {
+                              _selectedProfileImage = image;
+                            });
+                          }
+                        });
+                      },
                 child: Assets.icons.attachedFile.svg(
                   width: 24.w,
                   height: 24.h,
