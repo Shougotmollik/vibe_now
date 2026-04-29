@@ -18,10 +18,14 @@ Future<dynamic> editCommunityAction({
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: AppColors.backgroundVariant,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
-              BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
+              BoxShadow(
+                color: Theme.of(context).shadowColor.withOpacity(0.1),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
             ],
           ),
           child: Column(
@@ -40,12 +44,16 @@ Future<dynamic> editCommunityAction({
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: 4.w,
                     children: [
-                      Icon(Icons.close, color: AppColors.primary, size: 20.w),
+                      Icon(
+                        Icons.close,
+                        color: Theme.of(context).colorScheme.primary,
+                        size: 20.w,
+                      ),
                       Text(
                         'Cancel',
                         style: TextStyle(
                           fontSize: 16.sp,
-                          color: AppColors.primary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -53,7 +61,7 @@ Future<dynamic> editCommunityAction({
                   ),
                 ),
               ),
-              const Divider(height: 1),
+              Divider(height: 1, color: Theme.of(context).dividerColor),
 
               InkWell(
                 onTap: onArchive,
@@ -71,14 +79,14 @@ Future<dynamic> editCommunityAction({
                       Assets.icons.archive.svg(
                         width: 24.w,
                         height: 24.h,
-                        color: AppColors.primary,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                       Text(
                         'Archive Community',
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                     ],
@@ -86,7 +94,7 @@ Future<dynamic> editCommunityAction({
                 ),
               ),
 
-              Divider(height: 1.h),
+              Divider(height: 1.h, color: Theme.of(context).dividerColor),
               InkWell(
                 onTap: onDelete,
                 splashColor: Colors.transparent,
@@ -100,16 +108,12 @@ Future<dynamic> editCommunityAction({
                     crossAxisAlignment: CrossAxisAlignment.center,
                     spacing: 4.w,
                     children: [
-                      Assets.icons.trash.svg(
-                        width: 20.w,
-                        height: 20.h,
-                        // color: Colors.red,
-                      ),
+                      Assets.icons.trash.svg(width: 20.w, height: 20.h),
                       Text(
                         'Delete Community',
                         style: TextStyle(
                           fontSize: 16.sp,
-                          color: AppColors.primary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

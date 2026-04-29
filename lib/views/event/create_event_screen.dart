@@ -70,7 +70,6 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -110,12 +109,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Access Level',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -123,7 +122,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         Container(
           padding: EdgeInsets.all(4.w),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(14.r),
           ),
           child: Row(
@@ -162,7 +161,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 ? 'Anyone can discover and join this event instantly without approval.'
                 : 'People will need your approval before they can join this event.',
             textAlign: TextAlign.start,
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
       ],
@@ -204,7 +206,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 Icon(
                   icon,
                   size: 20.sp,
-                  color: isSelected ? Colors.white : Colors.grey[600],
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 SizedBox(width: 6.w),
                 Text(
@@ -212,7 +216,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.white : Colors.black87,
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -227,20 +233,35 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.blue[50],
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withValues(alpha: 0.1),
+            Theme.of(
+              context,
+            ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+          ],
+        ),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(Icons.group_outlined, color: Colors.grey[600], size: 20),
+          Icon(
+            Icons.group_outlined,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            size: 20,
+          ),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
               'Build a space where people with shared interests can connect and grow together',
               style: TextStyle(
                 fontSize: 13,
-                color: Colors.grey[600],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 height: 1.4,
               ),
             ),
@@ -275,7 +296,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+            colors: [
+              Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withValues(alpha: 0.1),
+              Theme.of(
+                context,
+              ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+            ],
           ),
           borderRadius: BorderRadius.circular(14.r),
         ),
@@ -329,7 +357,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0XFF364153),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
@@ -337,7 +365,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0XFF4A5565),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -351,12 +379,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Event Title',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -364,9 +392,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           controller: _titleController,
           decoration: InputDecoration(
             hintText: 'e.g. Music Lovers',
-            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -385,32 +416,35 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Select Location',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.location_on_outlined,
-                color: Colors.grey[700],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Text(
                 'Select address',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -426,12 +460,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Date',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -443,14 +477,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.calendar_today_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -458,7 +492,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         _selectedDate == null
                             ? 'Select'
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -472,12 +509,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Time',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -489,14 +526,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.access_time_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -504,7 +541,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                         _selectedTime == null
                             ? 'Select'
                             : _selectedTime!.format(context),
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -521,12 +561,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Max Attendees',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -535,7 +575,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -563,12 +603,14 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
-              side: BorderSide(color: Colors.grey[300]!),
+              side: BorderSide(
+                color: Theme.of(context).colorScheme.outlineVariant,
+              ),
             ),
-            child: const Text(
+            child: Text(
               'Cancel',
               style: TextStyle(
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
@@ -655,12 +697,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Event Category',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -715,7 +757,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                                             : null,
                                         color: selected
                                             ? null
-                                            : Colors.grey[100],
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.surfaceVariant,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
@@ -724,7 +768,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                                           fontSize: 13.sp,
                                           color: selected
                                               ? Colors.white
-                                              : Colors.grey[800],
+                                              : Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
                                         ),
                                       ),
                                     ),
@@ -745,7 +791,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                                           16.r,
                                         ),
                                         border: Border.all(
-                                          color: Colors.grey[400]!,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.outlineVariant,
                                           width: 1.5,
                                         ),
                                         gradient:
@@ -806,7 +854,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             'Add New Category',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -816,9 +864,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Enter category name',
-              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: Theme.of(context).colorScheme.surfaceVariant,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -838,7 +889,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               },
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ),
             GestureDetector(
@@ -890,7 +944,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               group.parent,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                color: isSelected ? Colors.black54 : Colors.black54,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
@@ -910,7 +966,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             'Add Sub Category',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -920,9 +976,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Enter category name',
-              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: Theme.of(context).colorScheme.surfaceVariant,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -942,7 +1001,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               },
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ),
             GestureDetector(

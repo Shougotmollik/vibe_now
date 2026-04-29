@@ -1,33 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/theme_controller.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/gradient_switch.dart';
 
-class ThemeSelectionScreen extends StatefulWidget {
+class ThemeSelectionScreen extends StatelessWidget {
   const ThemeSelectionScreen({super.key});
 
   @override
-  State<ThemeSelectionScreen> createState() => _ThemeSelectionScreenState();
-}
-
-class _ThemeSelectionScreenState extends State<ThemeSelectionScreen> {
-  bool lightValue = false;
-  bool darkValue = false;
-  bool systemValue = true;
-
-  void _setTheme({bool system = false, bool light = false, bool dark = false}) {
-    setState(() {
-      systemValue = system;
-      lightValue = light;
-      darkValue = dark;
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final themeController = Get.find<ThemeController>();
+
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16.w),
@@ -35,52 +21,52 @@ class _ThemeSelectionScreenState extends State<ThemeSelectionScreen> {
             children: [
               const CustomAppBar(title: "Mode"),
               SizedBox(height: 20.h),
-
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 8.h),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color(0xffE0E0E0),
-                    width: 1.5,
-                  ),
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Column(
-                  children: [
-                    _buildThemeSwitcher(
-                      title: "System",
-                      value: systemValue,
-                      onChanged: (value) {
-                        if (value) {
-                          _setTheme(system: true);
-                        }
-                      },
+              Obx(() => Container(
+                    padding: EdgeInsets.symmetric(vertical: 8.h),
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Theme.of(context).dividerColor,
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(20.r),
                     ),
-                    Divider(height: 1.h, color: Colors.black12),
-
-                    _buildThemeSwitcher(
-                      title: "Light",
-                      value: lightValue,
-                      onChanged: (value) {
-                        if (value) {
-                          _setTheme(light: true);
-                        }
-                      },
+                    child: Column(
+                      children: [
+                        _buildThemeSwitcher(
+                          context: context,
+                          title: "System",
+                          value: themeController.themeMode == ThemeMode.system,
+                          onChanged: (value) {
+                            if (value) {
+                              themeController.setThemeMode(ThemeMode.system);
+                            }
+                          },
+                        ),
+                        Divider(height: 1.h, color: Theme.of(context).dividerColor),
+                        _buildThemeSwitcher(
+                          context: context,
+                          title: "Light",
+                          value: themeController.themeMode == ThemeMode.light,
+                          onChanged: (value) {
+                            if (value) {
+                              themeController.setThemeMode(ThemeMode.light);
+                            }
+                          },
+                        ),
+                        Divider(height: 1.h, color: Theme.of(context).dividerColor),
+                        _buildThemeSwitcher(
+                          context: context,
+                          title: "Dark",
+                          value: themeController.themeMode == ThemeMode.dark,
+                          onChanged: (value) {
+                            if (value) {
+                              themeController.setThemeMode(ThemeMode.dark);
+                            }
+                          },
+                        ),
+                      ],
                     ),
-                    Divider(height: 1.h, color: Colors.black12),
-
-                    _buildThemeSwitcher(
-                      title: "Dark",
-                      value: darkValue,
-                      onChanged: (value) {
-                        if (value) {
-                          _setTheme(dark: true);
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
+                  )),
             ],
           ),
         ),
@@ -89,6 +75,7 @@ class _ThemeSelectionScreenState extends State<ThemeSelectionScreen> {
   }
 
   Widget _buildThemeSwitcher({
+    required BuildContext context,
     required String title,
     required bool value,
     required Function(bool) onChanged,
@@ -98,7 +85,13 @@ class _ThemeSelectionScreenState extends State<ThemeSelectionScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(fontSize: 16.sp)),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 16.sp,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           GradientSwitch(
             value: value,
             onChanged: onChanged,

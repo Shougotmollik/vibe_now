@@ -53,8 +53,7 @@ class GoogleMapLocation {
   });
 }
 
-Color textColor = Color(0xff181818);
-Color surfaceColor = AppColors.backgroundVariant;
+// Removed global hardcoded colors to use Theme.of(context) instead.
 
 class GoogleMapScreen extends StatefulWidget {
   final LatLng? initialPosition;
@@ -340,15 +339,16 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
           height: height,
           padding: padding ?? EdgeInsets.zero,
           decoration: BoxDecoration(
-            color: color ?? Colors.white.withValues(alpha: 0.1),
+            color:
+                color ?? Theme.of(context).colorScheme.surface.withOpacity(0.1),
             border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
+              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
               width: 1.w,
             ),
             borderRadius: borderRadius ?? BorderRadius.circular(20.r),
             boxShadow: [
               BoxShadow(
-                color: Color(0xFF242424).withValues(alpha: 0.15),
+                color: Theme.of(context).shadowColor.withOpacity(0.15),
                 spreadRadius: 5,
                 blurRadius: 7,
                 offset: const Offset(0, 3), // changes position of shadow
@@ -376,10 +376,10 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade300,
+                      color: Theme.of(context).shadowColor.withOpacity(0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -388,7 +388,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                 child: Assets.icons.notification.svg(
                   width: 20.w,
                   height: 20.h,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -411,11 +411,11 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                 width: 1.sw - 72.w - 36.w - 24.w,
                 padding: EdgeInsets.symmetric(horizontal: 12.w),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(24.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade300,
+                      color: Theme.of(context).shadowColor.withOpacity(0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
@@ -428,13 +428,13 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                       _searchIcon(),
                       width: 20.w,
                       height: 20.w,
-                      color: textColor.withValues(alpha: 0.6),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                     SizedBox(width: 12.w),
                     Text(
                       'Search ...',
                       style: TextStyle(
-                        color: textColor.withValues(alpha: 0.6),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 14.sp,
                       ),
                     ),
@@ -477,16 +477,20 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                 padding: EdgeInsets.all(12.w),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.grey.shade300,
+                      color: Theme.of(context).shadowColor.withOpacity(0.1),
                       blurRadius: 4,
                       offset: const Offset(0, 2),
                     ),
                   ],
                 ),
-                child: Assets.icons.filter.svg(width: 16.w, height: 16.h),
+                child: Assets.icons.filter.svg(
+                  width: 16.w,
+                  height: 16.h,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
           ],

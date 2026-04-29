@@ -20,7 +20,6 @@ class MeetupDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,10 +59,10 @@ class MeetupDetailsScreen extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () => Navigator.of(context).maybePop(),
                           child: CircleAvatar(
-                            backgroundColor: Colors.white,
+                            backgroundColor: Theme.of(context).colorScheme.surface,
                             child: Icon(
                               Icons.arrow_back_ios_new,
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -110,25 +109,27 @@ class MeetupDetailsScreen extends StatelessWidget {
                     // Event Title
                     Text(
                       "Club House",
-                      style: TextStyle(
-                        fontSize: 24.sp,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                     ),
                     SizedBox(height: 16.h),
 
                     SizedBox(height: 6.h),
                     Row(
                       children: [
-                        Assets.icons.location.svg(),
+                        Assets.icons.location.svg(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         SizedBox(width: 4.w),
                         Expanded(
                           child: Text(
                             "300km away",
                             style: TextStyle(
                               fontSize: 12.sp,
-                              color: AppColors.subText,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -138,13 +139,15 @@ class MeetupDetailsScreen extends StatelessWidget {
                     SizedBox(height: 6.h),
                     Row(
                       children: [
-                        Assets.icons.calender3.svg(),
+                        Assets.icons.calender3.svg(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         SizedBox(width: 4.w),
                         Text(
                           '8PM - 11PM, 21 Nov',
                           style: TextStyle(
-                            fontSize: 12.sp,
-                            color: AppColors.subText,
+                             fontSize: 12.sp,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -166,13 +169,17 @@ class MeetupDetailsScreen extends StatelessWidget {
                     SizedBox(height: 6.h),
                     Row(
                       children: [
-                        Assets.icons.community.svg(width: 16.w, height: 16.h),
+                         Assets.icons.community.svg(
+                          width: 16.w,
+                          height: 16.h,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         SizedBox(width: 4.w),
                         Text(
                           '5/10 attending',
                           style: TextStyle(
-                            fontSize: 12.sp,
-                            color: AppColors.subText,
+                             fontSize: 12.sp,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -213,7 +220,7 @@ class MeetupDetailsScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
-                        color: AppColors.primaryText,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
 
@@ -222,9 +229,9 @@ class MeetupDetailsScreen extends StatelessWidget {
 
                       textAlign: TextAlign.start,
                       style: TextStyle(
-                        fontSize: 12.sp,
+                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.subText,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
 
@@ -323,3 +330,4 @@ class MeetupDetailsScreen extends StatelessWidget {
     );
   }
 }
+

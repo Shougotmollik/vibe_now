@@ -166,7 +166,7 @@ class _IntroScreenState extends State<IntroScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(16.w),
@@ -185,7 +185,7 @@ class _IntroScreenState extends State<IntroScreen>
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
-                      color: const Color(0xff202020),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                 ),
@@ -236,7 +236,7 @@ class _IntroScreenState extends State<IntroScreen>
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
       decoration: BoxDecoration(
-        color: const Color(0xffF7F9FB),
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(40.r),
       ),
       child: Row(
@@ -244,7 +244,9 @@ class _IntroScreenState extends State<IntroScreen>
           Container(
             padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
-              color: const Color(0xffEAF0FB),
+              color: Theme.of(
+                context,
+              ).colorScheme.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(50.r),
             ),
             child: model.icon.svg(
@@ -260,7 +262,7 @@ class _IntroScreenState extends State<IntroScreen>
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
-                color: const Color(0xff171135),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ),

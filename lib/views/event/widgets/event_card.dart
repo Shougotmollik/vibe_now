@@ -63,9 +63,11 @@ class _EventCardState extends State<EventCard> {
       margin: EdgeInsets.symmetric(vertical: 2.h),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(15),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,14 +153,21 @@ class _EventCardState extends State<EventCard> {
           SizedBox(height: 6.h),
           Row(
             children: [
-              Assets.icons.location.svg(),
+              Assets.icons.location.svg(
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                  BlendMode.srcIn,
+                ),
+              ),
               SizedBox(width: 4.w),
               Expanded(
                 child: Text(
                   widget.event.location,
                   style: TextStyle(
                     fontSize: 12.sp,
-                    color: Colors.grey.shade600,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withAlpha(180),
                   ),
                 ),
               ),
@@ -167,11 +176,19 @@ class _EventCardState extends State<EventCard> {
           SizedBox(height: 6.h),
           Row(
             children: [
-              Assets.icons.calender3.svg(),
+              Assets.icons.calender3.svg(
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                  BlendMode.srcIn,
+                ),
+              ),
               SizedBox(width: 4.w),
               Text(
                 '${widget.event.time}, ${widget.event.date}',
-                style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                ),
               ),
             ],
           ),
@@ -180,18 +197,29 @@ class _EventCardState extends State<EventCard> {
             children: [
               Text(
                 widget.event.description,
-                style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                ),
               ),
             ],
           ),
           SizedBox(height: 6.h),
           Row(
             children: [
-              Assets.icons.users.svg(),
+              Assets.icons.users.svg(
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                  BlendMode.srcIn,
+                ),
+              ),
               SizedBox(width: 4.w),
               Text(
                 '${widget.event.attending}/${widget.event.totalAttending} attending',
-                style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                ),
               ),
             ],
           ),
@@ -256,9 +284,8 @@ class _EventCardState extends State<EventCard> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => EventRequestScreen(
-                                  event: widget.event,
-                                ),
+                                builder: (context) =>
+                                    EventRequestScreen(event: widget.event),
                               ),
                             );
 
@@ -280,7 +307,6 @@ class _EventCardState extends State<EventCard> {
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: Colors.grey.shade300),
                             gradient: !isActive
                                 ? AppColors.primaryGradientRotated
                                 : AppColors.primaryGradient.withOpacity(0.5),

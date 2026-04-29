@@ -64,12 +64,14 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
+        backgroundColor: Theme.of(context).colorScheme.background,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios, color: Colors.black, size: 20.sp),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Theme.of(context).colorScheme.onSurface,
+            size: 20.sp,
+          ),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -77,7 +79,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
         title: Text(
           'QR Verification',
           style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 18.sp,
             fontWeight: FontWeight.w600,
           ),
@@ -133,7 +135,9 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           gradient: isSelected ? AppColors.primaryGradient : null,
-          color: isSelected ? null : Colors.grey[100],
+          color: isSelected
+              ? null
+              : Theme.of(context).colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(25),
         ),
         child: Row(
@@ -141,14 +145,18 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
           children: [
             Icon(
               icon,
-              color: isSelected ? Colors.white : Colors.black54,
+              color: isSelected
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onSurface,
               size: 20.sp,
             ),
             const SizedBox(width: 8),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.black54,
+                color: isSelected
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onSurface,
                 fontSize: 15.sp,
                 fontWeight: FontWeight.w600,
               ),
@@ -199,18 +207,27 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.qr_code_2, color: Colors.grey[400], size: 16.sp),
+                Icon(
+                  Icons.qr_code_2,
+                  color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+                  size: 16.sp,
+                ),
                 const SizedBox(width: 6),
                 Text(
                   subtitleText,
-                  style: TextStyle(color: Colors.grey[600], fontSize: 14.sp),
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withAlpha(150),
+                    fontSize: 14.sp,
+                  ),
                 ),
               ],
             ),
@@ -291,13 +308,18 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             const SizedBox(height: 8),
             Text(
               'Align the QR code in the frame',
-              style: TextStyle(color: Colors.grey[600], fontSize: 14.sp),
+              style: TextStyle(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 150),
+                fontSize: 14.sp,
+              ),
             ),
             const SizedBox(height: 32),
             GestureDetector(
@@ -312,9 +334,9 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
               child: Container(
                 width: double.infinity,
                 height: 320.h,
-                padding: const EdgeInsets.all(24),
+                padding: EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Color(0xffEFF6FF),
+                  color: Theme.of(context).colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Container(

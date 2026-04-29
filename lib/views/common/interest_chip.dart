@@ -20,7 +20,7 @@ class InterestChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: !isSelected ? Colors.grey.shade300 : null,
+        color: !isSelected ? Theme.of(context).colorScheme.surfaceVariant : null,
         gradient: isSelected ? AppColors.primaryGradientRotated : null,
         borderRadius: BorderRadius.circular(20),
       ),
@@ -30,14 +30,18 @@ class InterestChip extends StatelessWidget {
           icon.svg(
             height: 16.h,
             width: 16.h,
-            color: !isSelected ? Colors.black : Colors.white,
+            color: !isSelected
+                ? Theme.of(context).colorScheme.onSurfaceVariant
+                : Colors.white,
           ),
           const SizedBox(width: 6),
           Text(
             label,
             style: TextStyle(
               fontSize: 12.sp,
-              color: !isSelected ? Colors.black : Colors.white,
+              color: !isSelected
+                  ? Theme.of(context).colorScheme.onSurfaceVariant
+                  : Colors.white,
             ),
           ),
         ],

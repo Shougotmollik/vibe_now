@@ -70,13 +70,12 @@ class _DeleteConfirmScreenState extends State<DeleteConfirmScreen>
 
   @override
   Widget build(BuildContext context) {
-    final deleteMsg =
+    const deleteMsg =
         "Your account has been deleted. We're sorry to see you go.";
-    final pauseMsg =
+    const pauseMsg =
         "Your account is paused, you can reactivate it at any time.";
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Center(
@@ -91,10 +90,10 @@ class _DeleteConfirmScreenState extends State<DeleteConfirmScreen>
                   child: Text(
                     widget.isPaused ?? false ? pauseMsg : deleteMsg,
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 22,
+                    style: TextStyle(
+                      fontSize: 22.sp,
                       fontWeight: FontWeight.w500,
-                      color: AppColors.primary,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
                 ),

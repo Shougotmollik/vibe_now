@@ -96,8 +96,8 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                 fontWeight: FontWeight.w400,
                 color: selected == label
-                    ? Color(0xFF383838)
-                    : Color(0xFF9D9D9D),
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14.sp,
               ),
             ),

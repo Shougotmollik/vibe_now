@@ -12,11 +12,10 @@ class NotificationPermissionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // height: 225.h,
       width: double.infinity,
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Column(
@@ -28,7 +27,7 @@ class NotificationPermissionDialog extends StatelessWidget {
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w500,
-              color: Color(0xff2a2a2a),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           SizedBox(height: 16.h),
@@ -38,11 +37,10 @@ class NotificationPermissionDialog extends StatelessWidget {
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
-              color: Color(0xff707070),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           SizedBox(height: 32.h),
-      
           Row(
             spacing: 8.w,
             children: [
@@ -53,8 +51,8 @@ class NotificationPermissionDialog extends StatelessWidget {
                     parentContext.pushNamed(RouteNames.stepNameScreen);
                   },
                   buttonText: "Don't Allow",
-                  btnColor: Color(0xffEDF3F8),
-                  textColor: Color(0xff202020),
+                  btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                  textColor: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
               Expanded(

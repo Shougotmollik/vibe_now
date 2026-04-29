@@ -43,9 +43,9 @@ class _MeetupCardState extends State<MeetupCard> {
       margin: EdgeInsets.symmetric(vertical: 2.h),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,19 +126,25 @@ class _MeetupCardState extends State<MeetupCard> {
           SizedBox(height: 12.h),
           Text(
             widget.event.name,
-            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           SizedBox(height: 6.h),
           Row(
             children: [
-              Assets.icons.location.svg(),
+              Assets.icons.location.svg(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               SizedBox(width: 4.w),
               Expanded(
                 child: Text(
                   widget.event.location,
                   style: TextStyle(
                     fontSize: 12.sp,
-                    color: Colors.grey.shade600,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
@@ -147,11 +153,16 @@ class _MeetupCardState extends State<MeetupCard> {
           SizedBox(height: 6.h),
           Row(
             children: [
-              Assets.icons.calender3.svg(),
+              Assets.icons.calender3.svg(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               SizedBox(width: 4.w),
               Text(
                 '${widget.event.time}, ${widget.event.date}',
-                style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -160,7 +171,10 @@ class _MeetupCardState extends State<MeetupCard> {
             children: [
               Text(
                 widget.event.description,
-                style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),

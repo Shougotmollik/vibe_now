@@ -94,7 +94,6 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -156,7 +155,10 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                           },
                         );
                       },
-                      child: Icon(Icons.more_vert),
+                        child: Icon(
+                          Icons.more_vert,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                     ),
                   ],
                 ),
@@ -202,7 +204,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 14.sp,
-            color: AppColors.primaryText,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
 
@@ -351,7 +353,9 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.white : Colors.black87,
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -375,12 +379,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
-              side: BorderSide(color: Colors.grey[300]!),
+              side: BorderSide(color: Theme.of(context).dividerColor),
             ),
-            child: const Text(
+            child:  Text(
               'Cancel',
               style: TextStyle(
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
@@ -448,22 +452,25 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+         Text(
           'Max Attendees',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _maxAttendeesController,
           keyboardType: TextInputType.number,
-          style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -485,12 +492,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+               Text(
                 'Date',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -502,14 +509,14 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.calendar_today_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -517,7 +524,10 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                         _selectedDate == null
                             ? 'Select'
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -531,12 +541,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+               Text(
                 'Time',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -548,14 +558,14 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.access_time_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -563,7 +573,10 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                         _selectedTime == null
                             ? 'Select'
                             : _selectedTime!.format(context),
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -608,32 +621,35 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+         Text(
           'Select Location',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.location_on_outlined,
-                color: Colors.grey[700],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Text(
                 'Select address',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -646,12 +662,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+         Text(
           'Community Category',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -706,7 +722,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                                             : null,
                                         color: selected
                                             ? null
-                                            : Colors.grey[100],
+                                            : Theme.of(context).colorScheme.surfaceVariant,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
@@ -715,7 +731,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                                           fontSize: 13.sp,
                                           color: selected
                                               ? Colors.white
-                                              : Colors.grey[800],
+                                              : Theme.of(context).colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ),
@@ -736,7 +752,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                                           16.r,
                                         ),
                                         border: Border.all(
-                                          color: Colors.grey[400]!,
+                                          color: Theme.of(context).dividerColor,
                                           width: 1.5,
                                         ),
                                         gradient:
@@ -797,7 +813,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             'Add New Category',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -807,9 +823,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Enter category name',
-              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: Theme.of(context).colorScheme.surfaceVariant,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -829,7 +848,10 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
               },
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ),
             GestureDetector(
@@ -874,7 +896,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: const Text(
             'Add New Category',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -884,9 +906,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Enter category name',
-              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: Theme.of(context).colorScheme.surfaceVariant,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -906,7 +931,10 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
               },
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ),
             GestureDetector(
@@ -949,12 +977,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+         Text(
           'Description',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -963,9 +991,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           maxLines: 4,
           decoration: InputDecoration(
             hintText: 'What is this community about?',
-            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -984,8 +1015,8 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             style: TextStyle(
               fontSize: 12,
               color: _descriptionController.text.length > 200
-                  ? Colors.red
-                  : Colors.grey,
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -997,12 +1028,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+         Text(
           'Rules',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -1011,9 +1042,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           maxLines: 8,
           decoration: InputDecoration(
             hintText: 'What are the rules of this community?',
-            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -1032,8 +1066,8 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             style: TextStyle(
               fontSize: 12,
               color: _descriptionController.text.length > 500
-                  ? Colors.red
-                  : Colors.grey,
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -1045,12 +1079,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+         Text(
           'Community Title',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -1058,9 +1092,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           controller: _titleController,
           decoration: InputDecoration(
             hintText: 'e.g. Music Lovers',
-            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -1095,10 +1132,10 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     height: 160.h,
-                    color: Colors.grey[900],
-                    child: const Icon(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    child: Icon(
                       Icons.image_not_supported,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
@@ -1112,7 +1149,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                 end: Alignment.bottomCenter,
                 colors: [
                   Colors.transparent,
-                  Colors.black.withValues(alpha: 0.5),
+                  Theme.of(context).shadowColor.withOpacity(0.5),
                 ],
               ),
             ),
@@ -1143,7 +1180,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
               decoration: BoxDecoration(
                 color: Colors.black.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.white24),
+                border: Border.all(color: Colors.white.withOpacity(0.2)),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -1182,12 +1219,13 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
               group.parent,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                color: isSelected ? Colors.black54 : Colors.black54,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
           Icon(
             isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ],
       ),
@@ -1201,7 +1239,10 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+          colors: [
+            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.1),
+            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.1),
+          ],
         ),
         borderRadius: BorderRadius.circular(14.r),
       ),
@@ -1219,7 +1260,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
-                    color: const Color(0xff6E6E6E),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),

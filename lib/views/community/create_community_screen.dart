@@ -89,7 +89,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -135,12 +134,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Access Level',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -148,7 +147,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
         Container(
           padding: EdgeInsets.all(4.w),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(14.r),
           ),
           child: Row(
@@ -187,7 +186,10 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                 ? 'Anyone can discover and join this community instantly without approval.'
                 : 'People will need your approval before they can join this community.',
             textAlign: TextAlign.start,
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
       ],
@@ -229,7 +231,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                 Icon(
                   icon,
                   size: 20.sp,
-                  color: isSelected ? Colors.white : Colors.grey[600],
+                  color: isSelected
+                      ? Colors.white
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 SizedBox(width: 6.w),
                 Text(
@@ -237,7 +241,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.white : Colors.black87,
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -261,12 +267,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
-              side: BorderSide(color: Colors.grey[300]!),
+              side: BorderSide(color: Theme.of(context).dividerColor),
             ),
-            child: const Text(
+            child: Text(
               'Cancel',
               style: TextStyle(
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
@@ -334,22 +340,25 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Max Attendees',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _maxAttendeesController,
           keyboardType: TextInputType.number,
-          style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -371,12 +380,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Date',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -388,14 +397,14 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.calendar_today_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -403,7 +412,10 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                         _selectedDate == null
                             ? 'Select'
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -417,12 +429,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Time',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -434,14 +446,14 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.access_time_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -449,7 +461,10 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                         _selectedTime == null
                             ? 'Select'
                             : _selectedTime!.format(context),
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -494,32 +509,35 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Select Location',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.location_on_outlined,
-                color: Colors.grey[700],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Text(
                 'Select address',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -532,12 +550,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Community Category',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -592,7 +610,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                             : null,
                                         color: selected
                                             ? null
-                                            : Colors.grey[100],
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.surfaceVariant,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
@@ -601,7 +621,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                           fontSize: 13.sp,
                                           color: selected
                                               ? Colors.white
-                                              : Colors.grey[800],
+                                              : Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ),
@@ -622,7 +644,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                           16.r,
                                         ),
                                         border: Border.all(
-                                          color: Colors.grey[400]!,
+                                          color: Theme.of(context).dividerColor,
                                           width: 1.5,
                                         ),
                                         gradient:
@@ -683,19 +705,26 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             'Add New Category',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           content: TextField(
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Enter category name',
-              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: Theme.of(context).colorScheme.surfaceVariant,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -715,7 +744,10 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               },
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 14,
+                ),
               ),
             ),
             GestureDetector(
@@ -760,19 +792,26 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          backgroundColor: Colors.white,
-          title: const Text(
+          backgroundColor: Theme.of(context).colorScheme.surface,
+          title: Text(
             'Add New Category',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           content: TextField(
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Enter category name',
-              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: Theme.of(context).colorScheme.surfaceVariant,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -792,7 +831,10 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               },
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 14,
+                ),
               ),
             ),
             GestureDetector(
@@ -835,12 +877,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Description',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -849,9 +891,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           maxLines: 4,
           decoration: InputDecoration(
             hintText: 'What is this community about?',
-            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -870,8 +915,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             style: TextStyle(
               fontSize: 12,
               color: _descriptionController.text.length > 200
-                  ? Colors.red
-                  : Colors.grey,
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -883,12 +928,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Community Title',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -896,9 +941,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           controller: _titleController,
           decoration: InputDecoration(
             hintText: 'e.g. Music Lovers',
-            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -938,7 +986,14 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+            colors: [
+              Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withValues(alpha: 0.1),
+              Theme.of(
+                context,
+              ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+            ],
           ),
           borderRadius: BorderRadius.circular(14.r),
         ),
@@ -991,7 +1046,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0XFF364153),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
@@ -999,7 +1054,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0XFF4A5565),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -1024,12 +1079,13 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               group.parent,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                color: isSelected ? Colors.black54 : Colors.black54,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
           Icon(
             isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ],
       ),
@@ -1043,7 +1099,10 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+          colors: [
+            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.1),
+            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.1),
+          ],
         ),
         borderRadius: BorderRadius.circular(14.r),
       ),
@@ -1061,7 +1120,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
-                    color: const Color(0xff6E6E6E),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),

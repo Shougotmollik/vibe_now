@@ -32,7 +32,6 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
@@ -66,14 +65,14 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                         style: TextStyle(
                           fontSize: 22.sp,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Text(
                         'john.gomes@me.com',
                         style: TextStyle(
                           fontSize: 14.sp,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -160,7 +159,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
 
@@ -171,7 +170,10 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
             child: Text(
               "You can delete your account, but please note the process may take some time to complete. Once deleted, it cannot be undone later.",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14.sp, color: Color(0xff908F90)),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
 
@@ -185,8 +187,8 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
               children: [
                 Expanded(
                   child: CustomElevatedButton(
-                    btnColor: Colors.grey.shade300,
-                    textColor: Color(0xff181818),
+                    btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                    textColor: Theme.of(context).colorScheme.onSurface,
                     onTap: () => Navigator.pop(context),
                     buttonText: 'Cancel',
                   ),
@@ -220,7 +222,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
         width: double.infinity,
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
         decoration: BoxDecoration(
-          border: Border.all(color: Color(0xffE0E0E0)),
+          border: Border.all(color: Theme.of(context).dividerColor),
           borderRadius: BorderRadius.circular(40.r),
         ),
         child: Row(
@@ -230,11 +232,15 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
               title,
               style: TextStyle(
                 fontSize: 16.sp,
-                color: Color(0xFF202020),
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w400,
               ),
             ),
-            Icon(Icons.arrow_forward_ios, size: 16.h, color: Color(0xFFCFCFCF)),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16.h,
+              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+            ),
           ],
         ),
       ),

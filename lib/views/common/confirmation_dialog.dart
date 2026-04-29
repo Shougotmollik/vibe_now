@@ -20,7 +20,7 @@ class ConfirmationDialog extends StatelessWidget {
     return Dialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: Container(
         padding: EdgeInsets.all(18.w),
         child: Column(
@@ -31,7 +31,7 @@ class ConfirmationDialog extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
-                color: Colors.black54,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w400,
               ),
             ),
@@ -42,9 +42,8 @@ class ConfirmationDialog extends StatelessWidget {
                   child: CustomElevatedButton(
                     onTap: onCancel,
                     buttonText: "Cancel",
-
-                    btnColor: const Color(0xFFF2F2F2),
-                    textColor: Colors.black,
+                    btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                    textColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 SizedBox(width: 16.w),

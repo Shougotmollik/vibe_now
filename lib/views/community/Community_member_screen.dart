@@ -19,7 +19,6 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,18 +93,26 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
     return ListView.separated(
       itemCount: 5,
       separatorBuilder: (context, index) =>
-          const Divider(indent: 20, endIndent: 20),
+          Divider(indent: 20, endIndent: 20, color: Theme.of(context).dividerColor),
       itemBuilder: (context, index) {
         return ListTile(
           leading: const CircleAvatar(
             radius: 28,
             backgroundImage: NetworkImage("https://i.pravatar.cc/150?u=a"),
           ),
-          title: const Text(
+          title: Text(
             "Jenny smith",
-            style: TextStyle(fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
-          subtitle: const Text("Open for small talk"),
+          subtitle: Text(
+            "Open for small talk",
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           onTap: () {},
         );
       },
@@ -116,18 +123,26 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
     return ListView.separated(
       itemCount: 3,
       separatorBuilder: (context, index) =>
-          const Divider(indent: 20, endIndent: 20),
+          Divider(indent: 20, endIndent: 20, color: Theme.of(context).dividerColor),
       itemBuilder: (context, index) {
         return ListTile(
           leading: const CircleAvatar(
             radius: 28,
             backgroundImage: NetworkImage("https://i.pravatar.cc/150?u=p"),
           ),
-          title: const Text(
+          title: Text(
             "Jenny smith",
-            style: TextStyle(fontWeight: FontWeight.w500),
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
-          subtitle: const Text("Open for small talk"),
+          subtitle: Text(
+            "Open for small talk",
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           trailing: SizedBox(
             width: 60.w,
             child: Row(
@@ -213,12 +228,13 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         gradient: isActive ? AppColors.primaryGradient : null,
-        border: isActive ? null : Border.all(color: Colors.grey.shade200),
+        border: isActive ? null : Border.all(color: Theme.of(context).dividerColor),
+        color: isActive ? null : Theme.of(context).colorScheme.surfaceVariant,
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: isActive ? Colors.white : Colors.grey,
+          color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
       ),

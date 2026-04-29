@@ -173,7 +173,13 @@ void showImagePickerOptions(
     context: context,
     builder: (context) {
       return Container(
-        color: Colors.white,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.r),
+            topRight: Radius.circular(20.r),
+          ),
+        ),
         width: 1.sw,
         height: 0.25.sh,
         child: Row(
@@ -190,7 +196,10 @@ void showImagePickerOptions(
                 child: Center(
                   child: SvgPicture.string(
                     cameraIcon,
-                    color: Color(0xff242424),
+                    colorFilter: ColorFilter.mode(
+                      Theme.of(context).colorScheme.onSurface,
+                      BlendMode.srcIn,
+                    ),
                     width: 72.w,
                     fit: BoxFit.fitWidth,
                   ),
@@ -208,7 +217,10 @@ void showImagePickerOptions(
                 child: Center(
                   child: SvgPicture.string(
                     galleryIcon,
-                    color: Color(0xff242424),
+                    colorFilter: ColorFilter.mode(
+                      Theme.of(context).colorScheme.onSurface,
+                      BlendMode.srcIn,
+                    ),
                     width: 72.w,
                     fit: BoxFit.fitWidth,
                   ),

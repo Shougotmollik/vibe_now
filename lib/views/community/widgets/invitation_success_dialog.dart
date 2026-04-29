@@ -28,7 +28,7 @@ class _InviteSuccessDialogState extends State<InviteSuccessDialog> {
     return Dialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 40.w),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
         child: Column(
@@ -56,14 +56,17 @@ class _InviteSuccessDialogState extends State<InviteSuccessDialog> {
               style: TextStyle(
                 fontSize: 22.sp,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF333333),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             SizedBox(height: 8.h),
             Text(
               'Your invite has been sent successfully.',
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 15.sp, color: Colors.grey.shade600),
+               style: TextStyle(
+                fontSize: 15.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),

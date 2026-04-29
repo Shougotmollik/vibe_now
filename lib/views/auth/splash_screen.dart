@@ -64,7 +64,7 @@ class _SplashScreenState extends State<SplashScreen> {
     AnimationConfig.enabled = true;
     AnimationConfig.speedMultiplier = 2.0;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: Column(
         children: [
           SizedBox(height: 375.h, width: double.infinity),

@@ -70,13 +70,17 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                   filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.95),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.background,
                       borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(24),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.08),
+                          color: Theme.of(
+                            context,
+                          ).shadowColor.withValues(alpha: 0.08),
                           blurRadius: 20,
                           offset: const Offset(0, -6),
                         ),
@@ -94,7 +98,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                             height: 4,
                             margin: EdgeInsets.only(bottom: 24.h),
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade300,
+                              color: Theme.of(context).dividerColor,
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -108,7 +112,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                 style: TextStyle(
                                   fontSize: 20.sp,
                                   fontWeight: FontWeight.w500,
-                                  color: const Color(0xff303030),
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -122,7 +128,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                               child: Container(
                                 padding: EdgeInsets.all(6.w),
                                 decoration: BoxDecoration(
-                                  color: Color(0xff_F0F7FF),
+                                  color: Theme.of(context).colorScheme.surface,
                                   shape: BoxShape.circle,
                                 ),
                                 child: Assets.icons.chatting.svg(
@@ -141,7 +147,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                             Assets.icons.location.svg(
                               width: 16.w,
                               height: 16.h,
-                              color: Color(0xff707070),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
 
                             Text(
@@ -149,7 +157,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
-                                color: Color(0xff707070),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -162,7 +172,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                             Assets.icons.timeCircle.svg(
                               width: 16.w,
                               height: 16.h,
-                              color: Color(0xff707070),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
 
                             Text(
@@ -170,7 +182,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 fontWeight: FontWeight.w400,
-                                color: Color(0xff707070),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ],
@@ -203,7 +217,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                               child: Text(
                                 "View all",
                                 style: TextStyle(
-                                  color: Color(0xff008CFF),
+                                  color: Theme.of(context).colorScheme.primary,
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -238,12 +252,16 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(12.r),
-                                color: Colors.grey.shade100,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceVariant,
                               ),
 
                               child: PopupMenuButton(
-                                color: AppColors.surface,
-                                iconColor: Colors.grey.shade600,
+                                color: Theme.of(context).colorScheme.surface,
+                                iconColor: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                                 itemBuilder: (context) => [
                                   PopupMenuItem(
                                     onTap: () {
@@ -254,7 +272,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                         Assets.icons.leave.svg(
                                           width: 24.w,
                                           height: 24.h,
-                                          color: AppColors.primary,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
                                         ),
                                         SizedBox(width: 8.w),
                                         Text(
@@ -262,7 +282,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                           style: TextStyle(
                                             fontSize: 14.sp,
                                             fontWeight: FontWeight.w400,
-                                            color: AppColors.primary,
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
                                           ),
                                         ),
                                       ],
@@ -281,7 +303,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         SizedBox(height: 12.h),
@@ -289,7 +311,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                           'Lorem ipsum dolor sit amet consectetur. Mattis neque elementum laoreet faucibus morbi venenatis nam nisi. Morbi sit dolor porttitor dictum laoreet nunc dictum. Aliquet erat sit pellentesque proin parturient aliquet.',
                           style: TextStyle(
                             fontSize: 14.sp,
-                            color: Colors.grey.shade700,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             height: 1.5,
                           ),
                         ),
@@ -301,7 +325,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                           style: TextStyle(
                             fontSize: 18.sp,
                             fontWeight: FontWeight.bold,
-                            color: Colors.black,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         SizedBox(height: 12.h),
@@ -364,9 +388,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                       );
                     },
                     child: CircleAvatar(
-                      backgroundColor: Colors.white,
+                      backgroundColor: Theme.of(context).colorScheme.surface,
                       child: Assets.icons.edit.svg(
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fit: BoxFit.cover,
                         height: 24.w,
                         width: 24.w,

@@ -24,11 +24,8 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      // The Stack here allows the Confetti to be the top-most layer
       body: Stack(
         children: [
-          // LAYER 1: Main Content
           SafeArea(
             child: Column(
               children: [
@@ -121,7 +118,7 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                     Text(
                       "Welcome to Event Zone",
                       style: TextStyle(
-                        color: AppColors.primaryText,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 24.sp,
                         fontWeight: FontWeight.w400,
                       ),
@@ -137,7 +134,9 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                 Text(
                   "You are Inside the event",
                   style: TextStyle(
-                    color: AppColors.subText,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 20),
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w400,
                   ),
@@ -145,7 +144,9 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                 Text(
                   "Only Vibes from this event are visible",
                   style: TextStyle(
-                    color: AppColors.subText,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 20),
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w400,
                   ),
@@ -158,7 +159,9 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                     Text(
                       "Enjoy the moment!",
                       style: TextStyle(
-                        color: AppColors.subText,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 20),
                         fontSize: 18.sp,
                         fontWeight: FontWeight.w400,
                       ),

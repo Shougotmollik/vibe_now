@@ -88,7 +88,6 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
     bool isAllSelected = _selectedIds.length == _members.length;
 
     return Scaffold(
-      backgroundColor: Colors.white,
 
       bottomNavigationBar: SafeArea(
         child: Padding(
@@ -130,16 +129,16 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
                         horizontal: 12.w,
                         vertical: 16.h,
                       ),
-                      decoration: BoxDecoration(
+                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12.r),
-                        color: const Color(0xffF3F3F5),
+                        color: Theme.of(context).colorScheme.surfaceVariant,
                       ),
                       child: Text(
                         "Selected members will receive an invitation to join for the event",
-                        style: TextStyle(
+                         style: TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 14.sp,
-                          color: AppColors.primaryText,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     ),
@@ -154,24 +153,24 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
                           SizedBox(width: 12.w),
                           Text(
                             "Invited All",
-                            style: TextStyle(
+                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
-                              color: AppColors.primaryText,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ],
                       ),
                     ),
                     SizedBox(height: 8.h),
-                    const Divider(color: Color(0xffEEEEEE)),
+                     const Divider(color: Colors.transparent),
                     // Member List
                     ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: _members.length,
-                      separatorBuilder: (context, index) =>
-                          const Divider(color: Color(0xffEEEEEE), height: 1),
+                       separatorBuilder: (context, index) =>
+                          Divider(color: Theme.of(context).dividerColor, height: 1),
                       itemBuilder: (context, index) {
                         final member = _members[index];
                         final isSelected = _selectedIds.contains(member.id);
@@ -187,16 +186,17 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
                           ),
                           title: Text(
                             member.name,
-                            style: TextStyle(
+                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w500,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           subtitle: Text(
                             member.role,
-                            style: TextStyle(
+                             style: TextStyle(
                               fontSize: 13.sp,
-                              color: Colors.grey,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ),
                           trailing: _buildCheckbox(isSelected),
@@ -223,7 +223,7 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
         gradient: isSelected ? AppColors.primaryGradient : null,
         border: isSelected
             ? null
-            : Border.all(color: Colors.grey.shade300, width: 1.5),
+            : Border.all(color: Theme.of(context).dividerColor, width: 1.5),
       ),
       child: isSelected
           ? Icon(Icons.check, size: 14.sp, color: Colors.white)

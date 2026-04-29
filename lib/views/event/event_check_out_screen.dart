@@ -13,7 +13,6 @@ class EventCheckOutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Stack(
         children: [
           SafeArea(
@@ -30,7 +29,7 @@ class EventCheckOutScreen extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 24.sp,
-                      color: AppColors.primaryText,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(
@@ -41,7 +40,7 @@ class EventCheckOutScreen extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 18.sp,
-                        color: AppColors.secondaryText,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),

@@ -12,7 +12,7 @@ class RequestSentDialog extends StatelessWidget {
     return Dialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 32.h),
         child: Column(
@@ -30,41 +30,37 @@ class RequestSentDialog extends StatelessWidget {
                     height: double.infinity,
                     fit: BoxFit.cover,
                   ),
-
                   Text('🥳', style: TextStyle(fontSize: 60.sp)),
                 ],
               ),
             ),
-
             SizedBox(height: 16.h),
-
             Text(
               'Request Sent',
               style: TextStyle(
                 fontSize: 24.sp,
                 fontWeight: FontWeight.bold,
-                color: const Color(0xFF333333),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             SizedBox(height: 8.h),
-
             Text(
               'Status: Pending approval',
-              style: TextStyle(fontSize: 16.sp, color: Colors.grey.shade600),
+              style: TextStyle(
+                  fontSize: 16.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             SizedBox(height: 24.h),
-
             Text(
               'You\'ll be invited to a real-life meetup\nbefore becoming a member.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15.sp,
-                color: Colors.grey.shade500,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 height: 1.5,
               ),
             ),
             SizedBox(height: 32.h),
-
             WithdrawButton(onPressed: onWithDrawTap),
           ],
         ),
@@ -94,7 +90,7 @@ class WithdrawButton extends StatelessWidget {
         child: TextButton(
           onPressed: onPressed,
           style: TextButton.styleFrom(
-            backgroundColor: Colors.white,
+            backgroundColor: Theme.of(context).colorScheme.surface,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(26.5.r),
             ),
@@ -103,7 +99,7 @@ class WithdrawButton extends StatelessWidget {
             'Withdraw Request',
             style: TextStyle(
               fontSize: 18.sp,
-              color: const Color(0xFF444444),
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w600,
             ),
           ),

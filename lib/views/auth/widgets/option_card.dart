@@ -21,7 +21,7 @@ class OptionCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(2),
+        padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
           gradient: isSelected
               ? const LinearGradient(
@@ -39,7 +39,7 @@ class OptionCard extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
           decoration: BoxDecoration(
-            color: const Color(0xffFEFEFE),
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(22.r),
           ),
           child: Center(
@@ -49,15 +49,21 @@ class OptionCard extends StatelessWidget {
                 model.icon.svg(
                   width: 32.w,
                   height: 32.h,
-                  color: Color(0xff6E6E6E),
+                  color: isSelected
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 SizedBox(height: 7.h),
                 Text(
                   model.title,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
                   style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w400,
-                    color: const Color(0xff6E6E6E),
+                    fontSize: 14.sp,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                    color: isSelected
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],

@@ -8,7 +8,6 @@ class LikeListScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
       body: SafeArea(
         child: Column(
           children: [
@@ -27,6 +26,7 @@ class LikeListScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         children: [
                           TextSpan(
@@ -34,7 +34,7 @@ class LikeListScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                              color: Colors.grey.shade700,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
@@ -44,7 +44,7 @@ class LikeListScreen extends StatelessWidget {
                       '1hr ago',
                       style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey.shade600,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                     leading: CircleAvatar(

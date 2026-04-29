@@ -149,7 +149,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -186,7 +185,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                               gradient: isSelected
                                   ? AppColors.primaryGradientRotated
                                   : null,
-                              color: isSelected ? null : Colors.grey[200],
+                              color: isSelected ? null : Theme.of(context).colorScheme.surfaceVariant,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -194,7 +193,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                               style: TextStyle(
                                 color: isSelected
                                     ? Colors.white
-                                    : Colors.grey[700],
+                                    : Theme.of(context).colorScheme.onSurfaceVariant,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -241,9 +240,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey.shade200,
+              color: Theme.of(context).colorScheme.surfaceVariant,
             ),
-            child: Assets.icons.scan.svg(),
+            child: Assets.icons.scan.svg(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ),
         SizedBox(width: 8),
@@ -255,7 +256,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
               shape: BoxShape.circle,
               gradient: AppColors.primaryGradientRotated,
             ),
-            child: Assets.icons.add.svg(),
+            child: Assets.icons.add.svg(
+              color: Colors.white,
+            ),
           ),
         ),
       ],

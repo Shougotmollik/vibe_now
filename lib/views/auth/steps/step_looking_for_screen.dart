@@ -90,7 +90,7 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
                   crossAxisCount: 2,
                   mainAxisSpacing: 16,
                   crossAxisSpacing: 16,
-                  childAspectRatio: 1.7,
+                  childAspectRatio: 1.4,
                 ),
                 itemCount: options.length,
                 itemBuilder: (context, index) {

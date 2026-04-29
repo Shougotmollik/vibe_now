@@ -24,7 +24,7 @@ class AvatarStack extends StatelessWidget {
               left: i * (size * 0.65), // overlap amount
               child: CircleAvatar(
                 radius: size / 2,
-                backgroundColor: Colors.white,
+                backgroundColor: Theme.of(context).colorScheme.surface,
                 child: CircleAvatar(
                   radius: (size / 2) - 2,
                   backgroundImage: NetworkImage(imageUrls[i]),
@@ -40,16 +40,19 @@ class AvatarStack extends StatelessWidget {
                 width: size,
                 height: size,
                 decoration: BoxDecoration(
-                  color: Colors.blue.shade200,
+                  color: Theme.of(context).colorScheme.primaryContainer,
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
+                  border: Border.all(
+                    color: Theme.of(context).colorScheme.surface,
+                    width: 2,
+                  ),
                 ),
                 alignment: Alignment.center,
                 child: Text(
                   '+$extraCount',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
                   ),
                 ),
               ),

@@ -200,7 +200,7 @@ class _EventChatScreenState extends State<EventChatScreen> {
     return GestureDetector(
       onTap: _removeOverlay,
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: _buildAppBar(),
         body: SafeArea(
           child: Column(
@@ -216,9 +216,9 @@ class _EventChatScreenState extends State<EventChatScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.white,
+      // backgroundColor: Theme.of(context).colorScheme.surface,
       elevation: 0.5,
-      shadowColor: Colors.black12,
+      shadowColor: Theme.of(context).colorScheme.shadow,
       leadingWidth: 32,
       leading: GestureDetector(
         child: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
@@ -239,13 +239,13 @@ class _EventChatScreenState extends State<EventChatScreen> {
           const SizedBox(width: 10),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
+            children: [
               Text(
                 'Club House',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF050505),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -260,7 +260,9 @@ class _EventChatScreenState extends State<EventChatScreen> {
               isAdmin ? 'Admin' : 'User',
               style: TextStyle(
                 fontSize: 11,
-                color: isAdmin ? const Color(0xFF0084FF) : Colors.grey,
+                color: isAdmin
+                    ? Theme.of(context).colorScheme.primary
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -338,12 +340,15 @@ class _EventChatScreenState extends State<EventChatScreen> {
               margin: const EdgeInsets.only(bottom: 12),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: Theme.of(context).colorScheme.surfaceVariant,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
+              child: Text(
                 'Today',
-                style: TextStyle(fontSize: 12, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ),
           );
@@ -369,20 +374,30 @@ class _EventChatScreenState extends State<EventChatScreen> {
   Widget _buildBottomArea() {
     if (!isAdmin) {
       return Container(
-        padding: const EdgeInsets.all(18),
+        padding: EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: const Color(0xFFFAFAFA),
-          border: Border(top: BorderSide(color: Colors.grey.shade200)),
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          // border: Border(
+          //   top: BorderSide(
+          //     color: Theme.of(
+          //       context,
+          //     ).colorScheme.onSurfaceVariant.withAlpha(122),
+          //   ),
+          // ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.lock_outline_rounded, size: 15, color: Colors.grey),
+          children: [
+            Icon(
+              Icons.lock_outline_rounded,
+              size: 15,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             SizedBox(width: 8),
             Text(
               'Only admins can send messages',
               style: TextStyle(
-                color: Colors.grey,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
               ),
@@ -398,14 +413,14 @@ class _EventChatScreenState extends State<EventChatScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.1),
-              blurRadius: 5,
-              offset: const Offset(0, -1),
-            ),
-          ],
+          color: Theme.of(context).colorScheme.surface,
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Theme.of(context).colorScheme.shadow,
+          //     blurRadius: 0,
+          //     offset: const Offset(0, -1),
+          //   ),
+          // ],
         ),
         child: Row(
           children: [
@@ -434,7 +449,7 @@ class _EventChatScreenState extends State<EventChatScreen> {
                 width: 24.w,
                 height: 24.h,
                 color: _isSending
-                    ? Colors.grey.withValues(alpha: 0.5)
+                    ? Theme.of(context).colorScheme.outlineVariant
                     : AppColors.primary,
               ),
             ),
@@ -455,7 +470,9 @@ class _EventChatScreenState extends State<EventChatScreen> {
                     : null,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: !_isRecording ? Colors.white : null,
+                    color: !_isRecording
+                        ? Theme.of(context).colorScheme.surface
+                        : null,
                     gradient: _isRecording ? AppColors.primaryGradient : null,
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -466,8 +483,8 @@ class _EventChatScreenState extends State<EventChatScreen> {
                         icon: Icon(
                           _isRecording ? Icons.pause : Icons.mic,
                           color: _isRecording
-                              ? Colors.white
-                              : AppColors.primary,
+                              ? Theme.of(context).colorScheme.surface
+                              : Theme.of(context).colorScheme.primary,
                         ),
                         onPressed: _isSending ? null : _toggleRecording,
                       ),
@@ -486,7 +503,11 @@ class _EventChatScreenState extends State<EventChatScreen> {
                               : TextField(
                                   controller: _controller,
                                   enabled: !_isSending,
-                                  style: const TextStyle(color: Colors.black87),
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
+                                  ),
                                   decoration: const InputDecoration(
                                     hintText: 'Message...',
                                     border: InputBorder.none,
@@ -528,7 +549,9 @@ class _EventChatScreenState extends State<EventChatScreen> {
                     child: Assets.icons.send.svg(
                       width: 24.w,
                       height: 24.h,
-                      color: canSend ? null : Colors.grey,
+                      color: canSend
+                          ? null
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
           ],
@@ -803,7 +826,7 @@ class _MessageTileState extends State<_MessageTile>
                     vertical: 10,
                   ),
                   decoration: BoxDecoration(
-                    color: isMe ? null : const Color(0xFFF0F2F5),
+                    color: isMe ? null : Theme.of(context).colorScheme.surfaceVariant,
                     gradient: isMe ? AppColors.primaryGradient : null,
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(18),
@@ -816,7 +839,9 @@ class _MessageTileState extends State<_MessageTile>
                     msg.text,
                     style: TextStyle(
                       fontSize: 15,
-                      color: isMe ? Colors.white : const Color(0xFF050505),
+                      color: isMe
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.onSurface,
                       height: 1.4,
                     ),
                   ),
@@ -879,8 +904,8 @@ class _ReactionChips extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: r.reactedByMe
-                  ? const Color(0xFFE7F0FD)
-                  : const Color(0xFFF0F2F5),
+                  ? Theme.of(context).colorScheme.surfaceVariant
+                  : Theme.of(context).colorScheme.surfaceVariant,
               border: Border.all(
                 color: r.reactedByMe ? AppColors.primary : Colors.transparent,
                 width: 1.w,
@@ -982,7 +1007,11 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
             behavior: HitTestBehavior.translucent,
             child: FadeTransition(
               opacity: _fade,
-              child: Container(color: Colors.black.withOpacity(0.08)),
+              child: Container(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.08),
+              ),
             ),
           ),
         ),
@@ -1002,11 +1031,13 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
                   width: barWidth,
                   height: barHeight,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(36),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.18),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.18),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -1077,10 +1108,16 @@ Future<dynamic> _buildMoreOption(
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: AppColors.backgroundVariant,
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(
+                  context,
+                ).colorScheme.shadow.withValues(alpha: 0.12),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
             ],
           ),
           child: Column(

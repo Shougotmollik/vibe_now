@@ -98,7 +98,6 @@ class _ProfileScreenState extends State<ProfileScreen>
     final _tabWidgets = [_buildPhotosTab(widget.isMyProfile), PostsTab()];
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -117,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       border: Border(
                         bottom: BorderSide(
                           color: _selectedTabIndex == _tabs.indexOf(item)
-                              ? Colors.black
+                              ? Theme.of(context).colorScheme.primary
                               : Colors.transparent,
                           width: 2.w,
                         ),
@@ -129,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       child: Text(
                         item,
                         style: TextStyle(
-                          color: AppColors.onBackground,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 16.sp,
                         ),
                       ),
@@ -159,7 +158,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ? const SizedBox()
                 : GestureDetector(
                     onTap: () => context.pop(),
-                    child: Icon(Icons.arrow_back_ios, color: Colors.black),
+                    child: Icon(Icons.arrow_back_ios,
+                        color: Theme.of(context).colorScheme.onSurface),
                   ),
             GestureDetector(
               onTap: () {
@@ -175,10 +175,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.shade200,
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -186,7 +186,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                     child: isMyProfile != true
                         ? Assets.icons.chatting.svg()
-                        : Icon(Icons.settings, color: Colors.grey.shade600),
+                        : Icon(Icons.settings,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -203,11 +204,12 @@ class _ProfileScreenState extends State<ProfileScreen>
       children: [
         CircleAvatar(
           radius: 60,
+          backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
           backgroundImage: _selectedProfileImage != null
               ? FileImage(_selectedProfileImage!)
               : NetworkImage(
                   'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-                ),
+                ) as ImageProvider,
         ),
         if (_isEditable)
           GestureDetector(
@@ -229,11 +231,11 @@ class _ProfileScreenState extends State<ProfileScreen>
             child: Container(
               padding: EdgeInsets.all(6.w),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.1),
+                    color: Theme.of(context).shadowColor.withOpacity(0.1),
                     blurRadius: 4,
                     offset: Offset(0, 2),
                   ),
@@ -260,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xff555555),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -268,18 +270,21 @@ class _ProfileScreenState extends State<ProfileScreen>
           SizedBox(height: 8.h),
           Container(
             decoration: BoxDecoration(
-              border: Border.all(color: Color(0xffAEAEAE)),
+              border: Border.all(color: Theme.of(context).dividerColor),
               borderRadius: BorderRadius.circular(24.r),
             ),
             child: TextFormField(
               controller: _bioController,
               maxLines: 4,
               maxLength: 70,
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
               decoration: InputDecoration(
                 counterText: "",
                 hintText:
                     "Enter your bio here. It will be visible to your friends",
-                hintStyle: TextStyle(fontSize: 14.sp, color: Color(0xff202020)),
+                hintStyle: TextStyle(
+                    fontSize: 14.sp,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
                 contentPadding: EdgeInsets.symmetric(
                   vertical: 12.h,
                   horizontal: 16.w,
@@ -293,7 +298,9 @@ class _ProfileScreenState extends State<ProfileScreen>
             padding: EdgeInsets.only(top: 4.h, right: 4.w),
             child: Text(
               "${_bioController.text.length}/70",
-              style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+              style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
           ),
         ],
@@ -325,10 +332,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.shade200,
+                            color:
+                                Theme.of(context).shadowColor.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -336,7 +344,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ),
                       child: Icon(
                         _isEditable ? Icons.done_all : Icons.edit,
-                        color: Colors.grey.shade600,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
@@ -347,15 +355,22 @@ class _ProfileScreenState extends State<ProfileScreen>
         SizedBox(height: 10.h),
         Text(
           'Jenny Gomes, 23',
-          style: TextStyle(fontSize: 24.sp, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 24.sp,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface),
         ),
         SizedBox(height: 4.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.location_on_outlined, size: 16.h),
+            Icon(Icons.location_on_outlined,
+                size: 16.h, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 4),
-            Text('Approx. 400 km', style: TextStyle(fontSize: 14.sp)),
+            Text('Approx. 400 km',
+                style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
           ],
         ),
         SizedBox(height: 8.h),
@@ -367,14 +382,18 @@ class _ProfileScreenState extends State<ProfileScreen>
               SizedBox(width: 4.w),
               Text(
                 'Coffee enthusiast   |',
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+                style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
               SizedBox(width: 8.w),
               Assets.icons.musicColor.svg(height: 16.h),
               SizedBox(width: 4.w),
               Text(
                 'Music lover',
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+                style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant),
               ),
             ],
           ),
@@ -390,9 +409,8 @@ class _ProfileScreenState extends State<ProfileScreen>
               children: _allInterests
                   .where((interest) => interest.isSelected)
                   .map((interest) {
-                    return _buildInterestTag(interest.icon, interest.label);
-                  })
-                  .toList(),
+                return _buildInterestTag(interest.icon, interest.label);
+              }).toList(),
             ),
           ),
         if (_isEditable) _buildInterestSection(),
@@ -405,7 +423,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey.shade300,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -413,7 +431,10 @@ class _ProfileScreenState extends State<ProfileScreen>
         children: [
           icon.svg(height: 16.h, width: 16.h),
           const SizedBox(width: 6),
-          Text(label, style: TextStyle(fontSize: 12.sp)),
+          Text(label,
+              style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
         ],
       ),
     );
@@ -456,7 +477,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               height: width * 1.24,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16.r),
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
               ),
               child: _selectedImage == null
                   ? Center(
@@ -510,13 +531,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                       height: width * 1.24,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16.r),
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surfaceVariant,
                       ),
                       child: Center(
                         child: Icon(
                           Icons.broken_image_outlined,
                           size: 56.h,
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     );
@@ -535,16 +556,16 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget _buildImageDeleteAlertDialog(BuildContext context, String item) {
     return AlertDialog(
       elevation: 0,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.r)),
       title: Container(
         padding: EdgeInsets.all(8.w),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.black12,
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
               blurRadius: 8,
               offset: Offset(0, 3),
             ),
@@ -558,7 +579,8 @@ class _ProfileScreenState extends State<ProfileScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         spacing: 18.h,
         children: [
-          Text('Are you sure you want to delete this photo?'),
+          Text('Are you sure you want to delete this photo?',
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
           SizedBox(
             height: 32.h,
             child: Row(
@@ -569,13 +591,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24.r),
                       border: Border.all(
-                        color: Color(0xffAEAEAE),
+                        color: Theme.of(context).dividerColor,
                         width: 1.5.w,
                       ),
                     ),
                     child: CustomElevatedButton(
-                      btnColor: Colors.white,
-                      textColor: Color(0xff181818),
+                      btnColor: Theme.of(context).colorScheme.surface,
+                      textColor: Theme.of(context).colorScheme.onSurface,
                       onTap: () => Navigator.pop(context),
                       buttonText: 'Cancel',
                     ),
@@ -606,12 +628,12 @@ class _ProfileScreenState extends State<ProfileScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Interests',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
@@ -679,7 +701,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                 : null,
                                             color: selected
                                                 ? null
-                                                : Colors.grey[200],
+                                                : Theme.of(context).colorScheme.surfaceVariant,
                                             borderRadius: BorderRadius.circular(
                                               20,
                                             ),
@@ -693,7 +715,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                 width: 16.h,
                                                 color: selected
                                                     ? Colors.white
-                                                    : Colors.grey[800],
+                                                    : Theme.of(context).colorScheme.onSurfaceVariant,
                                               ),
                                               Text(
                                                 sub.name,
@@ -701,7 +723,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                   fontSize: 13.sp,
                                                   color: selected
                                                       ? Colors.white
-                                                      : Colors.grey[800],
+                                                      : Theme.of(context).colorScheme.onSurfaceVariant,
                                                 ),
                                               ),
                                             ],
@@ -709,37 +731,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                                         ),
                                       );
                                     }).toList(),
-                                    // Padding(
-                                    //   padding: const EdgeInsets.symmetric(
-                                    //     vertical: 6.0,
-                                    //   ),
-                                    //   child: GestureDetector(
-                                    //     onTap: () {
-                                    //       _activeParent = group.parent;
-                                    //       // _showAddCategoryDialog();
-
-                                    //       _showAddInterestDialog();
-                                    //     },
-                                    //     child: Container(
-                                    //       decoration: BoxDecoration(
-                                    //         borderRadius: BorderRadius.circular(
-                                    //           16.r,
-                                    //         ),
-                                    //         border: Border.all(
-                                    //           color: Colors.grey[400]!,
-                                    //           width: 1.5,
-                                    //         ),
-                                    //         gradient: AppColors
-                                    //             .primaryGradientRotated,
-                                    //       ),
-                                    //       child: Icon(
-                                    //         Icons.add,
-                                    //         color: Colors.white,
-                                    //         size: 20.sp,
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // ),
                                   ],
                                 )
                               : const SizedBox.shrink(),
@@ -788,13 +779,13 @@ class _ProfileScreenState extends State<ProfileScreen>
       context: context,
       builder: (_) {
         return AlertDialog(
-          backgroundColor: AppColors.backgroundVariant,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          title: const Text(
+          title: Text(
             'Add Interest Category',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -803,13 +794,14 @@ class _ProfileScreenState extends State<ProfileScreen>
               TextField(
                 controller: controller,
                 autofocus: true,
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                 decoration: InputDecoration(
                   hintText: "Enter interest name",
-                  hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
-                      color: Colors.grey[400]!,
+                      color: Theme.of(context).dividerColor,
                       width: 1.5,
                     ),
                   ),
@@ -828,13 +820,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.r),
                           border: Border.all(
-                            color: Colors.grey[400]!,
+                            color: Theme.of(context).dividerColor,
                             width: 1.5,
                           ),
                         ),
                         child: CustomElevatedButton(
-                          btnColor: Colors.white,
-                          textColor: Colors.black,
+                          btnColor: Theme.of(context).colorScheme.surface,
+                          textColor: Theme.of(context).colorScheme.onSurface,
                           fontWeight: FontWeight.w500,
                           onTap: () {
                             Navigator.pop(context);
@@ -882,13 +874,13 @@ class _ProfileScreenState extends State<ProfileScreen>
               group.parent,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                color: isSelected ? Colors.black54 : Colors.black54,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
           Icon(
             isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-            color: isSelected ? Colors.black54 : Colors.black54,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ],
       ),
@@ -934,24 +926,25 @@ class _ProfileScreenState extends State<ProfileScreen>
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16.r),
               ),
-              backgroundColor: AppColors.backgroundVariant,
-              title: Text("Add Sub Interest"),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              title: Text("Add Sub Interest", style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: _newInterestController,
                     autofocus: true,
+                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                     decoration: InputDecoration(
                       hintText: "Enter interest name",
                       hintStyle: TextStyle(
-                        color: Colors.grey[600],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 14,
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: BorderSide(
-                          color: Colors.grey[400]!,
+                          color: Theme.of(context).dividerColor,
                           width: 1.5,
                         ),
                       ),
@@ -978,13 +971,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(24.r),
                               border: Border.all(
-                                color: Color(0xffAEAEAE),
+                                color: Theme.of(context).dividerColor,
                                 width: 1.5.w,
                               ),
                             ),
                             child: CustomElevatedButton(
-                              btnColor: Colors.white,
-                              textColor: Colors.black,
+                              btnColor: Theme.of(context).colorScheme.surface,
+                              textColor: Theme.of(context).colorScheme.onSurface,
                               onTap: () => Navigator.pop(context),
                               buttonText: 'Cancel',
                               fontWeight: FontWeight.w400,
@@ -997,18 +990,6 @@ class _ProfileScreenState extends State<ProfileScreen>
                               final newInterest = _newInterestController.text
                                   .trim();
                               if (newInterest.isNotEmpty) {
-                                // setState(() {
-                                //   _allInterests.add(
-                                //     InterestTag(
-                                //       label: newInterest,
-                                //       icon:
-                                //           selectedIcon ??
-                                //           Assets.icons.community,
-                                //       isSelected: true,
-                                //     ),
-                                //   );
-                                // });
-
                                 if (_activeParent != null) {
                                   profileController.addSubInterest(
                                     parent: _activeParent!,

@@ -54,8 +54,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundVariant,
-
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
@@ -65,7 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 58.h),
-                  AuthTitle(title: 'Sign Up', subtitle: 'Create your account'),
+                  const AuthTitle(title: 'Sign Up', subtitle: 'Create your account'),
                   SizedBox(height: 36.h),
                   CustomTextFormField(
                     controller: _emailController,
@@ -99,7 +98,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     onPressed: !_isFieldsValid
                         ? () {}
                         : () {
-                            // context.goNamed(RouteNames.stepNameScreen);
                             context.goNamed(
                               RouteNames.signupOtpVerificationScreen,
                             );
@@ -114,7 +112,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     style: TextStyle(
                       fontSize: 12.sp,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xff727272),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   SizedBox(height: 32.h),
@@ -143,7 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         'Already have an account?',
                         style: TextStyle(
                           fontSize: 14.sp,
-                          color: Color(0xff787878),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                       TextButton(
@@ -155,7 +153,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
-                            color: const Color.fromARGB(255, 172, 137, 255),
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ),

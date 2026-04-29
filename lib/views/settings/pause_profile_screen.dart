@@ -12,7 +12,6 @@ class PauseProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16.w),
@@ -24,20 +23,25 @@ class PauseProfileScreen extends StatelessWidget {
 
               Container(
                 decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xffE0E0E0), width: 1.5),
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor,
+                    width: 1.5,
+                  ),
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: Column(
                   children: [
                     _buildOptionTile(
                       title: "Pause Account",
+                      context: context,
                       onTap: () {
                         context.pushNamed(RouteNames.reasonScreen);
                       },
                     ),
-                    Divider(height: 1.h, color: Colors.black12),
+                    Divider(height: 1.h, color: Theme.of(context).dividerColor),
                     _buildOptionTile(
                       title: "Delete Account",
+                      context: context,
                       onTap: () {
                         showDialog(
                           context: context,
@@ -72,7 +76,9 @@ class PauseProfileScreen extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 18.sp,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.black,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                                   ),
 
@@ -87,7 +93,9 @@ class PauseProfileScreen extends StatelessWidget {
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 14.sp,
-                                        color: Color(0xff908F90),
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                     ),
                                   ),
@@ -106,7 +114,9 @@ class PauseProfileScreen extends StatelessWidget {
                                             "Cancel",
                                             style: TextStyle(
                                               fontSize: 16.sp,
-                                              color: Colors.grey,
+                                              color: Theme.of(
+                                                context,
+                                              ).colorScheme.onSurfaceVariant,
                                             ),
                                           ),
                                         ),
@@ -163,7 +173,7 @@ class PauseProfileScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
 
@@ -173,7 +183,10 @@ class PauseProfileScreen extends StatelessWidget {
             obscureText: true,
             decoration: InputDecoration(
               hintText: "Enter your password",
-              hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14.sp,
+              ),
             ),
           ),
 
@@ -188,7 +201,10 @@ class PauseProfileScreen extends StatelessWidget {
                   },
                   child: Text(
                     "Cancel",
-                    style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ),
               ),
@@ -212,7 +228,11 @@ class PauseProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOptionTile({required String title, VoidCallback? onTap}) {
+  Widget _buildOptionTile({
+    required String title,
+    VoidCallback? onTap,
+    required BuildContext context,
+  }) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 20.h),
       child: GestureDetector(
@@ -225,12 +245,17 @@ class PauseProfileScreen extends StatelessWidget {
               title,
               style: TextStyle(
                 fontSize: 16.sp,
-                color: Color(0xff2A2A2A),
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w400,
               ),
             ),
-
-            Icon(Icons.arrow_forward_ios, size: 20.h, color: Color(0xFFCFCFCF)),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 20.h,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withOpacity(0.5),
+            ),
           ],
         ),
       ),

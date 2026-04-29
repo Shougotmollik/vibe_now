@@ -13,18 +13,19 @@ class StepTitle extends StatelessWidget {
         Text(
           title,
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            fontWeight: FontWeight.w500,
-            fontSize: 16.sp,
-          ),
+                fontWeight: FontWeight.w500,
+                fontSize: 16.sp,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
         ),
         SizedBox(height: 24.h),
         Text(
           subtitle,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-            fontWeight: FontWeight.w400,
-            color: Colors.black54,
-            fontSize: 12.sp,
-          ),
+                fontWeight: FontWeight.w400,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 12.sp,
+              ),
           textAlign: TextAlign.center,
         ),
       ],

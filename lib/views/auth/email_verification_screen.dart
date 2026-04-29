@@ -46,7 +46,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundVariant,
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -62,7 +62,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
-                    color: AppColors.primary,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                 ),
               ),

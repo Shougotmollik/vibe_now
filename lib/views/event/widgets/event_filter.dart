@@ -54,7 +54,7 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
       insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Container(
@@ -74,10 +74,12 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: Icon(Icons.close),
+                    color: Theme.of(context).colorScheme.onSurface,
                     onPressed: () => Navigator.of(context).pop(),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -99,6 +101,7 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
 
@@ -109,6 +112,7 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -128,7 +132,9 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                           Container(
                             height: 4.h,
                             decoration: BoxDecoration(
-                              color: Colors.grey[300],
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withAlpha(20),
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -221,7 +227,11 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
               // ),
               Text(
                 'Categories',
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               SizedBox(height: 12.h),
 
@@ -285,7 +295,9 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                                                 : null,
                                             color: selected
                                                 ? null
-                                                : Colors.grey[100],
+                                                : Theme.of(
+                                                    context,
+                                                  ).colorScheme.surfaceVariant,
                                             borderRadius: BorderRadius.circular(
                                               20,
                                             ),
@@ -296,7 +308,9 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                                               fontSize: 13.sp,
                                               color: selected
                                                   ? Colors.white
-                                                  : Colors.grey[800],
+                                                  : Theme.of(
+                                                      context,
+                                                    ).colorScheme.onSurface,
                                             ),
                                           ),
                                         ),
@@ -319,7 +333,11 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
               // Date Filter (Radio)
               Text(
                 'Date',
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 8),
               Column(
@@ -344,13 +362,15 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.r),
                           border: Border.all(
-                            color: Color(0xffAEAEAE),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withAlpha(100),
                             width: 1.5.w,
                           ),
                         ),
                         child: CustomElevatedButton(
-                          btnColor: Colors.white,
-                          textColor: Colors.black87,
+                          btnColor: Theme.of(context).colorScheme.surface,
+                          textColor: Theme.of(context).colorScheme.onSurface,
                           onTap: clearFilters,
                           buttonText: 'Clear',
                         ),
@@ -394,12 +414,15 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
               group.parent,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.white : Colors.black87,
+                color: isSelected
+                    ? Colors.white
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
           Icon(
             isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ],
       ),
@@ -426,8 +449,8 @@ class _EventFilterDialogState extends State<EventFilterDialog> {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? const Color(0xFFC2E3FF)
-                      : const Color(0xFFE0E0E0),
+                      ? AppColors.primary.withAlpha(150)
+                      : Theme.of(context).colorScheme.onSurface.withAlpha(50),
                   width: 2,
                 ),
               ),

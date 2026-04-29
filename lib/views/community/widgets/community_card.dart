@@ -141,9 +141,9 @@ class _CommunityCardState extends State<CommunityCard> {
       padding: EdgeInsets.all(16.w),
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(color: Color(0xffBDBDBD)),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,7 +264,7 @@ class _CommunityCardState extends State<CommunityCard> {
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
-              color: Color(0xff303030),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           SizedBox(height: 12.h),
@@ -273,7 +273,7 @@ class _CommunityCardState extends State<CommunityCard> {
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
-              color: Color(0xff707070),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           SizedBox(height: 12.h),
@@ -282,7 +282,7 @@ class _CommunityCardState extends State<CommunityCard> {
               Assets.icons.location.svg(
                 width: 16.w,
                 height: 16.h,
-                color: Color(0xff707070),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               SizedBox(width: 4.w),
               Text(
@@ -290,7 +290,7 @@ class _CommunityCardState extends State<CommunityCard> {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xff707070),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -301,7 +301,7 @@ class _CommunityCardState extends State<CommunityCard> {
               Assets.icons.calendarColor.svg(
                 width: 16.w,
                 height: 16.h,
-                color: Color(0xff707070),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               SizedBox(width: 4.w),
               Text(
@@ -309,7 +309,7 @@ class _CommunityCardState extends State<CommunityCard> {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xff707070),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -320,7 +320,7 @@ class _CommunityCardState extends State<CommunityCard> {
               Assets.icons.community.svg(
                 width: 16.w,
                 height: 16.h,
-                color: Color(0xff707070),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
               SizedBox(width: 4.w),
               Text(
@@ -328,7 +328,7 @@ class _CommunityCardState extends State<CommunityCard> {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xff707070),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
               ),
             ],
@@ -507,7 +507,7 @@ class _CommunityCardState extends State<CommunityCard> {
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: Colors.grey.shade300),
+                            border: Border.all(color: Theme.of(context).dividerColor),
                             gradient: !isActive
                                 ? AppColors.primaryGradient
                                 : AppColors.primaryGradient.withOpacity(0.5),
@@ -574,12 +574,14 @@ class _CommunityCardState extends State<CommunityCard> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.r),
-        color: Colors.grey.shade200,
+        color: Theme.of(context).colorScheme.surfaceVariant,
       ),
       child: PopupMenuButton(
-        color: AppColors.surface,
-        iconColor: Colors.grey.shade600,
-        icon: Assets.icons.down.svg(),
+        color: Theme.of(context).colorScheme.surface,
+        iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        icon: Assets.icons.down.svg(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         itemBuilder: (context) => [
           PopupMenuItem(
             onTap: () {
@@ -594,7 +596,7 @@ class _CommunityCardState extends State<CommunityCard> {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
-                color: Colors.black54,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
@@ -611,7 +613,7 @@ class _CommunityCardState extends State<CommunityCard> {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
-                color: Colors.black54,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),

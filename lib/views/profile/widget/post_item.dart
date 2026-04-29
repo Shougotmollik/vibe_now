@@ -17,7 +17,7 @@ class PostItem extends StatelessWidget {
       padding: EdgeInsets.symmetric(vertical: 12.h),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(color: Colors.grey.shade300, width: 1),
+          bottom: BorderSide(color: Theme.of(context).dividerColor, width: 1),
         ),
       ),
       child: Column(
@@ -37,21 +37,25 @@ class PostItem extends StatelessWidget {
                 children: [
                   Text(
                     'Jenny smith',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   Row(
                     children: [
                       Assets.icons.earth.svg(
                         width: 16,
                         height: 16,
-                        color: Color(0xFF9D9D9D),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                       const SizedBox(width: 5),
-                      const Text(
+                      Text(
                         ' 20 Oct',
                         style: TextStyle(
                           fontSize: 12,
-                          color: Color(0xFF9D9D9D),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                           height: 1.5,
                         ),
                       ),
@@ -67,7 +71,9 @@ class PostItem extends StatelessWidget {
                     onTap: onLikeTap,
                     child: Icon(
                       isLiked ? Icons.favorite : Icons.favorite_border,
-                      color: isLiked ? Colors.red : Colors.grey,
+                      color: isLiked
+                          ? Colors.red
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
                       size: 30,
                     ),
                   ),
@@ -75,7 +81,9 @@ class PostItem extends StatelessWidget {
                     onTap: () => context.pushNamed(RouteNames.likeScreen),
                     child: Text(
                       '100',
-                      style: TextStyle(color: Colors.grey.shade600),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ),
                 ],
@@ -83,9 +91,12 @@ class PostItem extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             'Anybody wants to have coffee?',
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         ],
       ),

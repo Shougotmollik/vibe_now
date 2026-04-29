@@ -78,7 +78,7 @@ class _SignupOtpVerificationScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundVariant,
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -93,7 +93,7 @@ class _SignupOtpVerificationScreenState
                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                   fontSize: 28.sp,
                   fontWeight: FontWeight.w700,
-                  color: AppColors.primaryText,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
 
@@ -103,14 +103,14 @@ class _SignupOtpVerificationScreenState
                 text: TextSpan(
                   text: 'We sent you a 4-digit code to\n',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.primaryText,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14.sp,
                   ),
                   children: [
                     TextSpan(
                       text: 'example@mail.com',
                       style: TextStyle(
-                        color: AppColors.primary,
+                        color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -130,7 +130,7 @@ class _SignupOtpVerificationScreenState
                   ),
 
                   decoration: BoxDecoration(
-                    color: AppColors.background,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8.r),
                   ),
                   width: 48.w,
@@ -146,7 +146,7 @@ class _SignupOtpVerificationScreenState
                       child: Text(
                         'Resend Code',
                         style: TextStyle(
-                          color: AppColors.primary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
                         ),
@@ -159,14 +159,14 @@ class _SignupOtpVerificationScreenState
                           'Resend Code in ',
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
-                                color: AppColors.primary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontSize: 14.sp,
                               ),
                         ),
                         Text(
                           '$_secondsRemaining s',
                           style: TextStyle(
-                            color: AppColors.primary,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                           ),

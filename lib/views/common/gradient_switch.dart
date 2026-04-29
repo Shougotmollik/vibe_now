@@ -5,7 +5,7 @@ class GradientSwitch extends StatefulWidget {
   final bool value;
   final ValueChanged<bool> onChanged;
   final Gradient activeGradient;
-  final Color inactiveColor;
+  final Color? inactiveColor;
   final Gradient? thumbGradient;
   final double width;
   final double height;
@@ -18,7 +18,7 @@ class GradientSwitch extends StatefulWidget {
     required this.value,
     required this.onChanged,
     required this.activeGradient,
-    this.inactiveColor = const Color(0xFFE0E0E0),
+    this.inactiveColor,
     this.thumbGradient,
     this.width = 38,
     this.height = 20,
@@ -26,6 +26,8 @@ class GradientSwitch extends StatefulWidget {
     this.padding = 0,
     this.disabled = false,
   });
+
+
 
   @override
   State<GradientSwitch> createState() => _GradientSwitchState();
@@ -86,13 +88,13 @@ class _GradientSwitchState extends State<GradientSwitch>
                 ? widget.activeGradient
                 : null,
             color: (!widget.value || widget.disabled)
-                ? widget.inactiveColor
+                ? (widget.inactiveColor ?? Theme.of(context).dividerColor)
                 : null,
             borderRadius: BorderRadius.circular(trackRadius),
             boxShadow: [
               // subtle elevation
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Theme.of(context).shadowColor.withOpacity(0.08),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -119,11 +121,13 @@ class _GradientSwitchState extends State<GradientSwitch>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       gradient: widget.thumbGradient,
-                      color: widget.thumbGradient == null ? Colors.white : null,
+                      color: widget.thumbGradient == null
+                          ? Theme.of(context).colorScheme.surface
+                          : null,
                       boxShadow: [
                         BoxShadow(
                           // ignore: deprecated_member_use
-                          color: Colors.black.withOpacity(0.15),
+                          color: Theme.of(context).shadowColor.withOpacity(0.15),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -137,7 +141,10 @@ class _GradientSwitchState extends State<GradientSwitch>
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.6),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .surface
+                          .withOpacity(0.6),
                       borderRadius: BorderRadius.circular(trackRadius),
                     ),
                   ),

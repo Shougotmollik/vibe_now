@@ -62,7 +62,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -185,7 +185,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
           style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 14.sp,
-            color: AppColors.primaryText,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
 
@@ -201,12 +201,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Date',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -218,14 +218,14 @@ class _EditEventScreenState extends State<EditEventScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.calendar_today_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -233,7 +233,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
                         _selectedDate == null
                             ? 'Select'
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -247,12 +250,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Time',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -264,14 +267,14 @@ class _EditEventScreenState extends State<EditEventScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.access_time_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -279,7 +282,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
                         _selectedTime == null
                             ? 'Select'
                             : _selectedTime!.format(context),
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -310,12 +316,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Event Category',
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -370,7 +376,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                             : null,
                                         color: selected
                                             ? null
-                                            : Colors.grey[100],
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.surfaceVariant,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
@@ -379,7 +387,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                           fontSize: 13.sp,
                                           color: selected
                                               ? Colors.white
-                                              : Colors.grey[800],
+                                              : Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurface,
                                         ),
                                       ),
                                     ),
@@ -400,7 +410,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                           16.r,
                                         ),
                                         border: Border.all(
-                                          color: Colors.grey[400]!,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.outlineVariant,
                                           width: 1.5,
                                         ),
                                         gradient:
@@ -457,32 +469,35 @@ class _EditEventScreenState extends State<EditEventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Select Location',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.location_on_outlined,
-                color: Colors.grey[700],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Text(
                 'Select address',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -495,12 +510,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Event Title',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -508,9 +523,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
           controller: _titleController,
           decoration: InputDecoration(
             hintText: 'e.g. Music Lovers',
-            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -666,7 +684,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
               group.parent,
               style: TextStyle(
                 fontWeight: FontWeight.w500,
-                color: isSelected ? Colors.black54 : Colors.black54,
+                color: isSelected
+                    ? Theme.of(context).colorScheme.onSurface
+                    : Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
@@ -686,7 +706,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             'Add New Category',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -696,9 +716,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Enter category name',
-              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: Theme.of(context).colorScheme.surfaceVariant,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -718,7 +741,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
               },
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ),
             GestureDetector(
@@ -763,7 +789,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
             'Add Sub Category',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
@@ -773,9 +799,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
             autofocus: true,
             decoration: InputDecoration(
               hintText: 'Enter category name',
-              hintStyle: TextStyle(color: Colors.grey[600], fontSize: 14),
+              hintStyle: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 14,
+              ),
               filled: true,
-              fillColor: Colors.grey[100],
+              fillColor: Theme.of(context).colorScheme.surfaceVariant,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -795,7 +824,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
               },
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ),
             GestureDetector(
@@ -839,12 +871,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Max Attendees',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -853,7 +885,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,

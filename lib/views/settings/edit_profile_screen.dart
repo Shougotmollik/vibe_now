@@ -61,7 +61,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(16.0),
@@ -81,7 +80,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xff908F90),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   Text(
@@ -89,7 +88,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xff908F90),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -149,7 +148,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       style: TextStyle(
         fontSize: 14.sp,
         fontWeight: FontWeight.w400,
-        color: Color(0xff555555),
+        color: Theme.of(context).colorScheme.onSurface,
       ),
     );
   }
@@ -161,7 +160,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0xffAEAEAE)),
+        border: Border.all(color: Theme.of(context).dividerColor),
         borderRadius: BorderRadius.circular(24.r),
       ),
       child: TextFormField(
@@ -169,7 +168,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         obscureText: obscureText,
         decoration: InputDecoration(
           hintText: hint,
-          hintStyle: TextStyle(fontSize: 14.sp, color: Color(0xff202020)),
+          hintStyle: TextStyle(
+            fontSize: 14.sp,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           contentPadding: EdgeInsets.symmetric(
             vertical: 12.h,
             horizontal: 16.w,
@@ -186,7 +188,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       children: [
         Container(
           decoration: BoxDecoration(
-            border: Border.all(color: Color(0xffAEAEAE)),
+            border: Border.all(color: Theme.of(context).dividerColor),
             borderRadius: BorderRadius.circular(24.r),
           ),
           child: TextFormField(
@@ -197,7 +199,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               counterText: "",
               hintText:
                   "Coffee enthusiast. Music lover. Avid traveler. Foodie.",
-              hintStyle: TextStyle(fontSize: 14.sp, color: Color(0xff202020)),
+              hintStyle: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               contentPadding: EdgeInsets.symmetric(
                 vertical: 12.h,
                 horizontal: 16.w,
@@ -211,7 +216,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           padding: EdgeInsets.only(top: 4.h, right: 4.w),
           child: Text(
             "${bioController.text.length}/70",
-            style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
       ],
@@ -255,13 +263,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Container(
                     padding: EdgeInsets.all(6.w),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
                           blurRadius: 4,
-                          offset: Offset(0, 2),
+                          offset: const Offset(0, 2),
                         ),
                       ],
                     ),
@@ -277,7 +285,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             style: TextStyle(
               fontSize: 22.sp,
               fontWeight: FontWeight.bold,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           SizedBox(height: 8.h),
@@ -288,14 +296,20 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(width: 4.w),
               Text(
                 'Coffee enthusiast |',
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               SizedBox(width: 8.w),
               Assets.icons.musicColor.svg(height: 16.h),
               SizedBox(width: 4.w),
               Text(
                 'Music lover',
-                style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade600),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -319,7 +333,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ),
           ),
-          Expanded(flex: 4, child: Container(color: Color(0xffE6E6E6))),
+          Expanded(
+            flex: 4,
+            child: Container(color: Theme.of(context).dividerColor),
+          ),
         ],
       ),
     );

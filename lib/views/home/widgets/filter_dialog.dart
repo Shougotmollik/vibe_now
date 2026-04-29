@@ -132,7 +132,7 @@ class _FilterDialogState extends State<FilterDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
       insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Container(
@@ -152,6 +152,7 @@ class _FilterDialogState extends State<FilterDialog> {
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   IconButton(
@@ -183,7 +184,9 @@ class _FilterDialogState extends State<FilterDialog> {
                             gradient: isSelected
                                 ? AppColors.primaryGradientRotated
                                 : null,
-                            color: isSelected ? null : Colors.grey[200],
+                            color: isSelected
+                                ? null
+                                : Theme.of(context).colorScheme.surfaceVariant,
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Text(
@@ -191,7 +194,7 @@ class _FilterDialogState extends State<FilterDialog> {
                             style: TextStyle(
                               color: isSelected
                                   ? Colors.white
-                                  : Colors.grey[700],
+                                  : Theme.of(context).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -221,13 +224,13 @@ class _FilterDialogState extends State<FilterDialog> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.r),
                           border: Border.all(
-                            color: Color(0xffAEAEAE),
+                            color: Theme.of(context).dividerColor,
                             width: 1.5.w,
                           ),
                         ),
                         child: CustomElevatedButton(
-                          btnColor: Colors.white,
-                          textColor: Colors.black87,
+                          btnColor: Theme.of(context).colorScheme.surface,
+                          textColor: Theme.of(context).colorScheme.onSurface,
 
                           onTap: clearFilters,
                           buttonText: 'Clear',
@@ -260,7 +263,11 @@ class _FilterDialogState extends State<FilterDialog> {
       children: [
         Text(
           'Gender',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         SizedBox(height: 12.h),
         Column(
@@ -280,7 +287,11 @@ class _FilterDialogState extends State<FilterDialog> {
 
         Text(
           'Age',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         SizedBox(height: 12.h),
         _buildAgeSlider(),
@@ -288,7 +299,11 @@ class _FilterDialogState extends State<FilterDialog> {
 
         Text(
           'Interests',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         SizedBox(height: 12.sp),
         Wrap(
@@ -304,13 +319,17 @@ class _FilterDialogState extends State<FilterDialog> {
                   gradient: isSelected
                       ? AppColors.primaryGradientRotated
                       : null,
-                  color: isSelected ? null : Colors.grey[200],
+                  color: isSelected
+                      ? null
+                      : Theme.of(context).colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   interest,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey[800],
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -329,7 +348,11 @@ class _FilterDialogState extends State<FilterDialog> {
       children: [
         Text(
           'Event Type',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: 12),
         Column(
@@ -365,7 +388,11 @@ class _FilterDialogState extends State<FilterDialog> {
         // const SizedBox(height: 24),
         Text(
           'Categories',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: 12),
         Wrap(
@@ -384,13 +411,17 @@ class _FilterDialogState extends State<FilterDialog> {
                   gradient: isSelected
                       ? AppColors.primaryGradientRotated
                       : null,
-                  color: isSelected ? null : Colors.grey[200],
+                  color: isSelected
+                      ? null
+                      : Theme.of(context).colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   category,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey[800],
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -409,7 +440,11 @@ class _FilterDialogState extends State<FilterDialog> {
       children: [
         Text(
           'Community Size',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         SizedBox(height: 12.h),
         Column(
@@ -422,7 +457,11 @@ class _FilterDialogState extends State<FilterDialog> {
         SizedBox(height: 24.h),
         Text(
           'Community Type',
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         SizedBox(height: 12.h),
         Wrap(
@@ -441,13 +480,17 @@ class _FilterDialogState extends State<FilterDialog> {
                   gradient: isSelected
                       ? AppColors.primaryGradientRotated
                       : null,
-                  color: isSelected ? null : Colors.grey[200],
+                  color: isSelected
+                      ? null
+                      : Theme.of(context).colorScheme.surfaceVariant,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   type,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.grey[800],
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -475,7 +518,7 @@ class _FilterDialogState extends State<FilterDialog> {
                 Container(
                   height: 4,
                   decoration: BoxDecoration(
-                    color: Colors.grey[300],
+                    color: Theme.of(context).dividerColor,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -521,16 +564,18 @@ class _FilterDialogState extends State<FilterDialog> {
               children: [
                 Text(
                   '${ageRange.start.round()}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 Text(
                   '${ageRange.end.round()}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -559,8 +604,8 @@ class _FilterDialogState extends State<FilterDialog> {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: groupValue == value
-                      ? const Color(0xFFC2E3FF)
-                      : const Color(0xFFE0E0E0),
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.3)
+                      : Theme.of(context).dividerColor,
                   width: 2,
                 ),
               ),
@@ -578,7 +623,13 @@ class _FilterDialogState extends State<FilterDialog> {
                   : null,
             ),
             const SizedBox(width: 12),
-            Text(value, style: TextStyle(fontSize: 15.sp)),
+            Text(
+              value,
+              style: TextStyle(
+                fontSize: 15.sp,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
           ],
         ),
       ),

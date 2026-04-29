@@ -110,7 +110,6 @@ class _EventScreenState extends State<EventScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -150,7 +149,11 @@ class _EventScreenState extends State<EventScreen> {
                               gradient: isSelected
                                   ? AppColors.primaryGradientRotated
                                   : null,
-                              color: isSelected ? null : Colors.grey[200],
+                              color: isSelected
+                                  ? null
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceVariant,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
@@ -158,7 +161,9 @@ class _EventScreenState extends State<EventScreen> {
                               style: TextStyle(
                                 color: isSelected
                                     ? Colors.white
-                                    : Colors.grey[700],
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
@@ -207,9 +212,14 @@ class _EventScreenState extends State<EventScreen> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.grey.shade200,
+              color: Theme.of(context).colorScheme.surfaceVariant,
             ),
-            child: Assets.icons.scan.svg(),
+            child: Assets.icons.scan.svg(
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.onSurface,
+                BlendMode.srcIn,
+              ),
+            ),
           ),
         ),
         SizedBox(width: 8),

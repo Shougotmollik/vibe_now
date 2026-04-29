@@ -18,7 +18,6 @@ class _CommunityMembersScreenState extends State<CommunityMembersScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -97,12 +96,12 @@ class _CommunityMembersScreenState extends State<CommunityMembersScreen> {
         decoration: BoxDecoration(
           gradient: isSelected ? AppColors.primaryGradient : null,
           borderRadius: BorderRadius.circular(20.r),
-          border: isSelected ? null : Border.all(color: Colors.grey.shade300),
+          border: isSelected ? null : Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : Colors.black,
+            color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w500,
             fontSize: 14.sp,
           ),
@@ -156,24 +155,24 @@ class MemberTile extends StatelessWidget {
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16.sp,
-              color: AppColors.primaryText,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           subtitle: Text(
             "Open for small talk",
             style: TextStyle(
-              color: AppColors.secondaryText,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 12.sp,
               fontWeight: FontWeight.w500,
             ),
           ),
           trailing: _buildStatusLabel(status),
         ),
-        const Divider(
+        Divider(
           indent: 16,
           endIndent: 16,
           height: 1,
-          color: Color(0xff_EAEAEA),
+          color: Theme.of(context).dividerColor,
         ),
       ],
     );

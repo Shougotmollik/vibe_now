@@ -18,7 +18,7 @@ Future<dynamic> editEventAction({
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: AppColors.backgroundVariant,
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
@@ -53,7 +53,10 @@ Future<dynamic> editEventAction({
                   ),
                 ),
               ),
-              const Divider(height: 1),
+              Divider(
+                height: 1,
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
+              ),
 
               InkWell(
                 onTap: onArchive,
@@ -86,7 +89,10 @@ Future<dynamic> editEventAction({
                 ),
               ),
 
-              Divider(height: 1.h),
+              Divider(
+                height: 1,
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
+              ),
               InkWell(
                 onTap: onDelete,
                 splashColor: Colors.transparent,

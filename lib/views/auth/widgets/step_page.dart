@@ -24,7 +24,7 @@ class StepPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundVariant,
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       appBar: AppBar(
         leading: Navigator.canPop(context)
             ? Padding(
@@ -33,16 +33,24 @@ class StepPage extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(context);
                   },
-                  child: const Icon(Icons.arrow_back_ios),
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               )
             : null,
-        backgroundColor: AppColors.backgroundVariant,
+        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        elevation: 0,
         centerTitle: true,
         title: title == null
             ? null
-            : Text(title!, style: Theme.of(context).textTheme.headlineMedium),
-
+            : Text(
+                title!,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+              ),
         actions: [
           isSkippable!
               ? TextButton(
@@ -50,9 +58,9 @@ class StepPage extends StatelessWidget {
                   child: Text(
                     'later',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 )
               : const SizedBox.shrink(),
@@ -78,7 +86,9 @@ class StepPage extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: index + 1 <= currentStep
                                     ? null
-                                    : Colors.white,
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .surface,
                                 gradient: index + 1 <= currentStep
                                     ? AppColors.primaryGradient
                                     : null,
@@ -93,7 +103,6 @@ class StepPage extends StatelessWidget {
                   ],
                 ),
               ),
-              // child,
               if (footer != null) footer!,
               SizedBox(height: 16.h),
             ],

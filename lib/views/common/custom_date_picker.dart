@@ -56,6 +56,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
         IconButton(
           icon: const Icon(Icons.chevron_left),
           onPressed: _goToPreviousMonth,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
         GestureDetector(
           onTap: _openMonthYearPicker,
@@ -63,19 +64,22 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
             children: [
               Text(
                 '${_getMonthName(_currentMonth.month)} ${_currentMonth.year}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(width: 4),
-              const Icon(Icons.keyboard_arrow_down, size: 20),
+              Icon(Icons.keyboard_arrow_down,
+                  size: 20, color: Theme.of(context).colorScheme.onSurface),
             ],
           ),
         ),
         IconButton(
           icon: const Icon(Icons.chevron_right),
           onPressed: _goToNextMonth,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ],
     );
@@ -95,7 +99,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                 child: Text(
                   day,
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -174,10 +178,10 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
             '$day',
             style: TextStyle(
               color: isOtherMonth || isPastDate
-                  ? Colors.grey[300]
+                  ? Theme.of(context).dividerColor
                   : isSelected
                   ? Colors.white
-                  : Colors.black87,
+                  : Theme.of(context).colorScheme.onSurface,
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),
@@ -197,7 +201,9 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           onPressed: () => Navigator.pop(context),
           child: Text(
             'Cancel',
-            style: TextStyle(color: Colors.grey[600], fontSize: 15),
+            style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 15),
           ),
         ),
         const SizedBox(width: 12),
@@ -208,10 +214,10 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
             }
             Navigator.pop(context);
           },
-          child: const Text(
+          child: Text(
             'Save',
             style: TextStyle(
-              color: Color(0xFFB794F6),
+              color: Theme.of(context).colorScheme.primary,
               fontSize: 15,
               fontWeight: FontWeight.w600,
             ),
@@ -233,7 +239,10 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: const Text('Select month'),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              title: Text('Select month',
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               content: SizedBox(
                 height: 240,
                 child: Column(
@@ -244,17 +253,20 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                         IconButton(
                           icon: const Icon(Icons.chevron_left),
                           onPressed: () => setDialogState(() => tempYear--),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                         Text(
                           '$tempYear',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
                         ),
                         IconButton(
                           icon: const Icon(Icons.chevron_right),
                           onPressed: () => setDialogState(() => tempYear++),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ],
                     ),
@@ -279,7 +291,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? const Color(0xFFB794F6)
+                                    ? Theme.of(context).colorScheme.primary
                                     : Colors.transparent,
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -288,7 +300,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                                 style: TextStyle(
                                   color: isSelected
                                       ? Colors.white
-                                      : Colors.black87,
+                                      : Theme.of(context).colorScheme.onSurface,
                                   fontWeight: isSelected
                                       ? FontWeight.w600
                                       : FontWeight.normal,
@@ -305,7 +317,9 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('Cancel'),
+                  child: Text('Cancel',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant)),
                 ),
                 TextButton(
                   onPressed: () {
@@ -323,7 +337,9 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
 
                     Navigator.pop(context);
                   },
-                  child: const Text('OK'),
+                  child: Text('OK',
+                      style: TextStyle(
+                          color: Theme.of(context).colorScheme.primary)),
                 ),
               ],
             );

@@ -11,7 +11,7 @@ class EventAccessGrandScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
 
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20.0),
@@ -38,7 +38,7 @@ class EventAccessGrandScreen extends StatelessWidget {
                 border: Border.all(
                   style: BorderStyle.solid,
                   width: 1.w,
-                  color: Color(0xff_E6E6E6),
+                  color: Theme.of(context).colorScheme.outlineVariant,
                 ),
               ),
               child: Column(
@@ -49,7 +49,7 @@ class EventAccessGrandScreen extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 20.sp,
-                      color: AppColors.primaryText,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   Text(
@@ -57,7 +57,7 @@ class EventAccessGrandScreen extends StatelessWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 14.sp,
-                      color: AppColors.subText,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   SizedBox(
@@ -68,19 +68,20 @@ class EventAccessGrandScreen extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
                         fontSize: 14.sp,
-                        color: AppColors.subText,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ),
 
-                  Divider(color: Colors.grey[300], height: 1.h),
+                  Divider(
+                    color: Theme.of(context).colorScheme.outlineVariant,
+                    height: 1.h,
+                  ),
 
                   Container(
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xff_EFF6FF), Color(0xff_FAF5FF)],
-                      ),
+                      color: Theme.of(context).colorScheme.surfaceVariant,
                       borderRadius: BorderRadius.circular(12.r),
                     ),
 
@@ -89,10 +90,12 @@ class EventAccessGrandScreen extends StatelessWidget {
                         _buildInfoCard(
                           icons: Assets.icons.calendarColor,
                           title: "250m - 3 Min Walk",
+                          context: context,
                         ),
                         _buildInfoCard(
                           icons: Assets.icons.colorClock,
                           title: "Arrive within: 19:45",
+                          context: context,
                         ),
                       ],
                     ),
@@ -115,7 +118,11 @@ class EventAccessGrandScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoCard({required SvgGenImage icons, required String title}) {
+  Widget _buildInfoCard({
+    required SvgGenImage icons,
+    required String title,
+    required BuildContext context,
+  }) {
     return Row(
       spacing: 6.w,
       children: [
@@ -126,7 +133,7 @@ class EventAccessGrandScreen extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 18.sp,
-            color: AppColors.subText,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ],

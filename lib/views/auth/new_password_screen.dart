@@ -54,7 +54,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        color: AppColors.backgroundVariant,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SafeArea(
           child: Column(
@@ -67,7 +67,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                 style: TextStyle(
                   fontSize: 24.sp,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.primaryText,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               SizedBox(height: 24.h),

@@ -65,7 +65,7 @@ class _ManagePasswordState extends State<ManagePassword> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: AppColors.backgroundVariant,
+        color: Theme.of(context).colorScheme.surface,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -94,7 +94,10 @@ class _ManagePasswordState extends State<ManagePassword> {
                   SizedBox(height: 8.h),
                   Text(
                     _passwordError!,
-                    style: TextStyle(color: Colors.red, fontSize: 12.sp),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                      fontSize: 12.sp,
+                    ),
                   ),
                 ],
 

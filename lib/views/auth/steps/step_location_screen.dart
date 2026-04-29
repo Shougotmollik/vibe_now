@@ -31,11 +31,14 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24.r),
-                border: Border.all(color: Color(0xffAEAEAE), width: 1.w),
+                border: Border.all(
+                  color: Theme.of(context).dividerColor,
+                  width: 1.w,
+                ),
               ),
               child: CustomElevatedButton(
-                btnColor: Colors.white,
-                textColor: Colors.black,
+                btnColor: Theme.of(context).colorScheme.surface,
+                textColor: Theme.of(context).colorScheme.onSurface,
                 onTap: () {
                   context.pushNamed(RouteNames.mainNavBar);
                 },
@@ -69,21 +72,19 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
               'assets/lottie/Location Pin.json',
               height: 200.w,
               width: 300.w,
-              delegates: LottieDelegates(
-                values: [
-                  // All fills
-                  ValueDelegate.color([
-                    '**',
-                    'Fill *',
-                  ], value: Color(0xFF6750A4)),
-
-                  // All strokes
-                  ValueDelegate.color([
-                    '**',
-                    'Stroke *',
-                  ], value: Color(0xFF6750A4)),
-                ],
-              ),
+              // delegates: LottieDelegates(
+              //   values: [
+              //     // All fills
+              //     ValueDelegate.color(
+              //       ['**', 'Fill *'],
+              //       value: Theme.of(context).colorScheme.,
+              //     ),
+              //     ValueDelegate.color(
+              //       ['**', 'Stroke *'],
+              //       value: Theme.of(context).colorScheme.primary,
+              //     ),
+              //   ],
+              // ),
             ),
 
             // SizedBox(height: 24.h),
@@ -95,7 +96,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w600,
-                  color: const Color(0xff727272),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -106,7 +107,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
-                color: const Color(0xff727272),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
           ],

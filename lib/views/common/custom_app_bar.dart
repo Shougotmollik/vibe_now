@@ -15,7 +15,8 @@ class CustomAppBar extends StatelessWidget {
       children: [
         canBack
             ? GestureDetector(
-                child: const Icon(Icons.arrow_back_ios, color: Colors.black),
+                child: Icon(Icons.arrow_back_ios,
+                    color: Theme.of(context).colorScheme.onSurface),
                 onTap: () {
                   if (context.canPop()) {
                     context.pop();
@@ -30,7 +31,7 @@ class CustomAppBar extends StatelessWidget {
           style: TextStyle(
             fontSize: 20.sp,
             fontWeight: FontWeight.w500,
-            color: const Color(0xff303030),
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
       ],

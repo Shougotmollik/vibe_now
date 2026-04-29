@@ -37,7 +37,7 @@ class _MemberConfirmationDialogState extends State<MemberConfirmationDialog> {
     return Dialog(
       insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: Padding(
         padding: EdgeInsets.all(24.w),
         child: Column(
@@ -48,26 +48,22 @@ class _MemberConfirmationDialogState extends State<MemberConfirmationDialog> {
               widget.title,
               style: TextStyle(
                 fontSize: 18.sp,
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontWeight: FontWeight.w400,
                 height: 1.4,
               ),
             ),
             SizedBox(height: 24.h),
-
             ..._reasons.map((reason) => _buildRadioOption(reason)),
-
             SizedBox(height: 32.h),
-
             Row(
               children: [
                 Expanded(
                   child: CustomElevatedButton(
                     onTap: widget.onCancel,
                     buttonText: "Cancel",
-
-                    btnColor: const Color(0xFFF2F2F2),
-                    textColor: Colors.black,
+                    btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                    textColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
                 SizedBox(width: 16.w),
@@ -102,7 +98,8 @@ class _MemberConfirmationDialogState extends State<MemberConfirmationDialog> {
                 shape: BoxShape.circle,
                 border: isSelected
                     ? null
-                    : Border.all(color: Colors.grey.shade300, width: 2),
+                    : Border.all(
+                        color: Theme.of(context).dividerColor, width: 2),
                 gradient: isSelected ? AppColors.primaryGradient : null,
               ),
               child: isSelected
@@ -112,7 +109,10 @@ class _MemberConfirmationDialogState extends State<MemberConfirmationDialog> {
             SizedBox(width: 12.w),
             Text(
               title,
-              style: TextStyle(fontSize: 16.sp, color: Colors.black54),
+              style: TextStyle(
+                fontSize: 16.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),

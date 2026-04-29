@@ -10,6 +10,7 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/vibe/vibe_animated_dialog.dart';
 
 class CreateVibeScreen extends StatefulWidget {
@@ -26,12 +27,10 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // CustomAppBar(title: "Create Vibe", canBack: false),
               Padding(
                 padding: EdgeInsets.all(16.w),
                 child: Column(
@@ -65,9 +64,12 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
     return Row(
       children: [
         Expanded(
-          child: CancelButton(
-            btnText: "Cancel",
+          child: CustomElevatedButton(
+            height: 55.h,
             onTap: () => Navigator.of(context).maybePop(),
+            buttonText: "Cancel",
+            textColor: Theme.of(context).colorScheme.onSurface,
+            btnColor: Theme.of(context).colorScheme.surface,
           ),
         ),
         const SizedBox(width: 12),
@@ -161,9 +163,12 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
       decoration: BoxDecoration(
-        color: Color(0xffF7F9FB),
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade300, width: 1.w),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+          width: 1.w,
+        ),
       ),
 
       child: Column(
@@ -179,7 +184,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xff484848),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -190,7 +195,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
-              color: Color(0xff484848),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -202,22 +207,29 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Vibe Title',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _titleController,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 14.sp,
+          ),
           decoration: InputDecoration(
             hintText: 'e.g. Sunday coffee vibes — who’s in? 🌞',
-            hintStyle: TextStyle(color: Color(0xff717182), fontSize: 14.sp),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14.sp,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(40.r),
               borderSide: BorderSide.none,
@@ -257,7 +269,14 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+            colors: [
+              Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withValues(alpha: 0.1),
+              Theme.of(
+                context,
+              ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+            ],
           ),
           borderRadius: BorderRadius.circular(14.r),
         ),
@@ -286,7 +305,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                       child: Container(
                         padding: EdgeInsets.all(4.w),
                         decoration: BoxDecoration(
-                          color: Color.fromRGBO(24, 23, 24, 0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -303,7 +322,14 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Assets.icons.uploadImage.svg(width: 40.w, height: 40.h),
+                    Assets.icons.uploadImage.svg(
+                      width: 40.w,
+                      height: 40.h,
+                      colorFilter: ColorFilter.mode(
+                        Theme.of(context).colorScheme.onSurface,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                     SizedBox(height: 8.h),
 
                     Text(
@@ -311,7 +337,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0XFF364153),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
@@ -319,7 +345,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0XFF4A5565),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -336,7 +362,14 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+          colors: [
+            Theme.of(
+              context,
+            ).colorScheme.primaryContainer.withValues(alpha: 0.1),
+            Theme.of(
+              context,
+            ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+          ],
         ),
         borderRadius: BorderRadius.circular(14.r),
       ),
@@ -349,14 +382,17 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
               Assets.icons.creationStar.svg(
                 width: 24.w,
                 height: 24.h,
-                color: Color(0xff0A0A0A),
+                colorFilter: ColorFilter.mode(
+                  Theme.of(context).colorScheme.onSurface,
+                  BlendMode.srcIn,
+                ),
               ),
               Text(
                 "Create Vibe",
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w400,
-                  color: const Color(0xff0A0A0A),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],
@@ -366,7 +402,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w400,
-              color: const Color(0xff364153),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ],
@@ -398,9 +434,12 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: BoxDecoration(
-        color: Color(0xff_F7F9FB),
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade300, width: 1.w),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+          width: 1.w,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.07),
@@ -418,12 +457,12 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
             children: [
               Assets.icons.calenderHistory.svg(width: 24.w, height: 24.h),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'Vibe Duration',
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A2E),
+                  color: Theme.of(context).colorScheme.onSurface,
                   letterSpacing: -0.2,
                 ),
               ),
@@ -446,10 +485,12 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
                 builder: TimelineTileBuilder.connected(
                   itemCount: _durations.length,
                   connectionDirection: ConnectionDirection.before,
-                  connectorBuilder: (context, index, type) => const SizedBox(
+                  connectorBuilder: (context, index, type) => SizedBox(
                     width: 8,
                     child: SolidLineConnector(
-                      color: _connectorColor,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                       thickness: 2,
                     ),
                   ),
@@ -467,25 +508,30 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
                           gradient: isSelected
                               ? AppColors.primaryGradientRotated
                               : null,
-                          color: isSelected ? null : _inactiveColor,
+                          color: isSelected
+                              ? null
+                              : Theme.of(context).colorScheme.surface,
                           borderRadius: BorderRadius.circular(8.r),
                           border: Border.all(
                             color: isSelected
                                 ? Colors.transparent
-                                : (Colors.grey.shade300),
+                                : Theme.of(context).colorScheme.onSurfaceVariant
+                                      .withValues(alpha: 0.4),
                           ),
                         ),
                         alignment: Alignment.center,
                         child: AnimatedDefaultTextStyle(
                           duration: const Duration(milliseconds: 220),
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: isSelected
                                 ? FontWeight.w700
                                 : FontWeight.w500,
                             color: isSelected
                                 ? Colors.white
-                                : const Color(0xFF6B7280),
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                             letterSpacing: -0.1,
                           ),
                           child: Text(_durations[index]),

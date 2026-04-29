@@ -550,11 +550,11 @@ class _MapHomeScreenState extends State<HomeScreen>
                   child: Container(
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -564,7 +564,7 @@ class _MapHomeScreenState extends State<HomeScreen>
                       child: Assets.icons.notification.svg(
                         width: 20.w,
                         height: 20.h,
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -574,11 +574,11 @@ class _MapHomeScreenState extends State<HomeScreen>
                   child: Container(
                     height: 36.h,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(20.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -586,6 +586,7 @@ class _MapHomeScreenState extends State<HomeScreen>
                     ),
                     child: Center(
                       child: TextField(
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
                         decoration: InputDecoration(
                           isDense: true,
                           contentPadding: const EdgeInsets.symmetric(
@@ -595,7 +596,7 @@ class _MapHomeScreenState extends State<HomeScreen>
                           hintText: 'Search',
                           hintStyle: TextStyle(
                             fontSize: 14.sp,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
@@ -613,17 +614,21 @@ class _MapHomeScreenState extends State<HomeScreen>
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.shade300,
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
                       ],
                     ),
                     child: Center(
-                      child: Assets.icons.filter.svg(width: 16.w, height: 16.h),
+                      child: Assets.icons.filter.svg(
+                        width: 16.w, 
+                        height: 16.h,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                   ),
                 ),

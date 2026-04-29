@@ -12,8 +12,8 @@ class TrustScoreCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(20.0),
         decoration: BoxDecoration(
-          color: const Color(0xff_F1F5F9),
-          borderRadius: BorderRadius.circular(16),
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.circular(16.r),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -31,7 +31,7 @@ class TrustScoreCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w400,
-                        color: Colors.lightBlue,
+                        color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -39,26 +39,25 @@ class TrustScoreCard extends StatelessWidget {
                       'Respect Score',
                       style: TextStyle(
                         fontSize: 14.sp,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ],
                 ),
-
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
+                    borderRadius: BorderRadius.circular(30.r),
                     gradient: AppColors.primaryGradient,
                   ),
                   child: Row(
                     children: [
                       Icon(Icons.star, color: Colors.amber, size: 20.sp),
-                      SizedBox(width: 6),
-                      Text(
+                      const SizedBox(width: 6),
+                      const Text(
                         'Trusted',
                         style: TextStyle(
                           color: Colors.white,
@@ -74,13 +73,16 @@ class TrustScoreCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               'Based on 12 real-life meets',
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 12),
             Row(
               children: List.generate(5, (index) {
                 return Padding(
-                  padding: EdgeInsets.only(right: 4.0),
+                  padding: const EdgeInsets.only(right: 4.0),
                   child: Icon(Icons.star, color: Colors.amber, size: 20.sp),
                 );
               }),

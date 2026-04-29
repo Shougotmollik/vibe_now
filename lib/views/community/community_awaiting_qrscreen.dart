@@ -10,7 +10,6 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -32,11 +31,11 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                   Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(12.r),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.15),
+                          color: Theme.of(context).shadowColor.withOpacity(0.1),
                           blurRadius: 30,
                           spreadRadius: 8,
                           offset: const Offset(0, 8),
@@ -53,19 +52,19 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                             children: [
                               TextSpan(
                                 text: 'Jhon',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20.sp,
-                                ),
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 20.sp,
+                                  ),
                               ),
                               TextSpan(
                                 text: ' has been approved!',
-                                style: TextStyle(
-                                  color: Colors.black54,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 20.sp,
-                                ),
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 20.sp,
+                                  ),
                               ),
                             ],
                           ),
@@ -77,15 +76,15 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                             Icon(
                               Icons.calendar_today_outlined,
                               size: 16.sp,
-                              color: Colors.grey,
+                               color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                             SizedBox(width: 6.w),
                             Text(
                               'Wed, 12 at 4:00 PM',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14.sp,
-                              ),
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  fontSize: 14.sp,
+                                ),
                             ),
                           ],
                         ),
@@ -106,7 +105,7 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                           padding: EdgeInsets.all(14.w),
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFEEEEEE),
+                            color: Theme.of(context).colorScheme.surfaceVariant,
                             borderRadius: BorderRadius.circular(30.r),
                           ),
                           child: Row(
@@ -115,14 +114,15 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             spacing: 8.w,
                             children: [
-                              Assets.icons.scanner.svg(
+                              Assets.icons.scan.svg(
                                 height: 20.w,
                                 width: 24.w,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                               Text(
                                 "Scan QR Code",
                                 style: TextStyle(
-                                  color: AppColors.primaryText,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                   fontSize: 14.sp,
                                   fontWeight: FontWeight.w400,
                                 ),
@@ -141,7 +141,7 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                       height: 80.h,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.white, width: 4),
+                        border: Border.all(color: Theme.of(context).colorScheme.surface, width: 4),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.1),
@@ -209,7 +209,7 @@ class _InfoBullet extends StatelessWidget {
           child: Text(
             text,
             style: TextStyle(
-              color: Colors.black54,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 13.sp,
               height: 1.4,
             ),

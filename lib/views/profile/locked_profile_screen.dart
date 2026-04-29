@@ -11,7 +11,6 @@ class LockedProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFF5F5F5),
       body: SafeArea(
         child: Column(
           children: [
@@ -44,11 +43,13 @@ class LockedProfileScreen extends StatelessWidget {
                             Container(
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.white,
+                                color: Theme.of(context).colorScheme.surface,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.grey.shade200,
+                                    color: Theme.of(
+                                      context,
+                                    ).shadowColor.withOpacity(0.1),
                                     blurRadius: 10,
                                     offset: const Offset(0, 4),
                                   ),
@@ -63,7 +64,9 @@ class LockedProfileScreen extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 24.sp,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.black,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurface,
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -75,11 +78,19 @@ class LockedProfileScreen extends StatelessWidget {
                                       Icon(
                                         Icons.location_on_outlined,
                                         size: 16.h,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
                                       ),
                                       SizedBox(width: 4),
                                       Text(
                                         'Approximate 400 km',
-                                        style: TextStyle(fontSize: 14.sp),
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -190,11 +201,15 @@ class LockedProfileScreen extends StatelessWidget {
                                       },
                                   errorBuilder: (context, error, stackTrace) {
                                     return Container(
-                                      color: Colors.grey.shade200,
-                                      child: const Icon(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.surfaceVariant,
+                                      child: Icon(
                                         Icons.person,
                                         size: 60,
-                                        color: Colors.grey,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurfaceVariant,
                                       ),
                                     );
                                   },
@@ -216,7 +231,9 @@ class LockedProfileScreen extends StatelessWidget {
                           'The Wave feature lets you show friendly interest in someone nearby.',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             height: 1.5,
                           ),
                         ),
@@ -225,17 +242,23 @@ class LockedProfileScreen extends StatelessWidget {
                           'If you like someone, you can send them a Wave.',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             height: 1.5,
                           ),
                         ),
                         const SizedBox(height: 16),
                         _buildBulletPoint(
-                          'Before acceptance: Both users only see an approximate location (for privacy).',
+                          context: context,
+                          text:
+                              'Before acceptance: Both users only see an approximate location (for privacy).',
                         ),
                         const SizedBox(height: 12),
                         _buildBulletPoint(
-                          'After acceptance: Once the other person accepts the Wave, their exact location becomes visible, and both know that it\'s okay to approach or meet.',
+                          context: context,
+                          text:
+                              'After acceptance: Once the other person accepts the Wave, their exact location becomes visible, and both know that it\'s okay to approach or meet.',
                         ),
                       ],
                     ),
@@ -259,17 +282,20 @@ class LockedProfileScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             GestureDetector(
-              child: const Icon(Icons.arrow_back_ios, color: Colors.black),
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               onTap: () => Navigator.pop(context),
             ),
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.shade200,
+                    color: Theme.of(context).shadowColor.withOpacity(0.1),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),
@@ -283,7 +309,10 @@ class LockedProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildBulletPoint(String text) {
+  Widget _buildBulletPoint({
+    required String text,
+    required BuildContext context,
+  }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -291,7 +320,7 @@ class LockedProfileScreen extends StatelessWidget {
           '• ',
           style: TextStyle(
             fontSize: 14,
-            color: Colors.grey.shade600,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             height: 1.5,
           ),
         ),
@@ -300,7 +329,7 @@ class LockedProfileScreen extends StatelessWidget {
             text,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade600,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
               height: 1.5,
             ),
           ),

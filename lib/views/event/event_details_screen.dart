@@ -18,7 +18,6 @@ class EventDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,10 +55,12 @@ class EventDetailsScreen extends StatelessWidget {
                         child: GestureDetector(
                           onTap: () => Navigator.of(context).maybePop(),
                           child: CircleAvatar(
-                            backgroundColor: Colors.white,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
                             child: Icon(
                               Icons.arrow_back_ios_new,
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                         ),
@@ -74,9 +75,11 @@ class EventDetailsScreen extends StatelessWidget {
                             );
                           },
                           child: CircleAvatar(
-                            backgroundColor: Colors.white,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
                             child: Assets.icons.edit.svg(
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fit: BoxFit.cover,
                               height: 24.w,
                               width: 24.w,
@@ -109,7 +112,7 @@ class EventDetailsScreen extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     SizedBox(height: 16.h),
@@ -117,14 +120,20 @@ class EventDetailsScreen extends StatelessWidget {
                     SizedBox(height: 6.h),
                     Row(
                       children: [
-                        Assets.icons.location.svg(),
+                        Assets.icons.location.svg(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withAlpha(150),
+                        ),
                         SizedBox(width: 4.w),
                         Expanded(
                           child: Text(
                             event.location,
                             style: TextStyle(
                               fontSize: 12.sp,
-                              color: AppColors.subText,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withAlpha(150),
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -140,7 +149,9 @@ class EventDetailsScreen extends StatelessWidget {
                           '${event.time}, ${event.date}',
                           style: TextStyle(
                             fontSize: 12.sp,
-                            color: AppColors.subText,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -153,7 +164,9 @@ class EventDetailsScreen extends StatelessWidget {
                           event.description,
                           style: TextStyle(
                             fontSize: 12.sp,
-                            color: AppColors.subText,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -168,7 +181,9 @@ class EventDetailsScreen extends StatelessWidget {
                           '${event.attending}/${event.totalAttending} attending',
                           style: TextStyle(
                             fontSize: 12.sp,
-                            color: AppColors.subText,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
@@ -247,7 +262,7 @@ class EventDetailsScreen extends StatelessWidget {
                         PopupMenuButton<int>(
                           icon: Icon(
                             Icons.more_vert,
-                            color: const Color(0xFF050505),
+                            color: Theme.of(context).colorScheme.onSurface,
                             size: 24.sp,
                           ),
 

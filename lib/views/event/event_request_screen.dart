@@ -16,7 +16,7 @@ class EventRequestScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
         children: [
           Padding(
@@ -42,17 +42,19 @@ class EventRequestScreen extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 20.sp,
-                    color: AppColors.primaryText,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 SizedBox(height: 10.h),
 
                 _buildEventInfoCard(
+                  context,
                   icon: Assets.icons.location,
                   location: event.location,
                 ),
                 SizedBox(height: 8.h),
                 _buildEventInfoCard(
+                  context,
                   icon: Assets.icons.colorClock,
                   location: "${event.date} ${event.time}",
                 ),
@@ -62,7 +64,7 @@ class EventRequestScreen extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 14.sp,
-                    color: AppColors.subText,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
 
@@ -99,7 +101,8 @@ class EventRequestScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEventInfoCard({
+  Widget _buildEventInfoCard(
+    BuildContext context, {
     required SvgGenImage icon,
     required String location,
   }) {
@@ -107,7 +110,7 @@ class EventRequestScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        icon.svg(width: 16.w, height: 16.h, color: AppColors.subText),
+        icon.svg(width: 16.w, height: 16.h, color: Theme.of(context).colorScheme.onSurfaceVariant),
         SizedBox(width: 5.w),
 
         Text(
@@ -115,7 +118,7 @@ class EventRequestScreen extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.w400,
             fontSize: 14.sp,
-            color: AppColors.subText,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
         ),
       ],

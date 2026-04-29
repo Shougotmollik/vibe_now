@@ -63,7 +63,9 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                   onPressed: () => Navigator.pop(context),
                   child: Text(
                     'Cancel',
-                    style: TextStyle(color: Colors.grey[600], fontSize: 15),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 15),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -76,10 +78,10 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                     widget.onTimeSelected(time);
                     Navigator.pop(context);
                   },
-                  child: const Text(
+                  child: Text(
                     'Save',
                     style: TextStyle(
-                      color: Color(0xFFB794F6),
+                      color: Theme.of(context).colorScheme.primary,
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
                     ),
@@ -124,10 +126,10 @@ class _CustomTimePickerState extends State<CustomTimePicker> {
                   items[index],
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: isSelected
-                        ? FontWeight.w600
-                        : FontWeight.normal,
-                    color: isSelected ? Colors.white : Colors.black54,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    color: isSelected
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               );

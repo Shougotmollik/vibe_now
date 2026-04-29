@@ -31,7 +31,6 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -75,12 +74,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
-              side: BorderSide(color: Colors.grey[300]!),
+              side: BorderSide(color: Theme.of(context).dividerColor),
             ),
-            child: const Text(
+            child: Text(
               'Cancel',
               style: TextStyle(
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
               ),
@@ -132,7 +131,14 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Color(0XFFEFF6FF), Color(0XFFECFEFF)],
+            colors: [
+              Theme.of(
+                context,
+              ).colorScheme.primaryContainer.withValues(alpha: 0.1),
+              Theme.of(
+                context,
+              ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+            ],
           ),
           borderRadius: BorderRadius.circular(14.r),
         ),
@@ -186,7 +192,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0XFF364153),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     Text(
@@ -194,7 +200,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0XFF4A5565),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -208,12 +214,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           ' Name',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -221,9 +227,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
           controller: _titleController,
           decoration: InputDecoration(
             hintText: 'e.g. Music Lovers',
-            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -242,12 +251,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Description',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
@@ -256,9 +265,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
           maxLines: 4,
           decoration: InputDecoration(
             hintText: 'Describe about your meetup?',
-            hintStyle: TextStyle(color: Colors.grey[700], fontSize: 14),
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -277,8 +289,8 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
             style: TextStyle(
               fontSize: 12,
               color: _descriptionController.text.length > 200
-                  ? Colors.red
-                  : Colors.grey,
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -290,32 +302,35 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Select Location',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
               Icon(
                 Icons.location_on_outlined,
-                color: Colors.grey[700],
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 size: 20,
               ),
               const SizedBox(width: 12),
               Text(
                 'Select address',
-                style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),
@@ -331,12 +346,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Date',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -348,14 +363,14 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.calendar_today_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -363,7 +378,10 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                         _selectedDate == null
                             ? 'Select'
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -377,12 +395,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Time',
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 8),
@@ -394,14 +412,14 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                     vertical: 16,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Theme.of(context).colorScheme.surfaceVariant,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Row(
                     children: [
                       Icon(
                         Icons.access_time_outlined,
-                        color: Colors.grey[700],
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                         size: 18,
                       ),
                       const SizedBox(width: 12),
@@ -409,7 +427,10 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                         _selectedTime == null
                             ? 'Select'
                             : _selectedTime!.format(context),
-                        style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                       ),
                     ],
                   ),
@@ -454,22 +475,25 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'Max Attendees',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: Colors.black87,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _maxAttendeesController,
           keyboardType: TextInputType.number,
-          style: TextStyle(fontSize: 14.sp, color: Colors.grey[700]),
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.grey[100],
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,

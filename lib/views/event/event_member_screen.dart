@@ -18,7 +18,6 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,8 +58,11 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
   Widget _buildActiveList() {
     return ListView.separated(
       itemCount: 5,
-      separatorBuilder: (context, index) =>
-          const Divider(indent: 20, endIndent: 20),
+      separatorBuilder: (context, index) => Divider(
+        indent: 20,
+        endIndent: 20,
+        color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(122),
+      ),
       itemBuilder: (context, index) {
         return ListTile(
           leading: const CircleAvatar(
@@ -81,8 +83,11 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
   Widget _buildPendingList() {
     return ListView.separated(
       itemCount: 3,
-      separatorBuilder: (context, index) =>
-          const Divider(indent: 20, endIndent: 20),
+      separatorBuilder: (context, index) => Divider(
+        indent: 20,
+        endIndent: 20,
+        color: Theme.of(context).colorScheme.onSurfaceVariant.withAlpha(122),
+      ),
       itemBuilder: (context, index) {
         return ListTile(
           leading: const CircleAvatar(

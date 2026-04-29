@@ -54,21 +54,24 @@ class _CommunityManageMemberScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Theme.of(context).colorScheme.onSurface,
+            size: 20,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Manage Request',
           style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 20,
             fontWeight: FontWeight.w500,
           ),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -109,14 +112,21 @@ class _CommunityManageMemberScreenState
           text: "Approve for Meetup",
         ),
         const SizedBox(height: 30),
-        const Text(
+        Text(
           'About Community',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: 15),
-        const Text(
+        Text(
           'tincidunt dolor in ex quam amet, varius non adipiscing dolor ipsum hendrerit cursus...',
-          style: TextStyle(color: Colors.grey, height: 1.5),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            height: 1.5,
+          ),
         ),
       ],
     );
@@ -135,19 +145,30 @@ class _CommunityManageMemberScreenState
           child: const Icon(Icons.check, color: Colors.white, size: 45),
         ),
         const SizedBox(height: 20),
-        const Text(
+        Text(
           'Jhon has been approved!',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.location_on_outlined, size: 20, color: Colors.grey),
+          children: [
+            Icon(
+              Icons.location_on_outlined,
+              size: 20,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             SizedBox(width: 4),
             Text(
               'Central Park Cafe',
-              style: TextStyle(color: Colors.grey, fontSize: 16),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 16,
+              ),
             ),
           ],
         ),
@@ -208,7 +229,7 @@ class _CommunityManageMemberScreenState
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50),
-        border: Border.all(color: Colors.grey.shade200),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -238,12 +259,16 @@ class _CommunityManageMemberScreenState
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         gradient: isActive ? AppColors.primaryGradient : null,
-        border: isActive ? null : Border.all(color: Colors.grey.shade200),
+        border: isActive
+            ? null
+            : Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: isActive ? Colors.white : Colors.grey,
+          color: isActive
+              ? Colors.white
+              : Theme.of(context).colorScheme.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -255,7 +280,7 @@ class _CommunityManageMemberScreenState
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F7FF),
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(15),
       ),
       child: Column(children: children),
@@ -279,7 +304,10 @@ class _CommunityManageMemberScreenState
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(color: Color(0xFF4F4F4F), fontSize: 14),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
           ),
         ),
       ],
@@ -297,14 +325,17 @@ class _CommunityManageMemberScreenState
       child: Container(
         margin: const EdgeInsets.all(1.5),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(30),
         ),
         child: TextButton(
           onPressed: () => setState(() => isApproved = false),
-          child: const Text(
+          child: Text(
             "Cancel Request",
-            style: TextStyle(color: Colors.black87, fontSize: 18),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontSize: 18,
+            ),
           ),
         ),
       ),
@@ -318,12 +349,21 @@ class _CommunityManageMemberScreenState
         const SizedBox(width: 15),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text(
               'Jhon Gomes',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
-            Text('Music • New york, USA', style: TextStyle(color: Colors.grey)),
+            Text(
+              'Music • New york, USA',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ],
@@ -333,9 +373,19 @@ class _CommunityManageMemberScreenState
   Widget _buildIconTextRow(SvgGenImage icon, String text) {
     return Row(
       children: [
-        icon.svg(height: 20.h, width: 20.h),
+        icon.svg(
+          height: 20.h,
+          width: 20.h,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
         const SizedBox(width: 10),
-        Text(text, style: const TextStyle(color: Colors.grey, fontSize: 16)),
+        Text(
+          text,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 16,
+          ),
+        ),
       ],
     );
   }

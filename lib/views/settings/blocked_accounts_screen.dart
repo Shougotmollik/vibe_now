@@ -9,7 +9,6 @@ class BlockedAccountsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -61,6 +60,7 @@ class BlockedAccountsScreen extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -80,7 +80,7 @@ class BlockedAccountsScreen extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(20.w),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.surface,
                         borderRadius: BorderRadius.circular(16.r),
                       ),
                       child: Column(
@@ -92,7 +92,7 @@ class BlockedAccountsScreen extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w400,
-                              color: const Color(0xff908F90),
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                             ),
                           ),
 
@@ -106,8 +106,8 @@ class BlockedAccountsScreen extends StatelessWidget {
                                     Navigator.pop(context);
                                   },
                                   buttonText: "Cancel",
-                                  btnColor: const Color(0xffF2F2F2),
-                                  textColor: const Color(0xFF202020),
+                                  btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                                  textColor: Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
                               SizedBox(width: 12.w),
@@ -132,7 +132,7 @@ class BlockedAccountsScreen extends StatelessWidget {
               "Unblock",
               style: TextStyle(
                 fontSize: 14.sp,
-                color: const Color(0xFF9D9D9D),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontWeight: FontWeight.w500,
               ),
             ),

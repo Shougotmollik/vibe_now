@@ -122,8 +122,7 @@ class CustomNavBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bottomPadding = MediaQuery.of(context).padding.bottom;
-
-    final barHeight = 60.0;
+    const barHeight = 60.0;
 
     return SizedBox(
       height: barHeight + bottomPadding,
@@ -144,12 +143,12 @@ class CustomNavBar extends StatelessWidget {
                 bottom: bottomPadding > 0 ? bottomPadding : 8,
               ),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.surface,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black12,
+                    color: Theme.of(context).shadowColor.withOpacity(0.12),
                     blurRadius: 8,
-                    offset: Offset(0, -2),
+                    offset: const Offset(0, -2),
                   ),
                 ],
               ),
@@ -166,7 +165,6 @@ class CustomNavBar extends StatelessWidget {
               ),
             ),
           ),
-
           Positioned(
             bottom: (bottomPadding > 0 ? bottomPadding : 8) + 4,
             child: GestureDetector(
@@ -179,7 +177,7 @@ class CustomNavBar extends StatelessWidget {
                   gradient: AppColors.primaryGradient,
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0xFF5A7FFF).withValues(alpha: 0.45),
+                      color: AppColors.primary.withOpacity(0.45),
                       blurRadius: 35,
                       spreadRadius: 5,
                     ),

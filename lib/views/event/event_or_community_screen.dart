@@ -34,12 +34,19 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: Color(0xFFE9D4FF), width: 1.5.w),
-              gradient: LinearGradient(
-                colors: [Color(0xFFFAF5FF), Color(0xFFFDF2F8)],
-                begin: Alignment.bottomRight,
-                end: Alignment.topLeft,
+              border: Border.all(
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Theme.of(context).colorScheme.primary
+                    : Color(0xFFE9D4FF),
+                width: 1.5.w,
               ),
+              gradient: Theme.of(context).brightness == Brightness.dark
+                  ? null
+                  : LinearGradient(
+                      colors: [Color(0xFFFAF5FF), Color(0xFFFDF2F8)],
+                      begin: Alignment.bottomRight,
+                      end: Alignment.topLeft,
+                    ),
             ),
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -49,7 +56,10 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.info_outline, color: Color(0xFF8200DB)),
+                      Icon(
+                        Icons.info_outline,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                       SizedBox(width: 12.w),
                       Expanded(
                         child: Column(
@@ -60,7 +70,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w500,
-                                color: Color(0xFF8200DB),
+                                color: Theme.of(context).colorScheme.primary,
                               ),
                             ),
                             SizedBox(height: 8.h),
@@ -69,7 +79,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w400,
-                                color: Color(0xFF364153),
+                                color: Theme.of(context).colorScheme.onSurface,
                               ),
                               textAlign: TextAlign.justify,
                             ),
@@ -92,7 +102,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                         "Got it!",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onPrimary,
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
                         ),
@@ -111,7 +121,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -119,7 +129,13 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16.0.w, vertical: 0),
               child: Row(
                 children: [
-                  Text('Create something new', style: TextStyle(fontSize: 18)),
+                  Text(
+                    'Create something new',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -148,7 +164,10 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                     // Title
                     Text(
                       'Start an event or build a community.',
-                      style: TextStyle(fontSize: 20.sp),
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                     // Text(
                     //   'Choose the type of vibe you want to share',
@@ -232,12 +251,16 @@ class CreateCard extends StatelessWidget {
         child: Container(
           padding: EdgeInsets.all(3.w),
           decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12.r),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.shade300,
+                color: Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white.withOpacity(0.05)
+                    : Theme.of(context).shadowColor.withOpacity(0.1),
                 blurRadius: 10,
-                offset: const Offset(0, 6),
+                spreadRadius: 1,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -273,7 +296,7 @@ class CreateCard extends StatelessWidget {
                 ),
                 Expanded(
                   child: Container(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
@@ -285,7 +308,7 @@ class CreateCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 16.sp,
                               fontWeight: FontWeight.w400,
-                              color: Colors.black87,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           Text(
@@ -293,7 +316,9 @@ class CreateCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12.sp,
                               fontWeight: FontWeight.w400,
-                              color: Colors.grey.shade600,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withAlpha(180),
                             ),
                           ),
                         ],

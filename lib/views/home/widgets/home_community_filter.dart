@@ -74,6 +74,7 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                       style: TextStyle(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
 
@@ -84,6 +85,7 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],
@@ -103,7 +105,7 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                         Container(
                           height: 4.h,
                           decoration: BoxDecoration(
-                            color: Colors.grey[300],
+                            color: Theme.of(context).dividerColor,
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
@@ -147,7 +149,16 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [Text('100 m'), Text('10 km')],
+                  children: [
+                    Text(
+                      '100 m',
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                    ),
+                    Text(
+                      '10 km',
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -157,7 +168,11 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
             // Categories
             Text(
               'Categories',
-              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             ),
             const SizedBox(height: 8),
 
@@ -220,7 +235,7 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                                               : null,
                                           color: selected
                                               ? null
-                                              : Colors.grey[100],
+                                              : Theme.of(context).colorScheme.surfaceVariant,
                                           borderRadius: BorderRadius.circular(
                                             20,
                                           ),
@@ -231,7 +246,7 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
                                             fontSize: 13.sp,
                                             color: selected
                                                 ? Colors.white
-                                                : Colors.grey[800],
+                                                : Theme.of(context).colorScheme.onSurfaceVariant,
                                           ),
                                         ),
                                       ),
@@ -267,11 +282,16 @@ class _HomeCommunityFilterState extends State<HomeCommunityFilter> {
             group.parent,
             style: TextStyle(
               fontWeight: FontWeight.w600,
-              color: isSelected ? Colors.white : Colors.black87,
+              color: isSelected
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ),
-        Icon(isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+        Icon(
+          isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ],
     );
   }

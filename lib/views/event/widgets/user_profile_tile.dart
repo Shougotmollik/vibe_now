@@ -23,18 +23,24 @@ class UserProfileTile extends StatelessWidget {
         style: TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 18,
-          color: Colors.black87,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
 
       subtitle: Text(
         'Member',
-        style: TextStyle(fontSize: 14, color: Colors.grey),
+        style: TextStyle(
+          fontSize: 14,
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+        ),
       ),
 
       trailing: PopupMenuButton<String>(
-        color: AppColors.background,
-        icon: const Icon(Icons.more_horiz, color: Colors.grey),
+        color: Theme.of(context).colorScheme.surfaceVariant,
+        icon: Icon(
+          Icons.more_horiz,
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+        ),
         onSelected: (value) {
           showDialog(
             context: context,
@@ -55,7 +61,7 @@ class UserProfileTile extends StatelessWidget {
             value: 'remove',
             child: Text(
               'Remove Member',
-              style: TextStyle(color: AppColors.primaryVariant),
+              style: TextStyle(color: AppColors.primary),
             ),
           ),
         ],

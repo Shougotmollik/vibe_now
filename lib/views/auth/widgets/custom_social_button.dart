@@ -26,14 +26,14 @@ class CustomSocialButton extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 16.h),
         width: double.infinity,
         decoration: BoxDecoration(
-          color: Color(0xfffcfcfc),
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(40.r),
           boxShadow: [
             BoxShadow(
-              color: Color(0xff000000).withValues(alpha: 0.02),
+              color: Theme.of(context).shadowColor.withOpacity(0.02),
               spreadRadius: 0,
               blurRadius: 12,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -48,7 +48,7 @@ class CustomSocialButton extends StatelessWidget {
                 style: TextStyle(
                   fontSize: fontSize ?? 14.sp,
                   fontWeight: fontWeight ?? FontWeight.w600,
-                  color: Color(0xff1a1a23),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ],

@@ -78,11 +78,11 @@ class _CommunityAnimatedDialogState extends State<CommunityAnimatedDialog>
                 width: 300.w,
                 padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 20.h),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20.r),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black26,
+                      color: Theme.of(context).shadowColor.withOpacity(0.1),
                       blurRadius: 15.r,
                       offset: Offset(0, 8.h),
                     ),
@@ -104,7 +104,7 @@ class _CommunityAnimatedDialogState extends State<CommunityAnimatedDialog>
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xff555555),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
                     ),
                   ],

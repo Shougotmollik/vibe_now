@@ -124,7 +124,9 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
                     : DottedBorder(
                         options: RoundedRectDottedBorderOptions(
                           radius: Radius.circular(16.r),
-                          color: Color(0XFFDBDBDB),
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: .5),
                           strokeWidth: 4.w,
                           dashPattern: [8, 4],
                           borderPadding: EdgeInsets.zero,
@@ -133,7 +135,7 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(16.r),
-                            color: Color(0XFFffffff),
+                            color: Theme.of(context).colorScheme.surface,
                           ),
                           width: 102.w,
                           height: 124.h,
@@ -207,12 +209,16 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
             child: GestureDetector(
               onTap: onDelete,
               child: Container(
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.surface,
                 ),
                 padding: const EdgeInsets.all(3),
-                child: const Icon(Icons.close, size: 18, color: Colors.black54),
+                child: Icon(
+                  Icons.close,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
           ),
@@ -222,7 +228,7 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
       return DottedBorder(
         options: RoundedRectDottedBorderOptions(
           radius: Radius.circular(16.r),
-          color: Color(0XFFDBDBDB),
+          color: Theme.of(context).colorScheme.primary.withValues(alpha: .5),
           strokeWidth: 4.w,
           dashPattern: [8, 4],
           borderPadding: EdgeInsets.zero,
@@ -231,7 +237,7 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16.r),
-            color: Color(0XFFffffff),
+            color: Theme.of(context).colorScheme.surface,
           ),
           width: 102.w,
           height: 124.h,

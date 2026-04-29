@@ -11,13 +11,12 @@ class CommunityWelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: const Icon(
+          child: Icon(
             Icons.arrow_back_ios_new,
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
             size: 20,
           ),
         ),
@@ -47,20 +46,24 @@ class CommunityWelcomeScreen extends StatelessWidget {
                 ),
               ),
 
-              const Text(
+              Text(
                 "Welcome To\nRunning Club!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2D3142),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 16),
-              const Text(
+              Text(
                 "You're now an official member,\nFeel free to say hi to the group",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 16, color: Colors.grey, height: 1.4),
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  height: 1.4,
+                ),
               ),
 
               SizedBox(height: 24.h),
@@ -68,7 +71,7 @@ class CommunityWelcomeScreen extends StatelessWidget {
               _buildFeaturesCard(context: context),
               const SizedBox(height: 24),
 
-              _buildTrustNote(),
+              _buildTrustNote(context: context),
               const SizedBox(height: 48),
             ],
           ),
@@ -81,11 +84,11 @@ class CommunityWelcomeScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFF5EFF6),
+            color: Theme.of(context).shadowColor.withOpacity(0.05),
             blurRadius: 20,
             spreadRadius: 5,
             offset: const Offset(0, 4),
@@ -94,9 +97,21 @@ class CommunityWelcomeScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildListTile(Assets.icons.chatting, "Chats"),
-          _buildListTile(Assets.icons.calendarColor, "Events"),
-          _buildListTile(Assets.icons.communityColor, "Members"),
+          _buildListTile(
+            context: context,
+            icon: Assets.icons.chatting,
+            title: "Chats",
+          ),
+          _buildListTile(
+            context: context,
+            icon: Assets.icons.calendarColor,
+            title: "Events",
+          ),
+          _buildListTile(
+            context: context,
+            icon: Assets.icons.communityColor,
+            title: "Members",
+          ),
           const SizedBox(height: 24),
 
           PrimaryButton.text(
@@ -111,26 +126,34 @@ class CommunityWelcomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildListTile(SvgGenImage icon, String title) {
+  Widget _buildListTile({
+    required BuildContext context,
+    required SvgGenImage icon,
+    required String title,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: const BoxDecoration(
-              color: Color(0xFFF0F7FF),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: icon.svg(height: 24, width: 24),
+            child: icon.svg(
+              height: 24,
+              width: 24,
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           const SizedBox(width: 16),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
-              color: Color(0xFF2D3142),
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         ],
@@ -138,11 +161,11 @@ class CommunityWelcomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTrustNote() {
+  Widget _buildTrustNote({required BuildContext context}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF8F9FF),
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -159,7 +182,7 @@ class CommunityWelcomeScreen extends StatelessWidget {
                         '"Pending meetups not completed may affect your Respect Score." ',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.primaryText,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: 14.sp,
                     ),
                   ),
@@ -167,7 +190,7 @@ class CommunityWelcomeScreen extends StatelessWidget {
                     text:
                         'This connects Communities with your Trust ecosystem.',
                     style: TextStyle(
-                      color: AppColors.subText,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w400,
                     ),

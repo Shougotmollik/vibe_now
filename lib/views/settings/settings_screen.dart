@@ -32,7 +32,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -55,7 +54,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             children: [
                               CircleAvatar(
                                 radius: 50.r,
-                                backgroundColor: Colors.grey.shade200,
+                                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
                                 backgroundImage: const NetworkImage(
                                   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
                                 ),
@@ -68,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             style: TextStyle(
                               fontSize: 22.sp,
                               fontWeight: FontWeight.bold,
-                              color: Colors.black,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           SizedBox(height: 8.h),
@@ -82,7 +81,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 'Coffee enthusiast   |',
                                 style: TextStyle(
                                   fontSize: 14.sp,
-                                  color: Colors.grey.shade600,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                               SizedBox(width: 8.w),
@@ -93,7 +92,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 'Music lover',
                                 style: TextStyle(
                                   fontSize: 14.sp,
-                                  color: Colors.grey.shade600,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -124,7 +123,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     // Profile Information
                     _buildMenuItem(
                       icon: Assets.icons.lock,
-                      iconColor: Colors.black,
+                      iconColor: Theme.of(context).colorScheme.onSurface,
                       title: 'Subscriptions',
                       hasArrow: true,
                       isFullRounded: true,
@@ -142,7 +141,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -187,7 +186,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -252,7 +251,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -289,21 +288,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         );
                       },
                     ),
-                    // _buildMenuItem(
-                    //   icon: Assets.icons.gridColor,
-                    //   iconColor: Colors.purple,
-                    //   title: 'Manage Password',
-                    //   isBottomRound: true,
-                    //   hasArrow: true,
-                    //   onTap: () {
-                    //     Navigator.push(
-                    //       context,
-                    //       MaterialPageRoute(
-                    //         builder: (context) => ManagePassword(),
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
                     SizedBox(height: 24.h),
 
                     // About Section
@@ -314,7 +298,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
-                          color: Colors.grey.shade600,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -371,7 +355,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           child: Container(
             padding: EdgeInsets.all(20.w),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(16.r),
             ),
             child: Column(
@@ -383,7 +367,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
-                    color: Color(0xff908F90),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
 
@@ -397,8 +381,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           Navigator.pop(context);
                         },
                         buttonText: "Cancel",
-                        btnColor: Color(0xffF2F2F2),
-                        textColor: Color(0xFF202020),
+                        btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                        textColor: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     SizedBox(width: 12.w),
@@ -449,9 +433,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
         margin: EdgeInsets.symmetric(horizontal: 16.w),
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: borderRadius,
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Row(
           children: [
@@ -463,7 +447,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
-                  color: Colors.black,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
@@ -471,7 +455,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,
-                color: Colors.grey.shade400,
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
               ),
           ],
         ),
@@ -509,9 +493,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: borderRadius,
-        border: Border.all(color: Colors.grey.shade300),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -526,7 +510,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   style: TextStyle(
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 if (subtitle != null) ...[
@@ -535,7 +519,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     subtitle,
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -546,10 +530,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
             value: value,
             onChanged: onChanged,
             activeGradient: AppColors.primaryGradient,
-            // activeColor: Colors.white,
-            // activeTrackColor: Colors.purple,
-            // inactiveThumbColor: Colors.white,
-            // inactiveTrackColor: Colors.grey.shade300,
           ),
         ],
       ),

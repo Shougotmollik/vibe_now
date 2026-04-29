@@ -56,7 +56,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.r)),
       insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Container(
@@ -76,10 +76,14 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                     style: TextStyle(
                       fontSize: 24.sp,
                       fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
+                   IconButton(
+                    icon: Icon(
+                      Icons.close,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                     onPressed: () => Navigator.of(context).pop(),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
@@ -101,6 +105,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
 
@@ -111,6 +116,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -130,7 +136,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                           Container(
                             height: 4.h,
                             decoration: BoxDecoration(
-                              color: Colors.grey[300],
+                              color: Theme.of(context).dividerColor,
                               borderRadius: BorderRadius.circular(2),
                             ),
                           ),
@@ -178,7 +184,20 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: const [Text('100 m'), Text('10 km')],
+                    children: [
+                      Text(
+                        '100 m',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      Text(
+                        '10 km',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      )
+                    ],
                   ),
                 ],
               ),
@@ -188,7 +207,11 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
               // Categories
               Text(
                 'Categories',
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
               const SizedBox(height: 12),
 
@@ -252,7 +275,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                                                 : null,
                                             color: selected
                                                 ? null
-                                                : Colors.grey[100],
+                                                : Theme.of(context).colorScheme.surfaceVariant,
                                             borderRadius: BorderRadius.circular(
                                               20,
                                             ),
@@ -263,7 +286,7 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                                               fontSize: 13.sp,
                                               color: selected
                                                   ? Colors.white
-                                                  : Colors.grey[800],
+                                                  : Theme.of(context).colorScheme.onSurfaceVariant,
                                             ),
                                           ),
                                         ),
@@ -323,13 +346,13 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(24.r),
                           border: Border.all(
-                            color: Color(0xffAEAEAE),
+                            color: Theme.of(context).dividerColor,
                             width: 1.5.w,
                           ),
                         ),
                         child: CustomElevatedButton(
-                          btnColor: Colors.white,
-                          textColor: Colors.black87,
+                          btnColor: Theme.of(context).colorScheme.surface,
+                          textColor: Theme.of(context).colorScheme.onSurface,
                           onTap: clearFilters,
                           buttonText: 'Clear',
                         ),
@@ -382,12 +405,13 @@ class _CommunityFilterDialogState extends State<CommunityFilterDialog> {
               group.parent,
               style: TextStyle(
                 fontWeight: FontWeight.w600,
-                color: isSelected ? Colors.black87 : Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
           Icon(
             isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ],
       ),

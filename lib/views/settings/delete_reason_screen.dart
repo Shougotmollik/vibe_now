@@ -37,7 +37,6 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16.w),
@@ -53,7 +52,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
-                  color: Color(0xff2a2a2a),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               SizedBox(height: 12.h),
@@ -76,8 +75,8 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                       child: CustomElevatedButton(
                         onTap: () {},
                         buttonText: 'Clear',
-                        btnColor: Colors.white,
-                        textColor: Color(0xff2A2A2A),
+                        btnColor: Theme.of(context).colorScheme.surface,
+                        textColor: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -89,7 +88,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
-                            backgroundColor: Colors.white,
+                            backgroundColor: Theme.of(context).colorScheme.surface,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(16.r),
                             ),
@@ -102,7 +101,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                   style: TextStyle(
                                     fontSize: 15.sp,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black,
+                                    color: Theme.of(context).colorScheme.onSurface,
                                   ),
                                 ),
 
@@ -115,13 +114,13 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                   decoration: InputDecoration(
                                     hintText: "Enter your password",
                                     hintStyle: TextStyle(
-                                      color: Colors.grey,
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                                       fontSize: 14.sp,
                                     ),
                                     border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(12.r),
                                       borderSide: BorderSide(
-                                        color: Colors.grey,
+                                        color: Theme.of(context).dividerColor,
                                         width: 1.w,
                                       ),
                                     ),
@@ -154,8 +153,8 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                             ),
                                           ),
                                           child: CustomElevatedButton(
-                                            btnColor: Colors.white,
-                                            textColor: Color(0xff181818),
+                                            btnColor: Theme.of(context).colorScheme.surface,
+                                            textColor: Theme.of(context).colorScheme.onSurface,
                                             onTap: () {
                                               Navigator.pop(context);
                                             },
@@ -230,7 +229,10 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
         maxLines: 4,
         decoration: InputDecoration(
           hintText: "Explain here",
-          hintStyle: TextStyle(fontSize: 14.sp, color: Color(0xffAEAEAE)),
+          hintStyle: TextStyle(
+            fontSize: 14.sp,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           contentPadding: EdgeInsets.symmetric(
             vertical: 12.h,
             horizontal: 16.w,
@@ -266,7 +268,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w400,
-                        color: Color(0xff2a2a2a),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ),
@@ -292,7 +294,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
       width: 22.w,
       height: 22.h,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300, width: 1.5),
+        border: Border.all(color: Theme.of(context).dividerColor, width: 1.5),
         shape: BoxShape.circle,
       ),
     );

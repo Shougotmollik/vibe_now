@@ -9,6 +9,7 @@ class CustomElevatedButton extends StatelessWidget {
     this.btnColor,
     this.textColor,
     this.fontWeight,
+    this.height,
   });
 
   final FontWeight? fontWeight;
@@ -16,17 +17,17 @@ class CustomElevatedButton extends StatelessWidget {
   final String buttonText;
   final Color? btnColor;
   final Color? textColor;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 48.h,
-        // padding: EdgeInsets.symmetric(vertical: 12.h),
+        height: height ?? 48.h,
         width: double.infinity,
         decoration: BoxDecoration(
-          color: btnColor ?? Color(0xff2A2A2A),
+          color: btnColor ?? Theme.of(context).colorScheme.primary,
           borderRadius: BorderRadius.circular(40.r),
         ),
         child: Center(
@@ -34,7 +35,7 @@ class CustomElevatedButton extends StatelessWidget {
             buttonText,
             style: TextStyle(
               fontSize: 16.sp,
-              color: textColor ?? Color(0xFFfefefe),
+              color: textColor ?? Theme.of(context).colorScheme.onPrimary,
               fontWeight: fontWeight ?? FontWeight.w500,
             ),
             textAlign: TextAlign.center,

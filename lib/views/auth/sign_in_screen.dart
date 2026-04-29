@@ -50,8 +50,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundVariant,
-
+      backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20.0.w),
@@ -61,7 +60,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 58.h),
-                  AuthTitle(
+                  const AuthTitle(
                     title: 'Sign In',
                     subtitle: 'Enter you credentials to continue',
                   ),
@@ -93,7 +92,6 @@ class _SignInScreenState extends State<SignInScreen> {
                       return null;
                     },
                   ),
-
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
@@ -103,9 +101,9 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Text(
                         'Forgot Password?',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: AppColors.primary,
-                          fontSize: 14.sp,
-                        ),
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 14.sp,
+                            ),
                       ),
                     ),
                   ),
@@ -126,7 +124,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xff727272),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
                   SizedBox(height: 32.h),
@@ -155,7 +153,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         " Don't have an account?",
                         style: TextStyle(
                           fontSize: 14.sp,
-                          color: Color(0xff787878),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                       ),
                       TextButton(
@@ -167,7 +165,7 @@ class _SignInScreenState extends State<SignInScreen> {
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
-                            color: const Color.fromARGB(255, 172, 137, 255),
+                            color: Theme.of(context).colorScheme.primary,
                           ),
                         ),
                       ),

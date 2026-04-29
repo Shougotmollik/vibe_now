@@ -29,7 +29,6 @@ class _LanguageScreenState extends State<LanguageScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16.w),
@@ -75,7 +74,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
-                color: const Color(0xff2A2A2A),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
 
@@ -101,7 +100,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
       width: 20.w,
       height: 20.h,
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300, width: 1.5),
+        border: Border.all(color: Theme.of(context).dividerColor, width: 1.5),
         shape: BoxShape.circle,
       ),
     );
