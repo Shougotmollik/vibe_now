@@ -395,16 +395,16 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
 
             GestureDetector(
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) {
-                      return MapSearchScreen(
-                        apiKey: widget.apiKey,
-                        onSearchSelect: _handleSearchSelect,
-                      );
-                    },
-                  ),
-                );
+                // Navigator.of(context).push(
+                //   MaterialPageRoute(
+                //     builder: (_) {
+                //       return MapSearchScreen(
+                //         apiKey: widget.apiKey,
+                //         onSearchSelect: _handleSearchSelect,
+                //       );
+                //     },
+                //   ),
+                // );
               },
               child: Container(
                 height: 40.h,

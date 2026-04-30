@@ -15,7 +15,7 @@ class BlockScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -32,18 +32,59 @@ class BlockScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
-                      color: Color(0xff555555),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.85),
                     ),
                   ),
                   SizedBox(height: 18.h),
                   TextField(
+                    maxLines: 3,
+                    style: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.85),
+                    ),
                     decoration: InputDecoration(
-                      hintText: 'Explain here',
+                      hintText: 'Explain here... ',
                       hintStyle: TextStyle(
                         fontSize: 14.sp,
                         color: Color(0xffAEAEAE),
                         fontWeight: FontWeight.w400,
                       ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.12),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.12),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12.r),
+                        borderSide: BorderSide(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.12),
+                        ),
+                      ),
+                      filled: true,
+                      fillColor: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.05),
+                      contentPadding: EdgeInsets.symmetric(
+                        vertical: 16.h,
+                        horizontal: 16.w,
+                      ),
+                      isDense: true,
                     ),
                   ),
                 ],

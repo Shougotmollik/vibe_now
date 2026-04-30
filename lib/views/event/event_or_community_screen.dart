@@ -52,6 +52,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
               padding: const EdgeInsets.all(20),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

@@ -69,7 +69,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
             onTap: () => Navigator.of(context).maybePop(),
             buttonText: "Cancel",
             textColor: Theme.of(context).colorScheme.onSurface,
-            btnColor: Theme.of(context).colorScheme.surface,
+            btnColor: Theme.of(context).colorScheme.surfaceVariant,
           ),
         ),
         const SizedBox(width: 12),

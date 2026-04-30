@@ -24,8 +24,7 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
   DateTime? lastBackPressed;
 
   final List<Widget> screens = [
-    // HomeScreen(),
-    GoogleMapScreen(apiKey: EnvHandler.google_map_api_key),
+    HomeScreen(apiKey: EnvHandler.google_map_api_key),
     EventOrCommunityScreen(),
     CreateVibeScreen(),
     ChatScreen(),
@@ -156,11 +155,11 @@ class CustomNavBar extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildIcon(0),
-                  _buildIcon(1),
+                  _buildIcon(index: 0, context: context),
+                  _buildIcon(index: 1, context: context),
                   const SizedBox(width: 44),
-                  _buildIcon(3),
-                  _buildIcon(4),
+                  _buildIcon(index: 3, context: context),
+                  _buildIcon(index: 4, context: context),
                 ],
               ),
             ),
@@ -198,7 +197,7 @@ class CustomNavBar extends StatelessWidget {
     );
   }
 
-  Widget _buildIcon(int index) {
+  Widget _buildIcon({required int index, required BuildContext context}) {
     final bool isSelected = currentIndex == index;
     final SvgGenImage icon = isSelected ? colorIcons[index] : grayIcons[index];
 
@@ -207,7 +206,13 @@ class CustomNavBar extends StatelessWidget {
       onTap: () => onTap(index),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: icon.svg(height: 26.h, width: 26.w),
+        child: icon.svg(
+          height: 26.h,
+          width: 26.w,
+          color: isSelected
+              ? null
+              : Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+        ),
       ),
     );
   }

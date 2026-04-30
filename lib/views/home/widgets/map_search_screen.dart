@@ -6,7 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
-import 'package:vibe_now/views/home/widgets/google_map.dart';
+import 'package:vibe_now/views/home/home_screen.dart';
+import 'package:vibe_now/model/google_map_location.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -55,7 +56,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
   }
 
   String _searchLocationIcon() {
-    return '<?xml version="1.0" ?><svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg"><path fill="#181818" d="M192 0C85.97 0 0 85.97 0 192c0 77.41 26.97 99.03 172.3 309.7c9.531 13.77 29.91 13.77 39.44 0C357 291 384 269.4 384 192C384 85.97 298 0 192 0zM192 271.1c-44.13 0-80-35.88-80-80S147.9 111.1 192 111.1s80 35.88 80 80S236.1 271.1 192 271.1z"/></svg>';
+    return '<?xml version="1.0" ?><svg viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg"><path fill="#6750A4" d="M192 0C85.97 0 0 85.97 0 192c0 77.41 26.97 99.03 172.3 309.7c9.531 13.77 29.91 13.77 39.44 0C357 291 384 269.4 384 192C384 85.97 298 0 192 0zM192 271.1c-44.13 0-80-35.88-80-80S147.9 111.1 192 111.1s80 35.88 80 80S236.1 271.1 192 271.1z"/></svg>';
   }
 
   Future<void> _saveToHistory(GoogleMapSearchModel item) async {
@@ -209,11 +210,11 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
               height: 36.w,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.background,
               ),
               child: Icon(
                 Icons.arrow_back_ios_new_rounded,
-                color: textColor,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 14.w,
               ),
             ),
@@ -224,7 +225,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
               height: 40.h,
               padding: EdgeInsets.symmetric(horizontal: 12.w),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.background,
                 borderRadius: BorderRadius.circular(24.r),
               ),
               child: Row(
@@ -234,7 +235,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                     _searchIcon(),
                     width: 20.w,
                     height: 20.w,
-                    color: textColor.withValues(alpha: 0.6),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                   SizedBox(width: 12.w),
                   Expanded(
@@ -244,10 +245,13 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                       },
                       controller: _searchController,
                       focusNode: _searchFocusNode,
-                      style: TextStyle(color: textColor, fontSize: 14.sp),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 14.sp,
+                      ),
                       decoration: InputDecoration(
                         hintStyle: TextStyle(
-                          color: textColor.withValues(alpha: 0.6),
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 13.sp,
                         ),
                         isDense: true,
@@ -270,9 +274,13 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
               height: 36.w,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.white,
+                color: Theme.of(context).colorScheme.background,
               ),
-              child: Icon(Icons.close, color: textColor, size: 14.w),
+              child: Icon(
+                Icons.close,
+                color: Theme.of(context).colorScheme.onSurface,
+                size: 14.w,
+              ),
             ),
           ),
         ],
@@ -295,7 +303,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
               ? null
               : Border(
                   bottom: BorderSide(
-                    color: Colors.white.withValues(alpha: 0.15),
+                    color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
                     width: 1.w,
                   ),
                 ),
@@ -308,7 +316,10 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
             Expanded(
               child: Text(
                 item.description,
-                style: TextStyle(color: textColor, fontSize: 14.sp),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 14.sp,
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -356,7 +367,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: surfaceColor,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SingleChildScrollView(
           child: Column(
@@ -378,7 +389,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                       Text(
                         'History',
                         style: TextStyle(
-                          color: Color(0xff181818),
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
                         ),
@@ -388,7 +399,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                         child: Text(
                           'Clear All',
                           style: TextStyle(
-                            color: AppColors.primary,
+                            color: Theme.of(context).colorScheme.primary,
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                           ),

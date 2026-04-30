@@ -227,7 +227,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: _buildAppBar(context),
         body: Column(
           children: [
@@ -262,11 +262,13 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       elevation: 0.5,
+      shadowColor: Theme.of(context).colorScheme.shadow,
+      surfaceTintColor: Colors.transparent,
       leading: GestureDetector(
         onTap: () => context.pop(),
-        child: const Icon(Icons.arrow_back_ios, color: Colors.black),
+        child: Icon(Icons.arrow_back_ios, color: Theme.of(context).colorScheme.onSurface),
       ),
       title: GestureDetector(
         onTap: () => context.pushNamed(RouteNames.communityMemberScreen),
@@ -285,7 +287,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
                 'Coffee Meetup at Central Park',
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                  color: AppColors.primaryText,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
                 ),
@@ -296,9 +298,9 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
       ),
       actions: [
         PopupMenuButton<String>(
-          icon: const Icon(Icons.more_vert, color: Colors.black),
+          icon: Icon(Icons.more_vert, color: Theme.of(context).colorScheme.onSurface),
           offset: const Offset(0, 50),
-          color: AppColors.backgroundVariant,
+          color: Theme.of(context).colorScheme.surfaceVariant,
           itemBuilder: (_) => [
             PopupMenuItem<String>(
               value: 'block',
@@ -343,10 +345,10 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.1),
+              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
               blurRadius: 5,
               offset: const Offset(0, -1),
             ),
@@ -400,7 +402,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
                     : null,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: !_isRecording ? Colors.white : null,
+                    color: !_isRecording ? Theme.of(context).colorScheme.surface : null,
                     gradient: _isRecording ? AppColors.primaryGradient : null,
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -431,11 +433,11 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
                               : TextField(
                                   controller: _messageController,
                                   enabled: !_isSending,
-                                  style: const TextStyle(color: Colors.black87),
-                                  decoration: const InputDecoration(
+                                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                                  decoration: InputDecoration(
                                     hintText: 'Message...',
                                     hintStyle: TextStyle(
-                                      color: AppColors.primaryText,
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     ),
                                     border: InputBorder.none,
                                     isDense: true,
@@ -664,7 +666,7 @@ class _BubbleContent extends StatelessWidget {
               ? EdgeInsets.all(4.w)
               : EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
           decoration: BoxDecoration(
-            color: message.isMe ? null : const Color(0xffF2F4F7),
+            color: message.isMe ? null : Theme.of(context).colorScheme.surfaceVariant,
             gradient: message.isMe ? AppColors.primaryGradient : null,
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(20),
@@ -692,7 +694,7 @@ class _BubbleContent extends StatelessWidget {
         return Text(
           message.text ?? '',
           style: TextStyle(
-            color: message.isMe ? Colors.white : const Color(0xff303030),
+            color: message.isMe ? Colors.white : Theme.of(context).colorScheme.onSurface,
             fontSize: 14.sp,
           ),
         );
@@ -756,8 +758,8 @@ class _ReactionChips extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: r.reactedByMe
-                  ? const Color(0xFFE7F0FD)
-                  : const Color(0xFFF0F2F5),
+                  ? Theme.of(context).colorScheme.surfaceVariant
+                  : Theme.of(context).colorScheme.surfaceVariant,
               border: Border.all(
                 color: r.reactedByMe ? AppColors.primary : Colors.transparent,
                 width: 1.w,
@@ -775,7 +777,7 @@ class _ReactionChips extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: r.reactedByMe
-                        ? AppColors.primary
+                        ? const Color(0xFF1877F2)
                         : const Color(0xFF65676B),
                   ),
                 ),
@@ -859,7 +861,7 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
             behavior: HitTestBehavior.translucent,
             child: FadeTransition(
               opacity: _fade,
-              child: Container(color: Colors.black.withOpacity(0.06)),
+              child: Container(color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.08)),
             ),
           ),
         ),
@@ -879,11 +881,11 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
                   width: barWidth,
                   height: barHeight,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(36),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.16),
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.18),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -982,10 +984,14 @@ Future<dynamic> _buildMoreOption(
         margin: const EdgeInsets.all(16),
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: AppColors.backgroundVariant,
+          color: Theme.of(context).colorScheme.surfaceVariant,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: const [
-            BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.12),
+              blurRadius: 10,
+              spreadRadius: 2,
+            ),
           ],
         ),
         child: Column(

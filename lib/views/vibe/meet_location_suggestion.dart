@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/home/widgets/google_map.dart';
 import 'package:vibe_now/views/home/widgets/map_search_screen.dart';
-import 'package:vibe_now/views/vibe/meet_confirm_screen.dart'; // Assuming your AppColors/Buttons are here
+import 'package:vibe_now/views/vibe/meet_confirm_screen.dart';
+import 'package:vibe_now/views/vibe/reshedule_meetup_screen.dart'; // Assuming your AppColors/Buttons are here
 
 class MeetLocationSuggestionScreen extends StatefulWidget {
   const MeetLocationSuggestionScreen({super.key});
@@ -22,22 +25,38 @@ class _MeetLocationSuggestionScreenState
   // Mock coordinates for the map preview
   static const LatLng _userPos = LatLng(50.937, 6.953);
   static const LatLng _friendPos = LatLng(50.938, 6.958);
+  String? _darkMapStyle;
+
+  @override
+  void initState() {
+    super.initState();
+    rootBundle.loadString('assets/map_theme/dark_map.json').then((string) {
+      if (mounted) {
+        setState(() {
+          _darkMapStyle = string;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Define Meetup",
           style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 22.sp,
             fontWeight: FontWeight.w500,
           ),
@@ -66,7 +85,7 @@ class _MeetLocationSuggestionScreenState
                         style: TextStyle(
                           fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
-                          color: const Color(0xFF2D2D2D),
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       Row(
@@ -75,13 +94,17 @@ class _MeetLocationSuggestionScreenState
                           Icon(
                             Icons.location_on_outlined,
                             size: 16.sp,
-                            color: Colors.grey,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.5),
                           ),
                           Text(
                             "300m away",
                             style: TextStyle(
                               fontSize: 14.sp,
-                              color: Colors.grey,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.5),
                             ),
                           ),
                         ],
@@ -95,10 +118,17 @@ class _MeetLocationSuggestionScreenState
                   height: 180.h,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20.r),
-                    border: Border.all(color: Colors.grey.shade200),
+                    border: Border.all(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.1),
+                    ),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: GoogleMap(
+                    style: Theme.of(context).brightness == Brightness.dark
+                        ? _darkMapStyle
+                        : null,
                     initialCameraPosition: CameraPosition(
                       target: LatLng(
                         (_userPos.latitude + _friendPos.latitude) / 2,
@@ -192,11 +222,18 @@ class _MeetLocationSuggestionScreenState
                 ),
                 SizedBox(width: 15.w),
                 Expanded(
-                  child: CancelButton(
+                  child: CustomElevatedButton(
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ResheduleMeetupScreen(),
+                        ),
+                      );
                     },
-                    btnText: "Later",
+                    buttonText: "Later",
+                    btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                    textColor: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
               ],
@@ -233,12 +270,17 @@ class _MeetLocationSuggestionScreenState
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.w500,
-                color: Colors.black87,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             Text(
               subtitle,
-              style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
+              ),
             ),
           ],
         ),

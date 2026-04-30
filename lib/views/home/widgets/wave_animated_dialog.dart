@@ -77,7 +77,7 @@ class _WaveAnimatedDialogState extends State<WaveAnimatedDialog>
                 width: 300.w,
                 padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 20.h),
                 decoration: BoxDecoration(
-                  color: AppColors.backgroundVariant,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20.r),
                   boxShadow: [
                     BoxShadow(
@@ -103,7 +103,7 @@ class _WaveAnimatedDialogState extends State<WaveAnimatedDialog>
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w500,
-                        color: const Color(0xff555555),
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                   ],

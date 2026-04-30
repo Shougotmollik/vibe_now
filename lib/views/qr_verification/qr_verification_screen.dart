@@ -176,7 +176,18 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: Color(0xFFEFF6FF),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.1),
+                    Theme.of(
+                      context,
+                    ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+                  ],
+                ),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
@@ -184,7 +195,9 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
                 children: [
                   Icon(
                     Icons.info_outline,
-                    color: Colors.grey[700],
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.8),
                     size: 20.sp,
                   ),
                   const SizedBox(width: 12),
@@ -192,7 +205,9 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
                     child: Text(
                       infoText,
                       style: TextStyle(
-                        color: Colors.grey[800],
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.8),
                         fontSize: 13.sp,
                         height: 1.4.h,
                       ),
@@ -278,14 +293,28 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue[50],
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(
+                      context,
+                    ).colorScheme.primaryContainer.withValues(alpha: 0.1),
+                    Theme.of(
+                      context,
+                    ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+                  ],
+                ),
                 borderRadius: BorderRadius.circular(12.r),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Icon(
                     Icons.info_outline,
-                    color: Colors.blue[700],
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.8),
                     size: 20.sp,
                   ),
                   const SizedBox(width: 12),
@@ -293,9 +322,11 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
                     child: Text(
                       scanMessage,
                       style: TextStyle(
-                        color: Colors.grey[800],
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.8),
                         fontSize: 13.sp,
-                        height: 1.4,
+                        height: 1.4.h,
                       ),
                     ),
                   ),

@@ -35,7 +35,7 @@ class _CommunityNotificationScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(

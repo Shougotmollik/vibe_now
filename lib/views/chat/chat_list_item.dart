@@ -17,8 +17,8 @@ class ChatListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     // Determine background color based on type
     final backgroundColor = chat.type == ChatType.wave
-        ? AppColors.backgroundVariant
-        : Colors.white;
+        ? Theme.of(context).colorScheme.surfaceVariant
+        : Theme.of(context).colorScheme.surface;
 
     return InkWell(
       onTap: onTap,
@@ -34,7 +34,9 @@ class ChatListItem extends StatelessWidget {
           children: [
             _buildAvatar(), // Extracted Logic
             SizedBox(width: 12.w),
-            Expanded(child: _buildChatDetails()), // Extracted Logic
+            Expanded(
+              child: _buildChatDetails(context: context),
+            ), // Extracted Logic
             _buildTrailingInfo(), // Extracted Logic
           ],
         ),
@@ -58,7 +60,7 @@ class ChatListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildChatDetails() {
+  Widget _buildChatDetails({required BuildContext context}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -67,13 +69,18 @@ class ChatListItem extends StatelessWidget {
           style: TextStyle(
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
-            color: const Color(0xff303030),
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
         SizedBox(height: 4.h),
         Text(
           chat.message,
-          style: TextStyle(fontSize: 14.sp, color: const Color(0xff585858)),
+          style: TextStyle(
+            fontSize: 14.sp,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
@@ -126,7 +133,7 @@ Future<dynamic> _buildMoreOption(
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: AppColors.backgroundVariant,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),

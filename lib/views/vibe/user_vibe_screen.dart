@@ -18,7 +18,6 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: SafeArea(
@@ -68,7 +67,7 @@ class _UserVibeCardState extends State<UserVibeCard> {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(12.r),
         boxShadow: [
           BoxShadow(
@@ -99,7 +98,7 @@ class _UserVibeCardState extends State<UserVibeCard> {
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
-                  color: AppColors.primaryText,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               Text(
@@ -107,7 +106,9 @@ class _UserVibeCardState extends State<UserVibeCard> {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.subText,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
               ),
               Text(
@@ -115,7 +116,9 @@ class _UserVibeCardState extends State<UserVibeCard> {
                 style: TextStyle(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.subText,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
                 ),
               ),
             ],

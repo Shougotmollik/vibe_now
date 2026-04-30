@@ -65,7 +65,6 @@ class _ManagePasswordState extends State<ManagePassword> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: Theme.of(context).colorScheme.surface,
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: SafeArea(
           child: SingleChildScrollView(

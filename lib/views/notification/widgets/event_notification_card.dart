@@ -20,6 +20,7 @@ class EventNotificationCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           bottom: BorderSide(color: const Color(0xffE0E0E0), width: 1.w),
         ),
@@ -48,7 +49,7 @@ class EventNotificationCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xff1E1E1E),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 SizedBox(
@@ -58,14 +59,18 @@ class EventNotificationCard extends StatelessWidget {
                       Assets.icons.location.svg(
                         width: 16.w,
                         height: 16.h,
-                        color: Colors.black54,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                       Text(
                         "${notification.distance} km away",
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w400,
-                          color: Colors.black54,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.8),
                         ),
                       ),
                     ],

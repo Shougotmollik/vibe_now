@@ -25,7 +25,7 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
     final name = extra.name;
     final avatar = extra.avatars;
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: Padding(
         padding: EdgeInsets.all(20.w),
         child: Center(
@@ -69,14 +69,19 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w600,
-                  color: Colors.black87,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 8.h),
               Text(
                 'Accept to suggest a time and place for a quick meetup',
-                style: TextStyle(fontSize: 14.sp, color: Colors.black54),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 56.h),
@@ -102,7 +107,11 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                   Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24.r),
-                      border: Border.all(color: Color(0xffAEAEAE), width: 1.w),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.onSurface
+                            .withValues(alpha: 0.1),
+                        width: 1.w,
+                      ),
                     ),
                     child: CustomElevatedButton(
                       onTap: () {
@@ -129,8 +138,8 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                         );
                       },
                       buttonText: 'Reject',
-                      btnColor: Colors.white,
-                      textColor: Color(0xff181818),
+                      btnColor: Theme.of(context).colorScheme.surface,
+                      textColor: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
 

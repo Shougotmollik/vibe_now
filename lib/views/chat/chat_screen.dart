@@ -20,48 +20,6 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // final List<Chat> _chatList = [
-  //   Chat(
-  //     avatar: ['https://randomuser.me/api/portraits/women/10.jpg'],
-  //     name: 'Sammy Smith',
-  //     message: 'Send You a Wave',
-  //     time: '10:30 AM',
-  //     unreadCount: 0,
-  //     wave: true,
-  //     isCommunity: false,
-  //   ),
-  //   Chat(
-  //     avatar: ['https://randomuser.me/api/portraits/women/11.jpg'],
-  //     name: 'Jane Doe',
-  //     message: 'Hello, how are you?',
-  //     time: '10:30 AM',
-  //     unreadCount: 1,
-  //     wave: false,
-  //     isCommunity: false,
-  //   ),
-  //   Chat(
-  //     avatar: ['https://randomuser.me/api/portraits/women/12.jpg'],
-  //     name: 'kyaliace baker',
-  //     message: 'what are you doing? bro',
-  //     time: '11:30 AM',
-  //     unreadCount: 2,
-  //     wave: false,
-  //     isCommunity: false,
-  //   ),
-  //   Chat(
-  //     avatar: [
-  //       'https://randomuser.me/api/portraits/women/13.jpg',
-  //       'https://randomuser.me/api/portraits/women/14.jpg',
-  //       'https://randomuser.me/api/portraits/women/15.jpg',
-  //     ],
-  //     name: 'stephanie smith',
-  //     message: 'Are you there?',
-  //     time: '11:30 AM',
-  //     unreadCount: 4,
-  //     wave: false,
-  //     isCommunity: true,
-  //   ),
-  // ];
   // ! chat dummy data
   final List<Chat> _chatList = [
     Chat(
@@ -93,7 +51,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -103,7 +61,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Text(
                   'Chats',
                   style: TextStyle(
-                    color: Color(0xff303030),
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w500,
                   ),
@@ -118,12 +76,16 @@ class _ChatScreenState extends State<ChatScreen> {
                     padding: EdgeInsets.all(8.w),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Colors.grey[200],
+                      color: Theme.of(context).colorScheme.surfaceVariant,
                     ),
                     child: Assets.icons.scan.svg(
                       width: 24.w,
                       height: 24.h,
                       fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(
+                        Theme.of(context).colorScheme.onSurface,
+                        BlendMode.srcIn,
+                      ),
                     ),
                   ),
                 ),
@@ -137,16 +99,16 @@ class _ChatScreenState extends State<ChatScreen> {
                 decoration: InputDecoration(
                   hintText: 'Search a person',
                   hintStyle: TextStyle(
-                    color: Color(0xff9d9d9d),
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14.sp,
                   ),
                   prefixIcon: Icon(
                     Icons.search,
-                    color: Color(0xff9d9d9d),
+                    color: Theme.of(context).colorScheme.onSurface,
                     size: 20.sp,
                   ),
                   filled: true,
-                  fillColor: Colors.grey[50],
+                  fillColor: Theme.of(context).colorScheme.surface,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                     borderSide: BorderSide(color: Color(0xff9d9d9d)),

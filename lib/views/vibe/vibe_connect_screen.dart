@@ -6,6 +6,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/vibe/meet_location_suggestion.dart';
 
 class VibeConnectScreen extends StatelessWidget {
@@ -14,11 +15,13 @@ class VibeConnectScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          child: Icon(
+            Icons.arrow_back_ios,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -43,18 +46,23 @@ class VibeConnectScreen extends StatelessWidget {
               children: [
                 const Spacer(flex: 3),
 
-                const Text(
+                Text(
                   "It's a Vibe",
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D2D2D),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
-                const Text(
+                Text(
                   "You both want to connect!",
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
                 ),
                 const SizedBox(height: 40),
 
@@ -65,26 +73,33 @@ class VibeConnectScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   "Jhon Gomes",
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF2D2D2D),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(
                       Icons.location_on_outlined,
                       size: 18,
-                      color: Colors.grey,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                     Text(
                       " 300m away",
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.7),
+                      ),
                     ),
                   ],
                 ),
@@ -120,18 +135,19 @@ class VibeConnectScreen extends StatelessWidget {
                 //   },
                 //   btnText: "Chat with Jhon Gomes",
                 // ),
-
-                const Spacer(flex: 3),
-
-                CancelButton(
+                // const Spacer(flex: 3),
+                CustomElevatedButton(
+                  btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                  textColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
-                  btnText: "Cancel",
+                  buttonText: "Cancel",
                 ),
 
                 SizedBox(height: 48.h),
+                const Spacer(flex: 3),
               ],
             ),
           ),

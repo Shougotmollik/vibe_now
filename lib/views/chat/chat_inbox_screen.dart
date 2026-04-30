@@ -243,7 +243,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: SafeArea(
           child: Column(
             children: [
@@ -263,10 +263,10 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.1),
             blurRadius: 2,
             offset: const Offset(0, 1),
           ),
@@ -277,9 +277,13 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
           SizedBox(width: 4.w),
           GestureDetector(
             onTap: () => Navigator.pop(context),
-            child: const Padding(
-              padding: EdgeInsets.all(8),
-              child: Icon(Icons.arrow_back_ios, color: Colors.black, size: 20),
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: Theme.of(context).colorScheme.onSurface,
+                size: 20,
+              ),
             ),
           ),
           SizedBox(width: 4.w),
@@ -298,7 +302,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                     errorBuilder: (_, __, ___) => Container(
                       width: 40,
                       height: 40,
-                      color: Colors.grey[300],
+                      color: Theme.of(context).colorScheme.surfaceVariant,
                       child: const Icon(Icons.person),
                     ),
                   ),
@@ -310,7 +314,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                     Text(
                       name,
                       style: TextStyle(
-                        color: const Color(0xff303030),
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
                       ),
@@ -322,9 +326,12 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
           ),
           const Spacer(),
           PopupMenuButton<String>(
-            icon: const Icon(Icons.more_vert, color: Colors.black),
+            icon: Icon(
+              Icons.more_vert,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
             offset: const Offset(0, 50),
-            color: AppColors.backgroundVariant,
+            color: Theme.of(context).colorScheme.surfaceVariant,
             itemBuilder: (_) => [
               PopupMenuItem<String>(
                 value: 'block',
@@ -399,10 +406,12 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.surface,
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.1),
+              color: Theme.of(
+                context,
+              ).colorScheme.shadow.withValues(alpha: 0.1),
               blurRadius: 5,
               offset: const Offset(0, -1),
             ),
@@ -469,7 +478,9 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                     : null,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: !_isRecording ? const Color(0xffffffff) : null,
+                    color: !_isRecording
+                        ? Theme.of(context).colorScheme.surface
+                        : null,
                     gradient: _isRecording
                         ? AppColors.primaryGradientRotated
                         : null,
@@ -500,10 +511,18 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
                                   controller: _messageController,
                                   focusNode: _textFocusNode,
                                   enabled: !_isSending,
-                                  style: const TextStyle(color: Colors.black87),
-                                  decoration: const InputDecoration(
+                                  style: TextStyle(
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
+                                  ),
+                                  decoration: InputDecoration(
                                     hintText: 'Message...',
-                                    hintStyle: TextStyle(color: Colors.black26),
+                                    hintStyle: TextStyle(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
                                     border: InputBorder.none,
                                     isDense: true,
                                   ),
@@ -959,9 +978,9 @@ class _ReceivedTextBubble extends StatelessWidget {
       child: Container(
         constraints: BoxConstraints(maxWidth: 280.w),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: const BoxDecoration(
-          color: Color(0xffF3F4F6),
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
             bottomRight: Radius.circular(20),
@@ -970,7 +989,10 @@ class _ReceivedTextBubble extends StatelessWidget {
         ),
         child: Text(
           message,
-          style: TextStyle(color: Colors.black87, fontSize: 14.sp),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 14.sp,
+          ),
         ),
       ),
     );
@@ -998,8 +1020,8 @@ class _ReactionChips extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: r.reactedByMe
-                  ? const Color(0xFFE7F0FD)
-                  : const Color(0xFFF0F2F5),
+                  ? Theme.of(context).colorScheme.surfaceVariant
+                  : Theme.of(context).colorScheme.surfaceVariant,
               border: Border.all(
                 color: r.reactedByMe ? AppColors.primary : Colors.transparent,
                 width: 1.w,
@@ -1017,7 +1039,7 @@ class _ReactionChips extends StatelessWidget {
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     color: r.reactedByMe
-                        ? AppColors.primary
+                        ? const Color(0xFF1877F2)
                         : const Color(0xFF65676B),
                   ),
                 ),
@@ -1099,7 +1121,11 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
             behavior: HitTestBehavior.translucent,
             child: FadeTransition(
               opacity: _fade,
-              child: Container(color: Colors.black.withOpacity(0.06)),
+              child: Container(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.08),
+              ),
             ),
           ),
         ),
@@ -1119,11 +1145,13 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
                   width: barWidth,
                   height: barHeight,
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(36),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.16),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.18),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                       ),
@@ -1336,9 +1364,9 @@ class ReceivedVoiceMessage extends StatelessWidget {
       alignment: Alignment.centerLeft,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: const BoxDecoration(
-          color: Color(0xffF3F4F6),
-          borderRadius: BorderRadius.only(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(20),
             topRight: Radius.circular(20),
             bottomRight: Radius.circular(20),
@@ -1350,7 +1378,7 @@ class ReceivedVoiceMessage extends StatelessWidget {
           children: [
             Icon(
               isPaused ? Icons.play_arrow : Icons.pause,
-              color: Colors.black87,
+              color: Theme.of(context).colorScheme.onSurface,
               size: 20,
             ),
             const SizedBox(width: 8),
@@ -1364,7 +1392,10 @@ class ReceivedVoiceMessage extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               '0:15',
-              style: TextStyle(color: Colors.black87, fontSize: 12.sp),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 12.sp,
+              ),
             ),
           ],
         ),
@@ -1462,10 +1493,16 @@ Future<dynamic> _buildMoreOption(
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: AppColors.backgroundVariant,
+            color: Theme.of(context).colorScheme.surfaceVariant,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(
+                  context,
+                ).colorScheme.shadow.withValues(alpha: 0.12),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
             ],
           ),
           child: Column(

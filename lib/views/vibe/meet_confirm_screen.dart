@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 // Assuming your design system imports
 // import 'package:vibe_now/design_system/design_system.dart';
 
@@ -19,22 +21,38 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
   // Mock positions for the two users
   static const LatLng _posA = LatLng(50.937, 6.953);
   static const LatLng _posB = LatLng(50.938, 6.958);
+  String? _darkMapStyle;
+
+  @override
+  void initState() {
+    super.initState();
+    rootBundle.loadString('assets/map_theme/dark_map.json').then((string) {
+      if (mounted) {
+        setState(() {
+          _darkMapStyle = string;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           "Define Meetup",
           style: TextStyle(
-            color: Colors.black,
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 20.sp,
             fontWeight: FontWeight.w500,
           ),
@@ -62,7 +80,7 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
                     style: TextStyle(
                       fontSize: 26.sp,
                       fontWeight: FontWeight.bold,
-                      color: const Color(0xFF2D2D2D),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -70,7 +88,7 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
                     "See you at Central Park Cafe",
                     style: TextStyle(
                       fontSize: 16.sp,
-                      color: Colors.grey.shade600,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                     ),
                   ),
 
@@ -80,10 +98,12 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
                     height: 200.h,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24.r),
-                      border: Border.all(color: Colors.grey.shade100),
                     ),
                     clipBehavior: Clip.antiAlias,
                     child: GoogleMap(
+                      style: Theme.of(context).brightness == Brightness.dark
+                          ? _darkMapStyle
+                          : null,
                       initialCameraPosition: const CameraPosition(
                         target: LatLng(50.9375, 6.9555),
                         zoom: 14.5,
@@ -146,19 +166,21 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
             padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 40.h),
             child: Column(
               children: [
-                CancelButton(
+                CustomElevatedButton(
                   onTap: () {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
-                  btnText: "Cancel Meetup",
+                  buttonText: "Cancel Meetup",
+                  btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                  textColor: Theme.of(context).colorScheme.onSurface,
                 ),
                 SizedBox(height: 14.h),
                 Text(
                   "Great, see you soon!",
                   style: TextStyle(
                     fontSize: 16.sp,
-                    color: Colors.grey.shade500,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -179,7 +201,7 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
           label,
           style: TextStyle(
             fontSize: 18.sp,
-            color: Colors.grey.shade600,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w400,
           ),
         ),

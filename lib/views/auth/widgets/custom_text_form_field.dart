@@ -33,8 +33,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
           Text(
             widget.label!,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
         if (widget.label != null) SizedBox(height: 8.h),
         TextFormField(
@@ -51,7 +51,9 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             ),
             hintText: widget.hintText,
             hintStyle: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.5),
               fontSize: 15.sp,
             ),
             filled: true,

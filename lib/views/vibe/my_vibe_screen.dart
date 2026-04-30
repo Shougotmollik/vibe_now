@@ -4,6 +4,7 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 
 class MyVibeScreen extends StatelessWidget {
   const MyVibeScreen({super.key});
@@ -11,7 +12,6 @@ class MyVibeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
@@ -70,7 +70,6 @@ class MyVibeScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          backgroundColor: Colors.white,
           insetPadding: const EdgeInsets.symmetric(horizontal: 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(28.0),
@@ -91,21 +90,23 @@ class MyVibeScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'End Vibe Early?',
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
-                    color: Color(0xFF4A4A4A),
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'Your Vibe will disappear immediately from the map',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
                     height: 1.4,
                   ),
                 ),
@@ -115,9 +116,14 @@ class MyVibeScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: SizedBox(
-                        child: CancelButton(
+                        child: CustomElevatedButton(
                           onTap: () => Navigator.pop(context),
-                          btnText: "Cancel",
+                          buttonText: 'Cancel',
+                          btnColor: Theme.of(
+                            context,
+                          ).colorScheme.surfaceVariant,
+                          textColor: Theme.of(context).colorScheme.onSurface,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),
@@ -151,9 +157,15 @@ class VibeCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.12),
+            blurRadius: 16,
+            offset: const Offset(0, 0),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
