@@ -20,7 +20,9 @@ class AuthTitle extends StatelessWidget {
         SizedBox(height: 6.h),
         Text(
           subtitle,
-          style: Theme.of(context).textTheme.bodyLarge,
+          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           textAlign: TextAlign.center,
         ),
       ],

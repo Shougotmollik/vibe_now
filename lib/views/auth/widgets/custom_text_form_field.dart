@@ -57,6 +57,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               fontSize: 15.sp,
             ),
             filled: true,
+            isDense: true,
             fillColor: Theme.of(context).colorScheme.surface,
             suffixIcon: widget.isPassword
                 ? IconButton(
@@ -72,6 +73,16 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                   )
                 : null,
           ),
+          autofillHints: widget.isPassword
+              ? [AutofillHints.password]
+              : [AutofillHints.email],
+          enableSuggestions: false,
+          autocorrect: false,
+          keyboardType: widget.isPassword
+              ? TextInputType.visiblePassword
+              : TextInputType.emailAddress,
+
+          textInputAction: TextInputAction.next,
         ),
       ],
     );

@@ -24,6 +24,8 @@ android {
 
     buildTypes {
         release {
+            isMinifyEnabled = false   // 🔥 disable Proguard
+            isShrinkResources = false
             signingConfig = signingConfigs.getByName("debug")
         }
     }

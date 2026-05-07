@@ -93,7 +93,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
@@ -206,8 +206,7 @@ class PlanCard extends StatelessWidget {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(18.r),
             child: Container(
-              color: Colors.white,
-
+              color: Theme.of(context).colorScheme.surface,
               child: IntrinsicHeight(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -293,7 +292,7 @@ class _PlanHeader extends StatelessWidget {
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w700,
-                color: const Color(0xFF111827),
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
             SizedBox(height: 4.h),
@@ -301,7 +300,7 @@ class _PlanHeader extends StatelessWidget {
             SizedBox(height: 4.h),
             Text(
               plan.subtitle,
-              style: TextStyle(fontSize: 13.sp, color: const Color(0xFF6B7280)),
+              style: TextStyle(fontSize: 13.sp, color: Theme.of(context).colorScheme.onSurface),
             ),
           ],
         ),
@@ -360,7 +359,7 @@ class _PriceText extends StatelessWidget {
   Widget build(BuildContext context) {
     final mainColor = dark ? const Color(0xFF111827) : Colors.white;
     final subColor = dark
-        ? const Color(0xFF6B7280)
+        ? Theme.of(context).colorScheme.onSurfaceVariant
         : Colors.white.withValues(alpha: 0.85);
     return RichText(
       text: TextSpan(
@@ -370,7 +369,7 @@ class _PriceText extends StatelessWidget {
             style: TextStyle(
               fontSize: 28.sp,
               fontWeight: FontWeight.w800,
-              color: mainColor,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           TextSpan(
@@ -412,7 +411,7 @@ class _FeatureRow extends StatelessWidget {
               text: TextSpan(
                 style: TextStyle(
                   fontSize: 13.sp,
-                  color: const Color(0xFF374151),
+                  color: Theme.of(context).colorScheme.onSurface,
                   height: 1.4,
                 ),
                 children: [

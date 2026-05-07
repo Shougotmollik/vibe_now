@@ -40,9 +40,7 @@ class ReportScreen extends StatelessWidget {
                   TextField(
                     maxLines: 3,
                     style: TextStyle(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.85),
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
                       hintText: 'Explain here... ',

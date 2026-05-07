@@ -16,10 +16,10 @@ final ThemeData darkTheme = ThemeData(
     surfaceVariant: AppColors.surfaceVariantDark,
     onSurfaceVariant: AppColors.subTextDark,
   ),
-  textTheme: AppTypography.textTheme.apply(
-    bodyColor: AppColors.primaryTextDark,
-    displayColor: AppColors.primaryTextDark,
-  ),
+  // textTheme: AppTypography.textTheme.apply(
+  //   bodyColor: AppColors.primaryTextDark,
+  //   displayColor: AppColors.primaryTextDark,
+  // ),
   scaffoldBackgroundColor: AppColors.backgroundDark,
   dividerColor: AppColors.borderDark,
   cardTheme: CardThemeData(

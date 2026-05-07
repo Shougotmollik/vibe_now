@@ -16,10 +16,10 @@ final ThemeData lightTheme = ThemeData(
     surfaceVariant: AppColors.surfaceVariantLight,
     onSurfaceVariant: AppColors.subText,
   ),
-  textTheme: AppTypography.textTheme.apply(
-    bodyColor: AppColors.primaryText,
-    displayColor: AppColors.primaryText,
-  ),
+  // textTheme: AppTypography.textTheme.apply(
+  //   bodyColor: AppColors.primaryText,
+  //   displayColor: AppColors.primaryText,
+  // ),
   scaffoldBackgroundColor: AppColors.background,
   dividerColor: AppColors.border,
   cardTheme: CardThemeData(
