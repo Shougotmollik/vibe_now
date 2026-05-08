@@ -16,6 +16,7 @@ import 'package:vibe_now/views/auth/sign_up_screen.dart';
 import 'package:vibe_now/views/auth/signup_otp_verification_screen.dart';
 import 'package:vibe_now/views/auth/splash_screen.dart';
 import 'package:vibe_now/views/auth/steps/step_name_screen.dart';
+import 'package:vibe_now/views/auth/steps/step_upload_image_screen.dart';
 import 'package:vibe_now/views/chat/block_screen.dart';
 import 'package:vibe_now/views/chat/chat_inbox_screen.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
@@ -95,6 +96,11 @@ void setupRouter(bool hasToken) {
         path: '/step-name',
         name: RouteNames.stepNameScreen,
         builder: (context, state) => StepNameScreen(),
+      ),
+      GoRoute(
+        path: '/step-photo-upload',
+        name: RouteNames.stepPhotoUploadScreen,
+        builder: (context, state) => const StepUploadImageScreen(),
       ),
 
       GoRoute(

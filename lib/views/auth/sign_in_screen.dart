@@ -120,17 +120,36 @@ class _SignInScreenState extends State<SignInScreen> {
                     () => PrimaryButton.text(
                       onPressed: _isFieldsValid
                           ? () async {
-                              final success = await controller.login(
+                              final data = await controller.login(
                                 emailAddress: _emailController.text,
                                 password: _passwordController.text,
                                 context: context,
                               );
-                              if (success && mounted) {
+                              if (data == null || !mounted) return;
+
+                              final isVerified =
+                                  data['user']['is_verified'] ?? false;
+                              final isOnboardingCompleted =
+                                  data['onboarding']['completed'] ?? false;
+                              final isPhotoUploaded =
+                                  data['onboarding']['is_photo_uploaded'] ??
+                                  false;
+
+                              if (!isVerified) {
+                                appRouter.goNamed(
+                                  RouteNames.signupOtpVerificationScreen,
+                                );
+                              } else if (!isOnboardingCompleted) {
+                                appRouter.goNamed(RouteNames.stepNameScreen);
+                              } else if (!isPhotoUploaded) {
+                                appRouter.goNamed(
+                                  RouteNames.stepPhotoUploadScreen,
+                                );
+                              } else {
                                 appRouter.goNamed(RouteNames.mainNavBar);
                               }
                             }
                           : () {},
-
                       text: 'Get Started',
                       isEnabled: _isFieldsValid,
                       isLoading: controller.isLoading.value,

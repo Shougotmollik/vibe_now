@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -20,6 +22,7 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
   int? selectedIndex;
   // For multiple selection
   final Set<int> selectedIndexes = {};
+  final OnBoardingController controller = Get.find<OnBoardingController>();
 
   final List<OptionModel> options = [
     OptionModel(icon: Assets.icons.friendShip, title: "Friendship"),
@@ -39,6 +42,10 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
             List<OptionModel> selectedOptions = selectedIndexes
                 .map((i) => options[i])
                 .toList();
+            controller.lookingFor = selectedOptions
+                .map((e) => e.title)
+                .toList();
+            print("----------lookingFor ${controller.lookingFor}");
             // Navigate to the next screen
             Navigator.push(
               context,
@@ -63,6 +70,8 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
         ),
         isSkippable: true,
         onSkip: () {
+          controller.lookingFor = [];
+          print("----------lookingFor ${controller.lookingFor}");
           Navigator.push(
             context,
             PageRouteBuilder(

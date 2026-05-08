@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/auth/steps/step_looking_for_screen.dart';
@@ -23,6 +25,7 @@ class StepGenderScreen extends StatefulWidget {
 
 class _StepGenderScreenState extends State<StepGenderScreen> {
   String selected = "Man";
+  final OnBoardingController controller = Get.find<OnBoardingController>();
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +33,8 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
       currentStep: widget.step,
       footer: PrimaryButton.text(
         onPressed: () {
+          controller.gender = selected;
+          print("--------gender ${controller.gender}");
           Navigator.push(
             context,
             PageRouteBuilder(
@@ -43,7 +48,9 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
         text: 'Continue',
       ),
       isSkippable: true,
-      onSkip: () {
+      onSkip: () async {
+        controller.gender = "";
+        print("----------gender ${controller.gender}");
         Navigator.push(
           context,
           PageRouteBuilder(

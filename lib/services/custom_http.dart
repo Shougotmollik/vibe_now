@@ -179,7 +179,7 @@ class CustomHttp {
   static Future<CustomHttpResult> multipart({
     required String endpoint,
     required String fieldName,
-    required String filePath,
+    required List<String> filePaths,
     Map<String, String>? fields,
     Map<String, dynamic>? queries,
     String method = 'POST',
@@ -226,14 +226,16 @@ class CustomHttp {
         request.fields.addAll(fields);
       }
 
-      request.files.add(await http.MultipartFile.fromPath(fieldName, filePath));
+      for (var filePath in filePaths) {
+        request.files.add(await http.MultipartFile.fromPath(fieldName, filePath));
+      }
 
       HttpLogger.logRequest(
         method: method,
         url: url,
         headers: multipartHeaders,
         body: {
-          'filePath': filePath,
+          'filePaths': filePaths,
           'fieldName': fieldName,
           if (fields != null) ...fields,
         },

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -21,6 +23,7 @@ class _StepInterestSelectionScreenState
     extends State<StepInterestSelectionScreen> {
   // For multiple selection
   final Set<int> selectedIndexes = {};
+  final OnBoardingController controller = Get.find<OnBoardingController>();
 
   final List<OptionModel> options = [
     OptionModel(icon: Assets.icons.coffee, title: "Coffee"),
@@ -42,12 +45,56 @@ class _StepInterestSelectionScreenState
     return Scaffold(
       body: StepPage(
         currentStep: widget.step,
-        footer: PrimaryButton.text(
-          onPressed: () {
-            List<OptionModel> selectedOptions = selectedIndexes
-                .map((i) => options[i])
-                .toList();
-            // Navigate to the next screen
+        footer: Obx(
+          () => PrimaryButton.text(
+            onPressed: () async {
+              List<OptionModel> selectedOptions = selectedIndexes
+                  .map((i) => options[i])
+                  .toList();
+              controller.interests = selectedOptions
+                  .map((e) => e.title)
+                  .toList();
+              print("----------interests ${controller.interests}");
+
+              final success = await controller.onboardingDataSubmit();
+              if (success) {
+                Navigator.push(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: Duration.zero,
+                    reverseTransitionDuration: Duration.zero,
+                    pageBuilder: (_, __, ___) =>
+                        StepUploadImageScreen(step: widget.step + 1),
+                  ),
+                );
+              } else {
+                AppSnackbar.show(
+                  message: "Something went wrong, Please try again",
+                  type: SnackType.info,
+                );
+              }
+
+              // Navigate to the next screen
+
+              // if (selectedOptions.isNotEmpty) {
+              // } else {
+              //   AppSnackbar.show(
+              //     message: 'Please select at least one option to continue',
+              //     type: SnackType.info,
+              //   );
+              // }
+            },
+            text: 'Continue',
+            isEnabled: selectedIndexes.isNotEmpty,
+            isLoading: controller.isLoading.value,
+          ),
+        ),
+        isSkippable: true,
+        onSkip: () async {
+          controller.interests = [];
+          print("----------interests ${controller.interests}");
+          final success = await controller.onboardingDataSubmit();
+          if (success) {
             Navigator.push(
               context,
               PageRouteBuilder(
@@ -57,29 +104,12 @@ class _StepInterestSelectionScreenState
                     StepUploadImageScreen(step: widget.step + 1),
               ),
             );
-
-            // if (selectedOptions.isNotEmpty) {
-            // } else {
-            //   AppSnackbar.show(
-            //     message: 'Please select at least one option to continue',
-            //     type: SnackType.info,
-            //   );
-            // }
-          },
-          text: 'Continue',
-          isEnabled: selectedIndexes.isNotEmpty,
-        ),
-        isSkippable: true,
-        onSkip: () {
-          Navigator.push(
-            context,
-            PageRouteBuilder(
-              transitionDuration: Duration.zero,
-              reverseTransitionDuration: Duration.zero,
-              pageBuilder: (_, __, ___) =>
-                  StepUploadImageScreen(step: widget.step + 1),
-            ),
-          );
+          } else {
+            AppSnackbar.show(
+              message: "Something went wrong, Please try again",
+              type: SnackType.info,
+            );
+          }
         },
         child: SingleChildScrollView(
           child: Column(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/views/auth/steps/step_birthday_screen.dart';
@@ -19,6 +21,7 @@ class StepNameScreen extends StatefulWidget {
 class _StepNameScreenState extends State<StepNameScreen> {
   final TextEditingController _nameController = TextEditingController();
   bool _isNameFilled = true;
+  final OnBoardingController controller = Get.find<OnBoardingController>();
 
   @override
   void initState() {
@@ -47,6 +50,8 @@ class _StepNameScreenState extends State<StepNameScreen> {
             ? () {}
             : () {
                 if (_nameController.text.isNotEmpty) {
+                  controller.fullName = _nameController.text;
+                  print("--------name ${controller.fullName}");
                   Navigator.push(
                     context,
                     PageRouteBuilder(

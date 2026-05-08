@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/views/auth/steps/step_gender_screen.dart';
@@ -19,6 +21,7 @@ class StepBirthdayScreen extends StatefulWidget {
 class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
   final TextEditingController _birthdayController = TextEditingController();
   bool _isbirthdayEmpty = true;
+  final OnBoardingController controller = Get.find<OnBoardingController>();
 
   @override
   void initState() {
@@ -60,6 +63,8 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
         onPressed: _isbirthdayEmpty
             ? () {}
             : () {
+                controller.dob = _birthdayController.text;
+                print("--------birth ${controller.dob}");
                 Navigator.push(
                   context,
                   PageRouteBuilder(
@@ -75,6 +80,8 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
       ),
       isSkippable: true,
       onSkip: () {
+        controller.dob = "";
+        print("----------birth ${controller.dob}");
         Navigator.push(
           context,
           PageRouteBuilder(

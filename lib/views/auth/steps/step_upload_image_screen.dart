@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -23,6 +25,7 @@ class StepUploadImageScreen extends StatefulWidget {
 class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
   final List<File> _selectedImages = [];
   final int _maxImages = 4;
+  final OnBoardingController controller = Get.find<OnBoardingController>();
 
   Future<void> _pickImage() async {
     if (_selectedImages.length >= _maxImages) {
@@ -63,27 +66,40 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
     return Scaffold(
       body: StepPage(
         currentStep: widget.step,
-        footer: PrimaryButton.text(
-          onPressed: () {
-            if (_selectedImages.isNotEmpty) {
-              Navigator.push(
-                context,
-                PageRouteBuilder(
-                  transitionDuration: Duration.zero,
-                  reverseTransitionDuration: Duration.zero,
-                  pageBuilder: (_, __, ___) =>
-                      StepLocationScreen(step: widget.step + 1),
-                ),
-              );
-            } else {
-              AppSnackbar.show(
-                message: 'Please upload at least one image to continue',
-                type: SnackType.info,
-              );
-            }
-          },
-          text: 'Continue',
-          isEnabled: _selectedImages.isNotEmpty,
+        footer: Obx(
+          () => PrimaryButton.text(
+            onPressed: () async {
+              if (_selectedImages.isNotEmpty) {
+                final response = await controller.onboardingImageSubmit(
+                  _selectedImages,
+                );
+                if (response) {
+                  Navigator.push(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: Duration.zero,
+                      reverseTransitionDuration: Duration.zero,
+                      pageBuilder: (_, __, ___) =>
+                          StepLocationScreen(step: widget.step + 1),
+                    ),
+                  );
+                } else {
+                  AppSnackbar.show(
+                    message: 'Something went wrong please try again',
+                    type: SnackType.info,
+                  );
+                }
+              } else {
+                AppSnackbar.show(
+                  message: 'Please upload at least one image to continue',
+                  type: SnackType.info,
+                );
+              }
+            },
+            text: 'Continue',
+            isEnabled: _selectedImages.isNotEmpty,
+            isLoading: controller.isLoading.value,
+          ),
         ),
         isSkippable: false,
         onSkip: () {

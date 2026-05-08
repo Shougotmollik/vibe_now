@@ -5,7 +5,11 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Vibe Now</string>
+	<string>Vybin</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Vybin needs access to location to connect you with nearby events.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Vybin needs access to location to connect you with nearby events.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

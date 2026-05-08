@@ -41,7 +41,11 @@ class AuthController extends GetxController {
         await Future.delayed(const Duration(milliseconds: 500));
         return {'user_id': userId, 'email_address': emailAddress};
       } else {
-        final message = data['message'] ?? 'Something went wrong. Try again';
+        final message =
+            data['message']?.toString() ??
+            response.error ??
+            'Something went wrong. Try again';
+        debugPrint("message =====>$message");
         _safeShowSnack(context, message, SnackType.error);
         return null;
       }
@@ -124,7 +128,10 @@ class AuthController extends GetxController {
 
         return true;
       } else {
-        final message = data['message'] ?? 'Something went wrong. Try again';
+        final message =
+            data['message'] ??
+            response.error?.toString() ??
+            'Something went wrong. Try again';
         _safeShowSnack(context, message, SnackType.error);
         return false;
       }
@@ -138,7 +145,7 @@ class AuthController extends GetxController {
   }
 
   // user login
-  Future<bool> login({
+  Future<Map<String, dynamic>?> login({
     required String emailAddress,
     required String password,
     required BuildContext context,
@@ -172,16 +179,19 @@ class AuthController extends GetxController {
         await LocalStorage.user_id.set(userId);
 
         await Future.delayed(const Duration(milliseconds: 500));
-        return true;
+        return data['data'] as Map<String, dynamic>?;
       } else {
-        final message = data['message'] ?? 'Something went wrong. Try again';
+        final message =
+            data['message']?.toString() ??
+            response.error?.toString() ??
+            'Something went wrong. Try again';
         _safeShowSnack(context, message, SnackType.error);
-        return false;
+        return null;
       }
     } catch (e) {
       _safeShowSnack(context, '=====${e.toString()}', SnackType.error);
       debugPrint("error ${e.toString()}");
-      return false;
+      return null;
     } finally {
       isLoading.value = false;
     }
@@ -257,7 +267,10 @@ class AuthController extends GetxController {
 
         return {'user_id': userId, 'email_address': emailAddress};
       } else {
-        final message = data['message'] ?? 'Something went wrong. Try again';
+        final message =
+            data['message'] ??
+            response.error ??
+            'Something went wrong. Try again';
         _safeShowSnack(context, message, SnackType.error);
         return null;
       }
@@ -293,7 +306,10 @@ class AuthController extends GetxController {
         _safeShowSnack(context, message, SnackType.info);
         return data['data']["secret_key"];
       } else {
-        final message = data['message'] ?? 'Something went wrong. Try again';
+        final message =
+            data['message'] ??
+            response.error ??
+            'Something went wrong. Try again';
         _safeShowSnack(context, message, SnackType.error);
         return null;
       }
@@ -337,7 +353,10 @@ class AuthController extends GetxController {
         await Future.delayed(const Duration(milliseconds: 500));
         return true;
       } else {
-        final message = data['message'] ?? 'Something went wrong. Try again';
+        final message =
+            data['message'] ??
+            response.error ??
+            'Something went wrong. Try again';
         _safeShowSnack(context, message, SnackType.error);
         return false;
       }

@@ -124,7 +124,7 @@ class _SignupOtpVerificationScreenState
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  text: 'We sent you a 4-digit code to\n',
+                  text: 'We sent you a 6-digit code to\n',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14.sp,

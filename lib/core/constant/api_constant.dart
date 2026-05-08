@@ -7,4 +7,8 @@ class ApiConstant {
   static const String forgetPassword = "/auth/forgot-password";
   static const String forgetOtpVerification = "/auth/verify-reset-code";
   static const String resetPassword = "/auth/reset-password";
+
+  static const String onboarding = "/onboarding/complete";
+  static const String onboardingImage = "/onboarding/upload-photos";
+  static const String onboardingLocation = "/onboarding/location-setup";
 }

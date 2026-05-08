@@ -13,6 +13,7 @@ class RouteNames {
 
   static const String signUpOnBoardingScreen = "signUpOnBoardingScreen";
   static const String stepNameScreen = "stepNameScreen";
+  static const String stepPhotoUploadScreen = "stepPhotoUploadScreen";
 
   static const String mainNavBar = "mainNavBar";
 
