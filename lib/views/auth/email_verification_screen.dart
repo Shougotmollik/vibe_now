@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/auth_controller.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/core/routes/routes.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/views/auth/widgets/custom_text_form_field.dart';
@@ -18,6 +21,7 @@ class EmailVerificationScreen extends StatefulWidget {
 
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   final TextEditingController _emailController = TextEditingController();
+  final AuthController controller = Get.find<AuthController>();
 
   // bool _isEmailEmpty = true;
   bool _isEmailValid = false;
@@ -57,7 +61,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Text(
-                  'A 4 digit verification code will be sent to your email address.',
+                  'A 6 digit verification code will be sent to your email address.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -86,16 +90,28 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
               Spacer(),
 
-              PrimaryButton.text(
-                onPressed: !_isEmailValid
-                    ? () {}
-                    : () {
-                        if (_formKey.currentState!.validate()) {
-                          context.pushNamed(RouteNames.otpVerificationScreen);
-                        }
-                      },
-                text: 'Send Code',
-                isEnabled: _isEmailValid,
+              Obx(
+                () => PrimaryButton.text(
+                  onPressed: !_isEmailValid
+                      ? () {}
+                      : () async {
+                          if (_formKey.currentState!.validate()) {
+                            final result = await controller.forgetPassword(
+                              emailAddress: _emailController.text,
+                              context: context,
+                            );
+                            if (result != null && mounted) {
+                              appRouter.pushNamed(
+                                RouteNames.otpVerificationScreen,
+                                extra: result,
+                              );
+                            }
+                          }
+                        },
+                  text: 'Send Code',
+                  isEnabled: _isEmailValid,
+                  isLoading: controller.isLoading.value,
+                ),
               ),
               SizedBox(height: 48.h),
             ],

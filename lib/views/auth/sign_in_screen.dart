@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/auth_controller.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/core/routes/routes.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/auth/widgets/auth_title.dart';
@@ -23,6 +26,8 @@ class _SignInScreenState extends State<SignInScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isFieldsValid = false;
 
+  final AuthController controller = Get.find<AuthController>();
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +41,10 @@ class _SignInScreenState extends State<SignInScreen> {
 
     setState(() {
       _isFieldsValid =
-          email.isNotEmpty && isValidEmail(email) && password.isNotEmpty&& password.length >= 6;
+          email.isNotEmpty &&
+          isValidEmail(email) &&
+          password.isNotEmpty &&
+          password.length >= 6;
     });
   }
 
@@ -101,21 +109,32 @@ class _SignInScreenState extends State<SignInScreen> {
                       child: Text(
                         'Forgot Password?',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontSize: 14.sp,
-                            ),
+                          color: Theme.of(context).colorScheme.primary,
+                          fontSize: 14.sp,
+                        ),
                       ),
                     ),
                   ),
                   SizedBox(height: 18.h),
-                  PrimaryButton.text(
-                    onPressed: _isFieldsValid
-                        ? () {
-                            context.goNamed(RouteNames.mainNavBar);
-                          }
-                        : () {},
-                    text: 'Get Started',
-                    isEnabled: _isFieldsValid,
+                  Obx(
+                    () => PrimaryButton.text(
+                      onPressed: _isFieldsValid
+                          ? () async {
+                              final success = await controller.login(
+                                emailAddress: _emailController.text,
+                                password: _passwordController.text,
+                                context: context,
+                              );
+                              if (success && mounted) {
+                                appRouter.goNamed(RouteNames.mainNavBar);
+                              }
+                            }
+                          : () {},
+
+                      text: 'Get Started',
+                      isEnabled: _isFieldsValid,
+                      isLoading: controller.isLoading.value,
+                    ),
                   ),
                   SizedBox(height: 24.h),
                   Text(

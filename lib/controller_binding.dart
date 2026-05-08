@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:vibe_now/controller/auth_controller.dart';
 import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/controller/home_controller.dart';
@@ -16,5 +17,6 @@ class ControllerBinding extends Bindings {
     Get.lazyPut<ProfileController>(() => ProfileController());
     Get.lazyPut<EventController>(() => EventController());
     Get.lazyPut<CommunityController>(() => CommunityController());
+    Get.lazyPut<AuthController>(() => AuthController());
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/auth_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/core/routes/routes.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/views/auth/widgets/custom_text_form_field.dart';
@@ -19,6 +22,10 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
+  final AuthController controller = Get.find<AuthController>();
+  late Map<String, String> data;
+  String secretKey = "";
+  String userId = "";
 
   // bool _isFieldsFilled = true;
   bool _isPasswordValid = false;
@@ -28,6 +35,14 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
     super.initState();
     _newPasswordController.addListener(_onPasswordChanged);
     _confirmPasswordController.addListener(_onPasswordChanged);
+  }
+
+  @override
+  void didChangeDependencies() {
+    data = GoRouterState.of(context).extra as Map<String, String>;
+    secretKey = data['secret_key'] ?? '';
+    userId = data['user_id'] ?? '';
+    super.didChangeDependencies();
   }
 
   void _onPasswordChanged() {
@@ -88,24 +103,32 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
               ),
 
               Spacer(),
-              PrimaryButton.text(
-                onPressed: !_isPasswordValid
-                    ? () {}
-                    : () {
-                        AppSnackbar.show(
-                          message: 'Password set successfully',
-                          type: SnackType.info,
-                        );
-                        context.goNamed(RouteNames.signInScreen);
-                      },
-                text: 'Set Password',
-                isEnabled: _isPasswordValid,
+              Obx(
+                () => PrimaryButton.text(
+                  onPressed: !_isPasswordValid
+                      ? () {}
+                      : () async {
+                          final result = await controller.resetPassword(
+                            newPassword: _newPasswordController.text,
+                            confirmPassword: _confirmPasswordController.text,
+                            secretKey: secretKey,
+                            userId: userId,
+                            context: context,
+                          );
+                          if (result && mounted) {
+                            appRouter.goNamed(RouteNames.signInScreen);
+                          }
+                        },
+                  text: 'Set Password',
+                  isEnabled: _isPasswordValid,
+                  isLoading: controller.isLoading.value,
+                ),
               ),
               SizedBox(height: 48.h),
             ],
           ),
         ),
-      )
+      ),
     );
   }
 }

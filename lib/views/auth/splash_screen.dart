@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/auth/widgets/animated_value.dart';
 import 'package:vibe_now/views/auth/widgets/animated_ball.dart';
 import 'package:vibe_now/views/auth/widgets/animated_fade_up_text.dart';

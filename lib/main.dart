@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/controller/theme_controller.dart';
 import 'package:vibe_now/controller_binding.dart';
 import 'package:vibe_now/design_system/theme/app_theme.dart';
+import 'package:vibe_now/services/local_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +21,9 @@ void main() async {
 
   // Initialize bindings
   ControllerBinding().dependencies();
+
+  final accessToken = await LocalStorage.access_token.get();
+  setupRouter(accessToken != null);
 
   runApp(const MyApp());
 }
@@ -42,7 +46,7 @@ class MyApp extends StatelessWidget {
             theme: AppTheme.light(),
             darkTheme: AppTheme.dark(),
             themeMode: themeController.themeMode,
-            routerConfig: router,
+            routerConfig: appRouter,
           ),
         );
       },

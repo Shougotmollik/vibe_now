@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/auth_controller.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -29,6 +31,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool messages = true;
   bool events = true;
 
+  final AuthController authController = Get.find<AuthController>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +58,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             children: [
                               CircleAvatar(
                                 radius: 50.r,
-                                backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceVariant,
                                 backgroundImage: const NetworkImage(
                                   'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
                                 ),
@@ -81,7 +87,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 'Coffee enthusiast   |',
                                 style: TextStyle(
                                   fontSize: 14.sp,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                               SizedBox(width: 8.w),
@@ -92,7 +100,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 'Music lover',
                                 style: TextStyle(
                                   fontSize: 14.sp,
-                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ],
@@ -388,7 +398,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SizedBox(width: 12.w),
                     Expanded(
                       child: CustomElevatedButton(
-                        onTap: () {},
+                        onTap: () {
+                          authController.logout();
+                        },
                         buttonText: "Log Out",
                       ),
                     ),
@@ -455,7 +467,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16.sp,
-                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant.withOpacity(0.5),
               ),
           ],
         ),

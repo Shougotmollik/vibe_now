@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
+import 'package:vibe_now/controller/auth_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/core/routes/routes.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
@@ -27,6 +30,12 @@ class _SignupOtpVerificationScreenState
   bool _isOtpEmpty = true;
 
   final TextEditingController _otpTEController = TextEditingController();
+  final AuthController controller = Get.find<AuthController>();
+
+  late Map<String, String> data;
+  String email = '';
+  String userId = '';
+
   @override
   void initState() {
     super.initState();
@@ -34,11 +43,19 @@ class _SignupOtpVerificationScreenState
     _startTimer();
   }
 
+  @override
+  void didChangeDependencies() {
+    data = GoRouterState.of(context).extra as Map<String, String>;
+    email = data['email_address'] ?? '';
+    userId = data['user_id'] ?? '';
+    super.didChangeDependencies();
+  }
+
   void _onOtpChanged() {
     final otp = _otpTEController.text.trim();
     setState(() {
       // _isOtpEmpty = _otpTEController.text.trim().isEmpty;
-      _isOtpEmpty = otp.length != 4;
+      _isOtpEmpty = otp.length != 6;
     });
   }
 
@@ -70,9 +87,15 @@ class _SignupOtpVerificationScreenState
     super.dispose();
   }
 
-  void _onResendPressed() {
-    debugPrint("Resend Code clicked");
-    _startTimer();
+  void _onResendPressed() async {
+    final result = await controller.otpResent(
+      userId: userId,
+      purpose: "signup",
+      context: context,
+    );
+    if (result && mounted) {
+      _startTimer();
+    }
   }
 
   @override
@@ -108,7 +131,7 @@ class _SignupOtpVerificationScreenState
                   ),
                   children: [
                     TextSpan(
-                      text: 'example@mail.com',
+                      text: email,
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontWeight: FontWeight.w600,
@@ -123,6 +146,7 @@ class _SignupOtpVerificationScreenState
               Pinput(
                 controller: _otpTEController,
                 keyboardType: TextInputType.number,
+                length: 6,
                 defaultPinTheme: PinTheme(
                   textStyle: TextStyle(
                     fontWeight: FontWeight.w700,
@@ -175,21 +199,33 @@ class _SignupOtpVerificationScreenState
                     ),
 
               Spacer(),
-              PrimaryButton.text(
-                onPressed: _isOtpEmpty
-                    ? () {}
-                    : () {
-                        if (_otpTEController.text.isEmpty) {
-                          AppSnackbar.show(
-                            message: 'OTP is not matched',
-                            type: SnackType.info,
-                          );
-                        } else {
-                          context.goNamed(RouteNames.stepNameScreen);
-                        }
-                      },
-                text: 'Verify',
-                isEnabled: !_isOtpEmpty,
+              Obx(
+                () => PrimaryButton.text(
+                  onPressed: _isOtpEmpty
+                      ? () {}
+                      : () async {
+                          if (_otpTEController.text.isEmpty) {
+                            AppSnackbar.show(
+                              message: 'OTP is not matched',
+                              type: SnackType.info,
+                            );
+                          } else {
+                            final result = await controller
+                                .signupOtpVerification(
+                                  userId: userId,
+                                  otp: _otpTEController.text,
+                                  context: context,
+                                );
+
+                            if (result && mounted) {
+                              appRouter.pushNamed(RouteNames.stepNameScreen);
+                            }
+                          }
+                        },
+                  text: 'Verify',
+                  isEnabled: !_isOtpEmpty,
+                  isLoading: controller.isLoading.value,
+                ),
               ),
 
               SizedBox(height: 48.h),
