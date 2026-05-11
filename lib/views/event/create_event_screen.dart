@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,17 +9,19 @@ import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/design_system.dart';
-import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/category.dart';
-import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
 import 'package:vibe_now/views/common/custom_date_picker.dart';
+import 'package:vibe_now/views/common/location_selection_screen.dart';
 import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
+import 'package:vibe_now/views/home/widgets/google_map.dart';
 
-// enum EventAccessType { public, private }
+enum EventAccessType { public, private }
 
 class CreateEventScreen extends StatefulWidget {
   const CreateEventScreen({super.key});
@@ -33,7 +36,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     text: '10',
   );
   final TextEditingController _categoryController = TextEditingController();
-  final EventController eventController = Get.put(EventController());
+  final EventController eventController = Get.find<EventController>();
+  final TextEditingController locationController = TextEditingController();
+  double? selectedLatitude;
+  double? selectedLongitude;
+
   String? _activeParentForSub;
 
   DateTime? _selectedDate;
@@ -425,28 +432,59 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Select address',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 14,
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LocationSelectionScreen(
+                  apiKey: EnvHandler.google_map_api_key,
+                  onLocationSelect: (location) {
+                    setState(() {
+                      locationController.text = location.name;
+                      selectedLatitude = location.position.latitude;
+                      selectedLongitude = location.position.longitude;
+                    });
+
+                    print(
+                      'Selected location: $selectedLatitude, $selectedLongitude',
+                    );
+                    print('Location name: ${location.name}');
+                  },
                 ),
               ),
-            ],
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    locationController.text.isEmpty
+                        ? 'Select address'
+                        : locationController.text,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -594,87 +632,81 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     return Row(
       children: [
         Expanded(
-          child: OutlinedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              side: BorderSide(
-                color: Theme.of(context).colorScheme.outlineVariant,
-              ),
-            ),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+          child: CustomElevatedButton(
+            height: 48.h,
+            onTap: () => Navigator.of(context).maybePop(),
+            buttonText: "Cancel",
+            textColor: Theme.of(context).colorScheme.onSurface,
+            btnColor: Theme.of(context).colorScheme.surfaceVariant,
+          ),
+        ),
+        const SizedBox(width: 18),
+        Obx(
+          () => Expanded(
+            child: PrimaryButton.text(
+              onPressed: onCreate,
+              text: 'Create',
+              isLoading: eventController.isLoading.value,
             ),
           ),
         ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradientRotated,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: ElevatedButton(
-              onPressed: () {
-                // final event ={
-                //   'title': _titleController.text,
-                //   'description': _descriptionController.text,
-                //   'location': _locationController.text,
-                //   'date': _selectedDate,
-                //   'time': _selectedTime,
-                //   'maxAttendees': int.parse(_maxAttendeesController.text),
-                //   'category': selectedCategories,
-                //   'acessibility': _accessType,
-                // };
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (context) {
-                    return Center(
-                      child: Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        elevation: 0,
-                        backgroundColor: Colors.transparent,
-                        child: EventAnimatedDialog(
-                          content: 'Your event is live.',
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: const Text(
-                'Create',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
+        // Expanded(
+        //   child: Container(
+        //     decoration: BoxDecoration(
+        //       gradient: AppColors.primaryGradientRotated,
+        //       borderRadius: BorderRadius.circular(30),
+        //     ),
+        //     child: ElevatedButton(
+        //       onPressed: () {
+        //         // final event ={
+        //         //   'title': _titleController.text,
+        //         //   'description': _descriptionController.text,
+        //         //   'location': _locationController.text,
+        //         //   'date': _selectedDate,
+        //         //   'time': _selectedTime,
+        //         //   'maxAttendees': int.parse(_maxAttendeesController.text),
+        //         //   'category': selectedCategories,
+        //         //   'acessibility': _accessType,
+        //         // };
+        //         Navigator.pop(context);
+        //         showDialog(
+        //           context: context,
+        //           barrierDismissible: true,
+        //           builder: (context) {
+        //             return Center(
+        //               child: Dialog(
+        //                 shape: RoundedRectangleBorder(
+        //                   borderRadius: BorderRadius.circular(20.r),
+        //                 ),
+        //                 elevation: 0,
+        //                 backgroundColor: Colors.transparent,
+        //                 child: EventAnimatedDialog(
+        //                   content: 'Your event is live.',
+        //                 ),
+        //               ),
+        //             );
+        //           },
+        //         );
+        //       },
+        //       style: ElevatedButton.styleFrom(
+        //         backgroundColor: Colors.transparent,
+        //         shadowColor: Colors.transparent,
+        //         padding: const EdgeInsets.symmetric(vertical: 16),
+        //         shape: RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(30),
+        //         ),
+        //       ),
+        //       child: const Text(
+        //         'Create',
+        //         style: TextStyle(
+        //           color: Colors.white,
+        //           fontSize: 15,
+        //           fontWeight: FontWeight.w600,
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
@@ -1042,5 +1074,76 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         );
       },
     );
+  }
+
+  void onCreate() async {
+    if (_selectedImage == null) {
+      AppSnackbar.show(message: 'Please select cover image');
+      return;
+    }
+
+    if (_titleController.text.trim().isEmpty) {
+      AppSnackbar.show(message: 'Please enter event title');
+      return;
+    }
+
+    /// Build categories json
+    final List<Map<String, dynamic>> categoryJson = [];
+
+    for (final group in eventController.categoryGroups) {
+      final selectedSubs = group.children
+          .where((sub) => eventController.selectedSubcategories.contains(sub))
+          .toList();
+
+      if (selectedSubs.isNotEmpty) {
+        categoryJson.add({"name": group.parent, "subcategories": selectedSubs});
+      }
+    }
+    // String formatTimeOfDay(TimeOfDay time, BuildContext context) {
+    //   final now = DateTime.now();
+    //   final dt = DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    //   final formatted = TimeOfDay.fromDateTime(dt).format(context);
+    //   return formatted;
+    // }
+
+    final success = await eventController.createEvent(
+      coverImage: _selectedImage!,
+      title: _titleController.text.trim(),
+      categories: jsonEncode(categoryJson),
+      accessLevel: _accessType == EventAccessType.public ? 'public' : 'private',
+      address: locationController.text,
+      latitude: selectedLatitude.toString(),
+      longitude: selectedLongitude.toString(),
+      eventDate: _selectedDate != null
+          ? "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}"
+          : '',
+      eventTime: _selectedTime != null ? _selectedTime!.format(context) : '',
+      maxAttendees: _maxAttendeesController.text.trim(),
+    );
+
+    if (success && mounted) {
+      Navigator.pop(context);
+
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) {
+          return Center(
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              child: EventAnimatedDialog(
+                content: 'Your event is submitted for approval.',
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      AppSnackbar.show(message: 'Failed to create event');
+    }
   }
 }

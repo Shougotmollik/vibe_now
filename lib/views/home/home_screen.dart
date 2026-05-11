@@ -1308,18 +1308,17 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: EventCard(
               event: Event(
-                name: 'Club House',
-                location: '123 Main St, New York, NY 10001',
-                date: '21 Nov',
-                time: '8PM - 11PM',
-                description: '10 Interested • 16 Going',
-                image:
+                title: 'Club House',
+                address: '123 Main St, New York, NY 10001',
+                eventDate: '21 Nov',
+                eventTime: '8PM - 11PM',
+                coverImage:
                     'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800',
-                attending: '5',
-                totalAttending: '10',
+                interestedCount: 5,
+                maxAttendees: 10,
                 isJoined: false,
-                isMyEvent: false,
-                accessType: EventAccessType.private,
+                isInterested: false,
+                accessLevel: 'private',
               ),
             ),
           ),

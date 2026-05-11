@@ -76,7 +76,7 @@ class _EventAnimatedDialogState extends State<EventAnimatedDialog>
                 width: 300.w,
                 padding: EdgeInsets.symmetric(horizontal: 25.w, vertical: 20.h),
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.primaryContainer,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(20.r),
                   boxShadow: [
                     BoxShadow(

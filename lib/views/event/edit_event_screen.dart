@@ -42,7 +42,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController(text: widget.event.name);
+    _titleController = TextEditingController(text: widget.event.title);
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -557,7 +557,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   fit: BoxFit.cover,
                 )
               : Image.network(
-                  widget.event.image,
+                  widget.event.coverImage ?? "",
                   height: 160.h,
                   width: double.infinity,
                   fit: BoxFit.cover,

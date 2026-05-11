@@ -342,18 +342,17 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                           },
                           child: MeetupCard(
                             event: Event(
-                              name: '  ',
-                              location: '123 Main St, New York, NY 10001',
-                              date: '21 Nov',
-                              time: '8PM - 11PM',
-                              description: '10 Interested • 16 Going',
-                              image:
+                              title: '  ',
+                              address: '123 Main St, New York, NY 10001',
+                              eventDate: '21 Nov',
+                              eventTime: '8PM - 11PM',
+                              coverImage:
                                   'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800',
-                              attending: '5',
-                              totalAttending: '10',
+                              interestedCount: 5,
+                              maxAttendees: 10,
                               isJoined: true,
-                              isMyEvent: true,
-                              accessType: EventAccessType.public,
+                              isInterested: true,
+                              accessLevel: 'public',
                             ),
                           ),
                         ),

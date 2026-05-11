@@ -27,7 +27,7 @@ class EventDetailsScreen extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(event.image),
+                  image: NetworkImage(event.coverImage ?? ""),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -108,7 +108,7 @@ class EventDetailsScreen extends StatelessWidget {
                   children: [
                     // Event Title
                     Text(
-                      event.name,
+                      event.title ?? "",
                       style: TextStyle(
                         fontSize: 24.sp,
                         fontWeight: FontWeight.bold,
@@ -128,7 +128,7 @@ class EventDetailsScreen extends StatelessWidget {
                         SizedBox(width: 4.w),
                         Expanded(
                           child: Text(
-                            event.location,
+                            event.address ?? "",
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Theme.of(
@@ -146,7 +146,7 @@ class EventDetailsScreen extends StatelessWidget {
                         Assets.icons.calender3.svg(),
                         SizedBox(width: 4.w),
                         Text(
-                          '${event.time}, ${event.date}',
+                          '${event.eventTime}, ${event.eventDate}',
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Theme.of(
@@ -161,7 +161,7 @@ class EventDetailsScreen extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          event.description,
+                          "${event.interestedCount} Interested • ${event.joinedCount} Going",
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Theme.of(
@@ -178,7 +178,7 @@ class EventDetailsScreen extends StatelessWidget {
                         Assets.icons.community.svg(width: 16.w, height: 16.h),
                         SizedBox(width: 4.w),
                         Text(
-                          '${event.attending}/${event.totalAttending} attending',
+                          '${event.joinedCount}/${event.maxAttendees} attending',
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Theme.of(

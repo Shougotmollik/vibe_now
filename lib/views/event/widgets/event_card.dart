@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
@@ -24,15 +25,15 @@ class EventCard extends StatefulWidget {
 }
 
 class _EventCardState extends State<EventCard> {
-  late EventStatus? currentStatus;
+  // late EventStatus? currentStatus;
 
-  bool get isPublic => widget.event.accessType == EventAccessType.public;
+  // bool get isPublic => widget.event.accessType == EventAccessType.public;
 
-  bool get isPrivate => widget.event.accessType == EventAccessType.private;
+  // bool get isPrivate => widget.event.accessType == EventAccessType.private;
 
-  bool get isGoing => currentStatus == EventStatus.going;
-  bool get isRequested => currentStatus == EventStatus.requested;
-  bool get isActive => isGoing || isRequested;
+  // bool get isGoing => currentStatus == EventStatus.going;
+  // bool get isRequested => currentStatus == EventStatus.requested;
+  // bool get isActive => isGoing || isRequested;
 
   static const String hourglass = "assets/icons/hourglass-end.svg";
   static const String wishlist = "assets/icons/wishlist-star.svg";
@@ -43,19 +44,19 @@ class _EventCardState extends State<EventCard> {
   @override
   void initState() {
     super.initState();
-    currentStatus = widget.event.userStatus;
+    // currentStatus = widget.event.userStatus;
   }
 
-  String get buttonText {
-    if (widget.event.isMyEvent) return '';
+  // String get buttonText {
+  //   if (widget.event.isMyEvent) return '';
 
-    if (isPublic) {
-      return isGoing ? 'Going' : 'Join';
-    }
+  //   if (isPublic) {
+  //     return isGoing ? 'Going' : 'Join';
+  //   }
 
-    // Private
-    return isRequested ? 'Requested' : 'Request';
-  }
+  //   // Private
+  //   return isRequested ? 'Requested' : 'Request';
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -79,7 +80,7 @@ class _EventCardState extends State<EventCard> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.network(
-                  widget.event.image,
+                  AppCredentials.fixurl(widget.event.coverImage),
                   height: 200.h,
                   fit: BoxFit.cover,
                   width: double.infinity,
@@ -88,9 +89,9 @@ class _EventCardState extends State<EventCard> {
 
               GestureDetector(
                 onTap: () {
-                  setState(() {
-                    widget.event.isFavorite = !widget.event.isFavorite;
-                  });
+                  // setState(() {
+                  //   widget.event.isInterested = !widget.event.isInterested;
+                  // });
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -101,7 +102,10 @@ class _EventCardState extends State<EventCard> {
                     ),
                     padding: const EdgeInsets.all(10),
                     child: SvgPicture.asset(
-                      widget.event.isFavorite ? wishlistFilled : wishlist,
+                      widget.event.isInterested != null &&
+                              widget.event.isInterested == true
+                          ? wishlistFilled
+                          : wishlist,
                       height: 18.h,
                       width: 18.w,
                       color: AppColors.background,
@@ -126,13 +130,15 @@ class _EventCardState extends State<EventCard> {
                     spacing: 4.w,
                     children: [
                       SvgPicture.asset(
-                        isPublic ? public : private,
+                        widget.event.accessLevel == "public" ? public : private,
                         height: 14.h,
                         width: 14.w,
                         color: AppColors.background,
                       ),
                       Text(
-                        isPublic ? "Public" : "Private",
+                        widget.event.accessLevel == "public"
+                            ? "Public"
+                            : "Private",
                         style: TextStyle(
                           color: AppColors.background,
                           fontSize: 12.sp,
@@ -147,7 +153,7 @@ class _EventCardState extends State<EventCard> {
           ),
           SizedBox(height: 12.h),
           Text(
-            widget.event.name,
+            widget.event.title ?? '',
             style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
           ),
           SizedBox(height: 6.h),
@@ -162,7 +168,7 @@ class _EventCardState extends State<EventCard> {
               SizedBox(width: 4.w),
               Expanded(
                 child: Text(
-                  widget.event.location,
+                  widget.event.address ?? '',
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Theme.of(
@@ -184,7 +190,7 @@ class _EventCardState extends State<EventCard> {
               ),
               SizedBox(width: 4.w),
               Text(
-                '${widget.event.time}, ${widget.event.date}',
+                '${widget.event.eventTime}, ${widget.event.eventDate}',
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
@@ -196,7 +202,7 @@ class _EventCardState extends State<EventCard> {
           Row(
             children: [
               Text(
-                widget.event.description,
+                "${widget.event.interestedCount} Interested • ${widget.event.joinedCount} Going",
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
@@ -215,7 +221,7 @@ class _EventCardState extends State<EventCard> {
               ),
               SizedBox(width: 4.w),
               Text(
-                '${widget.event.attending}/${widget.event.totalAttending} attending',
+                '${widget.event.joinedCount}/${widget.event.maxAttendees} attending',
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
@@ -225,7 +231,7 @@ class _EventCardState extends State<EventCard> {
           ),
           SizedBox(height: 12),
           // Event Button section
-          widget.event.isMyEvent
+          widget.event.isJoined != null && widget.event.isJoined == true
               ? PrimaryButton.text(
                   radius: 12.r,
                   onPressed: () {
@@ -243,9 +249,11 @@ class _EventCardState extends State<EventCard> {
                       child: GestureDetector(
                         onTap: () {
                           // PUBLIC EVENT FLOW
-                          if (isPublic && !isGoing) {
+                          if (widget.event.accessLevel == 'public' &&
+                              widget.event.isJoined != null &&
+                              widget.event.isJoined == false) {
                             setState(() {
-                              currentStatus = EventStatus.going;
+                              // currentStatus = EventStatus.going;
                             });
 
                             // showDialog(
@@ -265,7 +273,7 @@ class _EventCardState extends State<EventCard> {
                               builder: (context) => RequestSentDialog(
                                 onWithDrawTap: () {
                                   setState(() {
-                                    currentStatus = EventStatus.interested;
+                                    // currentStatus = EventStatus.interested;
                                   });
                                   Navigator.pop(context);
                                 },
@@ -276,9 +284,9 @@ class _EventCardState extends State<EventCard> {
                           }
 
                           // PRIVATE EVENT FLOW
-                          if (isPrivate && !isRequested) {
+                          if (widget.event.accessLevel == 'private') {
                             setState(() {
-                              currentStatus = EventStatus.requested;
+                              // currentStatus = EventStatus.requested;
                             });
 
                             Navigator.push(
@@ -307,7 +315,9 @@ class _EventCardState extends State<EventCard> {
                           padding: EdgeInsets.all(12.w),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.r),
-                            gradient: !isActive
+                            gradient:
+                                widget.event.isJoined != null &&
+                                    widget.event.isJoined == true
                                 ? AppColors.primaryGradientRotated
                                 : AppColors.primaryGradient.withOpacity(0.5),
                             // color: !isActive ? null : const Color(0xffC4A8FF),
@@ -320,11 +330,22 @@ class _EventCardState extends State<EventCard> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               spacing: 8.w,
                               children: [
-                                isPrivate
+                                widget.event.accessLevel == "private"
                                     ? SvgPicture.asset(
-                                        isActive ? hourglass : "",
-                                        height: isActive ? 16.h : 0.h,
-                                        width: isActive ? 16.w : 0.w,
+                                        widget.event.isJoined != null &&
+                                                widget.event.isJoined == true
+                                            ? hourglass
+                                            : "",
+                                        height:
+                                            widget.event.isJoined != null &&
+                                                widget.event.isJoined == true
+                                            ? 16.h
+                                            : 0.h,
+                                        width:
+                                            widget.event.isJoined != null &&
+                                                widget.event.isJoined == true
+                                            ? 16.w
+                                            : 0.w,
                                         color: AppColors.background,
                                       )
                                     : SizedBox(),
@@ -336,9 +357,13 @@ class _EventCardState extends State<EventCard> {
                                 //     color: AppColors.background,
                                 //   ),
                                 Text(
-                                  buttonText,
+                                  widget.event.accessLevel == "private"
+                                      ? "Request"
+                                      : "Join",
                                   style: TextStyle(
-                                    color: !isActive
+                                    color:
+                                        widget.event.isJoined != null &&
+                                            widget.event.isJoined == true
                                         ? Colors.white
                                         : Colors.grey.shade100,
                                     fontSize: 16.sp,
@@ -362,53 +387,53 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
-  Widget _buildPopUpDropMenu() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        color: Colors.grey.shade200,
-      ),
-      child: PopupMenuButton(
-        color: AppColors.surface,
-        iconColor: Colors.grey.shade600,
-        icon: Assets.icons.down.svg(),
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            onTap: () {
-              Future.delayed(Duration.zero, () {
-                setState(() {
-                  currentStatus = EventStatus.interested;
-                });
-              });
-            },
-            child: Text(
-              "Interested",
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                color: Colors.black54,
-              ),
-            ),
-          ),
-          PopupMenuItem(
-            onTap: () {
-              Future.delayed(Duration.zero, () {
-                setState(() {
-                  currentStatus = EventStatus.going;
-                });
-              });
-            },
-            child: Text(
-              "Going",
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                color: Colors.black54,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  // Widget _buildPopUpDropMenu() {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(12.r),
+  //       color: Colors.grey.shade200,
+  //     ),
+  //     child: PopupMenuButton(
+  //       color: AppColors.surface,
+  //       iconColor: Colors.grey.shade600,
+  //       icon: Assets.icons.down.svg(),
+  //       itemBuilder: (context) => [
+  //         PopupMenuItem(
+  //           onTap: () {
+  //             Future.delayed(Duration.zero, () {
+  //               setState(() {
+  //                 currentStatus = EventStatus.interested;
+  //               });
+  //             });
+  //           },
+  //           child: Text(
+  //             "Interested",
+  //             style: TextStyle(
+  //               fontSize: 14.sp,
+  //               fontWeight: FontWeight.w400,
+  //               color: Colors.black54,
+  //             ),
+  //           ),
+  //         ),
+  //         PopupMenuItem(
+  //           onTap: () {
+  //             Future.delayed(Duration.zero, () {
+  //               setState(() {
+  //                 currentStatus = EventStatus.going;
+  //               });
+  //             });
+  //           },
+  //           child: Text(
+  //             "Going",
+  //             style: TextStyle(
+  //               fontSize: 14.sp,
+  //               fontWeight: FontWeight.w400,
+  //               color: Colors.black54,
+  //             ),
+  //           ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

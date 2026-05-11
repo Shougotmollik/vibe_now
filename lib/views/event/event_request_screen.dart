@@ -38,7 +38,7 @@ class EventRequestScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 10.h),
                 Text(
-                  event.name,
+                  event.title ?? "",
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 20.sp,
@@ -50,13 +50,13 @@ class EventRequestScreen extends StatelessWidget {
                 _buildEventInfoCard(
                   context,
                   icon: Assets.icons.location,
-                  location: event.location,
+                  location: event.address ?? "",
                 ),
                 SizedBox(height: 8.h),
                 _buildEventInfoCard(
                   context,
                   icon: Assets.icons.colorClock,
-                  location: "${event.date} ${event.time}",
+                  location: "${event.eventDate} ${event.eventTime}",
                 ),
                 Spacer(),
                 Text(

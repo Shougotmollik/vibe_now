@@ -25,16 +25,17 @@ class MeetupCard extends StatefulWidget {
 }
 
 class _MeetupCardState extends State<MeetupCard> {
-  late EventStatus? currentStatus;
+  
+  // late EventStatus? currentStatus;
 
-  bool get isJoined => currentStatus == EventStatus.going;
-  bool get isPending => currentStatus == EventStatus.requested;
-  bool get cannotJoin => isJoined || isPending;
+  // bool get isJoined => currentStatus == EventStatus.going;
+  // bool get isPending => currentStatus == EventStatus.requested;
+  // bool get cannotJoin => isJoined || isPending;
 
   @override
   void initState() {
     super.initState();
-    currentStatus = widget.event.userStatus;
+    // currentStatus = widget.event.userStatus;
   }
 
   @override
@@ -57,7 +58,7 @@ class _MeetupCardState extends State<MeetupCard> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.network(
-                  widget.event.image,
+                  widget.event.coverImage??'',
                   height: 200.h,
                   fit: BoxFit.cover,
                   width: double.infinity,
@@ -125,7 +126,7 @@ class _MeetupCardState extends State<MeetupCard> {
           ),
           SizedBox(height: 12.h),
           Text(
-            widget.event.name,
+            widget.event.title ?? "",
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
@@ -141,7 +142,7 @@ class _MeetupCardState extends State<MeetupCard> {
               SizedBox(width: 4.w),
               Expanded(
                 child: Text(
-                  widget.event.location,
+                  widget.event.address ?? "",
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -158,7 +159,7 @@ class _MeetupCardState extends State<MeetupCard> {
               ),
               SizedBox(width: 4.w),
               Text(
-                '${widget.event.time}, ${widget.event.date}',
+                '${widget.event.eventDate ??''}, ${widget.event.eventTime ??''}',
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -170,7 +171,7 @@ class _MeetupCardState extends State<MeetupCard> {
           Row(
             children: [
               Text(
-                widget.event.description,
+                "",
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -181,7 +182,7 @@ class _MeetupCardState extends State<MeetupCard> {
           SizedBox(height: 12.h),
 
           PrimaryButton.text(
-            onPressed: isJoined
+            onPressed: widget.event.isJoined??false
                 ? () {
                     Navigator.push(
                       context,
@@ -195,19 +196,19 @@ class _MeetupCardState extends State<MeetupCard> {
                       context: context,
                       builder: (context) => MeetupSentDialog(
                         onWithDrawTap: () {
-                          setState(
-                            () => currentStatus = EventStatus.interested,
-                          );
+                          // setState(
+                          //   () => currentStatus = EventStatus.interested,
+                          // );
                           Navigator.pop(context);
                         },
                       ),
                     ).then((_) {
                       setState(() {
-                        currentStatus = EventStatus.going;
+                        // currentStatus = EventStatus.going;
                       });
                     });
                   },
-            text: isJoined ? "View Details" : "Join",
+            text: widget.event.isJoined??false ? "View Details" : "Join",
             gradient: AppColors.primaryGradientRotated,
             radius: 12.r,
           ),

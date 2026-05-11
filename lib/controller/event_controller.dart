@@ -1,8 +1,14 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/model/category.dart';
+import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/services/custom_http.dart';
 
 class EventController extends GetxController {
-  
   final RxSet<String> expandedParents = <String>{}.obs;
 
   final RxSet<String> selectedSubcategories = <String>{}.obs;
@@ -96,5 +102,85 @@ class EventController extends GetxController {
         .length;
 
     return selectedCount > 0 && selectedCount < group.children.length;
+  }
+
+  // Api functions
+  var isLoading = false.obs;
+  final RxList<Event> eventList = <Event>[].obs;
+
+  // create Event
+  Future<bool> createEvent({
+    required File coverImage,
+    required String title,
+    required String categories,
+    required String accessLevel,
+    required String address,
+    required String latitude,
+    required String longitude,
+    required String eventDate,
+    required String eventTime,
+    required String maxAttendees,
+  }) async {
+    try {
+      isLoading(true);
+
+      final response = await CustomHttp.multipart(
+        need_auth: true,
+        endpoint: ApiConstant.createEvent,
+        fieldName: 'cover_image',
+        filePath: coverImage.path,
+        fields: {
+          'title': title,
+          'categories': categories,
+          'access_level': accessLevel,
+          'address': address,
+          'latitude': latitude,
+          'longitude': longitude,
+          'event_date': eventDate,
+          'event_time': eventTime,
+          'max_attendees': maxAttendees,
+        },
+      );
+
+      return response.ok;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  // get Events
+  Future<void> getEvents({
+    String tab = 'all',
+    String search = '',
+    int page = 1,
+    int pageSize = 10,
+  }) async {
+    isLoading(true);
+
+    final response = await CustomHttp.get(
+      need_auth: true,
+      endpoint: ApiConstant.event,
+      queries: {
+        'tab': tab,
+        'search': search,
+        'page': page.toString(),
+        'page_size': pageSize.toString(),
+      },
+    );
+
+    if (response.ok) {
+      final jsonData = response.data['data']['results'];
+
+      eventList.assignAll(
+        List<Event>.from(jsonData.map((e) => Event.fromJson(e))),
+      );
+    } else {
+      debugPrint('Error fetching events: ${response.error}');
+    }
+
+    isLoading(false);
   }
 }

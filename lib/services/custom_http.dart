@@ -179,7 +179,10 @@ class CustomHttp {
   static Future<CustomHttpResult> multipart({
     required String endpoint,
     required String fieldName,
-    required List<String> filePaths,
+
+    String? filePath,
+    List<String>? filePaths,
+
     Map<String, String>? fields,
     Map<String, dynamic>? queries,
     String method = 'POST',
@@ -217,17 +220,28 @@ class CustomHttp {
 
       final request = http.MultipartRequest(method, uri);
 
-      // Create headers for multipart: remove Content-Type to let http package handle it
       final multipartHeaders = Map<String, String>.from(resolved_headers);
+
       multipartHeaders.remove('Content-Type');
+
       request.headers.addAll(multipartHeaders);
 
       if (fields != null) {
         request.fields.addAll(fields);
       }
 
-      for (var filePath in filePaths) {
-        request.files.add(await http.MultipartFile.fromPath(fieldName, filePath));
+      /// Single file
+      if (filePath != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(fieldName, filePath),
+        );
+      }
+
+      /// Multiple files
+      if (filePaths != null && filePaths.isNotEmpty) {
+        for (final path in filePaths) {
+          request.files.add(await http.MultipartFile.fromPath(fieldName, path));
+        }
       }
 
       HttpLogger.logRequest(
@@ -235,6 +249,7 @@ class CustomHttp {
         url: url,
         headers: multipartHeaders,
         body: {
+          'filePath': filePath,
           'filePaths': filePaths,
           'fieldName': fieldName,
           if (fields != null) ...fields,
@@ -242,6 +257,7 @@ class CustomHttp {
       );
 
       final streamedResponse = await request.send();
+
       final response = await http.Response.fromStream(streamedResponse);
 
       return _handle_response(response, show_floating_error);
