@@ -1,13 +1,14 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
-import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_search_bar.dart';
 import 'package:vibe_now/views/event/widgets/event_card.dart';
@@ -22,91 +23,41 @@ class EventScreen extends StatefulWidget {
 
 class _EventScreenState extends State<EventScreen> {
   final List<String> tabs = ['All', 'Joined', 'Organized', 'Interested'];
-  String selectedTab = 'All';
+  final selectedTab = 'All'.obs;
+  final TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
 
-  final List<Event> events = [
-    Event(
-      name: 'Club House',
-      location: '123 Main St, New York, NY 10001',
-      date: '21 Nov',
-      time: '8PM - 11PM',
-      description: '10 Interested • 16 Going',
-      image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800',
-      attending: '5',
-      totalAttending: '10',
-      isJoined: false,
-      isMyEvent: false,
-      userStatus: EventStatus.interested,
-      accessType: EventAccessType.private,
-      isFavorite: false,
-    ),
-    Event(
-      name: 'Music Night',
-      description: '15 Interested • 20 Going',
-      date: '25 Nov',
-      time: '9PM - 12AM',
-      location: '456 Party Ave, Los Angeles, CA 90001',
-      image:
-          'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800',
-      attending: '8',
-      totalAttending: '15',
-      isJoined: true,
-      isMyEvent: false,
-      userStatus: EventStatus.interested,
-      accessType: EventAccessType.public,
-      isFavorite: false,
-    ),
-    Event(
-      name: 'Beach Party',
-      description: '20 Interested • 30 Going',
-      date: '28 Nov',
-      time: '6PM - 10PM',
-      location: '789 Beach Blvd, Miami, FL 33101',
-      image:
-          'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=800',
-      attending: '12',
-      totalAttending: '20',
-      isJoined: false,
-      isMyEvent: true,
-      userStatus: EventStatus.going,
-      accessType: EventAccessType.public,
-      isFavorite: true,
-    ),
-    Event(
-      name: 'Food Festival',
-      description: '25 Interested • 40 Going',
-      date: '30 Nov',
-      time: '5PM - 11PM',
-      location: '321 Food St, Chicago, IL 60007',
-      image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800',
-      attending: '15',
-      totalAttending: '25',
-      isJoined: true,
-      isMyEvent: true,
-      userStatus: EventStatus.going,
-      accessType: EventAccessType.private,
-      isFavorite: false,
-    ),
-  ];
+  final EventController eventController = Get.find<EventController>();
 
-  // Filter events based on selected tab
-  List<Event> get filteredEvents {
-    switch (selectedTab) {
-      case 'Joined':
-        return events.where((e) => e.userStatus == EventStatus.going).toList();
-      case 'Organized':
-        return events.where((e) => e.isMyEvent).toList();
-      case 'Interested':
-        return events
-            .where((e) => e.userStatus == EventStatus.interested)
-            .toList();
-      case 'All':
-      default:
-        return events;
-    }
+  @override
+  void initState() {
+    super.initState();
+    eventController.getEvents(tab: 'all');
   }
 
-  final EventController eventController = Get.put(EventController());
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    searchController.dispose();
+    super.dispose();
+  }
+
+  // Filter events based on selected tab
+  // List<Event> get filteredEvents {
+  //   final events = eventController.eventList;
+
+  //   switch (selectedTab.value) {
+  //     case 'Joined':
+  //       return events.where((e) => e.isJoined == true).toList();
+  //     case 'Organized':
+  //       return events.where((e) => e.isJoined == true).toList();
+  //     case 'Interested':
+  //       return events.where((e) => e.isInterested == true).toList();
+  //     default:
+  //       return events;
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,83 +65,121 @@ class _EventScreenState extends State<EventScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildAppBar(context),
-                SizedBox(height: 12.h),
+            child: Obx(() {
+              return Column(
+                children: [
+                  _buildAppBar(context),
+                  SizedBox(height: 12.h),
 
-                // Search bar with filter
-                CustomSearchBar(
-                  onFilterTap: () => showDialog(
-                    context: context,
-                    builder: (context) => const EventFilterDialog(),
+                  // Search bar with filter
+                  CustomSearchBar(
+                    controller: searchController,
+                    onFilterTap: () => showDialog(
+                      context: context,
+                      builder: (context) => const EventFilterDialog(),
+                    ),
+                    hintText: 'Search for events',
+                    onChanged: (query) {
+                      _debounce?.cancel();
+                      _debounce = Timer(const Duration(milliseconds: 500), () {
+                        eventController.getEvents(
+                          tab: selectedTab.value.toLowerCase(),
+                          search: query,
+                        );
+                      });
+                    },
                   ),
-                  hintText: 'Search for events',
-                ),
 
-                SizedBox(height: 12.h),
+                  SizedBox(height: 12.h),
 
-                // Category tabs
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: tabs.map((tab) {
-                      final isSelected = selectedTab == tab;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: GestureDetector(
-                          onTap: () => setState(() => selectedTab = tab),
-                          child: Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 20.w,
-                              vertical: 8.w,
-                            ),
-                            decoration: BoxDecoration(
-                              gradient: isSelected
-                                  ? AppColors.primaryGradientRotated
-                                  : null,
-                              color: isSelected
-                                  ? null
-                                  : Theme.of(
-                                      context,
-                                    ).colorScheme.surfaceVariant,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              tab,
-                              style: TextStyle(
+                  // Category tabs
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: tabs.map((tab) {
+                        final isSelected = selectedTab.value == tab;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: GestureDetector(
+                            onTap: () async {
+                              selectedTab.value = tab;
+                              await eventController.getEvents(
+                                tab: tab.toLowerCase(),
+                              );
+                            },
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 20.w,
+                                vertical: 8.w,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: isSelected
+                                    ? AppColors.primaryGradientRotated
+                                    : null,
                                 color: isSelected
-                                    ? Colors.white
+                                    ? null
                                     : Theme.of(
                                         context,
-                                      ).colorScheme.onSurface,
-                                fontWeight: FontWeight.w500,
+                                      ).colorScheme.surfaceVariant,
+                                borderRadius: BorderRadius.circular(20),
                               ),
+                              child: Text(
+                                tab,
+                                style: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : Theme.of(context).colorScheme.onSurface,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                  SizedBox(height: 14.h),
+
+                  // Event list based on selected tab
+                  Obx(() {
+                    final isLoading = eventController.isLoading.value;
+                    final events = eventController.eventList;
+
+                    if (isLoading) {
+                      return Skeletonizer(
+                        child: Column(
+                          children: List.generate(
+                            3,
+                            (index) => Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: _buildSkeletonCard(),
                             ),
                           ),
                         ),
                       );
-                    }).toList(),
-                  ),
-                ),
+                    }
 
-                SizedBox(height: 14.h),
+                    if (events.isEmpty) {
+                      return _buildEmptyState(context, selectedTab.value);
+                    }
 
-                // Event list based on selected tab
-                Column(
-                  children: filteredEvents
-                      .map(
-                        (e) => Padding(
-                          padding: EdgeInsets.only(bottom: 12.h),
-                          child: EventCard(event: e),
-                        ),
-                      )
-                      .toList(),
-                ),
+                    return Column(
+                      children: events
+                          .map(
+                            (e) => Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: EventCard(event: e),
+                            ),
+                          )
+                          .toList(),
+                    );
+                  }),
 
-                SizedBox(height: 24),
-              ],
-            ),
+                  SizedBox(height: 24),
+                ],
+              );
+            }),
           ),
         ),
       ),
@@ -235,6 +224,144 @@ class _EventScreenState extends State<EventScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context, String tab) {
+    String message;
+    String subMessage;
+
+    switch (tab) {
+      case 'Joined':
+        message = 'No events joined yet';
+        subMessage = 'Browse events and join to see them here';
+        break;
+      case 'Organized':
+        message = 'No events organized yet';
+        subMessage = 'Create your first event to get started';
+        break;
+      case 'Interested':
+        message = 'No events marked as interested';
+        subMessage = 'Browse events and mark your interest';
+        break;
+      default:
+        message = 'No events available';
+        subMessage = 'Check back later or create a new event';
+    }
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 60.h),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Assets.icons.calender2.svg(
+              width: 80.w,
+              height: 80.h,
+              colorFilter: ColorFilter.mode(
+                AppColors.secondaryText,
+                BlendMode.srcIn,
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              message,
+              style: AppTypography.textTheme.headlineMedium?.copyWith(
+                fontSize: 20.sp,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              subMessage,
+              style: AppTypography.textTheme.bodyMedium?.copyWith(
+                color: AppColors.secondaryText,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSkeletonCard() {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 2.h),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(15),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            height: 200.h,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+          ),
+          SizedBox(height: 12.h),
+          Container(
+            height: 16.h,
+            width: 200.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          SizedBox(height: 6.h),
+          Container(
+            height: 12.h,
+            width: 250.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          SizedBox(height: 6.h),
+          Container(
+            height: 12.h,
+            width: 180.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          SizedBox(height: 6.h),
+          Container(
+            height: 12.h,
+            width: 150.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          SizedBox(height: 6.h),
+          Container(
+            height: 12.h,
+            width: 120.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+          SizedBox(height: 12),
+          Container(
+            height: 48.h,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
