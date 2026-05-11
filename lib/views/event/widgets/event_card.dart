@@ -3,17 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/credential.dart';
-import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
-import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/event.dart';
-import 'package:vibe_now/views/common/request_sent_dialog.dart';
+import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/event/event_details_screen.dart';
 import 'package:vibe_now/views/event/event_request_screen.dart';
-import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
-import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
 class EventCard extends StatefulWidget {
   const EventCard({super.key, required this.event});
@@ -25,38 +21,75 @@ class EventCard extends StatefulWidget {
 }
 
 class _EventCardState extends State<EventCard> {
-  // late EventStatus? currentStatus;
-
-  // bool get isPublic => widget.event.accessType == EventAccessType.public;
-
-  // bool get isPrivate => widget.event.accessType == EventAccessType.private;
-
-  // bool get isGoing => currentStatus == EventStatus.going;
-  // bool get isRequested => currentStatus == EventStatus.requested;
-  // bool get isActive => isGoing || isRequested;
-
   static const String hourglass = "assets/icons/hourglass-end.svg";
   static const String wishlist = "assets/icons/wishlist-star.svg";
   static const String wishlistFilled = "assets/icons/wishlist-star-fill.svg";
   static const String private = "assets/icons/private.svg";
   static const String public = "assets/icons/public.svg";
 
+  bool _isLoadingInterest = false;
+  bool _isLoadingJoin = false;
+  bool _isLoadingRequest = false;
+  String? _currentUserId;
+
   @override
   void initState() {
     super.initState();
-    // currentStatus = widget.event.userStatus;
+    _loadCurrentUserId();
   }
 
-  // String get buttonText {
-  //   if (widget.event.isMyEvent) return '';
+  Future<void> _loadCurrentUserId() async {
+    final userId = await LocalStorage.user_id.get();
+    setState(() {
+      _currentUserId = userId;
+    });
+  }
 
-  //   if (isPublic) {
-  //     return isGoing ? 'Going' : 'Join';
-  //   }
+  bool get isMyEvent =>
+      widget.event.createdBy?.id != null &&
+      _currentUserId != null &&
+      widget.event.createdBy!.id == _currentUserId;
 
-  //   // Private
-  //   return isRequested ? 'Requested' : 'Request';
-  // }
+  // TODO: Implement API call for toggle interest
+  Future<void> _toggleInterest() async {
+    if (_isLoadingInterest || widget.event.isJoined == true) return;
+
+    setState(() => _isLoadingInterest = true);
+
+    // TODO: Call API to toggle interest
+    // final response = await CustomHttp.post(
+    //   endpoint: ApiConstant.toggleInterest(widget.event.id!),
+    //   need_auth: true,
+    // );
+    // if (response.ok) {
+    //   // Update local state based on API response
+    // }
+
+    // Simulating toggle for now
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    setState(() => _isLoadingInterest = false);
+  }
+
+  // TODO: Implement API call for join event (public)
+  Future<void> _joinEvent() async {
+    if (_isLoadingJoin) return;
+
+    setState(() => _isLoadingJoin = true);
+
+    // TODO: Call API to join event
+    // final response = await CustomHttp.post(
+    //   endpoint: ApiConstant.joinEvent(widget.event.id!),
+    //   need_auth: true,
+    // );
+    // if (response.ok) {
+    //   // Show success dialog, update local state
+    // }
+
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    setState(() => _isLoadingJoin = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,33 +120,44 @@ class _EventCardState extends State<EventCard> {
                 ),
               ),
 
+              // Interest Button - Original Position
               GestureDetector(
-                onTap: () {
-                  // setState(() {
-                  //   widget.event.isInterested = !widget.event.isInterested;
-                  // });
-                },
+                onTap: _isLoadingInterest || widget.event.isJoined == true
+                    ? null
+                    : _toggleInterest,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: AppColors.primary.withAlpha(200),
+                      color: _isLoadingInterest || widget.event.isJoined == true
+                          ? Colors.grey.shade400
+                          : AppColors.primary.withAlpha(200),
                     ),
                     padding: const EdgeInsets.all(10),
-                    child: SvgPicture.asset(
-                      widget.event.isInterested != null &&
-                              widget.event.isInterested == true
-                          ? wishlistFilled
-                          : wishlist,
-                      height: 18.h,
-                      width: 18.w,
-                      color: AppColors.background,
-                    ),
+                    child: _isLoadingInterest
+                        ? SizedBox(
+                            height: 18.h,
+                            width: 18.w,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : SvgPicture.asset(
+                            widget.event.isInterested != null &&
+                                    widget.event.isInterested == true
+                                ? wishlistFilled
+                                : wishlist,
+                            height: 18.h,
+                            width: 18.w,
+                            color: AppColors.background,
+                          ),
                   ),
                 ),
               ),
 
+              // Access Level Badge - Original Position
               Positioned(
                 top: 10.h,
                 left: 12.w,
@@ -230,210 +274,120 @@ class _EventCardState extends State<EventCard> {
             ],
           ),
           SizedBox(height: 12),
-          // Event Button section
-          widget.event.isJoined != null && widget.event.isJoined == true
-              ? PrimaryButton.text(
-                  radius: 12.r,
-                  onPressed: () {
-                    context.pushNamed(
-                      RouteNames.eventDetailsScreen,
-                      extra: widget.event,
-                    );
-                  },
-                  text: "View Details",
-                  gradient: AppColors.primaryGradientRotated,
-                )
-              : Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          // PUBLIC EVENT FLOW
-                          if (widget.event.accessLevel == 'public' &&
-                              widget.event.isJoined != null &&
-                              widget.event.isJoined == false) {
-                            setState(() {
-                              // currentStatus = EventStatus.going;
-                            });
-
-                            // showDialog(
-                            //   context: context,
-                            //   barrierDismissible: true,
-                            //   builder: (_) => Dialog(
-                            //     backgroundColor: Colors.transparent,
-                            //     child: EventAnimatedDialog(
-                            //       content:
-                            //           'You have joined the event successfully. See you there!',
-                            //     ),
-                            //   ),
-                            // );
-
-                            showDialog(
-                              context: context,
-                              builder: (context) => RequestSentDialog(
-                                onWithDrawTap: () {
-                                  setState(() {
-                                    // currentStatus = EventStatus.interested;
-                                  });
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            );
-
-                            return;
-                          }
-
-                          // PRIVATE EVENT FLOW
-                          if (widget.event.accessLevel == 'private') {
-                            setState(() {
-                              // currentStatus = EventStatus.requested;
-                            });
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    EventRequestScreen(event: widget.event),
-                              ),
-                            );
-
-                            // showDialog(
-                            //   context: context,
-                            //   builder: (context) => RequestSentDialog(
-                            //     onWithDrawTap: () {
-                            //       setState(() {
-                            //         currentStatus = EventStatus.interested;
-                            //       });
-                            //       Navigator.pop(context);
-                            //     },
-                            //   ),
-                            // );
-                          }
-                        },
-
-                        child: Container(
-                          padding: EdgeInsets.all(12.w),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.r),
-                            gradient:
-                                widget.event.isJoined != null &&
-                                    widget.event.isJoined == true
-                                ? AppColors.primaryGradientRotated
-                                : AppColors.primaryGradient.withOpacity(0.5),
-                            // color: !isActive ? null : const Color(0xffC4A8FF),
-                          ),
-
-                          child: Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              spacing: 8.w,
-                              children: [
-                                widget.event.accessLevel == "private"
-                                    ? SvgPicture.asset(
-                                        widget.event.isJoined != null &&
-                                                widget.event.isJoined == true
-                                            ? hourglass
-                                            : "",
-                                        height:
-                                            widget.event.isJoined != null &&
-                                                widget.event.isJoined == true
-                                            ? 16.h
-                                            : 0.h,
-                                        width:
-                                            widget.event.isJoined != null &&
-                                                widget.event.isJoined == true
-                                            ? 16.w
-                                            : 0.w,
-                                        color: AppColors.background,
-                                      )
-                                    : SizedBox(),
-
-                                // : SvgPicture.asset(
-                                //     "",
-                                //     height: 16.h,
-                                //     width: 16.w,
-                                //     color: AppColors.background,
-                                //   ),
-                                Text(
-                                  widget.event.accessLevel == "private"
-                                      ? "Request"
-                                      : "Join",
-                                  style: TextStyle(
-                                    color:
-                                        widget.event.isJoined != null &&
-                                            widget.event.isJoined == true
-                                        ? Colors.white
-                                        : Colors.grey.shade100,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    // SizedBox(width: 8.w),
-                    // widget.event.isMyEvent
-                    //     ? SizedBox.shrink()
-                    //     : _buildPopUpDropMenu(),
-                  ],
-                ),
+          // Original Button Section with functionality
+          // Show "View Details" if: user joined OR user is the event creator
+          ((widget.event.isJoined != null && widget.event.isJoined == true) || isMyEvent)
+              ? _buildViewDetailsButton()
+              : _buildActionButton(),
         ],
       ),
     );
   }
 
-  // Widget _buildPopUpDropMenu() {
-  //   return Container(
-  //     decoration: BoxDecoration(
-  //       borderRadius: BorderRadius.circular(12.r),
-  //       color: Colors.grey.shade200,
-  //     ),
-  //     child: PopupMenuButton(
-  //       color: AppColors.surface,
-  //       iconColor: Colors.grey.shade600,
-  //       icon: Assets.icons.down.svg(),
-  //       itemBuilder: (context) => [
-  //         PopupMenuItem(
-  //           onTap: () {
-  //             Future.delayed(Duration.zero, () {
-  //               setState(() {
-  //                 currentStatus = EventStatus.interested;
-  //               });
-  //             });
-  //           },
-  //           child: Text(
-  //             "Interested",
-  //             style: TextStyle(
-  //               fontSize: 14.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: Colors.black54,
-  //             ),
-  //           ),
-  //         ),
-  //         PopupMenuItem(
-  //           onTap: () {
-  //             Future.delayed(Duration.zero, () {
-  //               setState(() {
-  //                 currentStatus = EventStatus.going;
-  //               });
-  //             });
-  //           },
-  //           child: Text(
-  //             "Going",
-  //             style: TextStyle(
-  //               fontSize: 14.sp,
-  //               fontWeight: FontWeight.w400,
-  //               color: Colors.black54,
-  //             ),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget _buildViewDetailsButton() {
+    return GestureDetector(
+      onTap: () {
+        context.pushNamed(
+          RouteNames.eventDetailsScreen,
+          extra: widget.event,
+        );
+      },
+      child: Container(
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12.r),
+          gradient: AppColors.primaryGradientRotated,
+        ),
+        child: Center(
+          child: Text(
+            "View Details",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton() {
+    final isPublic = widget.event.accessLevel == 'public';
+    final isRequested = widget.event.isRequested == true;
+    final isLoading = isPublic ? _isLoadingJoin : _isLoadingRequest;
+
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: isLoading
+                ? null
+                : () {
+                    if (isPublic) {
+                      // Public event - Join
+                      _joinEvent();
+                    } else {
+                      // Private event - Navigate to request screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              EventRequestScreen(event: widget.event),
+                        ),
+                      );
+                    }
+                  },
+            child: Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                gradient: isLoading
+                    ? null
+                    : AppColors.primaryGradient,
+                color: isLoading ? Colors.grey.shade400 : null,
+              ),
+              child: Center(
+                child: isLoading
+                    ? SizedBox(
+                        height: 16.h,
+                        width: 16.w,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 8.w,
+                        children: [
+                          isPublic
+                              ? const SizedBox()
+                              : SvgPicture.asset(
+                                  isRequested ? hourglass : "",
+                                  height: isRequested ? 16.h : 0.h,
+                                  width: isRequested ? 16.w : 0.w,
+                                  color: AppColors.background,
+                                ),
+                          Text(
+                            isPublic
+                                ? "Join"
+                                : (isRequested ? "Requested" : "Request"),
+                            style: TextStyle(
+                              color: Colors.grey.shade100,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
