@@ -231,7 +231,7 @@ class CustomHttp {
       }
 
       /// Single file
-      if (filePath != null) {
+      if (filePath != null && fieldName.isNotEmpty) {
         request.files.add(
           await http.MultipartFile.fromPath(fieldName, filePath),
         );

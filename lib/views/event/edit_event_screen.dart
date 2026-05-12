@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -5,9 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibe_now/controller/event_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
+import 'package:vibe_now/env.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/utils.dart' as utils;
@@ -15,9 +19,12 @@ import 'package:vibe_now/views/common/confirmation_dialog.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
+import 'package:vibe_now/views/common/location_selection_screen.dart';
 import 'package:vibe_now/views/event/widgets/edit_event_action.dart';
 import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
 import 'package:vibe_now/views/event/widgets/user_profile_tile.dart';
+
+enum EventAccessType { public, private }
 
 class EditEventScreen extends StatefulWidget {
   const EditEventScreen({super.key, required this.event});
@@ -35,14 +42,70 @@ class _EditEventScreenState extends State<EditEventScreen> {
   late TextEditingController _titleController;
   final TextEditingController _categoryController = TextEditingController();
   final EventController eventController = Get.find<EventController>();
-  final TextEditingController _maxAttendeesController = TextEditingController(
-    text: '10',
-  );
+  late TextEditingController _maxAttendeesController;
+  final TextEditingController _locationController = TextEditingController();
+  double? _selectedLatitude;
+  double? _selectedLongitude;
+  EventAccessType _accessType = EventAccessType.public;
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.event.title);
+    _maxAttendeesController = TextEditingController(
+      text: widget.event.maxAttendees?.toString() ?? '10',
+    );
+    _locationController.text = widget.event.address ?? '';
+    _selectedLatitude = widget.event.latitude;
+    _selectedLongitude = widget.event.longitude;
+    _accessType = widget.event.accessLevel == 'private'
+        ? EventAccessType.private
+        : EventAccessType.public;
+
+    // Parse date from eventDate string (format: "2025-05-15")
+    if (widget.event.eventDate != null && widget.event.eventDate!.isNotEmpty) {
+      final parts = widget.event.eventDate!.split('-');
+      if (parts.length == 3) {
+        _selectedDate = DateTime(
+          int.parse(parts[0]),
+          int.parse(parts[1]),
+          int.parse(parts[2]),
+        );
+      }
+    }
+
+    // Parse time from eventTime string (format: "10:30 AM")
+    if (widget.event.eventTime != null && widget.event.eventTime!.isNotEmpty) {
+      try {
+        final timeParts = widget.event.eventTime!.split(' ');
+        if (timeParts.length == 2) {
+          final hourMin = timeParts[0].split(':');
+          int hour = int.parse(hourMin[0]);
+          final minute = int.parse(hourMin[1]);
+          final isPM = timeParts[1].toUpperCase() == 'PM';
+          if (isPM && hour != 12) hour += 12;
+          if (!isPM && hour == 12) hour = 0;
+          _selectedTime = TimeOfDay(hour: hour, minute: minute);
+        }
+      } catch (e) {
+        debugPrint('Error parsing time: $e');
+      }
+    }
+
+    // Initialize selected categories from event
+    if (widget.event.categories != null) {
+      for (final cat in widget.event.categories!) {
+        if (cat.subcategories != null) {
+          eventController.selectedSubcategories.addAll(cat.subcategories!);
+        }
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    eventController.clear();
+    super.dispose();
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -146,27 +209,15 @@ class _EditEventScreenState extends State<EditEventScreen> {
               _buildEventMember(),
               const SizedBox(height: 20),
               // _buildActionButtons(),
-              PrimaryButton.text(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return ConfirmationDialog(
-                        title:
-                            'Updating it will notify all meeting participants.\nAre you sure?',
-                        confirmBtnText: 'Yes',
-                        onConfirm: () {
-                          Navigator.pop(context);
-                          Navigator.pop(context);
+              Obx(
+                () => PrimaryButton.text(
+                  onPressed: eventController.isLoading.value
+                      ? () {}
+                      : () {
+                          _showUpdateConfirmationDialog();
                         },
-                        onCancel: () {
-                          Navigator.pop(context);
-                        },
-                      );
-                    },
-                  );
-                },
-                text: "Update",
+                  text: "Update",
+                ),
               ),
               const SizedBox(height: 32),
             ],
@@ -478,31 +529,65 @@ class _EditEventScreenState extends State<EditEventScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Select address',
-                style: TextStyle(
+        GestureDetector(
+          onTap: () => _selectLocation(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 14,
+                  size: 20,
                 ),
-              ),
-            ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    _locationController.text.isEmpty
+                        ? 'Select address'
+                        : _locationController.text,
+                    style: TextStyle(
+                      color: _locationController.text.isEmpty
+                          ? Theme.of(context).colorScheme.onSurfaceVariant
+                          : Theme.of(context).colorScheme.onSurface,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _selectLocation(BuildContext context) async {
+    // Set initial position if available
+    LatLng? initialPosition;
+    if (_selectedLatitude != null && _selectedLongitude != null) {
+      initialPosition = LatLng(_selectedLatitude!, _selectedLongitude!);
+    }
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LocationSelectionScreen(
+          apiKey: EnvHandler.google_map_api_key,
+          initialPosition: initialPosition,
+          onLocationSelect: (location) {
+            setState(() {
+              _locationController.text = location.name;
+              _selectedLatitude = location.position.latitude;
+              _selectedLongitude = location.position.longitude;
+            });
+          },
+        ),
+      ),
     );
   }
 
@@ -557,7 +642,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   fit: BoxFit.cover,
                 )
               : Image.network(
-                  widget.event.coverImage ?? "",
+                  AppCredentials.fixurl(widget.event.coverImage),
                   height: 160.h,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -956,4 +1041,138 @@ class _EditEventScreenState extends State<EditEventScreen> {
   //     ],
   //   );
   // }
+
+  void _showUpdateConfirmationDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              insetPadding: EdgeInsets.symmetric(horizontal: 20.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              backgroundColor: Theme.of(context).colorScheme.surface,
+              child: Container(
+                padding: EdgeInsets.all(18.w),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Updating it will notify all meeting participants.\nAre you sure?',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: CustomElevatedButton(
+                            onTap: () => Navigator.pop(dialogContext),
+                            buttonText: "Cancel",
+                            btnColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceVariant,
+                            textColor: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        SizedBox(width: 16.w),
+                        Expanded(
+                          child: Obx(
+                            () => PrimaryButton.text(
+                              onPressed: eventController.isLoading.value
+                                  ? () {}
+                                  : () {
+                                      Navigator.pop(dialogContext);
+                                      _updateEvent();
+                                    },
+                              text: "Yes",
+                              isLoading: eventController.isLoading.value,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _updateEvent() async {
+    if (_titleController.text.trim().isEmpty) {
+      AppSnackbar.show(
+        message: 'Please enter event title',
+        type: SnackType.info,
+      );
+      return;
+    }
+
+    if (_locationController.text.isEmpty) {
+      AppSnackbar.show(message: 'Please select location', type: SnackType.info);
+      return;
+    }
+
+    if (_selectedDate == null) {
+      AppSnackbar.show(message: 'Please select date', type: SnackType.info);
+      return;
+    }
+
+    if (_selectedTime == null) {
+      AppSnackbar.show(message: 'Please select time', type: SnackType.info);
+      return;
+    }
+
+    // Build categories JSON
+    final categoryJson = <Map<String, dynamic>>[];
+    for (final group in eventController.categoryGroups) {
+      final selectedSubs = group.children
+          .where((c) => eventController.selectedSubcategories.contains(c))
+          .toList();
+      if (selectedSubs.isNotEmpty) {
+        categoryJson.add({'name': group.parent, 'subcategories': selectedSubs});
+      }
+    }
+
+    final success = await eventController.updateEvent(
+      id: widget.event.id!,
+      coverImage: _selectedImage,
+      title: _titleController.text.trim(),
+      categories: jsonEncode(categoryJson),
+      accessLevel: _accessType == EventAccessType.public ? 'public' : 'private',
+      address: _locationController.text,
+      latitude: _selectedLatitude?.toString() ?? '',
+      longitude: _selectedLongitude?.toString() ?? '',
+      eventDate: _selectedDate != null
+          ? "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}"
+          : '',
+      eventTime: _selectedTime != null ? _selectedTime!.format(context) : '',
+      maxAttendees: _maxAttendeesController.text.trim(),
+    );
+
+    if (success && mounted) {
+      AppSnackbar.show(
+        message: 'Event updated successfully',
+        type: SnackType.info,
+      );
+      // Go back to previous screens
+      Navigator.pop(context);
+      // Navigator.pop(context);
+      // Navigator.pop(context);
+    } else {
+      AppSnackbar.show(message: 'Failed to update event', type: SnackType.info);
+      // Don't pop - stay on screen
+    }
+  }
 }

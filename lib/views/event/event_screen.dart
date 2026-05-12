@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
@@ -13,6 +12,7 @@ import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_search_bar.dart';
 import 'package:vibe_now/views/event/widgets/event_card.dart';
 import 'package:vibe_now/views/event/widgets/event_filter.dart';
+import 'package:vibe_now/views/event/widgets/event_shimmer_loading.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -147,14 +147,12 @@ class _EventScreenState extends State<EventScreen> {
                     final events = eventController.eventList;
 
                     if (isLoading) {
-                      return Skeletonizer(
-                        child: Column(
-                          children: List.generate(
-                            3,
-                            (index) => Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
-                              child: _buildSkeletonCard(),
-                            ),
+                      return Column(
+                        children: List.generate(
+                          3,
+                          (index) => Padding(
+                            padding: EdgeInsets.only(bottom: 12.h),
+                            child: const EventShimmerLoading(),
                           ),
                         ),
                       );
@@ -281,86 +279,6 @@ class _EventScreenState extends State<EventScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildSkeletonCard() {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 2.h),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(15),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            height: 200.h,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-          ),
-          SizedBox(height: 12.h),
-          Container(
-            height: 16.h,
-            width: 200.w,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          SizedBox(height: 6.h),
-          Container(
-            height: 12.h,
-            width: 250.w,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          SizedBox(height: 6.h),
-          Container(
-            height: 12.h,
-            width: 180.w,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          SizedBox(height: 6.h),
-          Container(
-            height: 12.h,
-            width: 150.w,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          SizedBox(height: 6.h),
-          Container(
-            height: 12.h,
-            width: 120.w,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-          SizedBox(height: 12),
-          Container(
-            height: 48.h,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-        ],
       ),
     );
   }

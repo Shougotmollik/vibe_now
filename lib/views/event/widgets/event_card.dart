@@ -31,6 +31,7 @@ class _EventCardState extends State<EventCard> {
   bool _isLoadingJoin = false;
   bool _isLoadingRequest = false;
   String? _currentUserId;
+  bool _isLoadingUserId = true;
 
   @override
   void initState() {
@@ -40,9 +41,12 @@ class _EventCardState extends State<EventCard> {
 
   Future<void> _loadCurrentUserId() async {
     final userId = await LocalStorage.user_id.get();
-    setState(() {
-      _currentUserId = userId;
-    });
+    if (mounted) {
+      setState(() {
+        _currentUserId = userId;
+        _isLoadingUserId = false;
+      });
+    }
   }
 
   bool get isMyEvent =>
@@ -276,10 +280,32 @@ class _EventCardState extends State<EventCard> {
           SizedBox(height: 12),
           // Original Button Section with functionality
           // Show "View Details" if: user joined OR user is the event creator
-          ((widget.event.isJoined != null && widget.event.isJoined == true) || isMyEvent)
-              ? _buildViewDetailsButton()
-              : _buildActionButton(),
+          _isLoadingUserId
+              ? _buildLoadingButton()
+              : ((widget.event.isJoined != null && widget.event.isJoined == true) || isMyEvent)
+                  ? _buildViewDetailsButton()
+                  : _buildActionButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingButton() {
+    return Container(
+      padding: EdgeInsets.all(12.w),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12.r),
+        color: Theme.of(context).colorScheme.surfaceVariant,
+      ),
+      child: Center(
+        child: SizedBox(
+          height: 20.h,
+          width: 20.w,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ),
       ),
     );
   }
@@ -289,7 +315,7 @@ class _EventCardState extends State<EventCard> {
       onTap: () {
         context.pushNamed(
           RouteNames.eventDetailsScreen,
-          extra: widget.event,
+          extra: widget.event.id,
         );
       },
       child: Container(

@@ -25,14 +25,13 @@ class StepLocationScreen extends StatefulWidget {
 }
 
 class _StepLocationScreenState extends State<StepLocationScreen> {
-  bool _isLoading = false;
+  final _isLoading = false.obs;
   final OnBoardingController controller = Get.find<OnBoardingController>();
   @override
   Widget build(BuildContext context) {
     return StepPage(
       currentStep: widget.step,
       footer: Row(
-        spacing: 28.w,
         children: [
           Expanded(
             child: Container(
@@ -47,18 +46,21 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
                 btnColor: Theme.of(context).colorScheme.surface,
                 textColor: Theme.of(context).colorScheme.onSurface,
                 onTap: () {
-                  // context.pushNamed(RouteNames.mainNavBar);
+                  context.pushNamed(RouteNames.mainNavBar);
                 },
                 buttonText: 'Not Now',
               ),
             ),
           ),
-          Obx(
-            () => Expanded(
-              child: PrimaryButton.text(
-                onPressed: _isLoading ? () {} : () => _getCurrentLocation(),
+          SizedBox(width: 16.w),
+          Expanded(
+            child: Obx(
+              () => PrimaryButton.text(
+                onPressed: _isLoading.value
+                    ? () {}
+                    : () => _getCurrentLocation(),
                 text: 'Allow',
-                isLoading: _isLoading,
+                isLoading: _isLoading.value,
               ),
             ),
           ),
@@ -125,8 +127,8 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
   }
 
   Future<void> _getCurrentLocation() async {
-    if (_isLoading) return;
-    setState(() => _isLoading = true);
+    if (_isLoading.value) return;
+    _isLoading.value = true;
 
     try {
       // 1. Service & Permission Checks
@@ -205,7 +207,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
     } catch (e) {
       AppSnackbar.show(message: e.toString(), type: SnackType.error);
     } finally {
-      if (mounted) setState(() => _isLoading = false);
+      _isLoading.value = false;
     }
   }
 }

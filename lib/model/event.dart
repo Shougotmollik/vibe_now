@@ -89,6 +89,7 @@ class Event {
   final bool? isInterested;
   final String? chatId;
   final String? createdAt;
+  final List<Participant>? participants;
 
   Event({
     this.id,
@@ -113,6 +114,7 @@ class Event {
     this.isInterested,
     this.chatId,
     this.createdAt,
+    this.participants,
   });
 
   factory Event.fromJson(Map<String, dynamic>? json) {
@@ -149,6 +151,9 @@ class Event {
       isInterested: json['is_interested'],
       chatId: json['chat_id'],
       createdAt: json['created_at'],
+      participants: (json['participants'] as List<dynamic>?)
+          ?.map((e) => Participant.fromJson(e))
+          .toList(),
     );
   }
 }
@@ -183,6 +188,26 @@ class CreatedBy {
     if (json == null) return CreatedBy();
 
     return CreatedBy(
+      id: json['id'],
+      email: json['email'],
+      fullName: json['full_name'],
+      avatar: json['avatar'],
+    );
+  }
+}
+
+class Participant {
+  final String? id;
+  final String? email;
+  final String? fullName;
+  final String? avatar;
+
+  Participant({this.id, this.email, this.fullName, this.avatar});
+
+  factory Participant.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return Participant();
+
+    return Participant(
       id: json['id'],
       email: json['email'],
       fullName: json['full_name'],

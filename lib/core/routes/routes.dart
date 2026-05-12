@@ -145,7 +145,7 @@ void setupRouter(bool hasToken) {
         path: '/event-details-screen',
         name: RouteNames.eventDetailsScreen,
         builder: (context, state) =>
-            EventDetailsScreen(event: state.extra as Event),
+            EventDetailsScreen(eventId: state.extra as int),
       ),
 
       GoRoute(

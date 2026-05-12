@@ -107,6 +107,7 @@ class EventController extends GetxController {
   // Api functions
   var isLoading = false.obs;
   final RxList<Event> eventList = <Event>[].obs;
+  final Rx<Event?> eventDetails = Rx<Event?>(null);
 
   // create Event
   Future<bool> createEvent({
@@ -129,6 +130,7 @@ class EventController extends GetxController {
         endpoint: ApiConstant.createEvent,
         fieldName: 'cover_image',
         filePath: coverImage.path,
+        method: 'POST',
         fields: {
           'title': title,
           'categories': categories,
@@ -182,5 +184,68 @@ class EventController extends GetxController {
     }
 
     isLoading(false);
+  }
+
+  // get event details
+  Future<void> getEventDetails({required int id}) async {
+    isLoading(true);
+
+    final response = await CustomHttp.get(endpoint: "${ApiConstant.event}/$id");
+
+    if (response.ok) {
+      final jsonData = response.data['data'];
+      eventDetails.value = Event.fromJson(jsonData);
+    } else {
+      debugPrint("Error fetching event details ${response.error}");
+    }
+    isLoading(false);
+  }
+
+  // update event
+  Future<bool> updateEvent({
+    required int id,
+    File? coverImage,
+    required String title,
+    required String categories,
+    required String accessLevel,
+    required String address,
+    required String latitude,
+    required String longitude,
+    required String eventDate,
+    required String eventTime,
+    required String maxAttendees,
+  }) async {
+    try {
+      isLoading(true);
+
+      // Check if user selected a new image
+      final bool hasNewImage = coverImage != null && coverImage.path.isNotEmpty;
+
+      final response = await CustomHttp.multipart(
+        need_auth: true,
+        endpoint: "${ApiConstant.event}/$id/update",
+        fieldName: hasNewImage ? 'cover_image' : '',
+        filePath: hasNewImage ? coverImage.path : null,
+        method: 'PATCH',
+        fields: {
+          'title': title,
+          'categories': categories,
+          'access_level': accessLevel,
+          'address': address,
+          'latitude': latitude,
+          'longitude': longitude,
+          'event_date': eventDate,
+          'event_time': eventTime,
+          'max_attendees': maxAttendees,
+        },
+      );
+
+      return response.ok;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    } finally {
+      isLoading(false);
+    }
   }
 }
