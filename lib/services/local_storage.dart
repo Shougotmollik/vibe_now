@@ -11,6 +11,8 @@ class LocalStorage {
   static _localStorageRole role = _localStorageRole();
   static _localStorageUserId user_id = _localStorageUserId();
   static _localStorageFullName full_name = _localStorageFullName();
+  static _localStorageHasSeenProTips has_seen_pro_tips =
+      _localStorageHasSeenProTips();
   static _localStorageCookie cookie = _localStorageCookie();
   static Future<bool> clear() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
@@ -113,5 +115,19 @@ class _localStorageFullName {
   Future<String?> get() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     return localStorage.getString(_localStorageFullName.key);
+  }
+}
+
+class _localStorageHasSeenProTips {
+  static const String key = 'has_seen_pro_tips';
+
+  Future<bool> set(bool value) async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    return localStorage.setBool(_localStorageHasSeenProTips.key, value);
+  }
+
+  Future<bool> get() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    return localStorage.getBool(_localStorageHasSeenProTips.key) ?? false;
   }
 }

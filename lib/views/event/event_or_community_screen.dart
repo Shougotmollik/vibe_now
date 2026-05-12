@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/services/local_storage.dart';
 
 class EventOrCommunityScreen extends StatefulWidget {
   const EventOrCommunityScreen({super.key});
@@ -16,10 +17,16 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
   @override
   void initState() {
     super.initState();
-    // Show the popup after the first frame is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showProTipsDialog();
+      _checkAndShowProTips();
     });
+  }
+
+  Future<void> _checkAndShowProTips() async {
+    final hasSeen = await LocalStorage.has_seen_pro_tips.get();
+    if (!hasSeen) {
+      _showProTipsDialog();
+    }
   }
 
   void _showProTipsDialog() {
@@ -91,7 +98,10 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                   ),
                   SizedBox(height: 16.h),
                   GestureDetector(
-                    onTap: () => Navigator.pop(context),
+                    onTap: () async {
+                      await LocalStorage.has_seen_pro_tips.set(true);
+                      if (context.mounted) Navigator.pop(context);
+                    },
                     child: Container(
                       padding: EdgeInsets.all(8.w),
                       width: double.infinity,
