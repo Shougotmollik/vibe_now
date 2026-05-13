@@ -3,16 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_search_bar.dart';
 import 'package:vibe_now/views/event/widgets/event_card.dart';
 import 'package:vibe_now/views/event/widgets/event_filter.dart';
-import 'package:vibe_now/views/event/widgets/event_shimmer_loading.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({super.key});
@@ -147,12 +148,26 @@ class _EventScreenState extends State<EventScreen> {
                     final events = eventController.eventList;
 
                     if (isLoading) {
-                      return Column(
-                        children: List.generate(
-                          3,
-                          (index) => Padding(
-                            padding: EdgeInsets.only(bottom: 12.h),
-                            child: const EventShimmerLoading(),
+                      return Skeletonizer(
+                        enabled: isLoading,
+                        child: Column(
+                          children: List.generate(
+                            3,
+                            (index) => Padding(
+                              padding: EdgeInsets.only(bottom: 12.h),
+                              child: EventCard(
+                                event: Event(
+                                  accessLevel: '',
+                                  coverImage: '',
+                                  isInterested: false,
+                                  title: "",
+                                  address: "",
+                                  eventTime: "",
+                                  eventDate: "",
+                                  interestedCount: 0,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       );
@@ -193,7 +208,7 @@ class _EventScreenState extends State<EventScreen> {
         GestureDetector(
           onTap: () => context.pushNamed(
             RouteNames.qrVerificationScreen,
-            extra: QRContext.event,
+            extra: {'qrContext': QRContext.event, 'showScanOnly': true},
           ),
           child: Container(
             padding: const EdgeInsets.all(8),
@@ -252,6 +267,7 @@ class _EventScreenState extends State<EventScreen> {
         padding: EdgeInsets.symmetric(vertical: 60.h),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Assets.icons.calender2.svg(
               width: 80.w,

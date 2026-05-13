@@ -188,13 +188,15 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
           }
         }
       } catch (e) {
-        print("⚠️ Geocoding service failed/timed out: $e");
+        print("⚠️ Geocoding failed: $e");
+        print("Lat: ${position.latitude}, Long: ${position.longitude}");
         // Last resort: formatted coordinates as the name
         locationName =
             "${position.latitude.toStringAsFixed(2)}, ${position.longitude.toStringAsFixed(2)}";
       }
 
       // 4. API Request
+      print(">>> Location Name: $locationName");
       final bool success = await controller.onboardingLocationSubmit(
         latitude: position.latitude,
         longitude: position.longitude,

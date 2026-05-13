@@ -12,12 +12,13 @@ import 'package:vibe_now/views/event/event_details_screen.dart';
 import 'package:vibe_now/views/event/event_request_screen.dart';
 
 class EventCard extends StatefulWidget {
-  const EventCard({super.key, required this.event});
+  const EventCard({super.key, required this.event, this.isLoading = false});
 
   @override
   State<EventCard> createState() => _EventCardState();
 
   final Event event;
+  final bool isLoading;
 }
 
 class _EventCardState extends State<EventCard> {
@@ -116,12 +117,17 @@ class _EventCardState extends State<EventCard> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  AppCredentials.fixurl(widget.event.coverImage),
-                  height: 200.h,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ),
+                child: widget.event.coverImage != null &&
+                        widget.event.coverImage!.isNotEmpty
+                    ? Image.network(
+                        AppCredentials.fixurl(widget.event.coverImage),
+                        height: 200.h,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) =>
+                            _buildPlaceholderImage(),
+                      )
+                    : _buildPlaceholderImage(),
               ),
 
               // Interest Button - Original Position
@@ -155,7 +161,10 @@ class _EventCardState extends State<EventCard> {
                                 : wishlist,
                             height: 18.h,
                             width: 18.w,
-                            color: AppColors.background,
+                            colorFilter: const ColorFilter.mode(
+                              AppColors.background,
+                              BlendMode.srcIn,
+                            ),
                           ),
                   ),
                 ),
@@ -181,12 +190,17 @@ class _EventCardState extends State<EventCard> {
                         widget.event.accessLevel == "public" ? public : private,
                         height: 14.h,
                         width: 14.w,
-                        color: AppColors.background,
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.background,
+                          BlendMode.srcIn,
+                        ),
                       ),
                       Text(
                         widget.event.accessLevel == "public"
                             ? "Public"
-                            : "Private",
+                            : (widget.event.accessLevel == "private"
+                                ? "Private"
+                                : "Public"),
                         style: TextStyle(
                           color: AppColors.background,
                           fontSize: 12.sp,
@@ -238,7 +252,7 @@ class _EventCardState extends State<EventCard> {
               ),
               SizedBox(width: 4.w),
               Text(
-                '${widget.event.eventTime}, ${widget.event.eventDate}',
+                '${widget.event.eventTime ?? ''}, ${widget.event.eventDate ?? ''}',
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
@@ -250,7 +264,7 @@ class _EventCardState extends State<EventCard> {
           Row(
             children: [
               Text(
-                "${widget.event.interestedCount} Interested • ${widget.event.joinedCount} Going",
+                "${widget.event.interestedCount ?? 0} Interested • ${widget.event.joinedCount ?? 0} Going",
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
@@ -269,7 +283,7 @@ class _EventCardState extends State<EventCard> {
               ),
               SizedBox(width: 4.w),
               Text(
-                '${widget.event.joinedCount}/${widget.event.maxAttendees} attending',
+                '${widget.event.joinedCount ?? 0}/${widget.event.maxAttendees ?? 0} attending',
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
@@ -286,6 +300,24 @@ class _EventCardState extends State<EventCard> {
                   ? _buildViewDetailsButton()
                   : _buildActionButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholderImage() {
+    return Container(
+      height: 200.h,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Center(
+        child: Icon(
+          Icons.image,
+          size: 50.sp,
+          color: Colors.grey.shade500,
+        ),
       ),
     );
   }
@@ -391,12 +423,17 @@ class _EventCardState extends State<EventCard> {
                         children: [
                           isPublic
                               ? const SizedBox()
-                              : SvgPicture.asset(
-                                  isRequested ? hourglass : "",
-                                  height: isRequested ? 16.h : 0.h,
-                                  width: isRequested ? 16.w : 0.w,
-                                  color: AppColors.background,
-                                ),
+                              : (isRequested
+                                  ? SvgPicture.asset(
+                                      hourglass,
+                                      height: 16.h,
+                                      width: 16.w,
+                                      colorFilter: const ColorFilter.mode(
+                                        AppColors.background,
+                                        BlendMode.srcIn,
+                                      ),
+                                    )
+                                  : const SizedBox()),
                           Text(
                             isPublic
                                 ? "Join"

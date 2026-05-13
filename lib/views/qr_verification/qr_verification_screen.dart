@@ -3,20 +3,45 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/views/qr_verification/qr_screen.dart';
 
 class QRVerificationScreen extends StatefulWidget {
   final QRContext qrContext;
-  const QRVerificationScreen({super.key, required this.qrContext});
+  final bool showQRCodeOnly;
+  final bool showScanOnly;
+  final String? qrCodeUrl;
+  final String? qrCodeValue;
+
+  const QRVerificationScreen({
+    super.key,
+    required this.qrContext,
+    this.showQRCodeOnly = false,
+    this.showScanOnly = false,
+    this.qrCodeUrl,
+    this.qrCodeValue,
+  });
 
   @override
   State<QRVerificationScreen> createState() => _QRVerificationScreenState();
 }
 
 class _QRVerificationScreenState extends State<QRVerificationScreen> {
-  bool isQRCodeTab = true;
+  late bool isQRCodeTab;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.showQRCodeOnly) {
+      isQRCodeTab = true;
+    } else if (widget.showScanOnly) {
+      isQRCodeTab = false;
+    } else {
+      isQRCodeTab = true;
+    }
+  }
   String get infoText {
     switch (widget.qrContext) {
       case QRContext.community:
@@ -63,6 +88,8 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool showTabs = !widget.showQRCodeOnly && !widget.showScanOnly;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.background,
@@ -77,7 +104,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
           },
         ),
         title: Text(
-          'QR Verification',
+          widget.showScanOnly ? 'Scan Event QR' : 'QR Verification',
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontSize: 18.sp,
@@ -87,10 +114,18 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
       ),
       body: Column(
         children: [
-          const SizedBox(height: 16),
-          _buildTabSelector(),
-          const SizedBox(height: 24),
-          Expanded(child: isQRCodeTab ? _buildQRCodeView() : _buildScanView()),
+          if (showTabs) ...[
+            const SizedBox(height: 16),
+            _buildTabSelector(),
+            const SizedBox(height: 24),
+          ],
+          Expanded(
+            child: widget.showQRCodeOnly
+                ? _buildQRCodeView()
+                : widget.showScanOnly
+                    ? _buildScanView()
+                    : (isQRCodeTab ? _buildQRCodeView() : _buildScanView()),
+          ),
         ],
       ),
     );
@@ -267,10 +302,23 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Image.network(
-                  'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=QRVerificationCode',
-                  fit: BoxFit.contain,
-                ),
+                child: widget.qrCodeUrl != null
+                    ? Image.network(
+                        AppCredentials.fixurl(widget.qrCodeUrl),
+                        fit: BoxFit.contain,
+                      )
+                    : widget.qrCodeValue != null
+                        ? Center(
+                            child: Text(
+                              widget.qrCodeValue!,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(fontSize: 14.sp),
+                            ),
+                          )
+                        : Image.network(
+                            'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=QRVerificationCode',
+                            fit: BoxFit.contain,
+                          ),
               ),
             ),
             const SizedBox(height: 16),

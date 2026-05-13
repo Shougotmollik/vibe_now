@@ -167,7 +167,17 @@ void setupRouter(bool hasToken) {
         path: '/qr-verification-screen',
         name: RouteNames.qrVerificationScreen,
         builder: (context, state) {
-          final qrContext = state.extra as QRContext;
+          final extra = state.extra;
+          if (extra is Map) {
+            return QRVerificationScreen(
+              qrContext: extra['qrContext'] as QRContext,
+              showQRCodeOnly: extra['showQRCodeOnly'] as bool? ?? false,
+              showScanOnly: extra['showScanOnly'] as bool? ?? false,
+              qrCodeUrl: extra['qrCodeUrl'] as String?,
+              qrCodeValue: extra['qrCodeValue'] as String?,
+            );
+          }
+          final qrContext = extra as QRContext;
           return QRVerificationScreen(qrContext: qrContext);
         },
       ),

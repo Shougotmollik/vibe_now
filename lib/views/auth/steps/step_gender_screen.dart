@@ -8,12 +8,12 @@ import 'package:vibe_now/views/auth/steps/step_looking_for_screen.dart';
 import 'package:vibe_now/views/auth/widgets/step_page.dart';
 import 'package:vibe_now/views/auth/widgets/step_title.dart';
 
-final List<String> genders = [
-  'Male',
-  'Female',
-  'Beyond binary',
-  'Prefer not to say',
-];
+final Map<String, String> genderMapping = {
+  'Man': 'male',
+  'Woman': 'female',
+  'Beyond Binary': 'other',
+  'Prefer not to say': 'prefer_not_to_say',
+};
 
 class StepGenderScreen extends StatefulWidget {
   final int step;
@@ -33,7 +33,7 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
       currentStep: widget.step,
       footer: PrimaryButton.text(
         onPressed: () {
-          controller.gender = selected;
+          controller.gender = genderMapping[selected] ?? '';
           print("--------gender ${controller.gender}");
           Navigator.push(
             context,
@@ -49,7 +49,7 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
       ),
       isSkippable: true,
       onSkip: () async {
-        controller.gender = "";
+        controller.gender = 'prefer_not_to_say';
         print("----------gender ${controller.gender}");
         Navigator.push(
           context,

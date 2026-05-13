@@ -4,11 +4,13 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/credential.dart';
+import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/controller/event_controller.dart';
+import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
 import 'package:vibe_now/views/event/event_chat_screen.dart';
 import 'package:vibe_now/views/event/event_member_screen.dart';
@@ -24,13 +26,24 @@ class EventDetailsScreen extends StatefulWidget {
 
 class _EventDetailsScreenState extends State<EventDetailsScreen> {
   final EventController _eventController = Get.find<EventController>();
+  String? _currentUserId;
 
   @override
   void initState() {
     super.initState();
+    _loadCurrentUserId();
     WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_) {
       _eventController.getEventDetails(id: widget.eventId);
     });
+  }
+
+  Future<void> _loadCurrentUserId() async {
+    final userId = await LocalStorage.user_id.get();
+    if (mounted) {
+      setState(() {
+        _currentUserId = userId;
+      });
+    }
   }
 
   @override
@@ -281,11 +294,20 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           SizedBox(width: 8.w),
 
                           // QR Code Button
-                          if (event.qrCodeImage != null ||
-                              event.qrCodeValue != null)
+                          if ((event.qrCodeImage != null ||
+                                  event.qrCodeValue != null) &&
+                              event.createdBy?.id == _currentUserId)
                             GestureDetector(
                               onTap: () {
-                                _showQrCodeDialog(context, event);
+                                context.pushNamed(
+                                  RouteNames.qrVerificationScreen,
+                                  extra: {
+                                    'qrContext': QRContext.event,
+                                    'showQRCodeOnly': true,
+                                    'qrCodeUrl': event.qrCodeImage,
+                                    'qrCodeValue': event.qrCodeValue,
+                                  },
+                                );
                               },
                               child: Container(
                                 padding: EdgeInsets.all(10.w),
@@ -300,8 +322,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                 ),
                               ),
                             ),
-                          if (event.qrCodeImage != null ||
-                              event.qrCodeValue != null)
+                          if ((event.qrCodeImage != null ||
+                                  event.qrCodeValue != null) &&
+                              event.createdBy?.id == _currentUserId)
                             SizedBox(width: 8.w),
 
                           PopupMenuButton<int>(
@@ -359,88 +382,5 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         ),
       );
     });
-  }
-
-  void _showQrCodeDialog(BuildContext context, Event event) {
-    showDialog(
-      context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(24.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    padding: EdgeInsets.all(4.w),
-                    decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.surfaceContainerHighest,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.close,
-                      size: 20.sp,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 12.h),
-              Text(
-                'Event QR Code',
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              SizedBox(height: 24.h),
-              Container(
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(13),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: event.qrCodeImage != null
-                    ? Image.network(
-                        AppCredentials.fixurl(event.qrCodeImage),
-                        width: 200.w,
-                        height: 200.h,
-                        fit: BoxFit.contain,
-                      )
-                    : SizedBox(
-                        width: 200.w,
-                        height: 200.h,
-                        child: Center(
-                          child: Text(
-                            event.qrCodeValue ?? '',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 14.sp),
-                          ),
-                        ),
-                      ),
-              ),
-              SizedBox(height: 20.h),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

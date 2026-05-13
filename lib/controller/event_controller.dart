@@ -248,4 +248,68 @@ class EventController extends GetxController {
       isLoading(false);
     }
   }
+
+  // join event
+  Future<bool> eventJoin({required int id}) async {
+    try {
+      isLoading(true);
+      final response = await CustomHttp.post(
+        need_auth: true,
+        endpoint: "${ApiConstant.event}/$id/join",
+      );
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint("Error joining event: ${response.error}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Exception while joining event: $e");
+      return false;
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  // interest event
+  Future<bool> eventInterest({required int id}) async {
+    try {
+      isLoading(true);
+      final response = await CustomHttp.post(
+        endpoint: "${ApiConstant.event}/$id/interest",
+      );
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint("Error interest event ${response.error}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Exception while interesting event$e");
+      return false;
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  // leave from event
+  Future<bool> eventLeave({required int id}) async {
+    try {
+      isLoading(true);
+      final response = await CustomHttp.post(
+        endpoint: "${ApiConstant.event}/$id/leave",
+      );
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint("Error leaving event${response.error}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Exception while leaving event $e");
+      return false;
+    } finally {
+      isLoading(true);
+    }
+  }
 }
