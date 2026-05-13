@@ -206,8 +206,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
               const SizedBox(height: 20),
               _buildMaxAttendees(),
               const SizedBox(height: 20),
-              _buildEventMember(),
-              const SizedBox(height: 20),
+              // _buildEventMember(),
+              // const SizedBox(height: 20),
               // _buildActionButtons(),
               Obx(
                 () => PrimaryButton.text(

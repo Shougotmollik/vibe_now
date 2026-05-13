@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/model/event_participants.dart';
 import 'package:vibe_now/services/custom_http.dart';
 
 class EventController extends GetxController {
@@ -310,6 +311,63 @@ class EventController extends GetxController {
       return false;
     } finally {
       isLoading(true);
+    }
+  }
+
+  // Get event participant
+  var isLoadingParticipants = false.obs;
+  final RxList<ParticipantData> joinedParticipants = <ParticipantData>[].obs;
+  final RxList<ParticipantData> requestedParticipants = <ParticipantData>[].obs;
+  EventCreator? eventCreator;
+
+  Future<void> getEventParticipants({required int eventId, String? tab}) async {
+    try {
+      isLoadingParticipants(true);
+
+      Map<String, String>? queries;
+      if (tab != null) {
+        queries = {'tab': tab};
+      }
+
+      // Single API call - with or without tab parameter
+      final response = await CustomHttp.get(
+        need_auth: true,
+        endpoint: "${ApiConstant.event}/$eventId/manage-requests",
+        queries: queries,
+      );
+
+      if (response.ok) {
+        final data = response.data['data'];
+        eventCreator = data['event_creator'] != null
+            ? EventCreator.fromJson(data['event_creator'])
+            : null;
+
+        final participants = (data['participants'] as List?)
+                ?.map((p) => ParticipantData.fromJson(p))
+                .toList() ??
+            [];
+
+        // If tab is specified, filter accordingly, otherwise get all
+        if (tab != null) {
+          if (tab == 'joined') {
+            joinedParticipants.assignAll(participants);
+          } else if (tab == 'requested') {
+            requestedParticipants.assignAll(participants);
+          }
+        } else {
+          // No tab - split participants by status
+          joinedParticipants.assignAll(
+            participants.where((p) => p.status == 'joined').toList(),
+          );
+          requestedParticipants.assignAll(
+            participants.where((p) => p.status == 'requested').toList(),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint("Error while fetching event participant $e ");
+    } finally {
+      isLoadingParticipants(false);
     }
   }
 }

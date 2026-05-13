@@ -117,7 +117,8 @@ class _EventCardState extends State<EventCard> {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: widget.event.coverImage != null &&
+                child:
+                    widget.event.coverImage != null &&
                         widget.event.coverImage!.isNotEmpty
                     ? Image.network(
                         AppCredentials.fixurl(widget.event.coverImage),
@@ -199,8 +200,8 @@ class _EventCardState extends State<EventCard> {
                         widget.event.accessLevel == "public"
                             ? "Public"
                             : (widget.event.accessLevel == "private"
-                                ? "Private"
-                                : "Public"),
+                                  ? "Private"
+                                  : "Public"),
                         style: TextStyle(
                           color: AppColors.background,
                           fontSize: 12.sp,
@@ -296,9 +297,11 @@ class _EventCardState extends State<EventCard> {
           // Show "View Details" if: user joined OR user is the event creator
           _isLoadingUserId
               ? _buildLoadingButton()
-              : ((widget.event.isJoined != null && widget.event.isJoined == true) || isMyEvent)
-                  ? _buildViewDetailsButton()
-                  : _buildActionButton(),
+              : ((widget.event.isJoined != null &&
+                        widget.event.isJoined == true) ||
+                    isMyEvent)
+              ? _buildViewDetailsButton()
+              : _buildActionButton(),
         ],
       ),
     );
@@ -313,11 +316,7 @@ class _EventCardState extends State<EventCard> {
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Center(
-        child: Icon(
-          Icons.image,
-          size: 50.sp,
-          color: Colors.grey.shade500,
-        ),
+        child: Icon(Icons.image, size: 50.sp, color: Colors.grey.shade500),
       ),
     );
   }
@@ -400,9 +399,7 @@ class _EventCardState extends State<EventCard> {
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.r),
-                gradient: isLoading
-                    ? null
-                    : AppColors.primaryGradient,
+                gradient: isLoading ? null : AppColors.primaryGradient,
                 color: isLoading ? Colors.grey.shade400 : null,
               ),
               child: Center(
@@ -424,16 +421,16 @@ class _EventCardState extends State<EventCard> {
                           isPublic
                               ? const SizedBox()
                               : (isRequested
-                                  ? SvgPicture.asset(
-                                      hourglass,
-                                      height: 16.h,
-                                      width: 16.w,
-                                      colorFilter: const ColorFilter.mode(
-                                        AppColors.background,
-                                        BlendMode.srcIn,
-                                      ),
-                                    )
-                                  : const SizedBox()),
+                                    ? SvgPicture.asset(
+                                        hourglass,
+                                        height: 16.h,
+                                        width: 16.w,
+                                        colorFilter: const ColorFilter.mode(
+                                          AppColors.background,
+                                          BlendMode.srcIn,
+                                        ),
+                                      )
+                                    : const SizedBox()),
                           Text(
                             isPublic
                                 ? "Join"

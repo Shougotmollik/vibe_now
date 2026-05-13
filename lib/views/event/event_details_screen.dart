@@ -108,28 +108,31 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             ),
                           ),
                         ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: GestureDetector(
-                            onTap: () {
-                              context.pushNamed(
-                                RouteNames.editEventScreen,
-                                extra: event,
-                              );
-                            },
-                            child: CircleAvatar(
-                              backgroundColor: Theme.of(
-                                context,
-                              ).colorScheme.surface,
-                              child: Assets.icons.edit.svg(
-                                color: Theme.of(context).colorScheme.onSurface,
-                                fit: BoxFit.cover,
-                                height: 24.w,
-                                width: 24.w,
+                        if (event.createdBy?.id == _currentUserId)
+                          Align(
+                            alignment: Alignment.topLeft,
+                            child: GestureDetector(
+                              onTap: () {
+                                context.pushNamed(
+                                  RouteNames.editEventScreen,
+                                  extra: event,
+                                );
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Theme.of(
+                                  context,
+                                ).colorScheme.surface,
+                                child: Assets.icons.edit.svg(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                  fit: BoxFit.cover,
+                                  height: 24.w,
+                                  width: 24.w,
+                                ),
                               ),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),
@@ -254,7 +257,9 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                             onPressed: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(
-                                  builder: (context) => EventMemberScreen(),
+                                  builder: (context) => EventMemberScreen(
+                                    eventId: widget.eventId,
+                                  ),
                                 ),
                               );
                             },
@@ -327,48 +332,49 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               event.createdBy?.id == _currentUserId)
                             SizedBox(width: 8.w),
 
-                          PopupMenuButton<int>(
-                            icon: Icon(
-                              Icons.more_vert,
-                              color: Theme.of(context).colorScheme.onSurface,
-                              size: 24.sp,
-                            ),
-
-                            offset: Offset(0, 45.h),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            onSelected: (value) {
-                              if (value == 1) {
-                                // // Logic for leaving event
-                                // print("User left the event");
-                                Navigator.of(context).pop();
-                              }
-                            },
-                            itemBuilder: (context) => [
-                              PopupMenuItem(
-                                value: 1,
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.logout_rounded,
-                                      color: AppColors.primary,
-                                      size: 20.sp,
-                                    ),
-                                    SizedBox(width: 10.w),
-                                    Text(
-                                      'Leave Event',
-                                      style: TextStyle(
-                                        color: AppColors.primary,
-                                        fontSize: 14.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                          if (event.createdBy?.id != _currentUserId)
+                            PopupMenuButton<int>(
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: Theme.of(context).colorScheme.onSurface,
+                                size: 24.sp,
                               ),
-                            ],
-                          ),
+
+                              offset: Offset(0, 45.h),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              onSelected: (value) {
+                                if (value == 1) {
+                                  // // Logic for leaving event
+                                  // print("User left the event");
+                                  Navigator.of(context).pop();
+                                }
+                              },
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  value: 1,
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.logout_rounded,
+                                        color: AppColors.primary,
+                                        size: 20.sp,
+                                      ),
+                                      SizedBox(width: 10.w),
+                                      Text(
+                                        'Leave Event',
+                                        style: TextStyle(
+                                          color: AppColors.primary,
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
 
