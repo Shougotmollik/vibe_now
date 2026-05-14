@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/event.dart';
@@ -109,6 +110,7 @@ class EventController extends GetxController {
   var isLoading = false.obs;
   final RxList<Event> eventList = <Event>[].obs;
   final Rx<Event?> eventDetails = Rx<Event?>(null);
+  final Rx<Event?> qrEventDetails = Rx<Event?>(null);
 
   // create Event
   Future<bool> createEvent({
@@ -183,7 +185,6 @@ class EventController extends GetxController {
     } else {
       debugPrint('Error fetching events: ${response.error}');
     }
-
     isLoading(false);
   }
 
@@ -272,10 +273,32 @@ class EventController extends GetxController {
     }
   }
 
+  // event join request withdraw
+  Future<bool> eventJoinWithdraw({required int id}) async {
+    try {
+      isLoading(true);
+      final response = await CustomHttp.post(
+        need_auth: true,
+        endpoint: "${ApiConstant.event}/$id/withdraw-request",
+      );
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint("Error joining event: ${response.error}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Exception while joining event: $e");
+      return false;
+    } finally {
+      isLoading(false);
+    }
+  }
+
   // interest event
   Future<bool> eventInterest({required int id}) async {
     try {
-      isLoading(true);
+      // isLoading(true);
       final response = await CustomHttp.post(
         endpoint: "${ApiConstant.event}/$id/interest",
       );
@@ -289,7 +312,7 @@ class EventController extends GetxController {
       debugPrint("Exception while interesting event$e");
       return false;
     } finally {
-      isLoading(false);
+      // isLoading(false);
     }
   }
 
@@ -318,7 +341,7 @@ class EventController extends GetxController {
   var isLoadingParticipants = false.obs;
   final RxList<ParticipantData> joinedParticipants = <ParticipantData>[].obs;
   final RxList<ParticipantData> requestedParticipants = <ParticipantData>[].obs;
-  EventCreator? eventCreator;
+  final Rx<EventCreator?> eventCreator = Rx<EventCreator?>(null);
 
   Future<void> getEventParticipants({required int eventId, String? tab}) async {
     try {
@@ -338,11 +361,12 @@ class EventController extends GetxController {
 
       if (response.ok) {
         final data = response.data['data'];
-        eventCreator = data['event_creator'] != null
+        eventCreator.value = data['event_creator'] != null
             ? EventCreator.fromJson(data['event_creator'])
             : null;
 
-        final participants = (data['participants'] as List?)
+        final participants =
+            (data['participants'] as List?)
                 ?.map((p) => ParticipantData.fromJson(p))
                 .toList() ??
             [];
@@ -368,6 +392,110 @@ class EventController extends GetxController {
       debugPrint("Error while fetching event participant $e ");
     } finally {
       isLoadingParticipants(false);
+    }
+  }
+
+  // Event member request
+  Future<bool> eventMemberRequest({
+    required int participantId,
+    required String action,
+  }) async {
+    try {
+      final response = await CustomHttp.post(
+        endpoint: "${ApiConstant.event}/requests/$participantId/moderate",
+        need_auth: true,
+        body: {"action": action},
+      );
+
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint(response.error);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error while event member request $e');
+      return false;
+    }
+  }
+
+  // remove participant
+
+  Future<bool> removeParticipant({required int participantId}) async {
+    try {
+      final response = await CustomHttp.post(
+        endpoint: "${ApiConstant.event}/participants/$participantId/remove",
+        need_auth: true,
+      );
+
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint(response.error);
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error while event member request $e');
+      return false;
+    }
+  }
+
+  // Join event qrcode
+  Future<void> qrcodeEventJoin({required String qrCode}) async {
+    try {
+      final response = await CustomHttp.post(
+        endpoint: "${ApiConstant.event}/scan-join",
+        need_auth: true,
+        body: {"qr_code_value": qrCode},
+      );
+
+      if (response.ok) {
+        final jsonData = response.data['data'];
+        qrEventDetails.value = Event.fromJson(jsonData);
+      } else {
+        debugPrint("Fetching problem ${response.error}");
+      }
+    } catch (e) {
+      debugPrint("Error while joining with qrcode $e");
+    }
+  }
+
+  // Leave from event
+  Future<bool> leaveEvent({required int eventId}) async {
+    try {
+      final response = await CustomHttp.post(
+        endpoint: "${ApiConstant.event}/$eventId/leave",
+        need_auth: true,
+      );
+
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint("Event leave error${response.error}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Error while leaving from event $e");
+      return false;
+    }
+  }
+
+  // Delete event
+  Future<bool> deleteEvent({required int id}) async {
+    try {
+      final response = await CustomHttp.delete(
+        endpoint: "${ApiConstant.event}/$id/delete",
+        need_auth: true,
+      );
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint("Delete Event${response.error}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Error while deleting the event$e");
+      return false;
     }
   }
 }

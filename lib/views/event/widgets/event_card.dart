@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
@@ -28,7 +30,7 @@ class _EventCardState extends State<EventCard> {
   static const String private = "assets/icons/private.svg";
   static const String public = "assets/icons/public.svg";
 
-  bool _isLoadingInterest = false;
+  final EventController _eventController = Get.find<EventController>();
   bool _isLoadingJoin = false;
   bool _isLoadingRequest = false;
   String? _currentUserId;
@@ -55,43 +57,29 @@ class _EventCardState extends State<EventCard> {
       _currentUserId != null &&
       widget.event.createdBy!.id == _currentUserId;
 
-  // TODO: Implement API call for toggle interest
+  // Toggle interest
   Future<void> _toggleInterest() async {
-    if (_isLoadingInterest || widget.event.isJoined == true) return;
+    if (widget.event.id == null) return;
 
-    setState(() => _isLoadingInterest = true);
+    // Immediately update UI (optimistic update) - no loading spinner
+    widget.event.isInterested = !(widget.event.isInterested ?? false);
+    setState(() {});
 
-    // TODO: Call API to toggle interest
-    // final response = await CustomHttp.post(
-    //   endpoint: ApiConstant.toggleInterest(widget.event.id!),
-    //   need_auth: true,
-    // );
-    // if (response.ok) {
-    //   // Update local state based on API response
-    // }
-
-    // Simulating toggle for now
-    await Future.delayed(const Duration(milliseconds: 500));
-
-    setState(() => _isLoadingInterest = false);
+    // Make API call in background
+    await _eventController.eventInterest(id: widget.event.id!);
   }
 
-  // TODO: Implement API call for join event (public)
+  // Join event (public event)
   Future<void> _joinEvent() async {
-    if (_isLoadingJoin) return;
+    if (_isLoadingJoin || widget.event.id == null) return;
 
     setState(() => _isLoadingJoin = true);
 
-    // TODO: Call API to join event
-    // final response = await CustomHttp.post(
-    //   endpoint: ApiConstant.joinEvent(widget.event.id!),
-    //   need_auth: true,
-    // );
-    // if (response.ok) {
-    //   // Show success dialog, update local state
-    // }
+    final success = await _eventController.eventJoin(id: widget.event.id!);
 
-    await Future.delayed(const Duration(milliseconds: 500));
+    if (success) {
+      widget.event.isJoined = true;
+    }
 
     setState(() => _isLoadingJoin = false);
   }
@@ -133,40 +121,27 @@ class _EventCardState extends State<EventCard> {
 
               // Interest Button - Original Position
               GestureDetector(
-                onTap: _isLoadingInterest || widget.event.isJoined == true
-                    ? null
-                    : _toggleInterest,
+                onTap: _toggleInterest,
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: _isLoadingInterest || widget.event.isJoined == true
-                          ? Colors.grey.shade400
-                          : AppColors.primary.withAlpha(200),
+                      color: AppColors.primary.withAlpha(200),
                     ),
                     padding: const EdgeInsets.all(10),
-                    child: _isLoadingInterest
-                        ? SizedBox(
-                            height: 18.h,
-                            width: 18.w,
-                            child: const CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          )
-                        : SvgPicture.asset(
-                            widget.event.isInterested != null &&
-                                    widget.event.isInterested == true
-                                ? wishlistFilled
-                                : wishlist,
-                            height: 18.h,
-                            width: 18.w,
-                            colorFilter: const ColorFilter.mode(
-                              AppColors.background,
-                              BlendMode.srcIn,
-                            ),
-                          ),
+                    child: SvgPicture.asset(
+                      widget.event.isInterested != null &&
+                              widget.event.isInterested == true
+                          ? wishlistFilled
+                          : wishlist,
+                      height: 18.h,
+                      width: 18.w,
+                      colorFilter: const ColorFilter.mode(
+                        AppColors.background,
+                        BlendMode.srcIn,
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -371,21 +346,29 @@ class _EventCardState extends State<EventCard> {
 
   Widget _buildActionButton() {
     final isPublic = widget.event.accessLevel == 'public';
+    final isJoined = widget.event.isJoined == true;
     final isRequested = widget.event.isRequested == true;
-    final isLoading = isPublic ? _isLoadingJoin : _isLoadingRequest;
+    final hasActionCompleted = isJoined || isRequested;
 
     return Row(
       children: [
         Expanded(
           child: GestureDetector(
-            onTap: isLoading
+            onTap: hasActionCompleted
                 ? null
-                : () {
+                : () async {
+                    final bool isPrivateEvent = !isPublic;
+
+                    // Immediately update UI (optimistic update)
                     if (isPublic) {
-                      // Public event - Join
-                      _joinEvent();
+                      widget.event.isJoined = true;
                     } else {
-                      // Private event - Navigate to request screen
+                      widget.event.isRequested = true;
+                    }
+                    setState(() {});
+
+                    // For private events, navigate immediately while API runs in background
+                    if (isPrivateEvent && context.mounted) {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -394,55 +377,51 @@ class _EventCardState extends State<EventCard> {
                         ),
                       );
                     }
+
+                    // Make API call in background
+                    if (widget.event.id != null) {
+                      await _eventController.eventJoin(id: widget.event.id!);
+                    }
                   },
-            child: Container(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
               padding: EdgeInsets.all(12.w),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12.r),
-                gradient: isLoading ? null : AppColors.primaryGradient,
-                color: isLoading ? Colors.grey.shade400 : null,
+                gradient: hasActionCompleted
+                    ? AppColors.primaryGradient.withOpacity(0.5)
+                    : AppColors.primaryGradient,
               ),
-              child: Center(
-                child: isLoading
-                    ? SizedBox(
-                        height: 16.h,
-                        width: 16.w,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 8.w,
-                        children: [
-                          isPublic
-                              ? const SizedBox()
-                              : (isRequested
-                                    ? SvgPicture.asset(
-                                        hourglass,
-                                        height: 16.h,
-                                        width: 16.w,
-                                        colorFilter: const ColorFilter.mode(
-                                          AppColors.background,
-                                          BlendMode.srcIn,
-                                        ),
-                                      )
-                                    : const SizedBox()),
-                          Text(
-                            isPublic
-                                ? "Join"
-                                : (isRequested ? "Requested" : "Request"),
-                            style: TextStyle(
-                              color: Colors.grey.shade100,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                spacing: 8.w,
+                children: [
+                  isPublic
+                      ? const SizedBox()
+                      : (isRequested
+                            ? SvgPicture.asset(
+                                hourglass,
+                                height: 16.h,
+                                width: 16.w,
+                                colorFilter: const ColorFilter.mode(
+                                  AppColors.background,
+                                  BlendMode.srcIn,
+                                ),
+                              )
+                            : const SizedBox()),
+                  Text(
+                    isPublic
+                        ? (isJoined ? "Joined" : "Join")
+                        : (isRequested ? "Requested" : "Request"),
+                    style: TextStyle(
+                      color: Colors.grey.shade100,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

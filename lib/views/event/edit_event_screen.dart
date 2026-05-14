@@ -148,11 +148,16 @@ class _EditEventScreenState extends State<EditEventScreen> {
                               return ConfirmationDialog(
                                 title: 'Are you sure you want to Delete it?',
                                 confirmBtnText: 'Delete',
-                                onConfirm: () {
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
+                                onConfirm: () async {
+                                  final success = await eventController
+                                      .deleteEvent(id: widget.event.id ?? 0);
+                                  if (success) {
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                    AppSnackbar.show(
+                                      message: "You deleted the event",
+                                    );
+                                  }
                                 },
                                 onCancel: () {
                                   Navigator.pop(context);

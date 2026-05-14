@@ -84,9 +84,9 @@ class Event {
   final CreatedBy? createdBy;
   final int? joinedCount;
   final int? interestedCount;
-  final bool? isJoined;
-  final bool? isRequested;
-  final bool? isInterested;
+  bool? isJoined;
+  bool? isRequested;
+  bool? isInterested;
   final String? chatId;
   final String? createdAt;
   final List<Participant>? participants;

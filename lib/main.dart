@@ -12,7 +12,6 @@ import 'package:vibe_now/services/local_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   try {
     await dotenv.load(fileName: '.env');
   } catch (e) {
@@ -21,7 +20,6 @@ void main() async {
 
   // Initialize bindings
   ControllerBinding().dependencies();
-
   final accessToken = await LocalStorage.access_token.get();
   setupRouter(accessToken != null);
 

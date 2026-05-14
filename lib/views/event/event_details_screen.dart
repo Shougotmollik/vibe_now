@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -344,11 +345,22 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
-                              onSelected: (value) {
+                              onSelected: (value) async {
                                 if (value == 1) {
-                                  // // Logic for leaving event
-                                  // print("User left the event");
-                                  Navigator.of(context).pop();
+                                  // // // Logic for leaving event
+                                  // // print("User left the event");
+                                  // Navigator.of(context).pop();
+
+                                  final success = await _eventController
+                                      .leaveEvent(eventId: event.id ?? 0);
+
+                                  if (success) {
+                                    Navigator.of(context).pop();
+                                    AppSnackbar.show(
+                                      message: "You Leave from ${event.title}",
+                                      type: SnackType.info,
+                                    );
+                                  }
                                 }
                               },
                               itemBuilder: (context) => [

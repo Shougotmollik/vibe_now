@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CancelButton extends StatelessWidget {
   const CancelButton({super.key, required this.onTap, required this.btnText});
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
   final String btnText;
 
   @override
