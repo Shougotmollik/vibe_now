@@ -106,6 +106,7 @@ class CommunityController extends GetxController {
   // Api functions
   var isLoading = false.obs;
   final RxList<Community> communityList = <Community>[].obs;
+  final Rx<Community?> communityDetails = Rx<Community?>(null);
 
   // Get communities
   Future<void> getCommunities({
@@ -139,6 +140,24 @@ class CommunityController extends GetxController {
     isLoading(false);
   }
 
+  // Get community details
+  Future<void> getCommunityDetails({required int id}) async {
+    isLoading(true);
+
+    final response = await CustomHttp.get(
+      need_auth: true,
+      endpoint: "${ApiConstant.community}/$id",
+    );
+
+    if (response.ok) {
+      final jsonData = response.data['data'];
+      communityDetails.value = Community.fromJson(jsonData);
+    } else {
+      debugPrint("Error fetching community details: ${response.error}");
+    }
+    isLoading(false);
+  }
+
   // Create community
   Future<bool> createEvent({
     required File coverImage,
@@ -162,6 +181,56 @@ class CommunityController extends GetxController {
         fieldName: 'cover_image',
         filePath: coverImage.path,
         method: 'POST',
+        fields: {
+          'title': title,
+          'description': description,
+          'rules': rules,
+          'categories': categories,
+          'address': address,
+          'latitude': latitude,
+          'longitude': longitude,
+          'community_date': communityDate,
+          'community_time': communityTime,
+          'max_attendees': maxAttendees,
+        },
+      );
+
+      return response.ok;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  // Update community
+  Future<bool> updateCommunity({
+    required int id,
+    File? coverImage,
+    required String title,
+    required String description,
+    required String rules,
+    required String categories,
+    required String address,
+    required String latitude,
+    required String longitude,
+    required String communityDate,
+    required String communityTime,
+    required String maxAttendees,
+  }) async {
+    try {
+      isLoading(true);
+
+      // Check if user selected a new image
+      final bool hasNewImage = coverImage != null && coverImage.path.isNotEmpty;
+
+      final response = await CustomHttp.multipart(
+        need_auth: true,
+        endpoint: "${ApiConstant.community}/$id/update",
+        fieldName: hasNewImage ? 'cover_image' : '',
+        filePath: hasNewImage ? coverImage.path : null,
+        method: 'PATCH',
         fields: {
           'title': title,
           'description': description,

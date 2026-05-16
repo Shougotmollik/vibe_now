@@ -165,10 +165,18 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                 : null,
           ),
           title: Text(
-            participant.user?.fullName ?? 'Unknown',
+            participant.user?.fullName
+                    ?.split(' ')
+                    .map(
+                      (e) => e.isNotEmpty
+                          ? '${e[0].toUpperCase()}${e.substring(1).toLowerCase()}'
+                          : '',
+                    )
+                    .join(' ') ??
+                'Unknown',
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
-          subtitle: Text(participant.user?.email ?? ''),
+          // subtitle: Text(participant.user?. ?? ''),
           trailing: isEventCreator.value
               ? PopupMenuButton<String>(
                   color: Theme.of(context).colorScheme.surfaceVariant,

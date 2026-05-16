@@ -31,16 +31,23 @@ class EditCommunityScreen extends StatefulWidget {
 }
 
 class _EditCommunityScreenState extends State<EditCommunityScreen> {
-  final TextEditingController _titleController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _maxAttendeesController = TextEditingController(
-    text: '10',
-  );
+  late TextEditingController _titleController;
+  late TextEditingController _descriptionController;
+  late TextEditingController _rulesController;
+  late TextEditingController _maxAttendeesController;
+  late TextEditingController _locationController;
   final TextEditingController _categoryController = TextEditingController();
 
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   File? _selectedImage;
+  double? _selectedLatitude;
+  double? _selectedLongitude;
+  CommunityAccessType _accessType = CommunityAccessType.public;
+  String? _activeParentForSub;
+
+  final CommunityController communityController =
+      Get.find<CommunityController>();
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -56,14 +63,6 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    _descriptionController.addListener(() {
-      setState(() {});
-    });
-  }
-
   List<String> categories = [
     'Music',
     'Art',
@@ -76,18 +75,83 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
   String? selectedCategory;
   Set<String> selectedCategories = {};
 
-  CommunityAccessType _accessType = CommunityAccessType.public;
-  String? _activeParentForSub;
+  @override
+  void initState() {
+    super.initState();
 
-  final CommunityController communityController = Get.put(
-    CommunityController(),
-  );
+    // Initialize controllers with existing community data
+    _titleController = TextEditingController(text: widget.community.title);
+    _descriptionController = TextEditingController(text: widget.community.description);
+    _rulesController = TextEditingController(text: widget.community.rules);
+    _maxAttendeesController = TextEditingController(
+      text: widget.community.maxAttendees?.toString() ?? '10',
+    );
+    _locationController = TextEditingController(text: widget.community.address ?? '');
+
+    // Set location coordinates
+    _selectedLatitude = widget.community.latitude;
+    _selectedLongitude = widget.community.longitude;
+
+    // Set access type
+    _accessType = widget.community.isPrivate
+        ? CommunityAccessType.private
+        : CommunityAccessType.public;
+
+    // Parse date from communityDate string (format: "2026-05-22")
+    if (widget.community.communityDate != null && widget.community.communityDate!.isNotEmpty) {
+      final parts = widget.community.communityDate!.split('-');
+      if (parts.length == 3) {
+        _selectedDate = DateTime(
+          int.parse(parts[0]),
+          int.parse(parts[1]),
+          int.parse(parts[2]),
+        );
+      }
+    }
+
+    // Parse time from communityTime string (format: "08:15 PM")
+    if (widget.community.communityTime != null && widget.community.communityTime!.isNotEmpty) {
+      try {
+        final timeParts = widget.community.communityTime!.split(' ');
+        if (timeParts.length == 2) {
+          final hourMin = timeParts[0].split(':');
+          int hour = int.parse(hourMin[0]);
+          final minute = int.parse(hourMin[1]);
+          final isPM = timeParts[1].toUpperCase() == 'PM';
+          if (isPM && hour != 12) hour += 12;
+          if (!isPM && hour == 12) hour = 0;
+          _selectedTime = TimeOfDay(hour: hour, minute: minute);
+        }
+      } catch (e) {
+        debugPrint('Error parsing time: $e');
+      }
+    }
+
+    // Initialize selected categories from community
+    if (widget.community.categories != null) {
+      for (final cat in widget.community.categories!) {
+        if (cat.subcategories != null) {
+          communityController.selectedSubcategories.addAll(cat.subcategories!);
+        }
+      }
+    }
+
+    _descriptionController.addListener(() {
+      setState(() {});
+    });
+
+    _rulesController.addListener(() {
+      setState(() {});
+    });
+  }
 
   @override
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _rulesController.dispose();
     _maxAttendeesController.dispose();
+    _locationController.dispose();
     _categoryController.dispose();
     super.dispose();
   }
@@ -183,10 +247,17 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                 _buildMaxAttendees(),
                 SizedBox(height: 24.h),
                 _buildCommunityRules(),
+                // SizedBox(height: 24.h),
+                // _buildCommunityMember(),
                 SizedBox(height: 24.h),
-                _buildCommunityMember(),
-                SizedBox(height: 24.h),
-                PrimaryButton.text(onPressed: () {}, text: "Update"),
+                Obx(() => PrimaryButton.text(
+                  onPressed: () {
+                    if (!communityController.isLoading.value) {
+                      _handleUpdate();
+                    }
+                  },
+                  text: communityController.isLoading.value ? "Updating..." : "Update",
+                )),
                 SizedBox(height: 24.h),
               ],
             ),
@@ -196,23 +267,109 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityMember() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Members(24)",
-          style: TextStyle(
-            fontWeight: FontWeight.w500,
-            fontSize: 14.sp,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
+  Future<void> _handleUpdate() async {
+    if (widget.community.id == null) {
+      AppSnackbar.show(
+        message: 'Invalid community',
+        type: SnackType.error,
+      );
+      return;
+    }
 
-        Column(children: List.generate(3, (index) => UserProfileTile())),
-      ],
+    // Validate required fields
+    if (_titleController.text.isEmpty) {
+      AppSnackbar.show(
+        message: 'Please enter a title',
+        type: SnackType.warning,
+      );
+      return;
+    }
+
+    if (_descriptionController.text.isEmpty) {
+      AppSnackbar.show(
+        message: 'Please enter a description',
+        type: SnackType.warning,
+      );
+      return;
+    }
+
+    if (_locationController.text.isEmpty) {
+      AppSnackbar.show(
+        message: 'Please select a location',
+        type: SnackType.warning,
+      );
+      return;
+    }
+
+    if (_selectedDate == null) {
+      AppSnackbar.show(
+        message: 'Please select a date',
+        type: SnackType.warning,
+      );
+      return;
+    }
+
+    if (_selectedTime == null) {
+      AppSnackbar.show(
+        message: 'Please select a time',
+        type: SnackType.warning,
+      );
+      return;
+    }
+
+    // Format date and time for API
+    final dateStr = '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}';
+    final timeStr = '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
+
+    // Get selected categories
+    final categories = communityController.selectedSubcategories.toList().join(',');
+
+    final success = await communityController.updateCommunity(
+      id: widget.community.id!,
+      coverImage: _selectedImage,
+      title: _titleController.text,
+      description: _descriptionController.text,
+      rules: _rulesController.text,
+      categories: categories,
+      address: _locationController.text,
+      latitude: _selectedLatitude?.toString() ?? '',
+      longitude: _selectedLongitude?.toString() ?? '',
+      communityDate: dateStr,
+      communityTime: timeStr,
+      maxAttendees: _maxAttendeesController.text,
     );
+
+    if (success && mounted) {
+      AppSnackbar.show(
+        message: 'Community updated successfully',
+        type: SnackType.success,
+      );
+      Navigator.pop(context);
+    } else if (mounted) {
+      AppSnackbar.show(
+        message: 'Failed to update community',
+        type: SnackType.error,
+      );
+    }
   }
+
+  // Widget _buildCommunityMember() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         "Members(24)",
+  //         style: TextStyle(
+  //           fontWeight: FontWeight.w500,
+  //           fontSize: 14.sp,
+  //           color: Theme.of(context).colorScheme.onSurface,
+  //         ),
+  //       ),
+
+  //       Column(children: List.generate(3, (index) => UserProfileTile())),
+  //     ],
+  //   );
+  // }
 
   Widget _buildAdminCard() {
     return Container(
@@ -631,28 +788,42 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Select address',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 14,
+        GestureDetector(
+          onTap: () {
+            // TODO: Navigate to location selection screen
+            // For now, just show the existing address
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
                 ),
-              ),
-            ],
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    _locationController.text.isNotEmpty
+                        ? _locationController.text
+                        : 'Select address',
+                    style: TextStyle(
+                      color: _locationController.text.isNotEmpty
+                          ? Theme.of(context).colorScheme.onSurface
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 14,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -1043,7 +1214,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
         ),
         const SizedBox(height: 8),
         TextField(
-          controller: _descriptionController,
+          controller: _rulesController,
           maxLines: 8,
           decoration: InputDecoration(
             hintText: 'What are the rules of this community?',
@@ -1052,7 +1223,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
               fontSize: 14,
             ),
             filled: true,
-            fillColor: Theme.of(context).colorScheme.surfaceVariant,
+            fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -1067,10 +1238,10 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
         Align(
           alignment: Alignment.centerRight,
           child: Text(
-            "${_descriptionController.value.text.length} / 500",
+            "${_rulesController.value.text.length} / 500",
             style: TextStyle(
               fontSize: 12,
-              color: _descriptionController.text.length > 500
+              color: _rulesController.text.length > 500
                   ? Theme.of(context).colorScheme.error
                   : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
