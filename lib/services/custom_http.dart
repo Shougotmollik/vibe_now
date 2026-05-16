@@ -29,6 +29,7 @@ enum _HttpMethod { post, put, patch, delete }
 
 class CustomHttp {
   CustomHttp._();
+  static const int _maxRetry = 2;
 
   static Future<CustomHttpResult> get({
     required String endpoint,
@@ -36,6 +37,7 @@ class CustomHttp {
     bool need_auth = true,
     Map<String, String>? headers,
     Map<String, dynamic>? queries,
+    int retryCount = 0,
   }) async {
     if (!await hasInternet(showError: true)) {
       return const CustomHttpResult(
@@ -73,18 +75,19 @@ class CustomHttp {
       return await _handle_response(
         response,
         show_floating_error,
+        retryCount: retryCount,
         // This tells the handler: "If you fail with 401, run this 'get' again"
-        retryAction: need_auth
+        retryAction: (retryCount < _maxRetry && need_auth)
             ? () => get(
                 endpoint: endpoint,
                 show_floating_error: show_floating_error,
                 need_auth: need_auth,
                 headers: headers,
                 queries: queries,
+                retryCount: retryCount + 1,
               )
             : null,
       );
-      ;
     } catch (e, stackTrace) {
       _log_error('GET', url, e, stackTrace);
 
@@ -260,7 +263,12 @@ class CustomHttp {
 
       final response = await http.Response.fromStream(streamedResponse);
 
-      return _handle_response(response, show_floating_error);
+      return _handle_response(
+        response,
+        show_floating_error,
+        retryCount: 0,
+        retryAction: null,
+      );
     } catch (e, stackTrace) {
       _log_error(method, url, e, stackTrace);
 
@@ -277,6 +285,7 @@ class CustomHttp {
     required bool show_floating_error,
     required bool need_auth,
     Map<String, dynamic>? queries,
+    int retryCount = 0,
   }) async {
     if (!await hasInternet(showError: true)) {
       return const CustomHttpResult(
@@ -348,17 +357,19 @@ class CustomHttp {
       return await _handle_response(
         response,
         show_floating_error,
+        retryCount: retryCount,
         // This tells the handler: "If you fail with 401, run this '_send_with_body' again"
-        retryAction: need_auth
+        retryAction: (retryCount < _maxRetry && need_auth)
             ? () => _send_with_body(
                 method: method,
                 endpoint: endpoint,
                 add_api_prefix: add_api_prefix,
-                headers: headers,
+                headers: {...?headers, 'x-retried': 'true'},
                 body: body,
                 show_floating_error: show_floating_error,
                 need_auth: need_auth,
                 queries: queries,
+                retryCount: retryCount + 1,
               )
             : null,
       );
@@ -369,6 +380,31 @@ class CustomHttp {
     }
   }
 
+  // static Future<Map<String, String>?> _build_headers({
+  //   required bool need_auth,
+  //   Map<String, String>? extra,
+  // }) async {
+  //   final headers = <String, String>{
+  //     'Content-Type': 'application/json',
+  //     'Accept': 'application/json',
+  //   };
+
+  //   if (need_auth) {
+  //     String? access_token = await LocalStorage.access_token.get();
+
+  //     // If token is missing, try to refresh immediately
+  //     if (access_token == null || access_token.isEmpty) {
+  //       bool success = await Get.find<AuthController>().refreshToken();
+  //       if (!success) return null;
+  //       access_token = await LocalStorage.access_token.get();
+  //     }
+
+  //     headers['Authorization'] = 'Bearer $access_token';
+  //   }
+
+  //   if (extra != null) headers.addAll(extra);
+  //   return headers;
+  // }
   static Future<Map<String, String>?> _build_headers({
     required bool need_auth,
     Map<String, String>? extra,
@@ -379,16 +415,13 @@ class CustomHttp {
     };
 
     if (need_auth) {
-      String? access_token = await LocalStorage.access_token.get();
+      final token = await LocalStorage.access_token.get();
 
-      // If token is missing, try to refresh immediately
-      if (access_token == null || access_token.isEmpty) {
-        bool success = await Get.find<AuthController>().refreshToken();
-        if (!success) return null;
-        access_token = await LocalStorage.access_token.get();
+      if (token == null || token.isEmpty) {
+        return null; // ❌ DO NOT refresh here
       }
 
-      headers['Authorization'] = 'Bearer $access_token';
+      headers['Authorization'] = 'Bearer $token';
     }
 
     if (extra != null) headers.addAll(extra);
@@ -411,17 +444,40 @@ class CustomHttp {
     http.Response response,
     bool show_error, {
     Future<CustomHttpResult> Function()? retryAction,
+    int retryCount = 0,
   }) async {
     // IF UNAUTHORIZED
-    if (response.statusCode == 401 && retryAction != null) {
+    if (response.statusCode == 401) {
       print("🚩 401 Unauthorized! Refreshing token...");
+      final alreadyRetried = response.request?.headers['x-retried'] == 'true';
+
+      if (alreadyRetried || retryCount >= _maxRetry) {
+        await Get.find<AuthController>().logout();
+        return CustomHttpResult(
+          status_code: 401,
+          ok: false,
+          error: "Session expired",
+        );
+      }
 
       final success = await Get.find<AuthController>().refreshToken();
 
       if (success) {
         print("✅ Refresh successful! Retrying request...");
-        return await retryAction();
+        return retryAction != null
+            ? await retryAction()
+            : CustomHttpResult(
+                status_code: 401,
+                ok: false,
+                error: "Retry failed",
+              );
       }
+      await Get.find<AuthController>().logout();
+      return CustomHttpResult(
+        status_code: 401,
+        ok: false,
+        error: "Session expired",
+      );
     }
     final method = response.request?.method ?? 'UNKNOWN';
     final url = response.request?.url.toString() ?? 'UNKNOWN';

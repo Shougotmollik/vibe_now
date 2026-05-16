@@ -1338,24 +1338,23 @@ class _HomeScreenState extends State<HomeScreen> {
             child: SizedBox(
               child: CommunityCard(
                 community: Community(
-                  name: "Coffee Meetup at Central Park",
+                  title: "Coffee Meetup at Central Park",
                   description: "Casual coffee and conversation in the park",
-                  location: "Central Park Cafe",
-                  distance: "0.3 km",
-                  dateTime: "Tomorrow at 3:00 PM",
-                  attending: "5",
-                  totalAttending: "10",
-                  image:
+                  address: "Central Park Cafe",
+                  communityTime: "Tomorrow at 3:00 PM",
+                  maxAttendees: 5,
+                  joinedCount: 10,
+                  coverImage:
                       'https://www.sbdcnet.org/wp-content/uploads/2020/07/chuttersnap-aEnH4hJ_Mrs-unsplash-e1594836312246.jpg',
-                  avatars: [
-                    "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBlb3BsZXxlbnwwfHwwfHx8MA%3D%3D",
-                    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                    "https://plus.unsplash.com/premium_photo-1673957923985-b814a9dbc03d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-                  ],
-                  extraCount: 5,
-                  isMyCommunity: true,
-                  userStatus: CommunityStatus.going,
-                  accessType: CommunityAccessType.public,
+                  // participants: [
+                  //   "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHBlb3BsZXxlbnwwfHwwfHx8MA%3D%3D",
+                  //   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                  //   "https://plus.unsplash.com/premium_photo-1673957923985-b814a9dbc03d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+                  // ],
+                //   extraCount: 5,
+                //   isMyCommunity: true,
+                //   userStatus: CommunityStatus.going,
+                //   accessType: CommunityAccessType.public,
                 ),
               ),
             ),

@@ -1,20 +1,21 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/category.dart';
-import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
 import 'package:vibe_now/views/common/custom_date_picker.dart';
+import 'package:vibe_now/views/common/location_selection_screen.dart';
 import 'package:vibe_now/views/community/widgets/community_animated_dialog.dart';
 
 class CreateCommunityScreen extends StatefulWidget {
@@ -27,10 +28,14 @@ class CreateCommunityScreen extends StatefulWidget {
 class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _rulesController = TextEditingController();
   final TextEditingController _maxAttendeesController = TextEditingController(
     text: '10',
   );
   final TextEditingController _categoryController = TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+  double? selectedLatitude;
+  double? selectedLongitude;
 
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
@@ -70,12 +75,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
   String? selectedCategory;
   Set<String> selectedCategories = {};
 
-  CommunityAccessType _accessType = CommunityAccessType.public;
   String? _activeParentForSub;
 
-  final CommunityController communityController = Get.put(
-    CommunityController(),
-  );
+  final CommunityController communityController = Get.find<CommunityController>();
 
   @override
   void dispose() {
@@ -118,6 +120,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                     SizedBox(height: 24.h),
                     _buildMaxAttendees(),
                     SizedBox(height: 24.h),
+                    _buildCommunityRules(),
+                    SizedBox(height: 24.h),
                     _buildActionButtons(),
                     SizedBox(height: 24.h),
                   ],
@@ -125,130 +129,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAccessLevel() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Access Level',
-          style: TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ),
-        const SizedBox(height: 8),
-
-        Container(
-          padding: EdgeInsets.all(4.w),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            borderRadius: BorderRadius.circular(14.r),
-          ),
-          child: Row(
-            children: [
-              _accessToggleItem(
-                label: 'Public',
-                icon: Icons.people_alt_outlined,
-                isSelected: _accessType == CommunityAccessType.public,
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  setState(() {
-                    _accessType = CommunityAccessType.public;
-                  });
-                },
-              ),
-              _accessToggleItem(
-                label: 'Private',
-                icon: Icons.lock_person_outlined,
-                isSelected: _accessType == CommunityAccessType.private,
-                onTap: () {
-                  HapticFeedback.selectionClick();
-                  setState(() {
-                    _accessType = CommunityAccessType.private;
-                  });
-                },
-              ),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 6),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Text(
-            _accessType == CommunityAccessType.public
-                ? 'Anyone can discover and join this community instantly without approval.'
-                : 'People will need your approval before they can join this community.',
-            textAlign: TextAlign.start,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _accessToggleItem({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-    IconData? icon,
-  }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            AnimatedAlign(
-              duration: const Duration(milliseconds: 420),
-              curve: Curves.easeInOutCubic,
-              alignment: isSelected ? Alignment.center : Alignment.center,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: isSelected ? 1 : 0,
-                child: Container(
-                  height: 42.h,
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradientRotated,
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-              ),
-            ),
-
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  size: 20.sp,
-                  color: isSelected
-                      ? Colors.white
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                SizedBox(width: 6.w),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected
-                        ? Colors.white
-                        : Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );
@@ -280,60 +160,140 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           ),
         ),
         const SizedBox(width: 12),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: ElevatedButton(
-              onPressed: () {
-                // AppSnackbar.show(
-                //   message: 'Your community has been created successfully',
-                //   type: SnackType.success,
-                // );
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (context) {
-                    return Center(
-                      child: Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.r),
+        Obx(
+          () => Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: ElevatedButton(
+                onPressed: communityController.isLoading.value
+                    ? null
+                    : onCreate,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                  shadowColor: Colors.transparent,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
+                child: communityController.isLoading.value
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
                         ),
-                        elevation: 0,
-                        backgroundColor: Colors.transparent,
-                        child: CommunityAnimatedDialog(
-                          content:
-                              'Congratulations! Your community is now live.',
+                      )
+                    : const Text(
+                        'Create',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    );
-                  },
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: const Text(
-                'Create',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
               ),
             ),
           ),
         ),
       ],
     );
+  }
+
+  void onCreate() async {
+    if (_selectedImage == null) {
+      AppSnackbar.show(message: 'Please select cover image');
+      return;
+    }
+
+    if (_titleController.text.trim().isEmpty) {
+      AppSnackbar.show(message: 'Please enter community title');
+      return;
+    }
+
+    if (locationController.text.isEmpty) {
+      AppSnackbar.show(message: 'Please select location');
+      return;
+    }
+
+    if (_selectedDate == null) {
+      AppSnackbar.show(message: 'Please select date');
+      return;
+    }
+
+    if (_selectedTime == null) {
+      AppSnackbar.show(message: 'Please select time');
+      return;
+    }
+
+    if (communityController.selectedSubcategories.isEmpty) {
+      AppSnackbar.show(message: 'Please select at least one category');
+      return;
+    }
+
+    // Build categories json
+    final List<Map<String, dynamic>> categoryJson = [];
+
+    for (final group in communityController.categoryGroups) {
+      final selectedSubs = group.children
+          .where(
+            (sub) => communityController.selectedSubcategories.contains(sub),
+          )
+          .toList();
+
+      if (selectedSubs.isNotEmpty) {
+        categoryJson.add({"name": group.parent, "subcategories": selectedSubs});
+      }
+    }
+
+    final success = await communityController.createEvent(
+      coverImage: _selectedImage!,
+      title: _titleController.text.trim(),
+      categories: jsonEncode(categoryJson),
+      description: _descriptionController.text.trim(),
+      rules: _rulesController.text.trim(),
+      address: locationController.text,
+      latitude: selectedLatitude.toString(),
+      longitude: selectedLongitude.toString(),
+      communityDate: _selectedDate != null
+          ? "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}"
+          : '',
+      communityTime: _selectedTime != null
+          ? _selectedTime!.format(context)
+          : '',
+      maxAttendees: _maxAttendeesController.text.trim(),
+    );
+
+    if (success && mounted) {
+      Navigator.pop(context);
+
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) {
+          return Center(
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              child: CommunityAnimatedDialog(
+                content: 'Congratulations! Your community is now live.',
+              ),
+            ),
+          );
+        },
+      );
+    } else {
+      AppSnackbar.show(message: 'Failed to create community');
+    }
   }
 
   Widget _buildMaxAttendees() {
@@ -366,6 +326,57 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 16,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCommunityRules() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Rules',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _rulesController,
+          maxLines: 8,
+          decoration: InputDecoration(
+            hintText: 'What are the rules of this community?',
+            hintStyle: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14,
+            ),
+            filled: true,
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 16,
+            ),
+          ),
+        ),
+        SizedBox(height: 6.h),
+        Align(
+          alignment: Alignment.centerRight,
+          child: Text(
+            "${_rulesController.value.text.length} / 500",
+            style: TextStyle(
+              fontSize: 12,
+              color: _rulesController.text.length > 500
+                  ? Theme.of(context).colorScheme.error
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
         ),
@@ -518,28 +529,59 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Select address',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 14,
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LocationSelectionScreen(
+                  apiKey: EnvHandler.google_map_api_key,
+                  onLocationSelect: (location) {
+                    setState(() {
+                      locationController.text = location.name;
+                      selectedLatitude = location.position.latitude;
+                      selectedLongitude = location.position.longitude;
+                    });
+
+                    print(
+                      'Selected location: $selectedLatitude, $selectedLongitude',
+                    );
+                    print('Location name: ${location.name}');
+                  },
                 ),
               ),
-            ],
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    locationController.text.isEmpty
+                        ? 'Select address'
+                        : locationController.text,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
@@ -96,189 +97,325 @@ class _EventCardState extends State<EventCard> {
           color: Theme.of(context).colorScheme.onSurface.withAlpha(15),
         ),
       ),
+      child: widget.isLoading ? _buildShimmerContent() : _buildMainContent(),
+    );
+  }
+
+  Widget _buildShimmerContent() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    final highlightColor = isDark ? Colors.grey[700]! : Colors.grey[100]!;
+
+    return Shimmer.fromColors(
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      period: const Duration(milliseconds: 1500),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Stack(
-            alignment: Alignment.topRight,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(16),
-                child:
-                    widget.event.coverImage != null &&
-                        widget.event.coverImage!.isNotEmpty
-                    ? Image.network(
-                        AppCredentials.fixurl(widget.event.coverImage),
-                        height: 200.h,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) =>
-                            _buildPlaceholderImage(),
-                      )
-                    : _buildPlaceholderImage(),
-              ),
+          // Image placeholder
+          Container(
+            height: 200.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+          ),
+          SizedBox(height: 12.h),
 
-              // Interest Button - Original Position
-              GestureDetector(
-                onTap: _toggleInterest,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.primary.withAlpha(200),
+          // Title placeholder
+          Container(
+            height: 18.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+          ),
+          SizedBox(height: 10.h),
+
+          // Location row
+          Row(
+            children: [
+              Container(
+                width: 16.w,
+                height: 16.h,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(width: 6.w),
+              Container(
+                height: 14.h,
+                width: 150.w,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+
+          // Date row
+          Row(
+            children: [
+              Container(
+                width: 16.w,
+                height: 16.h,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(width: 6.w),
+              Container(
+                height: 14.h,
+                width: 120.w,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 8.h),
+
+          // Interested row
+          Container(
+            height: 14.h,
+            width: 180.w,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+          ),
+          SizedBox(height: 8.h),
+
+          // Users row
+          Row(
+            children: [
+              Container(
+                width: 16.w,
+                height: 16.h,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              SizedBox(width: 6.w),
+              Container(
+                height: 14.h,
+                width: 80.w,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(4.r),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 16.h),
+
+          // Button placeholder
+          Container(
+            height: 48.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMainContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Stack(
+          alignment: Alignment.topRight,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child:
+                  widget.event.coverImage != null &&
+                      widget.event.coverImage!.isNotEmpty
+                  ? Image.network(
+                      AppCredentials.fixurl(widget.event.coverImage),
+                      height: 200.h,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (context, error, stackTrace) =>
+                          _buildPlaceholderImage(),
+                    )
+                  : _buildPlaceholderImage(),
+            ),
+
+            // Interest Button - Original Position
+            GestureDetector(
+              onTap: _toggleInterest,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.primary.withAlpha(200),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: SvgPicture.asset(
+                    widget.event.isInterested != null &&
+                            widget.event.isInterested == true
+                        ? wishlistFilled
+                        : wishlist,
+                    height: 18.h,
+                    width: 18.w,
+                    colorFilter: const ColorFilter.mode(
+                      AppColors.background,
+                      BlendMode.srcIn,
                     ),
-                    padding: const EdgeInsets.all(10),
-                    child: SvgPicture.asset(
-                      widget.event.isInterested != null &&
-                              widget.event.isInterested == true
-                          ? wishlistFilled
-                          : wishlist,
-                      height: 18.h,
-                      width: 18.w,
+                  ),
+                ),
+              ),
+            ),
+
+            // Access Level Badge - Original Position
+            Positioned(
+              top: 10.h,
+              left: 12.w,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withAlpha(200),
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  spacing: 4.w,
+                  children: [
+                    SvgPicture.asset(
+                      widget.event.accessLevel == "public" ? public : private,
+                      height: 14.h,
+                      width: 14.w,
                       colorFilter: const ColorFilter.mode(
                         AppColors.background,
                         BlendMode.srcIn,
                       ),
                     ),
-                  ),
-                ),
-              ),
-
-              // Access Level Badge - Original Position
-              Positioned(
-                top: 10.h,
-                left: 12.w,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withAlpha(200),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 4.w,
-                    children: [
-                      SvgPicture.asset(
-                        widget.event.accessLevel == "public" ? public : private,
-                        height: 14.h,
-                        width: 14.w,
-                        colorFilter: const ColorFilter.mode(
-                          AppColors.background,
-                          BlendMode.srcIn,
-                        ),
+                    Text(
+                      widget.event.accessLevel == "public"
+                          ? "Public"
+                          : (widget.event.accessLevel == "private"
+                                ? "Private"
+                                : "Public"),
+                      style: TextStyle(
+                        color: AppColors.background,
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
                       ),
-                      Text(
-                        widget.event.accessLevel == "public"
-                            ? "Public"
-                            : (widget.event.accessLevel == "private"
-                                  ? "Private"
-                                  : "Public"),
-                        style: TextStyle(
-                          color: AppColors.background,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            widget.event.title ?? '',
-            style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
-          ),
-          SizedBox(height: 6.h),
-          Row(
-            children: [
-              Assets.icons.location.svg(
-                colorFilter: ColorFilter.mode(
-                  Theme.of(context).colorScheme.onSurface.withAlpha(180),
-                  BlendMode.srcIn,
-                ),
+            ),
+          ],
+        ),
+        SizedBox(height: 12.h),
+        Text(
+          widget.event.title ?? '',
+          style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
+        ),
+        SizedBox(height: 6.h),
+        Row(
+          children: [
+            Assets.icons.location.svg(
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                BlendMode.srcIn,
               ),
-              SizedBox(width: 4.w),
-              Expanded(
-                child: Text(
-                  widget.event.address ?? '',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withAlpha(180),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 6.h),
-          Row(
-            children: [
-              Assets.icons.calender3.svg(
-                colorFilter: ColorFilter.mode(
-                  Theme.of(context).colorScheme.onSurface.withAlpha(180),
-                  BlendMode.srcIn,
-                ),
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                '${widget.event.eventTime ?? ''}, ${widget.event.eventDate ?? ''}',
+            ),
+            SizedBox(width: 4.w),
+            Expanded(
+              child: Text(
+                widget.event.address ?? '',
                 style: TextStyle(
                   fontSize: 12.sp,
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withAlpha(180),
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 6.h),
-          Row(
-            children: [
-              Text(
-                "${widget.event.interestedCount ?? 0} Interested • ${widget.event.joinedCount ?? 0} Going",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
-                ),
+            ),
+          ],
+        ),
+        SizedBox(height: 6.h),
+        Row(
+          children: [
+            Assets.icons.calender3.svg(
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                BlendMode.srcIn,
               ),
-            ],
-          ),
-          SizedBox(height: 6.h),
-          Row(
-            children: [
-              Assets.icons.users.svg(
-                colorFilter: ColorFilter.mode(
-                  Theme.of(context).colorScheme.onSurface.withAlpha(180),
-                  BlendMode.srcIn,
-                ),
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              '${widget.event.eventTime ?? ''}, ${widget.event.eventDate ?? ''}',
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
               ),
-              SizedBox(width: 4.w),
-              Text(
-                '${widget.event.joinedCount ?? 0}/${widget.event.maxAttendees ?? 0} attending',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
-                ),
+            ),
+          ],
+        ),
+        SizedBox(height: 6.h),
+        Row(
+          children: [
+            Text(
+              "${widget.event.interestedCount ?? 0} Interested • ${widget.event.joinedCount ?? 0} Going",
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
               ),
-            ],
-          ),
-          SizedBox(height: 12),
-          // Original Button Section with functionality
-          // Show "View Details" if: user joined OR user is the event creator
-          _isLoadingUserId
-              ? _buildLoadingButton()
-              : ((widget.event.isJoined != null &&
-                        widget.event.isJoined == true) ||
+            ),
+          ],
+        ),
+        SizedBox(height: 6.h),
+        Row(
+          children: [
+            Assets.icons.users.svg(
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.onSurface.withAlpha(180),
+                BlendMode.srcIn,
+              ),
+            ),
+            SizedBox(width: 4.w),
+            Text(
+              '${widget.event.joinedCount ?? 0}/${widget.event.maxAttendees ?? 0} attending',
+              style: TextStyle(
+                fontSize: 12.sp,
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 12),
+        // Original Button Section with functionality
+        // Show "View Details" if: user joined OR user is the event creator
+        _isLoadingUserId
+            ? _buildLoadingButton()
+            : ((widget.event.isJoined != null &&
+                      widget.event.isJoined == true) ||
                     isMyEvent)
-              ? _buildViewDetailsButton()
-              : _buildActionButton(),
-        ],
-      ),
+                ? _buildViewDetailsButton()
+                : _buildActionButton(),
+      ],
     );
   }
 

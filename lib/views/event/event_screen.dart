@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
-import 'package:skeletonizer/skeletonizer.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
@@ -43,114 +42,101 @@ class _EventScreenState extends State<EventScreen> {
     super.dispose();
   }
 
-  // Filter events based on selected tab
-  // List<Event> get filteredEvents {
-  //   final events = eventController.eventList;
-
-  //   switch (selectedTab.value) {
-  //     case 'Joined':
-  //       return events.where((e) => e.isJoined == true).toList();
-  //     case 'Organized':
-  //       return events.where((e) => e.isJoined == true).toList();
-  //     case 'Interested':
-  //       return events.where((e) => e.isInterested == true).toList();
-  //     default:
-  //       return events;
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: SingleChildScrollView(
-            child: Obx(() {
-              return Column(
-                children: [
-                  _buildAppBar(context),
-                  SizedBox(height: 12.h),
+          child: RefreshIndicator(
+            onRefresh: () => eventController.getEvents(
+              tab: selectedTab.value.toLowerCase(),
+            ),
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Obx(() {
+                return Column(
+                  children: [
+                    _buildAppBar(context),
+                    SizedBox(height: 12.h),
 
-                  // Search bar with filter
-                  CustomSearchBar(
-                    controller: searchController,
-                    onFilterTap: () => showDialog(
-                      context: context,
-                      builder: (context) => const EventFilterDialog(),
+                    // Search bar with filter
+                    CustomSearchBar(
+                      controller: searchController,
+                      onFilterTap: () => showDialog(
+                        context: context,
+                        builder: (context) => const EventFilterDialog(),
+                      ),
+                      hintText: 'Search for events',
+                      onChanged: (query) {
+                        _debounce?.cancel();
+                        _debounce = Timer(const Duration(milliseconds: 500), () {
+                          eventController.getEvents(
+                            tab: selectedTab.value.toLowerCase(),
+                            search: query,
+                          );
+                        });
+                      },
                     ),
-                    hintText: 'Search for events',
-                    onChanged: (query) {
-                      _debounce?.cancel();
-                      _debounce = Timer(const Duration(milliseconds: 500), () {
-                        eventController.getEvents(
-                          tab: selectedTab.value.toLowerCase(),
-                          search: query,
-                        );
-                      });
-                    },
-                  ),
 
-                  SizedBox(height: 12.h),
+                    SizedBox(height: 12.h),
 
-                  // Category tabs
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: tabs.map((tab) {
-                        final isSelected = selectedTab.value == tab;
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: GestureDetector(
-                            onTap: () async {
-                              selectedTab.value = tab;
-                              await eventController.getEvents(
-                                tab: tab.toLowerCase(),
-                              );
-                            },
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 20.w,
-                                vertical: 8.w,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: isSelected
-                                    ? AppColors.primaryGradientRotated
-                                    : null,
-                                color: isSelected
-                                    ? null
-                                    : Theme.of(
-                                        context,
-                                      ).colorScheme.surfaceVariant,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Text(
-                                tab,
-                                style: TextStyle(
+                    // Category tabs
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: tabs.map((tab) {
+                          final isSelected = selectedTab.value == tab;
+                          return Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: GestureDetector(
+                              onTap: () async {
+                                selectedTab.value = tab;
+                                await eventController.getEvents(
+                                  tab: tab.toLowerCase(),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 20.w,
+                                  vertical: 8.w,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: isSelected
+                                      ? AppColors.primaryGradientRotated
+                                      : null,
                                   color: isSelected
-                                      ? Colors.white
-                                      : Theme.of(context).colorScheme.onSurface,
-                                  fontWeight: FontWeight.w500,
+                                      ? null
+                                      : Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHighest,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  tab,
+                                  style: TextStyle(
+                                    color: isSelected
+                                        ? Colors.white
+                                        : Theme.of(context).colorScheme.onSurface,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        );
-                      }).toList(),
+                          );
+                        }).toList(),
+                      ),
                     ),
-                  ),
 
-                  SizedBox(height: 14.h),
+                    SizedBox(height: 14.h),
 
-                  // Event list based on selected tab
-                  Obx(() {
-                    final isLoading = eventController.isLoading.value;
-                    final events = eventController.eventList;
+                    // Event list based on selected tab
+                    Obx(() {
+                      final isLoading = eventController.isLoading.value;
+                      final events = eventController.eventList;
 
-                    if (isLoading) {
-                      return Skeletonizer(
-                        enabled: isLoading,
-                        child: Column(
+                      if (isLoading) {
+                        return Column(
                           children: List.generate(
                             3,
                             (index) => Padding(
@@ -166,33 +152,34 @@ class _EventScreenState extends State<EventScreen> {
                                   eventDate: "",
                                   interestedCount: 0,
                                 ),
+                                isLoading: true,
                               ),
                             ),
                           ),
-                        ),
+                        );
+                      }
+
+                      if (events.isEmpty) {
+                        return _buildEmptyState(context, selectedTab.value);
+                      }
+
+                      return Column(
+                        children: events
+                            .map(
+                              (e) => Padding(
+                                padding: EdgeInsets.only(bottom: 12.h),
+                                child: EventCard(event: e),
+                              ),
+                            )
+                            .toList(),
                       );
-                    }
+                    }),
 
-                    if (events.isEmpty) {
-                      return _buildEmptyState(context, selectedTab.value);
-                    }
-
-                    return Column(
-                      children: events
-                          .map(
-                            (e) => Padding(
-                              padding: EdgeInsets.only(bottom: 12.h),
-                              child: EventCard(event: e),
-                            ),
-                          )
-                          .toList(),
-                    );
-                  }),
-
-                  SizedBox(height: 24),
-                ],
-              );
-            }),
+                    SizedBox(height: 24),
+                  ],
+                );
+              }),
+            ),
           ),
         ),
       ),
@@ -204,7 +191,7 @@ class _EventScreenState extends State<EventScreen> {
     return Row(
       children: [
         CustomAppBar(title: 'Events'),
-        Spacer(),
+        const Spacer(),
         GestureDetector(
           onTap: () => context.pushNamed(
             RouteNames.qrVerificationScreen,
@@ -214,7 +201,7 @@ class _EventScreenState extends State<EventScreen> {
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Theme.of(context).colorScheme.surfaceVariant,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
             ),
             child: Assets.icons.scan.svg(
               colorFilter: ColorFilter.mode(
@@ -224,7 +211,7 @@ class _EventScreenState extends State<EventScreen> {
             ),
           ),
         ),
-        SizedBox(width: 8),
+        SizedBox(width: 8.w),
         GestureDetector(
           onTap: () => context.pushNamed(RouteNames.createEventScreen),
           child: Container(
@@ -247,15 +234,15 @@ class _EventScreenState extends State<EventScreen> {
     switch (tab) {
       case 'Joined':
         message = 'No events joined yet';
-        subMessage = 'Browse events and join to see them here';
+        subMessage = 'Browse & join events';
         break;
       case 'Organized':
         message = 'No events organized yet';
-        subMessage = 'Create your first event to get started';
+        subMessage = 'Create your first event';
         break;
       case 'Interested':
-        message = 'No events marked as interested';
-        subMessage = 'Browse events and mark your interest';
+        message = 'No interested events yet';
+        subMessage = 'Browse & mark your interest';
         break;
       default:
         message = 'No events available';
@@ -284,6 +271,7 @@ class _EventScreenState extends State<EventScreen> {
                 fontSize: 20.sp,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 8.h),
             Text(

@@ -1,139 +1,137 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shimmer/shimmer.dart';
+import 'package:vibe_now/controller/community_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
-import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/community.dart';
-import 'package:vibe_now/views/common/request_sent_dialog.dart';
-import 'package:vibe_now/views/community/community_details_screen.dart';
+import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
-import 'package:vibe_now/views/community/widgets/community_animated_dialog.dart';
 
 class CommunityCard extends StatefulWidget {
-  const CommunityCard({super.key, required this.community});
+  const CommunityCard({
+    super.key,
+    required this.community,
+    this.isLoading = false,
+  });
 
   @override
   State<CommunityCard> createState() => _CommunityCardState();
 
   final Community community;
+  final bool isLoading;
 }
 
 class _CommunityCardState extends State<CommunityCard> {
-  late CommunityStatus? currentStatus;
-
-  bool get isPublic =>
-      widget.community.accessType == CommunityAccessType.public;
-
-  bool get isPrivate =>
-      widget.community.accessType == CommunityAccessType.private;
-
-  bool get isGoing => currentStatus == CommunityStatus.going;
-  bool get isRequested => currentStatus == CommunityStatus.requested;
-  bool get isActive => isRequested;
-
   static const String hourglass = "assets/icons/hourglass-end.svg";
   static const String wishlist = "assets/icons/wishlist-star.svg";
   static const String wishlistFilled = "assets/icons/wishlist-star-fill.svg";
   static const String private = "assets/icons/private.svg";
-  static const String public = "assets/icons/public.svg";
 
-  // String get buttonText {
-  //   if (shouldShowViewDetails) return 'View Details';
+  final CommunityController _communityController =
+      Get.find<CommunityController>();
 
-  //   if (isPublic) {
-  //     return isGoing ? 'Going' : 'Join';
-  //   }
-
-  //   // Private
-  //   return isRequested ? 'Requested' : 'Request';
-  // }
-  String get buttonText {
-    return isRequested ? 'Requested' : 'Request';
-  }
-
-  CommunityStatus? originalStatus;
+  String? _currentUserId;
+  bool _isLoadingJoin = false;
+  bool _isLoadingInterest = false;
+  bool _localIsJoined = false;
+  bool _localIsInterested = false;
 
   @override
   void initState() {
     super.initState();
-    currentStatus = widget.community.userStatus;
-    originalStatus = widget.community.userStatus;
+    _localIsJoined = widget.community.isJoined ?? false;
+    _localIsInterested = widget.community.isInterested ?? false;
+    _loadCurrentUserId();
   }
 
-  // Check if should show "View Details" button
-  // bool get shouldShowViewDetails {
-  //   return widget.community.isMyCommunity ||
-  //       widget.community.isJoined ||
-  //       widget.community.isInterested;
-  // }
-  // bool get shouldShowViewDetails {
-  //   // My own community → always view details
-  //   if (widget.community.isMyCommunity) return true;
+  Future<void> _loadCurrentUserId() async {
+    final userId = await LocalStorage.user_id.get();
+    if (mounted) {
+      setState(() {
+        _currentUserId = userId;
+      });
+    }
+  }
 
-  //   // Public: joined
-  //   if (isPublic && widget.community.userStatus == CommunityStatus.going) {
-  //     return true;
-  //   }
+  bool get isMyCommunity =>
+      widget.community.createdBy?.id != null &&
+      _currentUserId != null &&
+      widget.community.createdBy!.id == _currentUserId;
 
-  //   // Private: only after approved (going)
-  //   if (isPrivate && currentStatus == CommunityStatus.going) {
-  //     return true;
-  //   }
+  bool get isPrivate => widget.community.isPrivate;
+  bool get isJoined => _localIsJoined;
+  bool get isInterested => _localIsInterested;
 
-  //   return false;
-  // }
-  // bool get shouldShowViewDetails {
-  //   if (widget.community.isMyCommunity) return true;
-  //   return originalStatus == CommunityStatus.going;
-  // }
+  // Handle join request button tap
+  Future<void> _handleJoinTap() async {
+    if (widget.community.id == null || _isLoadingJoin) return;
 
-  // String get buttonText {
-  //   // If it's my community, joined, or interested - show "View Details"
-  //   if (shouldShowViewDetails) {
-  //     return 'View Details';
-  //   }
+    // Optimistic update
+    setState(() => _isLoadingJoin = true);
 
-  //   // Otherwise show status-based text
-  //   if (currentStatus == null) return 'Request';
-  //   switch (currentStatus!) {
-  //     case CommunityStatus.requested:
-  //       return 'Interested';
-  //     case CommunityStatus.interested:
-  //       return 'Interested';
-  //     case CommunityStatus.going:
-  //       return 'Going';
-  //   }
-  // }
+    final success = await _communityController.communityJoin(
+      id: widget.community.id!,
+    );
 
-  // bool get isButtonActive {
-  //   return currentStatus == CommunityStatus.requested;
-  // }
+    if (mounted) {
+      setState(() => _isLoadingJoin = false);
 
-  // void _handleButtonTap() {
-  //   // If should show view details, navigate to details screen
-  //   if (shouldShowViewDetails) {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => CommunityDetailsScreen()),
-  //     );
-  //     return;
-  //   }
+      if (success) {
+        setState(() => _localIsJoined = true);
+        AppSnackbar.show(
+          message: isPrivate
+              ? 'Your request has been sent to the community creator'
+              : 'You have joined the community successfully',
+          type: SnackType.info,
+        );
+      } else {
+        AppSnackbar.show(
+          message: 'Failed to join community',
+          type: SnackType.error,
+        );
+      }
+    }
+  }
 
-  //   // Otherwise handle request logic
-  //   if (currentStatus != CommunityStatus.requested) {
-  //     setState(() {
-  //       currentStatus = CommunityStatus.requested;
-  //     });
-  //     AppSnackbar.show(
-  //       message: "Your request to join this community has been sent",
-  //       type: SnackType.success,
-  //     );
-  //   }
-  // }
+  // Handle interest button tap
+  Future<void> _handleInterestTap() async {
+    if (widget.community.id == null || _isLoadingInterest) return;
+
+    // Optimistic update
+    final wasInterested = _localIsInterested;
+    setState(() => _isLoadingInterest = true);
+
+    final success = await _communityController.communityInterest(
+      id: widget.community.id!,
+    );
+
+    if (mounted) {
+      setState(() => _isLoadingInterest = false);
+
+      if (success) {
+        setState(() => _localIsInterested = !wasInterested);
+
+        AppSnackbar.show(
+          message: wasInterested
+              ? 'Removed from interested'
+              : 'Added to interested',
+          type: SnackType.info,
+        );
+      } else {
+        AppSnackbar.show(
+          message: 'Failed to update interest',
+          type: SnackType.error,
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,480 +143,444 @@ class _CommunityCardState extends State<CommunityCard> {
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
+      child: widget.isLoading ? _buildShimmerContent() : _buildMainContent(),
+    );
+  }
+
+  Widget _buildShimmerContent() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final baseColor = isDark ? Colors.grey[800]! : Colors.grey[300]!;
+    final highlightColor = isDark ? Colors.grey[700]! : Colors.grey[100]!;
+
+    return Shimmer.fromColors(
+      baseColor: baseColor,
+      highlightColor: highlightColor,
+      period: const Duration(milliseconds: 1500),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Stack(
-            alignment: Alignment.topRight,
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(8.r),
-                child: Image.network(
-                  widget.community.image,
-                  width: double.infinity,
-                  height: 160.h,
-                  fit: BoxFit.cover,
-                ),
-              ),
-
-              // isPrivate
-              //     ? Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: AppColors.primary.withAlpha(200),
-              //           ),
-              //           padding: const EdgeInsets.all(10),
-              //           child: SvgPicture.asset(
-              //             isActive && !widget.community.isMyCommunity
-              //                 ? wishlistFilled
-              //                 : wishlist,
-              //             height: 18.h,
-              //             width: 18.w,
-              //             color: AppColors.background,
-              //           ),
-              //         ),
-              //       )
-              //     : Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child: Container(
-              //           decoration: BoxDecoration(
-              //             shape: BoxShape.circle,
-              //             color: AppColors.primary.withAlpha(200),
-              //           ),
-              //           padding: const EdgeInsets.all(10),
-              //           child: SvgPicture.asset(
-              //             isActive && !widget.community.isMyCommunity
-              //                 ? wishlistFilled
-              //                 : wishlist,
-              //             height: 18.h,
-              //             width: 18.w,
-              //             color: AppColors.background,
-              //           ),
-              //         ),
-              //       ),
-              GestureDetector(
-                onTap: () {
-                  setState(() {
-                    widget.community.isFavorite = !widget.community.isFavorite;
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.primary.withAlpha(200),
-                    ),
-                    padding: const EdgeInsets.all(10),
-                    child: SvgPicture.asset(
-                      widget.community.isFavorite ? wishlistFilled : wishlist,
-                      height: 18.h,
-                      width: 18.w,
-                      color: AppColors.background,
-                    ),
-                  ),
-                ),
-              ),
-
-              Positioned(
-                top: 10.h,
-                left: 12.w,
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withAlpha(200),
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    spacing: 4.w,
-                    children: [
-                      SvgPicture.asset(
-                        isPrivate ? private : private,
-                        height: 14.h,
-                        width: 14.w,
-                        color: AppColors.background,
-                      ),
-                      Text(
-                        isPrivate ? "Private" : "Private",
-                        style: TextStyle(
-                          color: AppColors.background,
-                          fontSize: 12.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            widget.community.name,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSurface,
+          // Image placeholder
+          Container(
+            height: 160.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.r),
             ),
           ),
           SizedBox(height: 12.h),
-          Text(
-            widget.community.description,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w500,
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+
+          // Title placeholder
+          Container(
+            height: 16.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+          ),
+          SizedBox(height: 10.h),
+
+          // Description placeholder
+          Container(
+            height: 14.h,
+            width: double.infinity * 0.8,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+          ),
+          SizedBox(height: 10.h),
+
+          // Location placeholder
+          Container(
+            height: 12.h,
+            width: double.infinity * 0.6,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+          ),
+          SizedBox(height: 10.h),
+
+          // DateTime placeholder
+          Container(
+            height: 12.h,
+            width: double.infinity * 0.4,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.r),
+            ),
+          ),
+          SizedBox(height: 10.h),
+
+          // Attendees placeholder
+          Container(
+            height: 12.h,
+            width: double.infinity * 0.3,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(4.r),
             ),
           ),
           SizedBox(height: 12.h),
-          Row(
-            children: [
-              Assets.icons.location.svg(
-                width: 16.w,
-                height: 16.h,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                "${widget.community.location} • ${widget.community.distance}",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
+
+          // Button placeholder
+          Container(
+            height: 44.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12.r),
+            ),
           ),
-          SizedBox(height: 12.h),
-          Row(
-            children: [
-              Assets.icons.calendarColor.svg(
-                width: 16.w,
-                height: 16.h,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                widget.community.dateTime,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          Row(
-            children: [
-              Assets.icons.community.svg(
-                width: 16.w,
-                height: 16.h,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-              SizedBox(width: 4.w),
-              Text(
-                "${widget.community.attending}/${widget.community.totalAttending} attending",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 12.h),
-          AvatarStack(
-            imageUrls: widget.community.avatars,
-            extraCount: widget.community.extraCount,
-          ),
-          SizedBox(height: 12.h),
-          // If should show "View Details", show simple button
-          // if (shouldShowViewDetails)
-          //   GestureDetector(
-          //     onTap: () {
-          //       context.pushNamed(
-          //         RouteNames.communityDetailsScreen,
-          //         extra: widget.community,
-          //       );
-          //     },
-          //     child: Container(
-          //       width: double.infinity,
-          //       padding: EdgeInsets.all(12.w),
-          //       decoration: BoxDecoration(
-          //         borderRadius: BorderRadius.circular(12.r),
-          //         gradient: AppColors.primaryGradient,
-          //       ),
-          //       child: Center(
-          //         child: Text(
-          //           'View Details',
-          //           style: TextStyle(
-          //             color: Colors.white,
-          //             fontSize: 16.sp,
-          //             fontWeight: FontWeight.w600,
-          //           ),
-          //         ),
-          //       ),
-          //     ),
-          //   )
-          // else
-          // Otherwise show request button with dropdown
-          widget.community.isMyCommunity
-              ? PrimaryButton.text(
-                  radius: 12.r,
-                  onPressed: () {
-                    context.pushNamed(
-                      RouteNames.communityDetailsScreen,
-                      extra: widget.community,
-                    );
-                  },
-                  text: "View Details",
-                )
-              : Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          // setState(() {
-                          //   // currentStatus = CommunityStatus.requested;
-                          //   // AppSnackbar.show(
-                          //   //   message:
-                          //   //       "Send a request to the community creator to joint the community",
-                          //   //   type: SnackType.success,
-                          //   // );
-
-                          //   if (currentStatus == CommunityStatus.requested) {
-                          //     currentStatus = CommunityStatus.interested;
-                          //     showDialog(
-                          //       context: context,
-                          //       barrierDismissible: true,
-                          //       builder: (context) {
-                          //         return Center(
-                          //           child: Dialog(
-                          //             shape: RoundedRectangleBorder(
-                          //               borderRadius: BorderRadius.circular(20.r),
-                          //             ),
-                          //             elevation: 0,
-                          //             backgroundColor: Colors.transparent,
-                          //             child: CommunityAnimatedDialog(
-                          //               content:
-                          //                   'Revoke your request to join the community?',
-                          //             ),
-                          //           ),
-                          //         );
-                          //       },
-                          //     );
-                          //   } else {
-                          //     currentStatus = CommunityStatus.requested;
-                          //     showDialog(
-                          //       context: context,
-                          //       barrierDismissible: true,
-                          //       builder: (context) {
-                          //         return Center(
-                          //           child: Dialog(
-                          //             shape: RoundedRectangleBorder(
-                          //               borderRadius: BorderRadius.circular(20.r),
-                          //             ),
-                          //             elevation: 0,
-                          //             backgroundColor: Colors.transparent,
-                          //             child: CommunityAnimatedDialog(
-                          //               content:
-                          //                   'Send a request to the community creator to joint the community',
-                          //             ),
-                          //           ),
-                          //         );
-                          //       },
-                          //     );
-                          //   }
-                          // });
-
-                          // Public Community flow
-                          // if (isPrivate && isRequested) return;
-
-                          // if (isPublic && !isGoing) {
-                          //   setState(() {
-                          //     currentStatus = CommunityStatus.going;
-                          //   });
-                          //   showDialog(
-                          //     context: context,
-                          //     builder: (_) => Dialog(
-                          //       backgroundColor: Colors.transparent,
-                          //       child: CommunityAnimatedDialog(
-                          //         content:
-                          //             'You have joined the community successfully.',
-                          //       ),
-                          //     ),
-                          //   );
-                          //   return;
-                          // }
-                          if (isRequested) return;
-                          setState(() {
-                            currentStatus = CommunityStatus.requested;
-                          });
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (_) => Dialog(
-                          //     backgroundColor: Colors.transparent,
-                          //     child: CommunityAnimatedDialog(
-                          //       content:
-                          //           'Request sent. Wait for the organizer to confirm it.',
-                          //     ),
-                          //   ),
-                          // );
-
-                          showDialog(
-                            context: context,
-                            builder: (context) => RequestSentDialog(
-                              onWithDrawTap: () {
-                                setState(() {
-                                  currentStatus = CommunityStatus.interested;
-                                });
-                                Navigator.pop(context);
-                              },
-                            ),
-                          );
-
-                          // // Private Community flow
-                          // if (isPrivate && !isRequested) {
-                          //   setState(() {
-                          //     currentStatus = CommunityStatus.requested;
-                          //   });
-                          //   showDialog(
-                          //     context: context,
-                          //     builder: (_) => Dialog(
-                          //       backgroundColor: Colors.transparent,
-                          //       child: CommunityAnimatedDialog(
-                          //         content:
-                          //             'Request sent. Wait for the organizer to confirm it.',
-                          //       ),
-                          //     ),
-                          //   );
-                          //   return;
-                          // }
-                        },
-
-                        child: Container(
-                          padding: EdgeInsets.all(12.w),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: Theme.of(context).dividerColor),
-                            gradient: !isActive
-                                ? AppColors.primaryGradient
-                                : AppColors.primaryGradient.withOpacity(0.5),
-                            // color: isActive ? Color(0xffC4A8FF) : null,
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              spacing: 8.w,
-                              children: [
-                                // isPrivate
-                                //     ? SvgPicture.asset(
-                                //         isActive ? hourglass : "",
-                                //         height: isActive ? 18.h : 0,
-                                //         width: isActive ? 18.w : 0,
-                                //         color: AppColors.background,
-                                //       )
-                                //     : SizedBox(),
-                                // // : SvgPicture.asset(
-                                // //     wishlist,
-                                // //     height: 18.h,
-                                // //     width: 18.w,
-                                // //     color: AppColors.background,
-                                // //   ),
-                                if (isActive)
-                                  SvgPicture.asset(
-                                    hourglass,
-                                    height: 18.h,
-                                    width: 18.w,
-                                    color: AppColors.background,
-                                  ),
-                                Text(
-                                  buttonText,
-                                  style: TextStyle(
-                                    color:
-                                        CommunityStatus.interested !=
-                                            currentStatus
-                                        ? Colors.white
-                                        : Colors.white,
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    // widget.community.isMyCommunity
-                    //     ? SizedBox.shrink()
-                    //     : _buildPopUpMenuSection(),
-                  ],
-                ),
         ],
       ),
     );
   }
 
-  Widget _buildPopUpMenuSection() {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12.r),
-        color: Theme.of(context).colorScheme.surfaceVariant,
-      ),
-      child: PopupMenuButton(
-        color: Theme.of(context).colorScheme.surface,
-        iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
-        icon: Assets.icons.down.svg(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
+  Widget _buildMainContent() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildImageSection(),
+        SizedBox(height: 12.h),
+        _buildTitle(),
+        SizedBox(height: 12.h),
+        _buildDescription(),
+        SizedBox(height: 12.h),
+        _buildLocation(),
+        SizedBox(height: 12.h),
+        _buildDateTime(),
+        SizedBox(height: 12.h),
+        _buildAttendees(),
+        SizedBox(height: 12.h),
+        _buildParticipants(),
+        SizedBox(height: 12.h),
+        _buildActionButton(),
+      ],
+    );
+  }
+
+  Widget _buildImageSection() {
+    return Stack(
+      alignment: Alignment.topRight,
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8.r),
+          child: widget.community.coverImage != null
+              ? Image.network(
+                  widget.community.coverImage!.startsWith('http')
+                      ? widget.community.coverImage!
+                      : '${AppCredentials.domain}${widget.community.coverImage}',
+                  width: double.infinity,
+                  height: 160.h,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _buildImagePlaceholder(),
+                )
+              : _buildImagePlaceholder(),
         ),
-        itemBuilder: (context) => [
-          PopupMenuItem(
-            onTap: () {
-              Future.delayed(Duration.zero, () {
-                setState(() {
-                  currentStatus = CommunityStatus.interested;
-                });
-              });
-            },
-            child: Text(
-              "Interested",
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                color: Theme.of(context).colorScheme.onSurface,
+
+        // Interest/Favorite button
+        GestureDetector(
+          onTap: _isLoadingInterest ? null : _handleInterestTap,
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isInterested
+                    ? AppColors.primary
+                    : AppColors.primary.withAlpha(200),
               ),
+              padding: const EdgeInsets.all(10),
+              child: _isLoadingInterest
+                  ? SizedBox(
+                      height: 18.h,
+                      width: 18.w,
+                      child: const CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
+                  : SvgPicture.asset(
+                      isInterested ? wishlistFilled : wishlist,
+                      height: 18.h,
+                      width: 18.w,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.white,
+                        BlendMode.srcIn,
+                      ),
+                    ),
             ),
           ),
-          PopupMenuItem(
-            onTap: () {
-              Future.delayed(Duration.zero, () {
-                setState(() {
-                  currentStatus = CommunityStatus.going;
-                });
-              });
-            },
-            child: Text(
-              "Going",
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+        ),
+
+        // Private/Public badge
+        Positioned(
+          top: 10.h,
+          left: 12.w,
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withAlpha(200),
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 4.w,
+              children: [
+                SvgPicture.asset(
+                  private,
+                  height: 14.h,
+                  width: 14.w,
+                  colorFilter: const ColorFilter.mode(
+                    Colors.white,
+                    BlendMode.srcIn,
+                  ),
+                ),
+                Text(
+                  isPrivate ? "Private" : "Public",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
           ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildImagePlaceholder() {
+    return Container(
+      width: double.infinity,
+      height: 160.h,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      child: Icon(
+        Icons.image,
+        size: 48.h,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
       ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return Text(
+      widget.community.title ?? '',
+      style: TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w500,
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildDescription() {
+    return Text(
+      widget.community.description ?? '',
+      style: TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w500,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+  }
+
+  Widget _buildLocation() {
+    return Row(
+      children: [
+        Assets.icons.location.svg(
+          width: 16.w,
+          height: 16.h,
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).colorScheme.onSurfaceVariant,
+            BlendMode.srcIn,
+          ),
+        ),
+        SizedBox(width: 4.w),
+        Expanded(
+          child: Text(
+            widget.community.address ?? '',
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w400,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateTime() {
+    final dateTime = widget.community.formattedDateTime;
+    if (dateTime.isEmpty) return const SizedBox.shrink();
+
+    return Row(
+      children: [
+        Assets.icons.calendarColor.svg(
+          width: 16.w,
+          height: 16.h,
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).colorScheme.onSurfaceVariant,
+            BlendMode.srcIn,
+          ),
+        ),
+        SizedBox(width: 4.w),
+        Text(
+          dateTime,
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAttendees() {
+    return Row(
+      children: [
+        Assets.icons.community.svg(
+          width: 16.w,
+          height: 16.h,
+          colorFilter: ColorFilter.mode(
+            Theme.of(context).colorScheme.onSurfaceVariant,
+            BlendMode.srcIn,
+          ),
+        ),
+        SizedBox(width: 4.w),
+        Text(
+          "${widget.community.joinedCount ?? 0}/${widget.community.maxAttendees ?? 0} attending",
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildParticipants() {
+    final participants = widget.community.participants ?? [];
+    if (participants.isEmpty) return const SizedBox.shrink();
+
+    final avatars = participants
+        .take(3)
+        .map((p) => p.avatar)
+        .whereType<String>()
+        .toList();
+
+    if (avatars.isEmpty) return const SizedBox.shrink();
+
+    return AvatarStack(
+      imageUrls: avatars,
+      extraCount: participants.length > 3 ? participants.length - 3 : 0,
+    );
+  }
+
+  Widget _buildActionButton() {
+    // My community - show View Details
+    if (isMyCommunity) {
+      return PrimaryButton.text(
+        radius: 12.r,
+        onPressed: () {
+          context.pushNamed(
+            RouteNames.communityDetailsScreen,
+            extra: widget.community,
+          );
+        },
+        text: "View Details",
+      );
+    }
+
+    // Already joined - show View Details
+    if (isJoined) {
+      return PrimaryButton.text(
+        radius: 12.r,
+        onPressed: () {
+          context.pushNamed(
+            RouteNames.communityDetailsScreen,
+            extra: widget.community,
+          );
+        },
+        text: "View Details",
+      );
+    }
+
+    // Not joined - show Join button
+    return Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: _isLoadingJoin ? null : _handleJoinTap,
+            child: Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(color: Theme.of(context).dividerColor),
+                gradient: AppColors.primaryGradient,
+              ),
+              child: Center(
+                child: _isLoadingJoin
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Colors.white,
+                          ),
+                        ),
+                      )
+                    : Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        spacing: 8.w,
+                        children: [
+                          if (isPrivate)
+                            SvgPicture.asset(
+                              hourglass,
+                              height: 18.h,
+                              width: 18.w,
+                              colorFilter: const ColorFilter.mode(
+                                Colors.white,
+                                BlendMode.srcIn,
+                              ),
+                            ),
+                          Text(
+                            isPrivate ? "Request" : "Join",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

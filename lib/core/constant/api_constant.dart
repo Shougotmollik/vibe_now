@@ -14,4 +14,7 @@ class ApiConstant {
 
   static const String createEvent = "/events/create";
   static const String event = "/events";
+
+  static const String createCommunity = "/communities/create";
+  static const String community = "/communities";
 }

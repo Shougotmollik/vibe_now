@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +13,10 @@ import 'package:vibe_now/services/local_storage.dart';
 class AuthController extends GetxController {
   var isLoading = false.obs;
   var isRefreshing = false.obs;
+
+  // FOR REFRESH TOKEN
+  bool _isRefreshing = false;
+  Completer<bool>? _refreshCompleter;
 
   // user signup
   Future<Map<String, String>?> signup({
@@ -199,47 +205,59 @@ class AuthController extends GetxController {
 
   // Refresh token
   Future<bool> refreshToken() async {
-    if (isRefreshing.value) return false;
+    if (_isRefreshing) {
+      return _refreshCompleter?.future ?? false;
+    }
+
+    _isRefreshing = true;
+    _refreshCompleter = Completer<bool>();
+
     try {
-      isLoading.value = true;
-      isRefreshing(true);
       final storedRefreshToken = await LocalStorage.refresh_token.get();
 
       if (storedRefreshToken == null || storedRefreshToken.isEmpty) {
         await logout();
+        _refreshCompleter!.complete(false);
         return false;
       }
 
       final response = await CustomHttp.post(
-        show_floating_error: false,
         endpoint: ApiConstant.refreshToken,
         body: {"refresh_token": storedRefreshToken},
         need_auth: false,
+        show_floating_error: false,
       );
 
       final data = response.data ?? {};
 
-      if (response.ok) {
-        final accessToken = data['data']?['tokens']?['access'] ?? '';
-        final refreshToken = data['data']?['tokens']?['refresh'] ?? '';
-        final userId = data['data']?['user']?['id'] ?? '';
-
-        // Save to local storage
-        await LocalStorage.access_token.set(accessToken);
-        await LocalStorage.refresh_token.set(refreshToken);
-        await LocalStorage.user_id.set(userId);
-
-        return true;
-      } else {
+      if (!response.ok) {
         await logout();
+        _refreshCompleter!.complete(false);
         return false;
       }
+
+      final tokens = data['data']?['tokens'];
+
+      final access = tokens?['access'];
+      final refresh = tokens?['refresh'];
+
+      if (access == null || access.isEmpty) {
+        await logout();
+        _refreshCompleter!.complete(false);
+        return false;
+      }
+
+      await LocalStorage.access_token.set(access);
+      await LocalStorage.refresh_token.set(refresh);
+
+      _refreshCompleter!.complete(true);
+      return true;
     } catch (e) {
-      debugPrint('Error refreshing token: $e');
+      _refreshCompleter!.complete(false);
       return false;
     } finally {
-      isRefreshing(false);
-      isLoading(false);
+      _isRefreshing = false;
+      _refreshCompleter = null;
     }
   }
 

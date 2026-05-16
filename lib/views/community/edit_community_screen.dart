@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vibe_now/controller/community_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
@@ -155,10 +156,10 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                           },
                         );
                       },
-                        child: Icon(
-                          Icons.more_vert,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
+                      child: Icon(
+                        Icons.more_vert,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                   ],
                 ),
@@ -381,7 +382,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
               ),
               side: BorderSide(color: Theme.of(context).dividerColor),
             ),
-            child:  Text(
+            child: Text(
               'Cancel',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
@@ -452,7 +453,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Max Attendees',
           style: TextStyle(
             fontSize: 15,
@@ -492,7 +493,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text(
+              Text(
                 'Date',
                 style: TextStyle(
                   fontSize: 15,
@@ -541,7 +542,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text(
+              Text(
                 'Time',
                 style: TextStyle(
                   fontSize: 15,
@@ -621,7 +622,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Select Location',
           style: TextStyle(
             fontSize: 15,
@@ -662,7 +663,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Community Category',
           style: TextStyle(
             fontSize: 18,
@@ -722,7 +723,9 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                                             : null,
                                         color: selected
                                             ? null
-                                            : Theme.of(context).colorScheme.surfaceVariant,
+                                            : Theme.of(
+                                                context,
+                                              ).colorScheme.surfaceVariant,
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
@@ -731,7 +734,9 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                                           fontSize: 13.sp,
                                           color: selected
                                               ? Colors.white
-                                              : Theme.of(context).colorScheme.onSurfaceVariant,
+                                              : Theme.of(
+                                                  context,
+                                                ).colorScheme.onSurfaceVariant,
                                         ),
                                       ),
                                     ),
@@ -977,7 +982,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Description',
           style: TextStyle(
             fontSize: 15,
@@ -1028,7 +1033,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Rules',
           style: TextStyle(
             fontSize: 15,
@@ -1079,7 +1084,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-         Text(
+        Text(
           'Community Title',
           style: TextStyle(
             fontSize: 15,
@@ -1126,7 +1131,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   fit: BoxFit.cover,
                 )
               : Image.network(
-                  widget.community.image,
+                  AppCredentials.fixurl(widget.community.coverImage),
                   height: 160.h,
                   width: double.infinity,
                   fit: BoxFit.cover,
