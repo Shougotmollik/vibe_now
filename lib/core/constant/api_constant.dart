@@ -17,4 +17,6 @@ class ApiConstant {
 
   static const String createCommunity = "/communities/create";
   static const String community = "/communities";
+
+  static const String vibe = "/vibes";
 }

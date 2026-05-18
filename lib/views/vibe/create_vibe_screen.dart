@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/state_manager.dart';
 import 'package:timelines_plus/timelines_plus.dart';
+import 'package:vibe_now/controller/vibe_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/design_system.dart';
@@ -22,6 +25,8 @@ class CreateVibeScreen extends StatefulWidget {
 
 class _CreateVibeScreenState extends State<CreateVibeScreen> {
   final TextEditingController _titleController = TextEditingController();
+  final VibeController controller = Get.find<VibeController>();
+  String _selectedDuration = '2h';
 
   File? _selectedImage;
   @override
@@ -41,7 +46,13 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                     _buildImageUploadSection(),
 
                     _buildVibeTitle(),
-                    VibeDurationSelector(),
+                    VibeDurationSelector(
+                      onDurationChanged: (duration) {
+                        setState(() {
+                          _selectedDuration = duration;
+                        });
+                      },
+                    ),
                     _buildInfoCard(
                       icons: Assets.icons.lock,
                       title: "Privacy First",
@@ -76,30 +87,42 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
         Expanded(
           child: SizedBox(
             height: 55.h,
-            child: PrimaryButton.text(
-              onPressed: () async {
-                await showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (context) {
-                    return Center(
-                      child: Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        elevation: 0,
-                        backgroundColor: Colors.transparent,
-                        child: VibeAnimatedDialog(
-                          content: "Your Vibe is now live.",
-                        ),
-                      ),
-                    );
-                  },
-                );
-                Navigator.of(context).maybePop();
-              },
-              text: "Create",
-              radius: 30.r,
+            child: Obx(
+              () => PrimaryButton.text(
+                onPressed: controller.isLoading.value
+                    ? () {}
+                    : () async {
+                        final success = await controller.createVibe(
+                          coverImage: _selectedImage!,
+                          title: _titleController.text,
+                          duration: _selectedDuration,
+                        );
+                        if (success) {
+                          await showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (context) {
+                              return Center(
+                                child: Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.r),
+                                  ),
+                                  elevation: 0,
+                                  backgroundColor: Colors.transparent,
+                                  child: VibeAnimatedDialog(
+                                    content: "Your Vibe is now live.",
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                          Navigator.of(context).maybePop();
+                        }
+                      },
+                text: "Create",
+                radius: 30.r,
+                isLoading: controller.isLoading.value,
+              ),
             ),
           ),
         ),
@@ -229,7 +252,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
               fontSize: 14.sp,
             ),
             filled: true,
-            fillColor: Theme.of(context).colorScheme.surface,
+            fillColor: Theme.of(context).colorScheme.surfaceVariant,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(40.r),
               borderSide: BorderSide.none,
@@ -412,7 +435,9 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
 }
 
 class VibeDurationSelector extends StatefulWidget {
-  const VibeDurationSelector({super.key});
+  const VibeDurationSelector({super.key, required this.onDurationChanged});
+
+  final Function(String) onDurationChanged;
 
   @override
   State<VibeDurationSelector> createState() => _VibeDurationSelectorState();
@@ -421,7 +446,16 @@ class VibeDurationSelector extends StatefulWidget {
 class _VibeDurationSelectorState extends State<VibeDurationSelector> {
   int _selectedIndex = 2;
 
-  final List<String> _durations = ['30m', '1hr', '2hrs', '4hrs'];
+  final List<String> _durations = ['30m', '1h', '2h', '4h'];
+
+  @override
+  void initState() {
+    super.initState();
+    // Notify initial duration
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      widget.onDurationChanged(_durations[_selectedIndex]);
+    });
+  }
 
   // Colors
   // static const _activeGradientStart = Color(0xFF818CF8);
@@ -498,7 +532,10 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
                   indicatorBuilder: (context, index) {
                     final isSelected = index == _selectedIndex;
                     return GestureDetector(
-                      onTap: () => setState(() => _selectedIndex = index),
+                      onTap: () {
+                        setState(() => _selectedIndex = index);
+                        widget.onDurationChanged(_durations[index]);
+                      },
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 100),
                         curve: Curves.easeInOut,
