@@ -77,6 +77,10 @@ class Event {
   final String? address;
   final String? eventDate;
   final String? eventTime;
+  final String? eventStartingDate;
+  final String? eventStartingTime;
+  final String? eventEndingDate;
+  final String? eventEndingTime;
   final int? maxAttendees;
   final String? status;
   final String? qrCodeValue;
@@ -102,6 +106,10 @@ class Event {
     this.address,
     this.eventDate,
     this.eventTime,
+    this.eventStartingDate,
+    this.eventStartingTime,
+    this.eventEndingDate,
+    this.eventEndingTime,
     this.maxAttendees,
     this.status,
     this.qrCodeValue,
@@ -137,6 +145,10 @@ class Event {
       address: json['address'],
       eventDate: json['event_date'],
       eventTime: json['event_time'],
+      eventStartingDate: json['event_starting_date'],
+      eventStartingTime: json['event_starting_time'],
+      eventEndingDate: json['event_ending_date'],
+      eventEndingTime: json['event_ending_time'],
       maxAttendees: json['max_attendees'],
       status: json['status'],
       qrCodeValue: json['qr_code_value'],

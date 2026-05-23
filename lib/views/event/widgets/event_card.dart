@@ -364,13 +364,9 @@ class _EventCardState extends State<EventCard> {
                 BlendMode.srcIn,
               ),
             ),
-            SizedBox(width: 4.w),
-            Text(
-              '${widget.event.eventTime ?? ''}, ${widget.event.eventDate ?? ''}',
-              style: TextStyle(
-                fontSize: 12.sp,
-                color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
-              ),
+            SizedBox(width: 6.w),
+            Expanded(
+              child: _buildDateTimeDisplay(),
             ),
           ],
         ),
@@ -416,6 +412,59 @@ class _EventCardState extends State<EventCard> {
                 ? _buildViewDetailsButton()
                 : _buildActionButton(),
       ],
+    );
+  }
+
+  Widget _buildDateTimeDisplay() {
+    String formatDate(String? dateStr) {
+      if (dateStr == null || dateStr.isEmpty) return '';
+      try {
+        final parts = dateStr.split('-');
+        if (parts.length != 3) return dateStr;
+        final months = [
+          '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        final month = int.tryParse(parts[1]) ?? 0;
+        return '${int.parse(parts[2])} ${month > 0 && month <= 12 ? months[month] : parts[1]} ${parts[0]}';
+      } catch (_) {
+        return dateStr;
+      }
+    }
+
+    final startDate = widget.event.eventStartingDate;
+    final startTime = widget.event.eventStartingTime;
+    final endDate = widget.event.eventEndingDate;
+    final endTime = widget.event.eventEndingTime;
+
+    if (startDate != null) {
+      final start = '${formatDate(startDate)}${startTime != null ? "  ${startTime}" : ""}';
+      if (endDate != null) {
+        final end = '${formatDate(endDate)}${endTime != null ? "  ${endTime}" : ""}';
+        return Text(
+          '$start  —  $end',
+          style: TextStyle(
+            fontSize: 12.sp,
+            color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+          ),
+        );
+      }
+      return Text(
+        start,
+        style: TextStyle(
+          fontSize: 12.sp,
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+        ),
+      );
+    }
+
+    // Fallback to legacy fields
+    return Text(
+      '${widget.event.eventTime ?? ""} ${widget.event.eventDate ?? ""}',
+      style: TextStyle(
+        fontSize: 12.sp,
+        color: Theme.of(context).colorScheme.onSurface.withAlpha(180),
+      ),
     );
   }
 

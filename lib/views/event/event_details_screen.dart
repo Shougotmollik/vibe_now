@@ -188,22 +188,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                         ],
                       ),
                       SizedBox(height: 6.h),
-                      Row(
-                        children: [
-                          Assets.icons.calender3.svg(),
-                          SizedBox(width: 4.w),
-                          Text(
-                            '${event.eventTime}, ${event.eventDate}',
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              color: Theme.of(
-                                context,
-                              ).colorScheme.onSurfaceVariant,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                        ],
-                      ),
+                      _buildDateTimeRow(event),
                       SizedBox(height: 6.h),
                       Row(
                         children: [
@@ -401,4 +386,62 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       );
     });
   }
+
+  Widget _buildDateTimeRow(Event event) {
+    String formatDate(String? dateStr) {
+      if (dateStr == null || dateStr.isEmpty) return '';
+      try {
+        final parts = dateStr.split('-');
+        if (parts.length != 3) return dateStr;
+        final months = [
+          '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        final month = int.tryParse(parts[1]) ?? 0;
+        return '${int.parse(parts[2])} ${month > 0 && month <= 12 ? months[month] : parts[1]} ${parts[0]}';
+      } catch (_) {
+        return dateStr;
+      }
+    }
+
+    final startDate = event.eventStartingDate;
+    final startTime = event.eventStartingTime;
+    final endDate = event.eventEndingDate;
+    final endTime = event.eventEndingTime;
+
+    String dateTimeText = '';
+
+    if (startDate != null) {
+      final start = '${formatDate(startDate)}${startTime != null ? "  $startTime" : ""}';
+      if (endDate != null) {
+        final end = '${formatDate(endDate)}${endTime != null ? "  $endTime" : ""}';
+        dateTimeText = '$start  —  $end';
+      } else {
+        dateTimeText = start;
+      }
+    } else {
+      // Fallback to legacy fields
+      dateTimeText = '${event.eventTime ?? ""} ${event.eventDate ?? ""}';
+    }
+
+    return Row(
+      children: [
+        Assets.icons.calender3.svg(
+          color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+        ),
+        SizedBox(width: 4.w),
+        Expanded(
+          child: Text(
+            dateTimeText,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Theme.of(context).colorScheme.onSurface.withAlpha(150),
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
+

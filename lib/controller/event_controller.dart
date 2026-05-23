@@ -121,9 +121,11 @@ class EventController extends GetxController {
     required String address,
     required String latitude,
     required String longitude,
-    required String eventDate,
-    required String eventTime,
     required String maxAttendees,
+    required String eventStartingDate,
+    required String eventStartingTime,
+    required String eventEndingDate,
+    required String eventEndingTime,
   }) async {
     try {
       isLoading(true);
@@ -141,8 +143,10 @@ class EventController extends GetxController {
           'address': address,
           'latitude': latitude,
           'longitude': longitude,
-          'event_date': eventDate,
-          'event_time': eventTime,
+          'event_starting_date': eventStartingDate,
+          'event_starting_time': eventStartingTime,
+          'event_ending_date': eventEndingDate,
+          'event_ending_time': eventEndingTime,
           'max_attendees': maxAttendees,
         },
       );
@@ -213,8 +217,10 @@ class EventController extends GetxController {
     required String address,
     required String latitude,
     required String longitude,
-    required String eventDate,
-    required String eventTime,
+    required String eventStartingDate,
+    required String eventStartingTime,
+    required String eventEndingDate,
+    required String eventEndingTime,
     required String maxAttendees,
   }) async {
     try {
@@ -236,8 +242,10 @@ class EventController extends GetxController {
           'address': address,
           'latitude': latitude,
           'longitude': longitude,
-          'event_date': eventDate,
-          'event_time': eventTime,
+          'event_starting_date': eventStartingDate,
+          'event_starting_time': eventStartingTime,
+          'event_ending_date': eventEndingDate,
+          'event_ending_time': eventEndingTime,
           'max_attendees': maxAttendees,
         },
       );

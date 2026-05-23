@@ -37,8 +37,10 @@ class EditEventScreen extends StatefulWidget {
 class _EditEventScreenState extends State<EditEventScreen> {
   File? _selectedImage;
   String? _activeParentForSub;
-  DateTime? _selectedDate;
-  TimeOfDay? _selectedTime;
+  DateTime? _startingDate;
+  TimeOfDay? _startingTime;
+  DateTime? _endingDate;
+  TimeOfDay? _endingTime;
   late TextEditingController _titleController;
   final TextEditingController _categoryController = TextEditingController();
   final EventController eventController = Get.find<EventController>();
@@ -62,11 +64,20 @@ class _EditEventScreenState extends State<EditEventScreen> {
         ? EventAccessType.private
         : EventAccessType.public;
 
-    // Parse date from eventDate string (format: "2025-05-15")
-    if (widget.event.eventDate != null && widget.event.eventDate!.isNotEmpty) {
+    // Parse dates from event data
+    if (widget.event.eventStartingDate != null && widget.event.eventStartingDate!.isNotEmpty) {
+      final parts = widget.event.eventStartingDate!.split('-');
+      if (parts.length == 3) {
+        _startingDate = DateTime(
+          int.parse(parts[0]),
+          int.parse(parts[1]),
+          int.parse(parts[2]),
+        );
+      }
+    } else if (widget.event.eventDate != null && widget.event.eventDate!.isNotEmpty) {
       final parts = widget.event.eventDate!.split('-');
       if (parts.length == 3) {
-        _selectedDate = DateTime(
+        _startingDate = DateTime(
           int.parse(parts[0]),
           int.parse(parts[1]),
           int.parse(parts[2]),
@@ -74,10 +85,22 @@ class _EditEventScreenState extends State<EditEventScreen> {
       }
     }
 
-    // Parse time from eventTime string (format: "10:30 AM")
-    if (widget.event.eventTime != null && widget.event.eventTime!.isNotEmpty) {
+    if (widget.event.eventEndingDate != null && widget.event.eventEndingDate!.isNotEmpty) {
+      final parts = widget.event.eventEndingDate!.split('-');
+      if (parts.length == 3) {
+        _endingDate = DateTime(
+          int.parse(parts[0]),
+          int.parse(parts[1]),
+          int.parse(parts[2]),
+        );
+      }
+    }
+
+    // Parse times from event data
+    void parseTime(String? timeStr, Function(TimeOfDay) assign) {
+      if (timeStr == null || timeStr.isEmpty) return;
       try {
-        final timeParts = widget.event.eventTime!.split(' ');
+        final timeParts = timeStr.split(' ');
         if (timeParts.length == 2) {
           final hourMin = timeParts[0].split(':');
           int hour = int.parse(hourMin[0]);
@@ -85,12 +108,18 @@ class _EditEventScreenState extends State<EditEventScreen> {
           final isPM = timeParts[1].toUpperCase() == 'PM';
           if (isPM && hour != 12) hour += 12;
           if (!isPM && hour == 12) hour = 0;
-          _selectedTime = TimeOfDay(hour: hour, minute: minute);
+          assign(TimeOfDay(hour: hour, minute: minute));
         }
       } catch (e) {
         debugPrint('Error parsing time: $e');
       }
     }
+
+    parseTime(widget.event.eventStartingTime, (time) => _startingTime = time);
+    if (_startingTime == null) {
+      parseTime(widget.event.eventTime, (time) => _startingTime = time);
+    }
+    parseTime(widget.event.eventEndingTime, (time) => _endingTime = time);
 
     // Initialize selected categories from event
     if (widget.event.categories != null) {
@@ -108,7 +137,10 @@ class _EditEventScreenState extends State<EditEventScreen> {
     super.dispose();
   }
 
-  Future<void> _selectDate(BuildContext context) async {
+  Future<void> _selectDate({
+    required BuildContext context,
+    required Function(DateTime) onSelected,
+  }) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -117,7 +149,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
     if (picked != null) {
       setState(() {
-        _selectedDate = picked;
+        onSelected(picked);
       });
     }
   }
@@ -251,110 +283,170 @@ class _EditEventScreenState extends State<EditEventScreen> {
   }
 
   Widget _buildDateTimeRow() {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Date',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () => _selectDate(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.calendar_today_outlined,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        _selectedDate == null
-                            ? 'Select'
-                            : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
+        Text(
+          'Event Date & Time',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Time',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.onSurface,
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildDateField(
+                label: 'Starting Date',
+                date: _startingDate,
+                onTap: () => _selectDate(
+                  context: context,
+                  onSelected: (date) => _startingDate = date,
                 ),
               ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () => _showTimePicker(context),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceVariant,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.access_time_outlined,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        size: 18,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        _selectedTime == null
-                            ? 'Select'
-                            : _selectedTime!.format(context),
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontSize: 14,
-                        ),
-                      ),
-                    ],
-                  ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildTimeField(
+                label: 'Starting Time',
+                time: _startingTime,
+                onTap: () => _showTimePicker(context, (time) => _startingTime = time),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildDateField(
+                label: 'Ending Date',
+                date: _endingDate,
+                onTap: () => _selectDate(
+                  context: context,
+                  onSelected: (date) => _endingDate = date,
                 ),
               ),
-            ],
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildTimeField(
+                label: 'Ending Time',
+                time: _endingTime,
+                onTap: () => _showTimePicker(context, (time) => _endingTime = time),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDateField({
+    required String label,
+    required DateTime? date,
+    required VoidCallback onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 6),
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.calendar_today_outlined,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 18,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  date == null
+                      ? 'Select'
+                      : '${date.day}/${date.month}/${date.year}',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  void _showTimePicker(BuildContext context) {
+  Widget _buildTimeField({
+    required String label,
+    required TimeOfDay? time,
+    required VoidCallback onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w400,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: 6),
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.access_time_outlined,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 18,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  time == null
+                      ? 'Select'
+                      : time.format(context),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showTimePicker(BuildContext context, Function(TimeOfDay) onSelected) {
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -362,7 +454,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
       ),
       builder: (context) => CustomTimePicker(
         onTimeSelected: (time) {
-          setState(() => _selectedTime = time);
+          setState(() => onSelected(time));
         },
       ),
     );
@@ -1129,13 +1221,23 @@ class _EditEventScreenState extends State<EditEventScreen> {
       return;
     }
 
-    if (_selectedDate == null) {
-      AppSnackbar.show(message: 'Please select date', type: SnackType.info);
+    if (_startingDate == null) {
+      AppSnackbar.show(message: 'Please select starting date', type: SnackType.info);
       return;
     }
 
-    if (_selectedTime == null) {
-      AppSnackbar.show(message: 'Please select time', type: SnackType.info);
+    if (_startingTime == null) {
+      AppSnackbar.show(message: 'Please select starting time', type: SnackType.info);
+      return;
+    }
+
+    if (_endingDate == null) {
+      AppSnackbar.show(message: 'Please select ending date', type: SnackType.info);
+      return;
+    }
+
+    if (_endingTime == null) {
+      AppSnackbar.show(message: 'Please select ending time', type: SnackType.info);
       return;
     }
 
@@ -1159,10 +1261,14 @@ class _EditEventScreenState extends State<EditEventScreen> {
       address: _locationController.text,
       latitude: _selectedLatitude?.toString() ?? '',
       longitude: _selectedLongitude?.toString() ?? '',
-      eventDate: _selectedDate != null
-          ? "${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}"
+      eventStartingDate: _startingDate != null
+          ? "${_startingDate!.year}-${_startingDate!.month.toString().padLeft(2, '0')}-${_startingDate!.day.toString().padLeft(2, '0')}"
           : '',
-      eventTime: _selectedTime != null ? _selectedTime!.format(context) : '',
+      eventStartingTime: _startingTime != null ? _startingTime!.format(context) : '',
+      eventEndingDate: _endingDate != null
+          ? "${_endingDate!.year}-${_endingDate!.month.toString().padLeft(2, '0')}-${_endingDate!.day.toString().padLeft(2, '0')}"
+          : '',
+      eventEndingTime: _endingTime != null ? _endingTime!.format(context) : '',
       maxAttendees: _maxAttendeesController.text.trim(),
     );
 
