@@ -65,7 +65,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
         : EventAccessType.public;
 
     // Parse dates from event data
-    if (widget.event.eventStartingDate != null && widget.event.eventStartingDate!.isNotEmpty) {
+    if (widget.event.eventStartingDate != null &&
+        widget.event.eventStartingDate!.isNotEmpty) {
       final parts = widget.event.eventStartingDate!.split('-');
       if (parts.length == 3) {
         _startingDate = DateTime(
@@ -74,7 +75,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
           int.parse(parts[2]),
         );
       }
-    } else if (widget.event.eventDate != null && widget.event.eventDate!.isNotEmpty) {
+    } else if (widget.event.eventDate != null &&
+        widget.event.eventDate!.isNotEmpty) {
       final parts = widget.event.eventDate!.split('-');
       if (parts.length == 3) {
         _startingDate = DateTime(
@@ -85,7 +87,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
       }
     }
 
-    if (widget.event.eventEndingDate != null && widget.event.eventEndingDate!.isNotEmpty) {
+    if (widget.event.eventEndingDate != null &&
+        widget.event.eventEndingDate!.isNotEmpty) {
       final parts = widget.event.eventEndingDate!.split('-');
       if (parts.length == 3) {
         _endingDate = DateTime(
@@ -220,7 +223,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
                         },
                         onCancel: () {
                           Navigator.pop(context);
-                          Navigator.pop(context);
                         },
                       );
                     },
@@ -312,7 +314,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
               child: _buildTimeField(
                 label: 'Starting Time',
                 time: _startingTime,
-                onTap: () => _showTimePicker(context, (time) => _startingTime = time),
+                onTap: () =>
+                    _showTimePicker(context, (time) => _startingTime = time),
               ),
             ),
           ],
@@ -335,7 +338,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
               child: _buildTimeField(
                 label: 'Ending Time',
                 time: _endingTime,
-                onTap: () => _showTimePicker(context, (time) => _endingTime = time),
+                onTap: () =>
+                    _showTimePicker(context, (time) => _endingTime = time),
               ),
             ),
           ],
@@ -430,9 +434,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  time == null
-                      ? 'Select'
-                      : time.format(context),
+                  time == null ? 'Select' : time.format(context),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 14,
@@ -1222,22 +1224,34 @@ class _EditEventScreenState extends State<EditEventScreen> {
     }
 
     if (_startingDate == null) {
-      AppSnackbar.show(message: 'Please select starting date', type: SnackType.info);
+      AppSnackbar.show(
+        message: 'Please select starting date',
+        type: SnackType.info,
+      );
       return;
     }
 
     if (_startingTime == null) {
-      AppSnackbar.show(message: 'Please select starting time', type: SnackType.info);
+      AppSnackbar.show(
+        message: 'Please select starting time',
+        type: SnackType.info,
+      );
       return;
     }
 
     if (_endingDate == null) {
-      AppSnackbar.show(message: 'Please select ending date', type: SnackType.info);
+      AppSnackbar.show(
+        message: 'Please select ending date',
+        type: SnackType.info,
+      );
       return;
     }
 
     if (_endingTime == null) {
-      AppSnackbar.show(message: 'Please select ending time', type: SnackType.info);
+      AppSnackbar.show(
+        message: 'Please select ending time',
+        type: SnackType.info,
+      );
       return;
     }
 
@@ -1264,7 +1278,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
       eventStartingDate: _startingDate != null
           ? "${_startingDate!.year}-${_startingDate!.month.toString().padLeft(2, '0')}-${_startingDate!.day.toString().padLeft(2, '0')}"
           : '',
-      eventStartingTime: _startingTime != null ? _startingTime!.format(context) : '',
+      eventStartingTime: _startingTime != null
+          ? _startingTime!.format(context)
+          : '',
       eventEndingDate: _endingDate != null
           ? "${_endingDate!.year}-${_endingDate!.month.toString().padLeft(2, '0')}-${_endingDate!.day.toString().padLeft(2, '0')}"
           : '',

@@ -53,42 +53,42 @@ Future<dynamic> editEventAction({
                   ),
                 ),
               ),
-              Divider(
-                height: 1,
-                color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
-              ),
 
-              InkWell(
-                onTap: onArchive,
-                splashColor: Colors.transparent,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 4.w,
-                    children: [
-                      Assets.icons.archive.svg(
-                        width: 24.w,
-                        height: 24.h,
-                        color: AppColors.primary,
-                      ),
-                      Text(
-                        'Archive Event',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              // Divider(
+              //   height: 1,
+              //   color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
+              // ),
 
+              // InkWell(
+              //   onTap: onArchive,
+              //   splashColor: Colors.transparent,
+              //   child: Padding(
+              //     padding: const EdgeInsets.symmetric(
+              //       vertical: 12,
+              //       horizontal: 16,
+              //     ),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.start,
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       spacing: 4.w,
+              //       children: [
+              //         Assets.icons.archive.svg(
+              //           width: 24.w,
+              //           height: 24.h,
+              //           color: AppColors.primary,
+              //         ),
+              //         Text(
+              //           'Archive Event',
+              //           style: TextStyle(
+              //             fontSize: 16.sp,
+              //             fontWeight: FontWeight.w600,
+              //             color: AppColors.primary,
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               Divider(
                 height: 1,
                 color: Theme.of(context).colorScheme.onSurface.withAlpha(120),

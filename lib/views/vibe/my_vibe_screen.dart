@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/vibe_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/model/vibe_model.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
+import 'package:vibe_now/views/vibe/widgets/vibe_shimmer_loading.dart';
 
 class MyVibeScreen extends StatelessWidget {
-  const MyVibeScreen({super.key});
+  final Vibe? vibe;
+  MyVibeScreen({super.key, this.vibe});
+
+  final VibeController _vibeController = Get.find<VibeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -46,10 +54,26 @@ class MyVibeScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 18.h),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [...List.generate(1, (index) => const VibeCard())],
-            ),
+            Obx(() {
+              // Read observable variable immediately to ensure GetX registers this Obx
+              final loading = _vibeController.isVibesLoading.value;
+              final displayVibe = vibe ?? _vibeController.ownVibe.value;
+
+              if (displayVibe == null) {
+                if (loading) {
+                  return const OwnVibeShimmer();
+                } else {
+                  return const Center(child: Text("No active vibe found."));
+                }
+              }
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  VibeCard(vibe: displayVibe),
+                ],
+              );
+            }),
           ],
         ),
       ),
@@ -98,7 +122,7 @@ class MyVibeScreen extends StatelessWidget {
                     color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
                 Text(
                   'Your Vibe will disappear immediately from the map',
                   textAlign: TextAlign.center,
@@ -131,11 +155,25 @@ class MyVibeScreen extends StatelessWidget {
                     Expanded(
                       child: SizedBox(
                         height: 48.h,
-                        child: PrimaryButton.text(
-                          onPressed: () => Navigator.pop(context),
-                          radius: 50.r,
-                          text: "End Now",
-                        ),
+                        child: Obx(() {
+                          return PrimaryButton.text(
+                            isLoading: _vibeController.isLoading.value,
+                            onPressed: () async {
+                              final displayVibe = vibe ?? _vibeController.ownVibe.value;
+                              if (displayVibe?.id != null) {
+                                final success = await _vibeController.endVibe(displayVibe!.id!);
+                                if (success) {
+                                  if (context.mounted) {
+                                    Navigator.pop(context); // Pop the dialog
+                                    Navigator.pop(context); // Navigate back to previous screen
+                                  }
+                                }
+                              }
+                            },
+                            radius: 50.r,
+                            text: "End Now",
+                          );
+                        }),
                       ),
                     ),
                   ],
@@ -150,7 +188,8 @@ class MyVibeScreen extends StatelessWidget {
 }
 
 class VibeCard extends StatelessWidget {
-  const VibeCard({super.key});
+  final Vibe vibe;
+  const VibeCard({super.key, required this.vibe});
 
   @override
   Widget build(BuildContext context) {
@@ -174,12 +213,26 @@ class VibeCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
-                child: Image.network(
-                  'https://content3.jdmagicbox.com/comp/def_content/coffee_shops/default-coffee-shops-7.jpg',
-                  height: 180.h,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+                child: vibe.coverImage != null
+                    ? Image.network(
+                        AppCredentials.fixurl(vibe.coverImage),
+                        height: 180.h,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.network(
+                          'https://content3.jdmagicbox.com/comp/def_content/coffee_shops/default-coffee-shops-7.jpg',
+                          height: 180.h,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                    : Image.network(
+                        'https://content3.jdmagicbox.com/comp/def_content/coffee_shops/default-coffee-shops-7.jpg',
+                        height: 180.h,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
               ),
               Positioned.fill(
                 child: Container(
@@ -218,7 +271,7 @@ class VibeCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        'LIVE',
+                        vibe.status?.toUpperCase() ?? 'LIVE',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -237,7 +290,7 @@ class VibeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Coffee Break',
+                      vibe.title ?? 'No Title',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24.sp,
@@ -246,7 +299,7 @@ class VibeCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Sunday coffee vibes - who’s in?',
+                      '${vibe.createdBy?.fullName ?? ""} - ${vibe.duration ?? ""}',
                       style: TextStyle(color: Colors.white, fontSize: 16.sp),
                     ),
                   ],
@@ -265,7 +318,7 @@ class VibeCard extends StatelessWidget {
                 ),
                 SizedBox(width: 12.w),
                 Text(
-                  '18 min left',
+                  '${vibe.duration} left',
                   style: TextStyle(
                     color: Colors.grey.shade600,
                     fontSize: 18.sp,

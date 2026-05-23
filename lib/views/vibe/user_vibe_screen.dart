@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:lottie/lottie.dart';
-import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/vibe_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/model/vibe_model.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/home/widgets/wave_animated_dialog.dart';
 import 'package:vibe_now/views/vibe/my_vibe_screen.dart';
+import 'package:vibe_now/views/vibe/widgets/vibe_shimmer_loading.dart';
 
 class UserVibeScreen extends StatefulWidget {
   const UserVibeScreen({super.key});
@@ -15,36 +18,103 @@ class UserVibeScreen extends StatefulWidget {
 }
 
 class _UserVibeScreenState extends State<UserVibeScreen> {
+  final VibeController _vibeController = Get.put(VibeController());
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      _vibeController.loadMore();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomAppBar(title: "All Vibes"),
-              SizedBox(height: 20.h),
-              GestureDetector(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MyVibeScreen()),
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: () => _vibeController.getVibes(),
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomAppBar(title: "All Vibes"),
+                SizedBox(height: 20.h),
+                Obx(() {
+                  if (_vibeController.isVibesLoading.value) {
+                    return const OwnVibeShimmer();
+                  }
+                  if (_vibeController.ownVibe.value == null) {
+                    return const SizedBox.shrink();
+                  }
+                  return GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MyVibeScreen(
+                                vibe: _vibeController.ownVibe.value,
+                              )),
+                    ),
+                    child: VibeCard(vibe: _vibeController.ownVibe.value!),
+                  );
+                }),
+                SizedBox(height: 12.h),
+                Text(
+                  "Other Vibes",
+                  style:
+                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
                 ),
-                child: VibeCard(),
-              ),
-              SizedBox(height: 12.h),
-
-              Text(
-                "Other Vibes",
-                style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(height: 12.h),
-              Column(
-                spacing: 12.h,
-                children: List.generate(4, (index) => UserVibeCard()),
-              ),
-            ],
+                SizedBox(height: 12.h),
+                Obx(() {
+                  if (_vibeController.isVibesLoading.value &&
+                      _vibeController.othersVibe.isEmpty) {
+                    return Column(
+                      spacing: 12.h,
+                      children: List.generate(4, (index) => const OtherVibeShimmer()),
+                    );
+                  }
+                  if (_vibeController.othersVibe.isEmpty) {
+                    return const Center(child: Text("No other vibes found."));
+                  }
+                  return Column(
+                    children: [
+                      ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _vibeController.othersVibe.length,
+                        separatorBuilder: (context, index) =>
+                            SizedBox(height: 12.h),
+                        itemBuilder: (context, index) {
+                          final vibe = _vibeController.othersVibe[index];
+                          return UserVibeCard(vibe: vibe);
+                        },
+                      ),
+                      if (_vibeController.isMoreLoading.value)
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10.h),
+                          child: const OtherVibeShimmer(),
+                        ),
+                    ],
+                  );
+                }),
+                SizedBox(height: 20.h),
+              ],
+            ),
           ),
         ),
       ),
@@ -53,7 +123,8 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
 }
 
 class UserVibeCard extends StatefulWidget {
-  const UserVibeCard({super.key});
+  final Vibe vibe;
+  const UserVibeCard({super.key, required this.vibe});
 
   @override
   State<UserVibeCard> createState() => _UserVibeCardState();
@@ -82,48 +153,61 @@ class _UserVibeCardState extends State<UserVibeCard> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(50.r),
-            child: Image.asset(
-              "assets/images/profile_picture.jpg",
-              width: 50.w,
-              height: 50.w,
-              fit: BoxFit.cover,
+            child: widget.vibe.createdBy?.avatar != null
+                ? Image.network(
+                    AppCredentials.fixurl(widget.vibe.createdBy!.avatar),
+                    width: 50.w,
+                    height: 50.w,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      "assets/images/profile_picture.jpg",
+                      width: 50.w,
+                      height: 50.w,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : Image.asset(
+                    "assets/images/profile_picture.jpg",
+                    width: 50.w,
+                    height: 50.w,
+                    fit: BoxFit.cover,
+                  ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.vibe.createdBy?.fullName ?? "Unknown",
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                Text(
+                  widget.vibe.title ?? "",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
+                Text(
+                  "Expires in ${widget.vibe.duration}",
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
             ),
           ),
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Janny kosdowski",
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-              Text(
-                "Coffee break ☕",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.5),
-                ),
-              ),
-              Text(
-                "Expires in 20min",
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.5),
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
           GestureDetector(
             onTap: () {
               setState(() => isWaved = true);
@@ -140,72 +224,13 @@ class _UserVibeCardState extends State<UserVibeCard> {
                       elevation: 0,
                       backgroundColor: Colors.transparent,
                       child: WaveAnimatedDialog(
-                        content: "You waved to Jenny Kosdowski",
+                        content:
+                            "You waved to ${widget.vibe.createdBy?.fullName ?? "User"}",
                       ),
                     ),
                   );
                 },
               );
-
-              // showDialog(
-              //   context: context,
-              //   barrierColor: Colors.black.withOpacity(0.2),
-              //   builder: (context) {
-              //     Future.delayed(const Duration(seconds: 2), () {
-              //       if (Navigator.canPop(context)) Navigator.pop(context);
-              //     });
-
-              //     return Center(
-              //       child: Container(
-              //         margin: EdgeInsets.all(24.w),
-              //         padding: EdgeInsets.symmetric(
-              //           vertical: 20.h,
-              //           horizontal: 16.w,
-              //         ),
-              //         decoration: BoxDecoration(
-              //           color: AppColors.background,
-              //           borderRadius: BorderRadius.circular(24.r),
-              //           boxShadow: [
-              //             BoxShadow(
-              //               color: Colors.black.withOpacity(0.1),
-              //               blurRadius: 20,
-              //               spreadRadius: 5,
-              //             ),
-              //           ],
-              //         ),
-              //         child: Column(
-              //           mainAxisSize: MainAxisSize.min,
-              //           children: [
-              //             Lottie.asset(
-              //               "assets/lottie/Hello Lottie.json",
-              //               height: 120.h,
-              //               repeat: false,
-              //             ),
-              //             SizedBox(height: 12.h),
-              //             Text(
-              //               "Wave Sent!",
-              //               style: TextStyle(
-              //                 fontSize: 18.sp,
-              //                 fontWeight: FontWeight.bold,
-              //                 color: AppColors.primaryText,
-              //               ),
-              //             ),
-              //             SizedBox(height: 4.h),
-              //             Text(
-              //               "You have sent a wave to Janny Kosdowski",
-              //               textAlign: TextAlign.center,
-              //               style: TextStyle(
-              //                 fontSize: 14.sp,
-              //                 color: Colors.grey[600],
-              //               ),
-              //             ),
-              //             SizedBox(height: 4.h),
-              //           ],
-              //         ),
-              //       ),
-              //     );
-              //   },
-              // );
             },
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 300),
