@@ -338,4 +338,28 @@ class CommunityController extends GetxController {
       isLoading(false);
     }
   }
+
+  // manage members
+
+  Future<void> manageCommunityMembers({
+    required int id,
+    String tab = 'joined',
+    int page = 1,
+    int pageSize = 10,
+  }) async {
+    isLoading(true);
+    final response = await CustomHttp.get(
+      need_auth: true,
+      endpoint: "${ApiConstant.community}/$id/manage-requests",
+      queries: {
+        'tab': tab,
+        'page': page.toString(),
+        'page_size': pageSize.toString(),
+      },
+    );
+    if (response.ok) {
+      final jsonData = response.data['data'];
+    }
+    isLoading(false);
+  }
 }

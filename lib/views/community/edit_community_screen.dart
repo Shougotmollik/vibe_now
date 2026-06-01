@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -78,6 +79,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
   @override
   void initState() {
     super.initState();
+    communityController.selectedSubcategories.clear();
 
     // Initialize controllers with existing community data
     _titleController = TextEditingController(text: widget.community.title);
@@ -321,8 +323,22 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     final dateStr = '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}';
     final timeStr = '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
 
-    // Get selected categories
-    final categories = communityController.selectedSubcategories.toList().join(',');
+    // Build categories json
+    final List<Map<String, dynamic>> categoryJson = [];
+
+    for (final group in communityController.categoryGroups) {
+      final selectedSubs = group.children
+          .where(
+            (sub) => communityController.selectedSubcategories.contains(sub),
+          )
+          .toList();
+
+      if (selectedSubs.isNotEmpty) {
+        categoryJson.add({"name": group.parent, "subcategories": selectedSubs});
+      }
+    }
+
+    final categories = jsonEncode(categoryJson);
 
     final success = await communityController.updateCommunity(
       id: widget.community.id!,

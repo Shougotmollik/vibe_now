@@ -344,7 +344,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                   ),
 
                                   child: PopupMenuButton(
-                                    color: Theme.of(context).colorScheme.surface,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.surface,
                                     iconColor: Theme.of(
                                       context,
                                     ).colorScheme.onSurfaceVariant,
@@ -403,6 +405,29 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                               height: 1.5,
                             ),
                           ),
+                          // Community Rules
+                          if ((community.rules ?? '').isNotEmpty) ...[
+                            SizedBox(height: 20.h),
+                            Text(
+                              'Community Rules',
+                              style: TextStyle(
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            SizedBox(height: 12.h),
+                            Text(
+                              community.rules!,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                                height: 1.5,
+                              ),
+                            ),
+                          ],
                           SizedBox(height: 20.h),
 
                           // Upcoming Events
@@ -464,17 +489,25 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                     ),
                     if (isMyCommunity)
                       GestureDetector(
-                        onTap: () {
-                          Navigator.push(
+                        onTap: () async {
+                          await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
                                   EditCommunityScreen(community: community),
                             ),
                           );
+                          if (community.id != null) {
+                            _communityController.getCommunityDetails(
+                              id: community.id!,
+                            );
+                            _communityController.getCommunities(tab: 'all');
+                          }
                         },
                         child: CircleAvatar(
-                          backgroundColor: Theme.of(context).colorScheme.surface,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.surface,
                           child: Assets.icons.edit.svg(
                             color: Theme.of(context).colorScheme.onSurface,
                             fit: BoxFit.cover,

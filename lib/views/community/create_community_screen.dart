@@ -77,7 +77,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
 
   String? _activeParentForSub;
 
-  final CommunityController communityController = Get.find<CommunityController>();
+  final CommunityController communityController =
+      Get.find<CommunityController>();
 
   @override
   void dispose() {
