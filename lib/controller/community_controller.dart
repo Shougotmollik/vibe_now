@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/community.dart';
+import 'package:vibe_now/model/community_member.dart';
 import 'package:vibe_now/services/custom_http.dart';
 
 class CommunityController extends GetxController {
@@ -107,6 +108,8 @@ class CommunityController extends GetxController {
   var isLoading = false.obs;
   final RxList<Community> communityList = <Community>[].obs;
   final Rx<Community?> communityDetails = Rx<Community?>(null);
+  final RxList<CommunityMember> manageMembers = <CommunityMember>[].obs;
+  var isManageMembersLoading = false.obs;
 
   // Get communities
   Future<void> getCommunities({
@@ -340,14 +343,14 @@ class CommunityController extends GetxController {
   }
 
   // manage members
-
   Future<void> manageCommunityMembers({
     required int id,
     String tab = 'joined',
     int page = 1,
     int pageSize = 10,
+    bool showLoading = true,
   }) async {
-    isLoading(true);
+    if (showLoading) isManageMembersLoading(true);
     final response = await CustomHttp.get(
       need_auth: true,
       endpoint: "${ApiConstant.community}/$id/manage-requests",
@@ -358,8 +361,62 @@ class CommunityController extends GetxController {
       },
     );
     if (response.ok) {
-      final jsonData = response.data['data'];
+      final data = response.data['data'];
+      final List results = data is List ? data : data['results'] ?? [];
+      manageMembers.assignAll(results.map((e) => CommunityMember.fromJson(e)));
     }
-    isLoading(false);
+    if (showLoading) isManageMembersLoading(false);
+  }
+
+  // join request manage
+  Future<bool> joinRequestManage({
+    required int memberId,
+    required String action,
+  }) async {
+    try {
+      isLoading(true);
+      final response = await CustomHttp.post(
+        need_auth: true,
+        endpoint: "${ApiConstant.community}/membership/$memberId/moderate",
+        body: {"action": action},
+      );
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint("Error managing join request: ${response.error}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Exception while managing join request: $e");
+      return false;
+    } finally {
+      isLoading(false);
+    }
+  }
+
+  //community schedule for meetup
+  Future<bool> communitySchedule({
+    required int memberId,
+    required String scheduleAt,
+  }) async {
+    try {
+      isLoading(true);
+      final response = await CustomHttp.post(
+        need_auth: true,
+        endpoint: "${ApiConstant.community}/membership/$memberId/meetup",
+        body: {"scheduled_at": scheduleAt},
+      );
+      if (response.ok) {
+        return true;
+      } else {
+        debugPrint("Error scheduling meetup: ${response.error}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Exception while scheduling meetup: $e");
+      return false;
+    } finally {
+      isLoading(false);
+    }
   }
 }

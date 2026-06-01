@@ -1,20 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/community_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/community_member.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/community/community_manage_member_screen.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
 class CommunityMemberScreen extends StatefulWidget {
-  const CommunityMemberScreen({super.key});
+  const CommunityMemberScreen({super.key, required this.communityId});
+  final int communityId;
 
   @override
   State<CommunityMemberScreen> createState() => _CommunityMemberScreenState();
 }
 
 class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
-  String selectedStatus = "Active";
+  final CommunityController _controller = Get.find<CommunityController>();
+
+  final List<_TabConfig> _tabs = const [
+    _TabConfig(label: 'Active', apiTab: 'joined'),
+    _TabConfig(label: 'Requested', apiTab: 'requested'),
+  ];
+
+  String _selectedTab = 'joined';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchMembers());
+  }
+
+  void _fetchMembers({bool showLoading = true}) {
+    _controller.manageCommunityMembers(
+      id: widget.communityId,
+      tab: _selectedTab,
+      showLoading: showLoading,
+    );
+  }
+
+  String get _emptyMessage {
+    switch (_selectedTab) {
+      case 'joined':
+        return 'No active members yet';
+      case 'requested':
+        return 'No pending requests';
+      default:
+        return 'No members found';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +66,17 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomAppBar(title: "Manage Request"),
-
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => CommunityManageMemberScreen(),
+                          builder: (context) => CommunityManageMemberScreen(
+                            communityId: widget.communityId,
+                          ),
                         ),
                       );
+                      _fetchMembers(showLoading: false);
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -67,21 +106,38 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
-                children: [
-                  _buildTabTrigger("Active"),
-                  const SizedBox(width: 12),
-                  _buildTabTrigger("Requested"),
-                  const SizedBox(width: 12),
-                  // _buildTabTrigger("Awaiting Meetup"),
-                ],
+                children: _tabs.map((tab) {
+                  return Padding(
+                    padding: EdgeInsets.only(right: 12.w),
+                    child: _buildTabTrigger(tab),
+                  );
+                }).toList(),
               ),
             ),
             const SizedBox(height: 20),
 
             Expanded(
-              child: selectedStatus == "Active"
-                  ? _buildActiveList()
-                  : _buildPendingList(),
+              child: Obx(() {
+                if (_controller.isManageMembersLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final members = _controller.manageMembers;
+                if (members.isEmpty) {
+                  return Center(
+                    child: Text(
+                      _emptyMessage,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  );
+                }
+
+                return _selectedTab == 'joined'
+                    ? _buildMemberList(members)
+                    : _buildRequestList(members);
+              }),
             ),
           ],
         ),
@@ -89,26 +145,32 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
     );
   }
 
-  Widget _buildActiveList() {
+  Widget _buildMemberList(List<CommunityMember> members) {
     return ListView.separated(
-      itemCount: 5,
-      separatorBuilder: (context, index) =>
-          Divider(indent: 20, endIndent: 20, color: Theme.of(context).dividerColor),
+      itemCount: members.length,
+      separatorBuilder: (context, index) => Divider(
+        indent: 20,
+        endIndent: 20,
+        color: Theme.of(context).dividerColor,
+      ),
       itemBuilder: (context, index) {
+        final member = members[index];
         return ListTile(
-          leading: const CircleAvatar(
+          leading: CircleAvatar(
             radius: 28,
-            backgroundImage: NetworkImage("https://i.pravatar.cc/150?u=a"),
+            backgroundImage: NetworkImage(
+              AppCredentials.fixurl(member.user.avatar),
+            ),
           ),
           title: Text(
-            "Jenny smith",
+            member.user.fullName,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           subtitle: Text(
-            "Open for small talk",
+            member.status,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -119,26 +181,32 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
     );
   }
 
-  Widget _buildPendingList() {
+  Widget _buildRequestList(List<CommunityMember> members) {
     return ListView.separated(
-      itemCount: 3,
-      separatorBuilder: (context, index) =>
-          Divider(indent: 20, endIndent: 20, color: Theme.of(context).dividerColor),
+      itemCount: members.length,
+      separatorBuilder: (context, index) => Divider(
+        indent: 20,
+        endIndent: 20,
+        color: Theme.of(context).dividerColor,
+      ),
       itemBuilder: (context, index) {
+        final member = members[index];
         return ListTile(
-          leading: const CircleAvatar(
+          leading: CircleAvatar(
             radius: 28,
-            backgroundImage: NetworkImage("https://i.pravatar.cc/150?u=p"),
+            backgroundImage: NetworkImage(
+              AppCredentials.fixurl(member.user.avatar),
+            ),
           ),
           title: Text(
-            "Jenny smith",
+            member.user.fullName,
             style: TextStyle(
               fontWeight: FontWeight.w500,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           subtitle: Text(
-            "Open for small talk",
+            'Requested to join',
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -149,7 +217,12 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
               spacing: 8.w,
               children: [
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    final success = await _controller.joinRequestManage(
+                      memberId: member.memberId,
+                      action: 'approve',
+                    );
+                    if (!context.mounted) return;
                     showDialog(
                       context: context,
                       barrierDismissible: true,
@@ -162,14 +235,16 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                             elevation: 0,
                             backgroundColor: Colors.transparent,
                             child: AnimatedDialogContent(
-                              content:
-                                  'You have accepted jenny smith\'s community join request.',
-                              accept: true,
+                              content: success
+                                  ? 'You have accepted ${member.user.fullName}\'s community join request.'
+                                  : 'Failed to accept request.',
+                              accept: success,
                             ),
                           ),
                         );
                       },
                     );
+                    if (success) _fetchMembers(showLoading: false);
                   },
                   child: Assets.icons.accept.svg(
                     width: 20.w,
@@ -178,7 +253,12 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    final success = await _controller.joinRequestManage(
+                      memberId: member.memberId,
+                      action: 'reject',
+                    );
+                    if (!context.mounted) return;
                     showDialog(
                       context: context,
                       barrierDismissible: true,
@@ -191,20 +271,18 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                             elevation: 0,
                             backgroundColor: Colors.transparent,
                             child: AnimatedDialogContent(
-                              content:
-                                  'You have rejected jenny smith\'s community join request.',
-                              accept: false,
+                              content: success
+                                  ? 'You have rejected ${member.user.fullName}\'s community join request.'
+                                  : 'Failed to reject request.',
+                              accept: success,
                             ),
                           ),
                         );
                       },
                     );
+                    if (success) _fetchMembers(showLoading: false);
                   },
-                  child: Assets.icons.decline.svg(
-                    width: 22.w,
-                    height: 22.h,
-                    // color: AppColors.primary,
-                  ),
+                  child: Assets.icons.decline.svg(width: 22.w, height: 22.h),
                 ),
               ],
             ),
@@ -214,11 +292,16 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
     );
   }
 
-  Widget _buildTabTrigger(String label) {
-    bool isActive = selectedStatus == label;
+  Widget _buildTabTrigger(_TabConfig tab) {
+    bool isActive = _selectedTab == tab.apiTab;
     return GestureDetector(
-      onTap: () => setState(() => selectedStatus = label),
-      child: _buildStatusTab(label, isActive),
+      onTap: () {
+        setState(() {
+          _selectedTab = tab.apiTab;
+        });
+        _fetchMembers();
+      },
+      child: _buildStatusTab(tab.label, isActive),
     );
   }
 
@@ -228,16 +311,29 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
         gradient: isActive ? AppColors.primaryGradient : null,
-        border: isActive ? null : Border.all(color: Theme.of(context).dividerColor),
-        color: isActive ? null : Theme.of(context).colorScheme.surfaceVariant,
+        border: isActive
+            ? null
+            : Border.all(color: Theme.of(context).dividerColor),
+        color: isActive
+            ? null
+            : Theme.of(context).colorScheme.surfaceContainerHighest,
       ),
       child: Text(
         label,
         style: TextStyle(
-          color: isActive ? Colors.white : Theme.of(context).colorScheme.onSurfaceVariant,
+          color: isActive
+              ? Colors.white
+              : Theme.of(context).colorScheme.onSurfaceVariant,
           fontWeight: FontWeight.w500,
         ),
       ),
     );
   }
+}
+
+class _TabConfig {
+  final String label;
+  final String apiTab;
+
+  const _TabConfig({required this.label, required this.apiTab});
 }

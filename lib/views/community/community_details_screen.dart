@@ -258,7 +258,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          const CommunityMemberScreen(),
+                                          CommunityMemberScreen(communityId: community.id!),
                                     ),
                                   );
                                 },

@@ -131,7 +131,12 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const CommunityAwaitingQrScreen(),
+              builder: (context) => CommunityAwaitingQrScreen(
+                memberName: 'Jenny smith',
+                memberAvatar: 'https://i.pravatar.cc/150?u=a',
+                scheduledAt: 'Wed,Jun 12, 2026 at 04:00 PM',
+                qrCodeValue: 'COMMUNITY-TEST',
+              ),
             ),
           );
         }

@@ -73,7 +73,11 @@ class _CommunityNotificationScreenState
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CommunityAwaitingQrScreen(),
+                        builder: (context) => CommunityAwaitingQrScreen(
+                          memberName: 'Jenny smith',
+                          memberAvatar: 'https://i.pravatar.cc/150?img=12',
+                          qrCodeValue: 'COMMUNITY-TEST',
+                        ),
                       ),
                     );
                   }

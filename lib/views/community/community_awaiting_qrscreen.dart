@@ -4,8 +4,23 @@ import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 
+import 'package:vibe_now/core/constant/credential.dart';
+
 class CommunityAwaitingQrScreen extends StatelessWidget {
-  const CommunityAwaitingQrScreen({super.key});
+  const CommunityAwaitingQrScreen({
+    super.key,
+    required this.memberName,
+    required this.memberAvatar,
+    this.scheduledAt,
+    this.qrCodeValue,
+    this.qrCodeImage,
+  });
+
+  final String memberName;
+  final String memberAvatar;
+  final String? scheduledAt;
+  final String? qrCodeValue;
+  final String? qrCodeImage;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +66,7 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                           text: TextSpan(
                             children: [
                               TextSpan(
-                                text: 'Jhon',
+                                text: memberName,
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.onSurface,
                                     fontWeight: FontWeight.w700,
@@ -80,7 +95,7 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                             ),
                             SizedBox(width: 6.w),
                             Text(
-                              'Wed, 12 at 4:00 PM',
+                              scheduledAt ?? 'Wed, 12 at 4:00 PM',
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                                   fontSize: 14.sp,
@@ -93,11 +108,24 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                           width: 180.w,
                           height: 180.w,
                           color: Colors.white,
-                          child: const Icon(
-                            Icons.qr_code_2,
-                            size: 180,
-                            color: Colors.black,
-                          ),
+                          child: qrCodeImage != null
+                              ? Image.network(
+                                  AppCredentials.fixurl(qrCodeImage!),
+                                  fit: BoxFit.contain,
+                                )
+                              : qrCodeValue != null
+                                  ? Center(
+                                      child: Text(
+                                        qrCodeValue!,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 12.sp),
+                                      ),
+                                    )
+                                  : const Icon(
+                                      Icons.qr_code_2,
+                                      size: 180,
+                                      color: Colors.black,
+                                    ),
                         ),
                         SizedBox(height: 30.h),
 
@@ -152,7 +180,7 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                       ),
                       child: ClipOval(
                         child: Image.network(
-                          'https://i.pravatar.cc/150?img=12',
+                          AppCredentials.fixurl(memberAvatar),
                           fit: BoxFit.cover,
                         ),
                       ),

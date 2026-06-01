@@ -96,12 +96,16 @@ class _CommunityMembersScreenState extends State<CommunityMembersScreen> {
         decoration: BoxDecoration(
           gradient: isSelected ? AppColors.primaryGradient : null,
           borderRadius: BorderRadius.circular(20.r),
-          border: isSelected ? null : Border.all(color: Theme.of(context).dividerColor),
+          border: isSelected
+              ? null
+              : Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+            color: isSelected
+                ? Colors.white
+                : Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w500,
             fontSize: 14.sp,
           ),
