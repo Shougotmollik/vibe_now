@@ -26,6 +26,7 @@ class Community {
   final int? interestedCount;
   final bool? isJoined;
   final bool? isInterested;
+  final bool? isRequested;
   final String? chatId;
   final List<CommunityParticipant>? participants;
   final String? createdAt;
@@ -52,6 +53,7 @@ class Community {
     this.interestedCount,
     this.isJoined,
     this.isInterested,
+    this.isRequested,
     this.chatId,
     this.participants,
     this.createdAt,
@@ -90,6 +92,7 @@ class Community {
       interestedCount: json['interested_count'],
       isJoined: json['is_joined'],
       isInterested: json['is_interested'],
+      isRequested: json['is_requested'],
       chatId: json['chat_id'],
       participants: (json['participants'] as List<dynamic>?)
           ?.map((e) => CommunityParticipant.fromJson(e))

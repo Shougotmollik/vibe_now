@@ -262,7 +262,6 @@ class CommunityController extends GetxController {
   // Join community
   Future<bool> communityJoin({required int id}) async {
     try {
-      isLoading(true);
       final response = await CustomHttp.post(
         need_auth: true,
         endpoint: "${ApiConstant.community}/$id/join-request",
@@ -276,8 +275,6 @@ class CommunityController extends GetxController {
     } catch (e) {
       debugPrint("Exception while joining community: $e");
       return false;
-    } finally {
-      isLoading(false);
     }
   }
 
@@ -325,7 +322,6 @@ class CommunityController extends GetxController {
   // Withdraw join request
   Future<bool> communityJoinWithdraw({required int id}) async {
     try {
-      isLoading(true);
       final response = await CustomHttp.post(
         need_auth: true,
         endpoint: "${ApiConstant.community}/$id/withdraw-request",
@@ -339,8 +335,6 @@ class CommunityController extends GetxController {
     } catch (e) {
       debugPrint("Exception while withdrawing request: $e");
       return false;
-    } finally {
-      isLoading(false);
     }
   }
 

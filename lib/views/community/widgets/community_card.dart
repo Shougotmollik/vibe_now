@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -13,6 +15,7 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
+import 'package:vibe_now/views/common/request_sent_dialog.dart';
 
 class CommunityCard extends StatefulWidget {
   const CommunityCard({
@@ -40,15 +43,25 @@ class _CommunityCardState extends State<CommunityCard> {
   String? _currentUserId;
   bool _isLoadingJoin = false;
   bool _isLoadingInterest = false;
-  bool _localIsJoined = false;
+  bool _localIsRequested = false;
   bool _localIsInterested = false;
 
   @override
   void initState() {
     super.initState();
-    _localIsJoined = widget.community.isJoined ?? false;
-    _localIsInterested = widget.community.isInterested ?? false;
+    _syncState();
     _loadCurrentUserId();
+  }
+
+  @override
+  void didUpdateWidget(covariant CommunityCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncState();
+  }
+
+  void _syncState() {
+    _localIsRequested = widget.community.isRequested ?? false;
+    _localIsInterested = widget.community.isInterested ?? false;
   }
 
   Future<void> _loadCurrentUserId() async {
@@ -66,7 +79,7 @@ class _CommunityCardState extends State<CommunityCard> {
       widget.community.createdBy!.id == _currentUserId;
 
   bool get isPrivate => widget.community.isPrivate;
-  bool get isJoined => _localIsJoined;
+  bool get isRequested => _localIsRequested;
   bool get isInterested => _localIsInterested;
 
   // Handle join request button tap
@@ -84,13 +97,8 @@ class _CommunityCardState extends State<CommunityCard> {
       setState(() => _isLoadingJoin = false);
 
       if (success) {
-        setState(() => _localIsJoined = true);
-        AppSnackbar.show(
-          message: isPrivate
-              ? 'Your request has been sent to the community creator'
-              : 'You have joined the community successfully',
-          type: SnackType.info,
-        );
+        setState(() => _localIsRequested = true);
+        _showRequestSentDialog();
       } else {
         AppSnackbar.show(
           message: 'Failed to join community',
@@ -127,6 +135,40 @@ class _CommunityCardState extends State<CommunityCard> {
       } else {
         AppSnackbar.show(
           message: 'Failed to update interest',
+          type: SnackType.error,
+        );
+      }
+    }
+  }
+
+  void _showRequestSentDialog() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => RequestSentDialog(
+        onWithDrawTap: () => _handleWithdraw(dialogContext),
+      ),
+    );
+  }
+
+  Future<void> _handleWithdraw(BuildContext dialogContext) async {
+    if (widget.community.id == null) return;
+
+    Navigator.of(dialogContext).pop();
+
+    final success = await _communityController.communityJoinWithdraw(
+      id: widget.community.id!,
+    );
+
+    if (mounted) {
+      if (success) {
+        setState(() => _localIsRequested = false);
+        AppSnackbar.show(
+          message: 'Request withdrawn successfully',
+          type: SnackType.info,
+        );
+      } else {
+        AppSnackbar.show(
+          message: 'Failed to withdraw request',
           type: SnackType.error,
         );
       }
@@ -511,21 +553,50 @@ class _CommunityCardState extends State<CommunityCard> {
       );
     }
 
-    // Already joined - show View Details
-    if (isJoined) {
-      return PrimaryButton.text(
+    // Already requested - show "Requested" with hourglass, dimmed, disabled
+    if (isRequested) {
+      return PrimaryButton(
         radius: 12.r,
-        onPressed: () {
-          context.pushNamed(
-            RouteNames.communityDetailsScreen,
-            extra: widget.community,
-          );
-        },
-        text: "View Details",
+        gradient: LinearGradient(
+          colors: const [
+            Color(0xFF8663F6),
+            Color(0xFFC470F5),
+            Color(0xFF57C2FF),
+          ].map((c) => c.withAlpha(128)).toList(),
+          stops: const [0.16, 0.54, 0.92],
+          transform: GradientRotation(pi + 0.5),
+        ),
+        isEnabled: false,
+        onPressed: () {},
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 8.w,
+          children: [
+            SvgPicture.asset(
+              hourglass,
+              height: 18.h,
+              width: 18.w,
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
+            Text(
+              "Requested",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
       );
     }
 
-    // Not joined - show Join button
+    // Not joined - show Request button
     return Row(
       children: [
         Expanded(
@@ -550,31 +621,13 @@ class _CommunityCardState extends State<CommunityCard> {
                           ),
                         ),
                       )
-                    : Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        spacing: 8.w,
-                        children: [
-                          if (isPrivate)
-                            SvgPicture.asset(
-                              hourglass,
-                              height: 18.h,
-                              width: 18.w,
-                              colorFilter: const ColorFilter.mode(
-                                Colors.white,
-                                BlendMode.srcIn,
-                              ),
-                            ),
-                          Text(
-                            isPrivate ? "Request" : "Join",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.sp,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
+                    : Text(
+                        "Request",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
               ),
             ),
