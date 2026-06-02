@@ -4,6 +4,7 @@ import 'package:vibe_now/controller/auth_controller.dart';
 import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/controller/home_controller.dart';
+import 'package:vibe_now/controller/meetup_controller.dart';
 import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/controller/vibe_controller.dart';
@@ -22,5 +23,6 @@ class ControllerBinding extends Bindings {
     Get.lazyPut<AuthController>(() => AuthController());
     Get.lazyPut<OnBoardingController>(() => OnBoardingController());
     Get.lazyPut<VibeController>(() => VibeController());
+    Get.lazyPut<MeetupController>(() => MeetupController());
   }
 }

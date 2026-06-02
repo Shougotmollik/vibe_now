@@ -1,333 +1,228 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/meetup_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
-import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/model/meetup.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
-import 'package:vibe_now/views/community/Community_member_screen.dart';
 import 'package:vibe_now/views/community/meetup_member_screen.dart';
-import 'package:vibe_now/views/event/event_chat_screen.dart';
-import 'package:vibe_now/views/event/event_member_screen.dart';
 
-class MeetupDetailsScreen extends StatelessWidget {
-  const MeetupDetailsScreen({super.key});
+class MeetupDetailsScreen extends StatefulWidget {
+  const MeetupDetailsScreen({super.key, required this.meetupId});
 
-  // final Event event;
+  final String meetupId;
+
+  @override
+  State<MeetupDetailsScreen> createState() => _MeetupDetailsScreenState();
+}
+
+class _MeetupDetailsScreenState extends State<MeetupDetailsScreen> {
+  final MeetupController _meetupController = Get.find<MeetupController>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_) {
+      _meetupController.getMeetupDetails(meetupId: widget.meetupId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 400.h,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                    "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Container(
+      body: Obx(() {
+        final meetup = _meetupController.meetupDetails.value;
+
+        if (meetup == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 400.h,
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.3),
-                      Colors.transparent,
-                    ],
+                  image: DecorationImage(
+                    image: NetworkImage(
+                      meetup.coverImage != null
+                          ? AppCredentials.fixurl(meetup.coverImage!)
+                          : "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800",
+                    ),
+                    fit: BoxFit.cover,
                   ),
                 ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 40.h,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.black.withValues(alpha: 0.3),
+                        Colors.transparent,
+                      ],
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Align(
-                        alignment: Alignment.topLeft,
-                        child: GestureDetector(
-                          onTap: () => Navigator.of(context).maybePop(),
-                          child: CircleAvatar(
-                            backgroundColor: Theme.of(context).colorScheme.surface,
-                            child: Icon(
-                              Icons.arrow_back_ios_new,
-                              color: Theme.of(context).colorScheme.onSurface,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 40.h,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Align(
+                          alignment: Alignment.topLeft,
+                          child: GestureDetector(
+                            onTap: () => Navigator.of(context).maybePop(),
+                            child: CircleAvatar(
+                              backgroundColor: Theme.of(context).colorScheme.surface,
+                              child: Icon(
+                                Icons.arrow_back_ios_new,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      // Align(
-                      //   alignment: Alignment.topLeft,
-                      //   child: GestureDetector(
-                      //     onTap: () {
-                      //       // context.pushNamed(
-                      //       //   RouteNames.editEventScreen,
-                      //       //   extra: event,
-                      //       // );
-                      //     },
-                      //     child: CircleAvatar(
-                      //       backgroundColor: Colors.white,
-                      //       child: Assets.icons.edit.svg(
-                      //         color: Colors.black,
-                      //         fit: BoxFit.cover,
-                      //         height: 24.w,
-                      //         width: 24.w,
-                      //       ),
-                      //     ),
-                      //   ),
-                      // ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-
-            // Event Details Card
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24.r),
-                  topRight: Radius.circular(24.r),
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24.r),
+                    topRight: Radius.circular(24.r),
+                  ),
                 ),
-              ),
-              child: Padding(
-                padding: EdgeInsets.all(20.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Event Title
-                    Text(
-                      "Club House",
+                child: Padding(
+                  padding: EdgeInsets.all(20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        meetup.title ?? '',
                         style: TextStyle(
                           fontSize: 24.sp,
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
-                    ),
-                    SizedBox(height: 16.h),
-
-                    SizedBox(height: 6.h),
-                    Row(
-                      children: [
-                        Assets.icons.location.svg(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        SizedBox(width: 4.w),
-                        Expanded(
-                          child: Text(
-                            "300km away",
+                      ),
+                      SizedBox(height: 16.h),
+                      SizedBox(height: 6.h),
+                      Row(
+                        children: [
+                          Assets.icons.location.svg(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                          SizedBox(width: 4.w),
+                          Expanded(
+                            child: Text(
+                              meetup.address ?? '',
+                              style: TextStyle(
+                                fontSize: 12.sp,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 6.h),
+                      Row(
+                        children: [
+                          Assets.icons.calender3.svg(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            '${meetup.meetupTime ?? ''}, ${meetup.meetupDate ?? ''}',
                             style: TextStyle(
-                              fontSize: 12.sp,
+                               fontSize: 12.sp,
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6.h),
-                    Row(
-                      children: [
-                        Assets.icons.calender3.svg(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          '8PM - 11PM, 21 Nov',
-                          style: TextStyle(
-                             fontSize: 12.sp,
+                        ],
+                      ),
+                      SizedBox(height: 6.h),
+                      Row(
+                        children: [
+                          Assets.icons.community.svg(
+                            width: 16.w,
+                            height: 16.h,
                             color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w400,
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 6.h),
-                    // Row(
-                    //   children: [
-                    //     Text(
-                    //       "10 Interested • ",
-                    //       style: TextStyle(
-                    //         fontSize: 12.sp,
-                    //         color: AppColors.subText,
-                    //         fontWeight: FontWeight.w400,
-                    //       ),
-                    //     ),
-                    //   ],
-                    // ),
-                    SizedBox(height: 6.h),
-                    Row(
-                      children: [
-                         Assets.icons.community.svg(
-                          width: 16.w,
-                          height: 16.h,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        SizedBox(width: 4.w),
-                        Text(
-                          '5/10 attending',
-                          style: TextStyle(
-                             fontSize: 12.sp,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w400,
+                          SizedBox(width: 4.w),
+                          Text(
+                            '${meetup.joinedCount ?? 0}/${meetup.maxAttendees ?? 0} attending',
+                            style: TextStyle(
+                               fontSize: 12.sp,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w400,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AvatarStack(
-                            imageUrls: [
-                              "https://i.pravatar.cc/150?img=1",
-                              "https://i.pravatar.cc/150?img=2",
-                              "https://i.pravatar.cc/150?img=3",
-                              "https://i.pravatar.cc/150?img=4",
-                              "https://i.pravatar.cc/150?img=5",
-                            ],
-                            extraCount: 5,
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => MeetupMemberScreen(),
+                        ],
+                      ),
+                      if (meetup.participants != null && meetup.participants!.isNotEmpty) ...[
+                        SizedBox(height: 16.h),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: AvatarStack(
+                                imageUrls: meetup.participants!
+                                    .map((p) => p.avatar != null
+                                        ? AppCredentials.fixurl(p.avatar!)
+                                        : '')
+                                    .where((url) => url.isNotEmpty)
+                                    .toList(),
                               ),
-                            );
-                          },
-                          child: Text("View all"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                     builder: (context) => MeetupMemberScreen(meetupId: widget.meetupId),
+                                  ),
+                                );
+                              },
+                              child: Text("View all"),
+                            ),
+                          ],
                         ),
                       ],
-                    ),
-
-                    SizedBox(height: 20.h),
-
-                    Text(
-                      "About",
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
-                        color: Theme.of(context).colorScheme.onSurface,
+                      SizedBox(height: 20.h),
+                      Text(
+                        "About",
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
-                    ),
-
-                    Text(
-                      "Lorem ipsum dolor sit amet consectetur. Mattis neque elementum laoreet faucibus morbi venenatis nam nisi. Morbi sit dolor porttitor dictum laoreet nunc dictum. Aliquet erat sit pellentesque proin parturient aliquet.",
-
-                      textAlign: TextAlign.start,
-                      style: TextStyle(
-                         fontSize: 12.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      Text(
+                        meetup.description ?? '',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                           fontSize: 12.sp,
+                          fontWeight: FontWeight.w400,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       child: GestureDetector(
-                    //         onTap: () {
-                    //           Navigator.of(context).push(
-                    //             MaterialPageRoute(
-                    //               builder: (context) => EventChatScreen(),
-                    //             ),
-                    //           );
-                    //         },
-                    //         child: Container(
-                    //           width: double.infinity,
-                    //           padding: EdgeInsets.all(10.w),
-                    //           decoration: BoxDecoration(
-                    //             gradient: AppColors.primaryGradientRotated,
-                    //             borderRadius: BorderRadius.circular(12.r),
-                    //           ),
-                    //           child: Assets.icons.chatting.svg(
-                    //             width: 24.w,
-                    //             height: 24.h,
-                    //             color: AppColors.surface,
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     SizedBox(width: 8.w),
-
-                    //     // Container(
-                    //     //   padding: EdgeInsets.all(10.w),
-                    //     //   decoration: BoxDecoration(
-                    //     //     color: Color(0xff_F4F4F4),
-                    //     //     borderRadius: BorderRadius.circular(12.r),
-                    //     //   ),
-                    //     //   child: Assets.icons.archive.svg(
-                    //     //     width: 24.w,
-                    //     //     height: 24.h,
-                    //     //     color: AppColors.primaryText,
-                    //     //   ),
-                    //     // ),
-                    //     PopupMenuButton<int>(
-                    //       icon: Icon(
-                    //         Icons.more_vert,
-                    //         color: const Color(0xFF050505),
-                    //         size: 24.sp,
-                    //       ),
-
-                    //       offset: Offset(0, 45.h),
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(12.r),
-                    //       ),
-                    //       onSelected: (value) {
-                    //         if (value == 1) {
-                    //           // // Logic for leaving event
-                    //           // print("User left the event");
-                    //           Navigator.of(context).pop();
-                    //         }
-                    //       },
-                    //       itemBuilder: (context) => [
-                    //         PopupMenuItem(
-                    //           value: 1,
-                    //           child: Row(
-                    //             children: [
-                    //               Icon(
-                    //                 Icons.logout_rounded,
-                    //                 color: AppColors.primary,
-                    //                 size: 20.sp,
-                    //               ),
-                    //               SizedBox(width: 10.w),
-                    //               Text(
-                    //                 'Leave Event',
-                    //                 style: TextStyle(
-                    //                   color: AppColors.primary,
-                    //                   fontSize: 14.sp,
-                    //                   fontWeight: FontWeight.w500,
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ],
-                    // ),
-                    SizedBox(height: 20.h),
-                  ],
+                      SizedBox(height: 20.h),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
+            ],
+          ),
+        );
+      }),
     );
   }
 }
-

@@ -484,7 +484,7 @@ class _CommunityCardState extends State<CommunityCard> {
 
     final avatars = participants
         .take(3)
-        .map((p) => p.avatar)
+        .map((p) => AppCredentials.fixurl(p.avatar))
         .whereType<String>()
         .toList();
 

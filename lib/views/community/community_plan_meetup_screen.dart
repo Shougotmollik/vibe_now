@@ -2,16 +2,21 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/meetup_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
+import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
+import 'package:vibe_now/views/common/location_selection_screen.dart';
 import 'package:vibe_now/views/community/invite_member_to_plan_meetup.dart';
 
 class CommunityPlanMeetupScreen extends StatefulWidget {
-  const CommunityPlanMeetupScreen({super.key});
+  const CommunityPlanMeetupScreen({super.key, required this.communityId});
+  final String communityId;
 
   @override
   State<CommunityPlanMeetupScreen> createState() =>
@@ -19,15 +24,86 @@ class CommunityPlanMeetupScreen extends StatefulWidget {
 }
 
 class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
+  final MeetupController _controller = Get.find<MeetupController>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _maxAttendeesController = TextEditingController(
     text: '10',
   );
 
+  final TextEditingController _locationController = TextEditingController();
+  double? _selectedLatitude;
+  double? _selectedLongitude;
   DateTime? _selectedDate;
   TimeOfDay? _selectedTime;
   File? _selectedImage;
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _locationController.dispose();
+    _maxAttendeesController.dispose();
+    super.dispose();
+  }
+
+  bool _validate() {
+    if (_selectedImage == null) {
+      AppSnackbar.show(message: 'Please select cover image');
+      return false;
+    }
+    if (_titleController.text.trim().isEmpty) {
+      AppSnackbar.show(message: 'Please enter meetup title');
+      return false;
+    }
+    if (_descriptionController.text.trim().isEmpty) {
+      AppSnackbar.show(message: 'Please enter description');
+      return false;
+    }
+    if (_locationController.text.isEmpty) {
+      AppSnackbar.show(message: 'Please select location');
+      return false;
+    }
+    if (_selectedDate == null) {
+      AppSnackbar.show(message: 'Please select date');
+      return false;
+    }
+    if (_selectedTime == null) {
+      AppSnackbar.show(message: 'Please select time');
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _createMeetup() async {
+    if (!_validate()) return;
+
+    final success = await _controller.createMeetupPlan(
+      communityId: widget.communityId,
+      coverImage: _selectedImage!,
+      title: _titleController.text.trim(),
+      description: _descriptionController.text.trim(),
+      address: _locationController.text,
+      latitude: (_selectedLatitude ?? 0).toString(),
+      longitude: (_selectedLongitude ?? 0).toString(),
+      meetUpDate:
+          '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
+      meetUpTime:
+          '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}',
+      maxMembers: _maxAttendeesController.text.trim(),
+    );
+
+    if (!context.mounted) return;
+
+    if (success) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => InviteMemberToPlanMeetup()),
+      );
+    } else {
+      AppSnackbar.show(message: 'Failed to create meetup');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,8 +126,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
               SizedBox(height: 24.h),
               _buildMaxAttendees(),
               SizedBox(height: 48.h),
-              // Spacer(),
-              _buildActionButtonSection(context),
+              Obx(() => _buildActionButtonSection(context)),
               SizedBox(height: 24.h),
             ],
           ),
@@ -66,9 +141,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
       children: [
         Expanded(
           child: OutlinedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 16),
               shape: RoundedRectangleBorder(
@@ -91,14 +164,9 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
             height: 55.h,
             child: PrimaryButton.text(
               radius: 30.r,
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => InviteMemberToPlanMeetup(),
-                  ),
-                );
-              },
+              onPressed: _createMeetup,
               text: "Create",
+              isLoading: _controller.isLoading.value,
             ),
           ),
         ),
@@ -311,28 +379,51 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surfaceVariant,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                'Select address',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 14,
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => LocationSelectionScreen(
+                  apiKey: EnvHandler.google_map_api_key,
+                  onLocationSelect: (location) {
+                    setState(() {
+                      _locationController.text = location.name;
+                      _selectedLatitude = location.position.latitude;
+                      _selectedLongitude = location.position.longitude;
+                    });
+                  },
                 ),
               ),
-            ],
+            );
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    _locationController.text.isEmpty
+                        ? 'Select address'
+                        : _locationController.text,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

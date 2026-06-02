@@ -198,7 +198,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
         GestureDetector(
           onTap: () => context.pushNamed(
             RouteNames.qrVerificationScreen,
-            extra: QRContext.community,
+            extra: {'qrContext': QRContext.community, 'showScanOnly': true},
           ),
           child: Container(
             padding: const EdgeInsets.all(8),

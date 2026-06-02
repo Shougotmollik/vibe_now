@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/controller/community_controller.dart';
+import 'package:vibe_now/controller/meetup_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
@@ -11,7 +12,7 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/community.dart';
-import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/model/meetup.dart';
 import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
@@ -34,6 +35,7 @@ class CommunityDetailsScreen extends StatefulWidget {
 class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
   final CommunityController _communityController =
       Get.find<CommunityController>();
+  final MeetupController _meetupController = Get.find<MeetupController>();
   String? _currentUserId;
 
   @override
@@ -43,6 +45,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
     WidgetsFlutterBinding.ensureInitialized().addPostFrameCallback((_) {
       if (widget.community.id != null) {
         _communityController.getCommunityDetails(id: widget.community.id!);
+        _meetupController.getMeetups(communityId: widget.community.id!);
       }
     });
   }
@@ -243,7 +246,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                   imageUrls:
                                       community.participants
                                           ?.take(5)
-                                          .map((p) => p.avatar)
+                                          .map((p) => AppCredentials.fixurl(p.avatar))
                                           .whereType<String>()
                                           .toList() ??
                                       [],
@@ -258,7 +261,9 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          CommunityMemberScreen(communityId: community.id!),
+                                          CommunityMemberScreen(
+                                            communityId: community.id!,
+                                          ),
                                     ),
                                   );
                                 },
@@ -289,7 +294,10 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) =>
-                                              CommunityPlanMeetupScreen(),
+                                              CommunityPlanMeetupScreen(
+                                                communityId: community.id!
+                                                    .toString(),
+                                              ),
                                         ),
                                       );
                                     },
@@ -440,33 +448,44 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                             ),
                           ),
                           SizedBox(height: 12.h),
-                          GestureDetector(
-                            onTap: () {
-                              // context.pushNamed(RouteNames.communityMemberScreen);
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (context) =>
-                              //         const MeetupDetailsScreen(),
-                              //   ),
-                              // );
-                            },
-                            child: MeetupCard(
-                              event: Event(
-                                title: '  ',
-                                address: '123 Main St, New York, NY 10001',
-                                eventDate: '21 Nov',
-                                eventTime: '8PM - 11PM',
-                                coverImage:
-                                    'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=800',
-                                interestedCount: 5,
-                                maxAttendees: 10,
-                                isJoined: true,
-                                isInterested: true,
-                                accessLevel: 'public',
-                              ),
-                            ),
-                          ),
+                          Obx(() {
+                            if (_meetupController.isLoading.value) {
+                              return const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20),
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+
+                            final meetups = _meetupController.meetupList;
+
+                            if (meetups.isEmpty) {
+                              return Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(20),
+                                  child: Text(
+                                    'No meetups planned yet',
+                                    style: TextStyle(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                      fontSize: 14.sp,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return Column(
+                              children: meetups.map((meetup) {
+                                return Padding(
+                                  padding: EdgeInsets.only(bottom: 12.h),
+                                  child: MeetupCard(meetup: meetup),
+                                );
+                              }).toList(),
+                            );
+                          }),
                         ],
                       ),
                     ),

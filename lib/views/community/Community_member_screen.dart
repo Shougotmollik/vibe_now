@@ -6,6 +6,7 @@ import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/community_member.dart';
+import 'package:vibe_now/utils.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/community/community_manage_member_screen.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
@@ -170,7 +171,8 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
             ),
           ),
           subtitle: Text(
-            member.status,
+            // member.requestedAt?.timeAgo,
+            timeAgo(DateTime.parse(member.requestedAt!)),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),

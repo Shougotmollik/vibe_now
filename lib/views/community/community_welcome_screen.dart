@@ -1,12 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
-class CommunityWelcomeScreen extends StatelessWidget {
-  const CommunityWelcomeScreen({super.key});
+class CommunityWelcomeScreen extends StatefulWidget {
+  const CommunityWelcomeScreen({super.key, this.qrCode});
+  final String? qrCode;
+
+  @override
+  State<CommunityWelcomeScreen> createState() => _CommunityWelcomeScreenState();
+}
+
+class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
+  final CommunityController _controller = Get.find<CommunityController>();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.qrCode != null) {
+      _controller.communityQrcodeJoin(qrcode: widget.qrCode!);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +41,16 @@ class CommunityWelcomeScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
+      body: Obx(() {
+        final community = _controller.qrCommunityDetails.value;
+
+        if (_controller.isQrJoining.value) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final String title = community?.title ?? 'Running Club';
+
+        return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -47,7 +73,7 @@ class CommunityWelcomeScreen extends StatelessWidget {
               ),
 
               Text(
-                "Welcome To\nRunning Club!",
+                "Welcome To\n$title!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 28,
@@ -75,8 +101,8 @@ class CommunityWelcomeScreen extends StatelessWidget {
               const SizedBox(height: 48),
             ],
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 

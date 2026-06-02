@@ -48,7 +48,7 @@ class _QrScreenState extends State<QrScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => const CommunityWelcomeScreen(),
+            builder: (context) => CommunityWelcomeScreen(qrCode: code),
           ),
         );
         break;

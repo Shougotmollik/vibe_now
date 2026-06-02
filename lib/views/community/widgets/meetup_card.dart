@@ -1,45 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:vibe_now/core/helper/app_snackbar.dart';
-import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/meetup_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
-import 'package:vibe_now/model/event.dart';
+import 'package:vibe_now/model/meetup.dart';
+import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/common/meetup_join_dialog.dart';
-import 'package:vibe_now/views/common/request_sent_dialog.dart';
 import 'package:vibe_now/views/community/meetup_details_screen.dart';
-import 'package:vibe_now/views/event/event_details_screen.dart';
-import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
-import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
 class MeetupCard extends StatefulWidget {
-  const MeetupCard({super.key, required this.event});
+  const MeetupCard({super.key, required this.meetup});
 
   @override
   State<MeetupCard> createState() => _MeetupCardState();
 
-  final Event event;
+  final Meetup meetup;
 }
 
 class _MeetupCardState extends State<MeetupCard> {
-  
-  // late EventStatus? currentStatus;
-
-  // bool get isJoined => currentStatus == EventStatus.going;
-  // bool get isPending => currentStatus == EventStatus.requested;
-  // bool get cannotJoin => isJoined || isPending;
+  final MeetupController _meetupController = Get.find<MeetupController>();
+  String? _currentUserId;
+  bool _isLoadingJoin = false;
 
   @override
   void initState() {
     super.initState();
-    // currentStatus = widget.event.userStatus;
+    _loadCurrentUserId();
+  }
+
+  Future<void> _loadCurrentUserId() async {
+    final userId = await LocalStorage.user_id.get();
+    if (mounted) {
+      setState(() {
+        _currentUserId = userId;
+      });
+    }
+  }
+
+  bool get isMyMeetup =>
+      widget.meetup.createdBy?.id != null &&
+      _currentUserId != null &&
+      widget.meetup.createdBy!.id == _currentUserId;
+
+  Future<void> _joinMeetup() async {
+    if (_isLoadingJoin) return;
+
+    setState(() => _isLoadingJoin = true);
+
+    final success = await _meetupController.joinMeetup(
+      meetupId: '${widget.meetup.id}',
+    );
+
+    if (success && mounted) {
+      widget.meetup.isJoined = true;
+      setState(() => _isLoadingJoin = false);
+      showDialog(
+        context: context,
+        builder: (context) => MeetupSentDialog(
+          onWithDrawTap: () => Navigator.pop(context),
+        ),
+      );
+    } else {
+      setState(() => _isLoadingJoin = false);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final meetup = widget.meetup;
+
     return Container(
       margin: EdgeInsets.symmetric(vertical: 2.h),
       padding: const EdgeInsets.all(16),
@@ -58,75 +90,24 @@ class _MeetupCardState extends State<MeetupCard> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: Image.network(
-                  widget.event.coverImage??'',
+                  meetup.coverImage != null
+                      ? AppCredentials.fixurl(meetup.coverImage!)
+                      : '',
                   height: 200.h,
                   fit: BoxFit.cover,
                   width: double.infinity,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    height: 200.h,
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    child: const Center(child: Icon(Icons.image, size: 48)),
+                  ),
                 ),
               ),
-
-              // GestureDetector(
-              //   onTap: () {
-              //     setState(() {
-              //       widget.event.isFavorite = !widget.event.isFavorite;
-              //     });
-              //   },
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: Container(
-              //       decoration: BoxDecoration(
-              //         shape: BoxShape.circle,
-              //         color: AppColors.primary.withAlpha(200),
-              //       ),
-              //       padding: const EdgeInsets.all(10),
-              //       child: SvgPicture.asset(
-              //         widget.event.isFavorite ? wishlistFilled : wishlist,
-              //         height: 18.h,
-              //         width: 18.w,
-              //         color: AppColors.background,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-
-              // Positioned(
-              //   top: 10.h,
-              //   left: 12.w,
-              //   child: Container(
-              //     padding: const EdgeInsets.all(8),
-              //     decoration: BoxDecoration(
-              //       color: AppColors.primary.withAlpha(200),
-              //       borderRadius: BorderRadius.circular(8.r),
-              //     ),
-              //     child: Row(
-              //       mainAxisSize: MainAxisSize.min,
-              //       crossAxisAlignment: CrossAxisAlignment.center,
-              //       mainAxisAlignment: MainAxisAlignment.center,
-              //       spacing: 4.w,
-              //       children: [
-              //         SvgPicture.asset(
-              //           isPublic ? public : private,
-              //           height: 14.h,
-              //           width: 14.w,
-              //           color: AppColors.background,
-              //         ),
-              //         Text(
-              //           isPublic ? "Public" : "Private",
-              //           style: TextStyle(
-              //             color: AppColors.background,
-              //             fontSize: 12.sp,
-              //             fontWeight: FontWeight.w500,
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
             ],
           ),
           SizedBox(height: 12.h),
           Text(
-            widget.event.title ?? "",
+            meetup.title ?? '',
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w500,
@@ -142,7 +123,7 @@ class _MeetupCardState extends State<MeetupCard> {
               SizedBox(width: 4.w),
               Expanded(
                 child: Text(
-                  widget.event.address ?? "",
+                  meetup.address ?? '',
                   style: TextStyle(
                     fontSize: 12.sp,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -159,19 +140,7 @@ class _MeetupCardState extends State<MeetupCard> {
               ),
               SizedBox(width: 4.w),
               Text(
-                '${widget.event.eventDate ??''}, ${widget.event.eventTime ??''}',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 6.h),
-          Row(
-            children: [
-              Text(
-                "",
+                '${meetup.meetupDate ?? ''}, ${meetup.meetupTime ?? ''}',
                 style: TextStyle(
                   fontSize: 12.sp,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -182,169 +151,27 @@ class _MeetupCardState extends State<MeetupCard> {
           SizedBox(height: 12.h),
 
           PrimaryButton.text(
-            onPressed: widget.event.isJoined??false
-                ? () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const MeetupDetailsScreen(),
-                      ),
-                    );
-                  }
-                : () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => MeetupSentDialog(
-                        onWithDrawTap: () {
-                          // setState(
-                          //   () => currentStatus = EventStatus.interested,
-                          // );
-                          Navigator.pop(context);
-                        },
-                      ),
-                    ).then((_) {
-                      setState(() {
-                        // currentStatus = EventStatus.going;
-                      });
-                    });
-                  },
-            text: widget.event.isJoined??false ? "View Details" : "Join",
+            onPressed: () {
+              if (isMyMeetup || meetup.isJoined == true) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        MeetupDetailsScreen(meetupId: '${meetup.id}'),
+                  ),
+                );
+              } else {
+                _joinMeetup();
+              }
+            },
+            isLoading: _isLoadingJoin,
+            isEnabled: !_isLoadingJoin,
+            text: (isMyMeetup || meetup.isJoined == true)
+                ? "View Details"
+                : "Join",
             gradient: AppColors.primaryGradientRotated,
             radius: 12.r,
           ),
-          // Row(
-          //   children: [
-          //     Assets.icons.users.svg(),
-          //     SizedBox(width: 4.w),
-          //     Text(
-          //       '${widget.event.attending}/${widget.event.totalAttending} attending',
-          //       style: TextStyle(fontSize: 12.sp, color: Colors.grey.shade600),
-          //     ),
-          //   ],
-          // ),
-          // SizedBox(height: 12),
-          // // Event Button section
-          // widget.event.isMyEvent
-          //     ? PrimaryButton.text(
-          //         radius: 12.r,
-          //         onPressed: () {
-          //           context.pushNamed(
-          //             RouteNames.eventDetailsScreen,
-          //             extra: widget.event,
-          //           );
-          //         },
-          //         text: "View Details",
-          //         gradient: AppColors.primaryGradientRotated,
-          //       )
-          //     : Row(
-          //         children: [
-          //           Expanded(
-          //             child: GestureDetector(
-          //               onTap: () {
-          //                 // PUBLIC EVENT FLOW
-          //                 if (isPublic && !isGoing) {
-          //                   setState(() {
-          //                     currentStatus = EventStatus.going;
-          //                   });
-
-          //                   // showDialog(
-          //                   //   context: context,
-          //                   //   barrierDismissible: true,
-          //                   //   builder: (_) => Dialog(
-          //                   //     backgroundColor: Colors.transparent,
-          //                   //     child: EventAnimatedDialog(
-          //                   //       content:
-          //                   //           'You have joined the event successfully. See you there!',
-          //                   //     ),
-          //                   //   ),
-          //                   // );
-
-          //                   showDialog(
-          //                     context: context,
-          //                     builder: (context) => RequestSentDialog(
-          //                       onWithDrawTap: () {
-          //                         setState(() {
-          //                           currentStatus = EventStatus.interested;
-          //                         });
-          //                         Navigator.pop(context);
-          //                       },
-          //                     ),
-          //                   );
-
-          //                   return;
-          //                 }
-
-          //                 // PRIVATE EVENT FLOW
-          //                 if (isPrivate && !isRequested) {
-          //                   setState(() {
-          //                     currentStatus = EventStatus.requested;
-          //                   });
-
-          //                   showDialog(
-          //                     context: context,
-          //                     builder: (context) => RequestSentDialog(
-          //                       onWithDrawTap: () {
-          //                         setState(() {
-          //                           currentStatus = EventStatus.interested;
-          //                         });
-          //                         Navigator.pop(context);
-          //                       },
-          //                     ),
-          //                   );
-          //                 }
-          //               },
-
-          //               child: Container(
-          //                 padding: EdgeInsets.all(12.w),
-          //                 decoration: BoxDecoration(
-          //                   borderRadius: BorderRadius.circular(12.r),
-          //                   border: Border.all(color: Colors.grey.shade300),
-          //                   gradient: !isActive
-          //                       ? AppColors.primaryGradientRotated
-          //                       : null,
-          //                   color: !isActive ? null : const Color(0xffC4A8FF),
-          //                 ),
-
-          //                 child: Center(
-          //                   child: Row(
-          //                     mainAxisSize: MainAxisSize.min,
-          //                     mainAxisAlignment: MainAxisAlignment.center,
-          //                     crossAxisAlignment: CrossAxisAlignment.center,
-          //                     spacing: 8.w,
-          //                     children: [
-          //                       isPrivate
-          //                           ? SvgPicture.asset(
-          //                               isActive ? hourglass : "",
-          //                               height: isActive ? 16.h : 0.h,
-          //                               width: isActive ? 16.w : 0.w,
-          //                               color: AppColors.background,
-          //                             )
-          //                           : SizedBox(),
-
-          //                       // : SvgPicture.asset(
-          //                       //     "",
-          //                       //     height: 16.h,
-          //                       //     width: 16.w,
-          //                       //     color: AppColors.background,
-          //                       //   ),
-          //                       Text(
-          //                         buttonText,
-          //                         style: TextStyle(
-          //                           color: !isActive
-          //                               ? Colors.white
-          //                               : Colors.grey.shade100,
-          //                           fontSize: 16.sp,
-          //                           fontWeight: FontWeight.w600,
-          //                         ),
-          //                       ),
-          //                     ],
-          //                   ),
-          //                 ),
-          //               ),
-          //             ),
-          //           ),
-          //         ],
-          //       ),
         ],
       ),
     );

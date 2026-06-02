@@ -110,6 +110,8 @@ class CommunityController extends GetxController {
   final Rx<Community?> communityDetails = Rx<Community?>(null);
   final RxList<CommunityMember> manageMembers = <CommunityMember>[].obs;
   var isManageMembersLoading = false.obs;
+  final Rx<Community?> qrCommunityDetails = Rx<Community?>(null);
+  var isQrJoining = false.obs;
 
   // Get communities
   Future<void> getCommunities({
@@ -417,6 +419,31 @@ class CommunityController extends GetxController {
       return false;
     } finally {
       isLoading(false);
+    }
+  }
+
+  // qrcode join community
+  Future<bool> communityQrcodeJoin({required String qrcode}) async {
+    try {
+      isQrJoining(true);
+      final response = await CustomHttp.post(
+        need_auth: true,
+        endpoint: "${ApiConstant.community}/scan-join",
+        body: {"qr_code_value": qrcode},
+      );
+      if (response.ok) {
+        final jsonData = response.data['data'];
+        qrCommunityDetails.value = Community.fromJson(jsonData);
+        return true;
+      } else {
+        debugPrint("Error joining community: ${response.error}");
+        return false;
+      }
+    } catch (e) {
+      debugPrint("Exception while joining community: $e");
+      return false;
+    } finally {
+      isQrJoining(false);
     }
   }
 }
