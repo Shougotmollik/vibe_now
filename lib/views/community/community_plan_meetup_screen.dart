@@ -78,7 +78,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
   Future<void> _createMeetup() async {
     if (!_validate()) return;
 
-    final success = await _controller.createMeetupPlan(
+    final meetupId = await _controller.createMeetupPlan(
       communityId: widget.communityId,
       coverImage: _selectedImage!,
       title: _titleController.text.trim(),
@@ -95,9 +95,14 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
 
     if (!context.mounted) return;
 
-    if (success) {
+    if (meetupId != null) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => InviteMemberToPlanMeetup()),
+        MaterialPageRoute(
+          builder: (context) => InviteMemberToPlanMeetup(
+            communityId: widget.communityId,
+            meetupId: meetupId,
+          ),
+        ),
       );
     } else {
       AppSnackbar.show(message: 'Failed to create meetup');

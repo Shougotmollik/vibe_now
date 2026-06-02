@@ -10,8 +10,10 @@ class MeetupController extends GetxController {
   var isLoading = false.obs;
   final RxList<Meetup> meetupList = <Meetup>[].obs;
 
+  final RxString createdMeetupId = ''.obs;
+
   // create meetupplan
-  Future<bool> createMeetupPlan({
+  Future<String?> createMeetupPlan({
     required String communityId,
     required File coverImage,
     required String title,
@@ -42,10 +44,15 @@ class MeetupController extends GetxController {
         filePath: coverImage.path,
       );
 
-      return response.ok;
+      if (response.ok) {
+        final meetupId = response.data['data']['id'].toString();
+        createdMeetupId.value = meetupId;
+        return meetupId;
+      }
+      return null;
     } catch (e) {
       debugPrint(e.toString());
-      return false;
+      return null;
     } finally {
       isLoading(false);
     }
@@ -137,5 +144,25 @@ class MeetupController extends GetxController {
       );
     }
     if (showLoading) isMeetupMembersLoading(false);
+  }
+
+  // invite member to meetup plan
+  Future<bool> inviteMemberToMeetupPlan({
+    required String meetupId,
+    required List<String> memberIds,
+  }) async {
+    try {
+      isLoading(true);
+      final response = await CustomHttp.post(
+        endpoint: "/meetups/$meetupId/invite",
+        body: {'user_ids': memberIds},
+      );
+      return response.ok;
+    } catch (e) {
+      debugPrint(e.toString());
+      return false;
+    } finally {
+      isLoading(false);
+    }
   }
 }
