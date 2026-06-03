@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:get/get.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/controller/notification_controller.dart';
 import 'package:vibe_now/model/notification.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 import 'package:vibe_now/views/notification/widgets/community_notification_card.dart';
 import 'package:vibe_now/views/notification/widgets/event_notification_card.dart';
+import 'package:vibe_now/views/notification/widgets/notification_shimmer.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -15,43 +19,17 @@ class NotificationScreen extends StatefulWidget {
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
 
-final List<NotificationModel> waves = [
-  NotificationModel(title: 'Jenny Smith sent you a wave', distance: '160'),
-  NotificationModel(title: 'Metin sent you a wave', distance: '90'),
-  NotificationModel(title: 'Alex sent you a wave', distance: '20'),
-];
-
-final List<NotificationModel> events = [
-  NotificationModel(
-    title: 'Jenny smith is interested in your event',
-    distance: '160',
-  ),
-  NotificationModel(
-    title: 'Engin Accepted your event join request',
-    distance: '90',
-  ),
-  NotificationModel(title: 'Metin joined in your event', distance: '20'),
-];
-
-final List<NotificationModel> communities = [
-  NotificationModel(
-    title: 'Jenny smith is interested in your community',
-    distance: '160',
-  ),
-  NotificationModel(
-    title: 'Engin Accepted your community join request',
-    distance: '90',
-  ),
-  NotificationModel(
-    title: 'Metin invited you join to community meetup',
-    distance: '20',
-    invitation: true,
-  ),
-];
-
 class _NotificationScreenState extends State<NotificationScreen> {
+  final NotificationController _controller = Get.find<NotificationController>();
   int _selectedTabIndex = 0;
   final List<String> _tabs = ['Waves', 'Events', 'Community'];
+  final List<String> _tabKeys = ['vibes', 'events', 'communities'];
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.getNotifications(_tabKeys[0]);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,14 +37,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: Column(
-            children: [
-              const CustomAppBar(title: "Notification"),
-              SizedBox(height: 16.h),
-              _buildTabBar(),
-              SizedBox(height: 16.h),
-              Expanded(child: _buildTabContent()),
-            ],
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const CustomAppBar(title: "Notification"),
+                SizedBox(height: 16.h),
+                Obx(() => _buildTabBar()),
+                SizedBox(height: 16.h),
+                _buildTabContent(),
+              ],
+            ),
           ),
         ),
       ),
@@ -106,42 +86,80 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Row(
         children: List.generate(_tabs.length, (index) {
           final isSelected = _selectedTabIndex == index;
+          final count = switch (index) {
+            0 => _controller.unreadCounts.value.vibes,
+            1 => _controller.unreadCounts.value.events,
+            _ => _controller.unreadCounts.value.communities,
+          };
           return Padding(
             padding: const EdgeInsets.only(right: 8),
             child: GestureDetector(
-              onTap: () => setState(() => _selectedTabIndex = index),
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.w),
-                decoration: BoxDecoration(
-                  gradient: isSelected ? _tabGradients[index] : null,
-                  color: isSelected
-                      ? null
-                      : Theme.of(context).colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(20),
-                  border: isSelected
-                      ? null
-                      : Border.all(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.15),
-                          width: 1,
+              onTap: () {
+                setState(() => _selectedTabIndex = index);
+                _controller.getNotifications(_tabKeys[index]);
+              },
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.w,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: isSelected ? _tabGradients[index] : null,
+                      color: isSelected
+                          ? null
+                          : Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(20),
+                      border: isSelected
+                          ? null
+                          : Border.all(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.15),
+                              width: 1,
+                            ),
+                    ),
+                    child: Row(
+                      spacing: 6.w,
+                      children: [
+                        isSelected ? _tabIcons[index] : const SizedBox.shrink(),
+                        Text(
+                          _tabs[index],
+                          style: TextStyle(
+                            color: isSelected
+                                ? (index == 0 ? Colors.white : Colors.black87)
+                                : Theme.of(context).colorScheme.onSurface,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                ),
-                  child: Row(
-                    spacing: 6.w,
-                    children: [
-                      isSelected ? _tabIcons[index] : const SizedBox.shrink(),
-                      Text(
-                      _tabs[index],
-                      style: TextStyle(
-                        color: isSelected
-                            ? (index == 0 ? Colors.white : Colors.black87)
-                            : Theme.of(context).colorScheme.onSurface,
-                        fontWeight: FontWeight.w500,
+                      ],
+                    ),
+                  ),
+                  if (count > 0)
+                    Positioned(
+                      top: -4,
+                      right: -4,
+                      child: Container(
+                        padding: EdgeInsets.all(3.w),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          count.toString(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     ),
-                  ],
-                ),
+                ],
               ),
             ),
           );
@@ -164,8 +182,22 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget _buildWavesSection() {
-    return SingleChildScrollView(
-      child: Container(
+    return Obx(() {
+      if (_controller.isLoading('vibes') && _controller.vibes.isEmpty) {
+        return const NotificationShimmer();
+      }
+      final items = _controller.vibes;
+      if (items.isEmpty) {
+        return Center(
+          child: Text(
+            'No waves yet',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        );
+      }
+      return Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(8.r),
@@ -182,20 +214,34 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: [
             ..._withDividers(
               List.generate(
-                waves.length,
-                (index) => _buildWaveCard(context, waves[index]),
+                items.length,
+                (index) => _buildWaveCard(context, items[index]),
               ),
               context,
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildEventsSection() {
-    return SingleChildScrollView(
-      child: Container(
+    return Obx(() {
+      if (_controller.isLoading('events') && _controller.events.isEmpty) {
+        return const NotificationShimmer();
+      }
+      final items = _controller.events;
+      if (items.isEmpty) {
+        return Center(
+          child: Text(
+            'No events yet',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        );
+      }
+      return Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(8.r),
@@ -212,20 +258,38 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: [
             ..._withDividers(
               List.generate(
-                events.length,
-                (index) => EventNotificationCard(notification: events[index]),
+                items.length,
+                (index) => EventNotificationCard(
+                  notification: items[index],
+                  unreadGradient: _unreadGradient(1),
+                ),
               ),
               context,
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildCommunitySection() {
-    return SingleChildScrollView(
-      child: Container(
+    return Obx(() {
+      if (_controller.isLoading('communities') &&
+          _controller.communities.isEmpty) {
+        return const NotificationShimmer();
+      }
+      final items = _controller.communities;
+      if (items.isEmpty) {
+        return Center(
+          child: Text(
+            'No community notifications yet',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        );
+      }
+      return Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(8.r),
@@ -242,15 +306,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: [
             ..._withDividers(
               List.generate(
-                communities.length,
+                items.length,
                 (index) => _buildCommunityCard(context, index),
               ),
               context,
             ),
           ],
         ),
-      ),
-    );
+      );
+    });
   }
 
   List<Widget> _withDividers(List<Widget> items, BuildContext context) {
@@ -266,24 +330,38 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
   }
 
+  LinearGradient _unreadGradient(int tabIndex) {
+    final g = _tabGradients[tabIndex];
+    return LinearGradient(
+      colors: g.colors.map((c) => c.withValues(alpha: 0.08)).toList(),
+      stops: g.stops,
+      begin: g.begin,
+      end: g.end,
+    );
+  }
+
   Widget _buildWaveCard(BuildContext context, NotificationModel notification) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface),
+      decoration: BoxDecoration(
+        gradient: !notification.isRead ? _unreadGradient(0) : null,
+        color: Theme.of(context).colorScheme.surface,
+      ),
       child: Row(
         spacing: 8.w,
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(50.r),
-            child: Image.asset(
-              "assets/images/profile_picture.jpg",
-              width: 50.w,
-              height: 50.w,
-              fit: BoxFit.cover,
-            ),
+            child: notification.actor.avatar != null
+                ? Image.network(
+                    AppCredentials.fixurl(notification.actor.avatar!),
+                    width: 50.w,
+                    height: 50.w,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _defaultAvatar(),
+                  )
+                : _defaultAvatar(),
           ),
           Expanded(
             child: Column(
@@ -309,7 +387,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     ),
                     SizedBox(width: 4.w),
                     Text(
-                      '6 hours ago',
+                      timeago.format(DateTime.parse(notification.createdAt)),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
@@ -328,10 +406,27 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 
+  Widget _defaultAvatar() {
+    return Container(
+      width: 50.w,
+      height: 50.w,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(50.r),
+      ),
+      child: Icon(
+        Icons.person,
+        size: 24.w,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
+    );
+  }
+
   Widget _buildCommunityCard(BuildContext context, int index) {
-    final notification = communities[index];
+    final notification = _controller.communities[index];
     return CommunityNotificationCard(
       notification: notification,
+      unreadGradient: _unreadGradient(2),
       acceptOnTap: () {
         showDialog(
           context: context,
@@ -345,8 +440,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 elevation: 0,
                 backgroundColor: Colors.transparent,
                 child: AnimatedDialogContent(
-                  content:
-                      'You have accepted ${notification.title.split(' ').take(2).join(' ')} invitation.',
+                  content: 'You have accepted the invitation.',
                   accept: true,
                 ),
               ),

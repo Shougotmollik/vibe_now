@@ -18,19 +18,19 @@ class CommunityNotificationScreen extends StatefulWidget {
 class _CommunityNotificationScreenState
     extends State<CommunityNotificationScreen> {
   final List<NotificationModel> communities = [
-    NotificationModel(
-      title: 'Jenny smith is interested in your community',
-      distance: '160',
-    ),
-    NotificationModel(
-      title: 'Engin Accepted your community join request',
-      distance: '90',
-    ),
-    NotificationModel(
-      title: 'Metin invited you to community meetup',
-      distance: '20',
-      invitation: true,
-    ),
+    // NotificationModel(
+    //   title: 'Jenny smith is interested in your community',
+    //   distance: '160',
+    // ),
+    // NotificationModel(
+    //   title: 'Engin Accepted your community join request',
+    //   distance: '90',
+    // ),
+    // NotificationModel(
+    //   title: 'Metin invited you to community meetup',
+    //   distance: '20',
+    //   invitation: true,
+    // ),
   ];
   @override
   Widget build(BuildContext context) {

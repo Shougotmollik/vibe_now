@@ -14,6 +14,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe_now/controller/home_controller.dart';
+import 'package:vibe_now/controller/notification_controller.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -74,6 +75,9 @@ class _HomeScreenState extends State<HomeScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   final HomeController homeController = Get.put(HomeController());
+  final NotificationController notifController = Get.put(
+    NotificationController(),
+  );
 
   static const LatLng _currentLocation = LatLng(
     50.93747315706174,
@@ -119,6 +123,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     _loadMarkers();
+
+    notifController.getNotifications('vibes');
 
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   showUserVibeDialog(context: context, user: someNearbyUser, hasVibe: true);
@@ -375,28 +381,58 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Row(
           spacing: 12.w,
           children: [
-            GestureDetector(
-              onTap: () => context.pushNamed(RouteNames.notificationScreen),
-              child: Container(
-                padding: EdgeInsets.all(10.w),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Theme.of(context).colorScheme.surface,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).shadowColor.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
+            Obx(() {
+              final unread = notifController.stats.value.unreadTotal;
+              return GestureDetector(
+                onTap: () => context.pushNamed(RouteNames.notificationScreen),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(10.w),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Theme.of(context).colorScheme.surface,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Theme.of(
+                              context,
+                            ).shadowColor.withOpacity(0.1),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Assets.icons.notification.svg(
+                        width: 20.w,
+                        height: 20.h,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
+                    if (unread > 0)
+                      Positioned(
+                        top: -2,
+                        right: -2,
+                        child: Container(
+                          padding: EdgeInsets.all(3.w),
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Text(
+                            unread.toString(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
                   ],
                 ),
-                child: Assets.icons.notification.svg(
-                  width: 20.w,
-                  height: 20.h,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
-              ),
-            ),
+              );
+            }),
 
             GestureDetector(
               onTap: () {
@@ -1351,10 +1387,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   //   "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=764&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                   //   "https://plus.unsplash.com/premium_photo-1673957923985-b814a9dbc03d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
                   // ],
-                //   extraCount: 5,
-                //   isMyCommunity: true,
-                //   userStatus: CommunityStatus.going,
-                //   accessType: CommunityAccessType.public,
+                  //   extraCount: 5,
+                  //   isMyCommunity: true,
+                  //   userStatus: CommunityStatus.going,
+                  //   accessType: CommunityAccessType.public,
                 ),
               ),
             ),

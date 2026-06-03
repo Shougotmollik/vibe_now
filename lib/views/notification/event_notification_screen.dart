@@ -17,15 +17,15 @@ class EventNotificationScreen extends StatefulWidget {
 
 class _EventNotificationScreenState extends State<EventNotificationScreen> {
   final List<NotificationModel> events = [
-    NotificationModel(
-      title: 'Jenny smith is interested in your event',
-      distance: '160',
-    ),
-    NotificationModel(
-      title: 'Engin Accepted your event join request',
-      distance: '90',
-    ),
-    NotificationModel(title: 'Metin Sent you a Wave', distance: '20'),
+    // NotificationModel(
+    //   title: 'Jenny smith is interested in your event',
+    //   distance: '160',
+    // ),
+    // NotificationModel(
+    //   title: 'Engin Accepted your event join request',
+    //   distance: '90',
+    // ),
+    // NotificationModel(title: 'Metin Sent you a Wave', distance: '20'),
   ];
 
   @override
