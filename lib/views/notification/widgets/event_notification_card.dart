@@ -18,12 +18,9 @@ class EventNotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(color: const Color(0xffE0E0E0), width: 1.w),
-        ),
       ),
       child: Row(
         spacing: 8.w,
@@ -56,15 +53,16 @@ class EventNotificationCard extends StatelessWidget {
                   width: 180.w,
                   child: Row(
                     children: [
-                      Assets.icons.location.svg(
+                      Assets.icons.timeCircle.svg(
                         width: 16.w,
                         height: 16.h,
                         color: Theme.of(
                           context,
                         ).colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
+                      SizedBox(width: 4.w),
                       Text(
-                        "${notification.distance} km away",
+                        '6 hours ago',
                         style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w400,
