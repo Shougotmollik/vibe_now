@@ -131,7 +131,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           _tabs[index],
                           style: TextStyle(
                             color: isSelected
-                                ? (index == 0 ? Colors.white : Colors.black87)
+                                ? (index == 0 ? Colors.black87 : Colors.black87)
                                 : Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w500,
                           ),
@@ -286,6 +286,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 (index) => EventNotificationCard(
                   notification: items[index],
                   unreadGradient: _unreadGradient(1),
+                  onTap: () {
+                    final n = items[index];
+                    if (!n.isRead) {
+                      _controller.readNotificationById(ids: [n.id]);
+                    }
+                  },
                 ),
               ),
               context,
@@ -377,67 +383,74 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget _buildWaveCard(BuildContext context, NotificationModel notification) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      decoration: BoxDecoration(
-        gradient: !notification.isRead ? _unreadGradient(0) : null,
-        color: Theme.of(context).colorScheme.surface,
-      ),
-      child: Row(
-        spacing: 8.w,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(50.r),
-            child: notification.actor.avatar != null
-                ? Image.network(
-                    AppCredentials.fixurl(notification.actor.avatar!),
-                    width: 50.w,
-                    height: 50.w,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => _defaultAvatar(),
-                  )
-                : _defaultAvatar(),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  notification.title,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Row(
-                  children: [
-                    Assets.icons.timeCircle.svg(
-                      width: 16.w,
-                      height: 16.h,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.8),
+    return GestureDetector(
+      onTap: () {
+        if (!notification.isRead) {
+          _controller.readNotificationById(ids: [notification.id]);
+        }
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        decoration: BoxDecoration(
+          gradient: !notification.isRead ? _unreadGradient(0) : null,
+          color: Theme.of(context).colorScheme.surface,
+        ),
+        child: Row(
+          spacing: 8.w,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(50.r),
+              child: notification.actor.avatar != null
+                  ? Image.network(
+                      AppCredentials.fixurl(notification.actor.avatar!),
+                      width: 50.w,
+                      height: 50.w,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => _defaultAvatar(),
+                    )
+                  : _defaultAvatar(),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    notification.title,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
                     ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      timeago.format(DateTime.parse(notification.createdAt)),
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w400,
+                  ),
+                  SizedBox(height: 4.h),
+                  Row(
+                    children: [
+                      Assets.icons.timeCircle.svg(
+                        width: 16.w,
+                        height: 16.h,
                         color: Theme.of(
                           context,
                         ).colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      SizedBox(width: 4.w),
+                      Text(
+                        timeago.format(DateTime.parse(notification.createdAt)),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w400,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -463,46 +476,51 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return CommunityNotificationCard(
       notification: notification,
       unreadGradient: _unreadGradient(2),
-      acceptOnTap: () {
-        showDialog(
-          context: context,
-          barrierDismissible: true,
-          builder: (context) {
-            return Center(
-              child: Dialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-                child: AnimatedDialogContent(
-                  content: 'You have accepted the invitation.',
-                  accept: true,
-                ),
-              ),
-            );
-          },
-        );
-      },
-      rejectOnTap: () {
-        showDialog(
-          context: context,
-          barrierDismissible: true,
-          builder: (context) {
-            return Center(
-              child: Dialog(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                elevation: 0,
-                backgroundColor: Colors.transparent,
-                child: const AnimatedDialogContent(
-                  content: 'You have rejected the invitation.',
-                  accept: false,
-                ),
-              ),
-            );
-          },
+      acceptOnTap: () => _handleInvitationAction(
+        context: context,
+        notification: notification,
+        action: 'approve',
+        successMessage: 'You have accepted the invitation.',
+        accept: true,
+      ),
+      rejectOnTap: () => _handleInvitationAction(
+        context: context,
+        notification: notification,
+        action: 'reject',
+        successMessage: 'You have rejected the invitation.',
+        accept: false,
+      ),
+    );
+  }
+
+  Future<void> _handleInvitationAction({
+    required BuildContext context,
+    required NotificationModel notification,
+    required String action,
+    required String successMessage,
+    required bool accept,
+  }) async {
+    final ok = await _controller.notificationAction(
+      notificationId: notification.id,
+      action: action,
+    );
+    if (!ok || !context.mounted) return;
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Center(
+          child: Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: AnimatedDialogContent(
+              content: successMessage,
+              accept: accept,
+            ),
+          ),
         );
       },
     );

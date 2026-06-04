@@ -22,6 +22,8 @@ class ApiConstant {
   static const String vibe = "/vibes";
 
   static const String notification = "/notifications";
+  static const String markNotificationAsRead = "/notifications/mark-as-read";
+  static const String notificationActionPath = "/notifications";
 
   static const String profile = "/auth/me";
   static const String updateProfileImage = "/onboarding/upload-profile-photo";

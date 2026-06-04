@@ -159,4 +159,27 @@ class NotificationModel {
       invitation: isInvitation,
     );
   }
+
+  NotificationModel copyWith({
+    bool? isRead,
+    String? actionStatus,
+  }) {
+    final newActionStatus = actionStatus ?? this.actionStatus;
+    final newInvitation =
+        newActionStatus == 'pending' && notificationType.contains('request');
+    return NotificationModel(
+      id: id,
+      notificationType: notificationType,
+      actor: actor,
+      title: title,
+      message: message,
+      isRead: isRead ?? this.isRead,
+      createdAt: createdAt,
+      readAt: readAt,
+      relatedObject: relatedObject,
+      actionStatus: newActionStatus,
+      distance: distance,
+      invitation: newInvitation,
+    );
+  }
 }

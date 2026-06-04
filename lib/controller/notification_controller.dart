@@ -20,6 +20,7 @@ class NotificationController extends GetxController {
 
   bool isLoading(String tab) => loadingTabs[tab] ?? false;
 
+  // get notification
   Future<void> getNotifications(String tab) async {
     if (loadedTabs.contains(tab)) return;
     try {
@@ -57,5 +58,109 @@ class NotificationController extends GetxController {
     } finally {
       loadingTabs[tab] = false;
     }
+  }
+
+  //read notification by id
+  Future<void> readNotificationById({required List<int> ids}) async {
+    try {
+      for (final id in ids) {
+        loadingTabs[_tabForNotificationId(id)] = true;
+      }
+      final response = await CustomHttp.post(
+        endpoint: ApiConstant.markNotificationAsRead,
+        need_auth: true,
+        body: {'notification_ids': ids},
+      );
+      if (response.ok) {
+        _updateReadState(ids, true);
+        _decrementUnreadCounts(ids);
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      for (final id in ids) {
+        loadingTabs[_tabForNotificationId(id)] = false;
+      }
+    }
+  }
+
+  // notification action (approve | reject)
+  Future<bool> notificationAction({
+    required int notificationId,
+    required String action,
+  }) async {
+    try {
+      loadingTabs[_tabForNotificationId(notificationId)] = true;
+      final response = await CustomHttp.post(
+        endpoint: '${ApiConstant.notificationActionPath}/$notificationId/action',
+        need_auth: true,
+        body: {'action': action},
+      );
+      if (response.ok) {
+        _updateActionStatus(notificationId, action);
+        _updateReadState([notificationId], true);
+        _decrementUnreadCounts([notificationId]);
+        return true;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    } finally {
+      loadingTabs[_tabForNotificationId(notificationId)] = false;
+    }
+    return false;
+  }
+
+  String _tabForNotificationId(int id) {
+    if (vibes.any((n) => n.id == id)) return 'vibes';
+    if (events.any((n) => n.id == id)) return 'events';
+    if (communities.any((n) => n.id == id)) return 'communities';
+    return 'vibes';
+  }
+
+  void _updateReadState(List<int> ids, bool isRead) {
+    final idSet = ids.toSet();
+    void updateList(RxList<NotificationModel> list) {
+      final index = list.indexWhere((n) => idSet.contains(n.id));
+      if (index == -1) return;
+      list[index] = list[index].copyWith(isRead: isRead);
+    }
+
+    updateList(vibes);
+    updateList(events);
+    updateList(communities);
+  }
+
+  void _decrementUnreadCounts(List<int> ids) {
+    final idSet = ids.toSet();
+    final newCounts = UnreadCounts(
+      vibes: _countInTab(vibes, idSet, unreadCounts.value.vibes),
+      events: _countInTab(events, idSet, unreadCounts.value.events),
+      communities: _countInTab(communities, idSet, unreadCounts.value.communities),
+    );
+    unreadCounts.value = newCounts;
+  }
+
+  int _countInTab(
+    RxList<NotificationModel> list,
+    Set<int> idsMarkedRead,
+    int currentCount,
+  ) {
+    final matches = list.where((n) => idsMarkedRead.contains(n.id)).length;
+    return (currentCount - matches).clamp(0, 1 << 30);
+  }
+
+  void _updateActionStatus(int notificationId, String action) {
+    RxList<NotificationModel>? list;
+    if (vibes.any((n) => n.id == notificationId)) {
+      list = vibes;
+    } else if (events.any((n) => n.id == notificationId)) {
+      list = events;
+    } else if (communities.any((n) => n.id == notificationId)) {
+      list = communities;
+    }
+    if (list == null) return;
+    final index = list.indexWhere((n) => n.id == notificationId);
+    if (index == -1) return;
+    list[index] = list[index].copyWith(actionStatus: action);
   }
 }
