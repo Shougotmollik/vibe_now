@@ -138,6 +138,12 @@ class NotificationController extends GetxController {
       communities: _countInTab(communities, idSet, unreadCounts.value.communities),
     );
     unreadCounts.value = newCounts;
+
+    final newTotal = newCounts.vibes + newCounts.events + newCounts.communities;
+    stats.value = NotificationStats(
+      unreadTotal: newTotal,
+      totalNotifications: stats.value.totalNotifications,
+    );
   }
 
   int _countInTab(
