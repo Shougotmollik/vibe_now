@@ -3,10 +3,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 
 class TrustScoreCard extends StatelessWidget {
-  const TrustScoreCard({super.key});
+  const TrustScoreCard({
+    super.key,
+    this.score = 0.0,
+    this.meetsCount = 0,
+  });
+
+  final double score;
+  final int meetsCount;
 
   @override
   Widget build(BuildContext context) {
+    final clampedScore = score.clamp(0.0, 5.0);
+    final fullStars = clampedScore.floor();
+    final hasHalf = (clampedScore - fullStars) >= 0.25 &&
+        (clampedScore - fullStars) < 0.75;
+    final extraFull = (clampedScore - fullStars) >= 0.75 ? 1 : 0;
+    final filledCount = (fullStars + extraFull).clamp(0, 5);
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 20.w),
       child: Container(
@@ -27,7 +41,9 @@ class TrustScoreCard extends StatelessWidget {
                     Icon(Icons.star, color: Colors.amber, size: 20.sp),
                     const SizedBox(width: 8),
                     Text(
-                      '4.8',
+                      clampedScore.toStringAsFixed(
+                        clampedScore == clampedScore.roundToDouble() ? 0 : 1,
+                      ),
                       style: TextStyle(
                         fontSize: 20.sp,
                         fontWeight: FontWeight.w400,
@@ -72,7 +88,9 @@ class TrustScoreCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              'Based on 12 real-life meets',
+              meetsCount == 0
+                  ? 'No real-life meets yet'
+                  : 'Based on $meetsCount real-life ${meetsCount == 1 ? 'meet' : 'meets'}',
               style: TextStyle(
                 fontSize: 14.sp,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -81,9 +99,21 @@ class TrustScoreCard extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: List.generate(5, (index) {
+                IconData iconData;
+                Color color;
+                if (index < filledCount) {
+                  iconData = Icons.star;
+                  color = Colors.amber;
+                } else if (index == filledCount && hasHalf) {
+                  iconData = Icons.star_half;
+                  color = Colors.amber;
+                } else {
+                  iconData = Icons.star_border;
+                  color = Colors.amber.shade300;
+                }
                 return Padding(
                   padding: const EdgeInsets.only(right: 4.0),
-                  child: Icon(Icons.star, color: Colors.amber, size: 20.sp),
+                  child: Icon(iconData, color: color, size: 20.sp),
                 );
               }),
             ),

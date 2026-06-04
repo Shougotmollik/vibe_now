@@ -39,6 +39,7 @@ part './utils/video_picker.dart';
 part './utils/audio_picker.dart';
 part './utils/number_magnitude.dart';
 part './utils/simple_text_updater.dart';
+part './utils/title_case.dart';
 part './utils/report_widget.dart';
 part './utils/ffmpeg.dart';
 

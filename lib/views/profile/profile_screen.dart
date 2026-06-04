@@ -7,6 +7,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
@@ -16,10 +17,11 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/interest_model.dart';
+import 'package:vibe_now/model/profile_model.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
 import 'package:vibe_now/utils.dart' as utils;
-import 'package:vibe_now/views/profile/widget/post_tab.dart';
+// import 'package:vibe_now/views/profile/widget/post_tab.dart';
 import 'package:vibe_now/views/settings/widget/respect_score_card.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -37,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     text: 'Coffee enthusiast. Music lover. Avid traveler. Foodie.',
   );
 
-  final _tabs = ['Photos', 'Posts'];
+  // final _tabs = ['Photos', 'Posts'];
 
   // For photo grid
   final List<String> _photos = [
@@ -74,16 +76,19 @@ class _ProfileScreenState extends State<ProfileScreen>
   ];
 
   File? _selectedImage;
-  int _selectedTabIndex = 0;
+  // int _selectedTabIndex = 0;
 
   bool _isEditable = false;
   String? _activeParent;
 
-  final ProfileController profileController = Get.put(ProfileController());
+  final ProfileController profileController = Get.find<ProfileController>();
+  final OnBoardingController onBoardingController =
+      Get.find<OnBoardingController>();
 
   @override
   void initState() {
     super.initState();
+    profileController.fetchProfile();
   }
 
   @override
@@ -94,56 +99,69 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Move _tabWidgets here so it rebuilds when setState is called
-    final _tabWidgets = [_buildPhotosTab(widget.isMyProfile), PostsTab()];
-
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            SafeArea(bottom: false, child: SizedBox(height: 12.h)),
-            _buildAppBar(context, widget.isMyProfile),
-            _buildProfileHeader(),
-            TrustScoreCard(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _tabs.map((item) {
-                return GestureDetector(
-                  onTap: () =>
-                      setState(() => _selectedTabIndex = _tabs.indexOf(item)),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: _selectedTabIndex == _tabs.indexOf(item)
-                              ? Theme.of(context).colorScheme.primary
-                              : Colors.transparent,
-                          width: 2.w,
-                        ),
-                      ),
-                    ),
-                    width: (1.sw - 40.w) / 2,
-                    height: 48.w,
-                    child: Center(
-                      child: Text(
-                        item,
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 16.h),
-            _tabWidgets[_selectedTabIndex],
-            SizedBox(height: 112.h),
-          ],
-        ),
-      ),
+      body: Obx(() {
+        if (profileController.isLoading.value &&
+            profileController.account.value == null) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final account = profileController.account.value;
+        final userProfile = account?.profile;
+        final fullName = userProfile?.fullName.isNotEmpty == true
+            ? utils.titleCase(userProfile!.fullName)
+            : 'User';
+        final age = _ageFromDob(userProfile?.dateOfBirth);
+        final avatarUrl = userProfile?.primaryPhoto?.fullUrl;
+        final photoUrls =
+            userProfile?.photos.map((p) => p.fullUrl).toList() ?? _photos;
+        final bio = userProfile?.bio ?? _bioController.text;
+        final locationName = userProfile?.locationName;
+        final interests = userProfile?.interests ?? <String>[];
+        final trustScore = userProfile?.trustedScore?.score ?? 0.0;
+        final meetsCount = userProfile?.trustedScore?.meetsCount ?? 0;
+        if (_bioController.text != bio && !_isEditable) {
+          _bioController.text = bio;
+        }
+
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              SafeArea(bottom: false, child: SizedBox(height: 12.h)),
+              _buildAppBar(context, widget.isMyProfile),
+              _buildProfileHeader(
+                fullName: fullName,
+                age: age,
+                avatarUrl: avatarUrl,
+                locationName: locationName,
+                bio: bio,
+                interests: interests,
+              ),
+              TrustScoreCard(score: trustScore, meetsCount: meetsCount),
+              SizedBox(height: 16.h),
+              _buildPhotosTab(widget.isMyProfile, photoUrls),
+              SizedBox(height: 112.h),
+            ],
+          ),
+        );
+      }),
     );
+  }
+
+  int? _ageFromDob(String? dob) {
+    if (dob == null || dob.isEmpty) return null;
+    try {
+      final birth = DateTime.parse(dob);
+      final now = DateTime.now();
+      var age = now.year - birth.year;
+      if (now.month < birth.month ||
+          (now.month == birth.month && now.day < birth.day)) {
+        age--;
+      }
+      return age;
+    } catch (_) {
+      return null;
+    }
   }
 
   PreferredSize _buildAppBar(BuildContext context, bool isMyProfile) {
@@ -158,8 +176,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                 ? const SizedBox()
                 : GestureDetector(
                     onTap: () => context.pop(),
-                    child: Icon(Icons.arrow_back_ios,
-                        color: Theme.of(context).colorScheme.onSurface),
+                    child: Icon(
+                      Icons.arrow_back_ios,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
             GestureDetector(
               onTap: () {
@@ -186,8 +206,12 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                     child: isMyProfile != true
                         ? Assets.icons.chatting.svg()
-                        : Icon(Icons.settings,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        : Icon(
+                            Icons.settings,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
                   ),
                 ],
               ),
@@ -198,7 +222,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _profilePicWidget() {
+  Widget _profilePicWidget({String? avatarUrl}) {
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
@@ -207,43 +231,82 @@ class _ProfileScreenState extends State<ProfileScreen>
           backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
           backgroundImage: _selectedProfileImage != null
               ? FileImage(_selectedProfileImage!)
-              : NetworkImage(
-                  'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-                ) as ImageProvider,
+              : (avatarUrl != null && avatarUrl.isNotEmpty
+                        ? NetworkImage(avatarUrl)
+                        : NetworkImage(
+                            'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
+                          ))
+                    as ImageProvider,
         ),
         if (_isEditable)
-          GestureDetector(
-            onTap: () async {
-              utils.showImagePickerOptions(context, (imageSource) async {
-                final image = await utils.pickSingleImage(
-                  context: context,
-                  source: imageSource,
-                  compress: true,
-                );
+          Obx(() {
+            final uploading = profileController.isLoading.value;
+            return GestureDetector(
+              onTap: uploading
+                  ? null
+                  : () async {
+                      utils.showImagePickerOptions(context, (
+                        imageSource,
+                      ) async {
+                        final image = await utils.pickSingleImage(
+                          context: context,
+                          source: imageSource,
+                          compress: true,
+                        );
 
-                if (image != null) {
-                  setState(() {
-                    _selectedProfileImage = image;
-                  });
-                }
-              });
-            },
-            child: Container(
-              padding: EdgeInsets.all(6.w),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surface,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).shadowColor.withOpacity(0.1),
-                    blurRadius: 4,
-                    offset: Offset(0, 2),
-                  ),
-                ],
+                        if (image != null) {
+                          setState(() {
+                            _selectedProfileImage = image;
+                          });
+
+                          final success = await profileController
+                              .updateProfileImage(image);
+
+                          if (!mounted) return;
+
+                          if (success) {
+                            AppSnackbar.show(
+                              message: 'Profile photo updated',
+                              type: SnackType.warning,
+                            );
+                            if (mounted) {
+                              setState(() {
+                                _selectedProfileImage = null;
+                              });
+                            }
+                          } else {
+                            AppSnackbar.show(
+                              message:
+                                  'Failed to update profile photo. Please try again.',
+                              type: SnackType.warning,
+                            );
+                          }
+                        }
+                      });
+                    },
+              child: Container(
+                padding: EdgeInsets.all(6.w),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Theme.of(context).shadowColor.withOpacity(0.1),
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: uploading
+                    ? SizedBox(
+                        width: 18.w,
+                        height: 18.w,
+                        child: const CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Assets.icons.camera2.svg(),
               ),
-              child: Assets.icons.camera2.svg(),
-            ),
-          ),
+            );
+          }),
       ],
     );
   }
@@ -283,8 +346,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                 hintText:
                     "Enter your bio here. It will be visible to your friends",
                 hintStyle: TextStyle(
-                    fontSize: 14.sp,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  fontSize: 14.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 contentPadding: EdgeInsets.symmetric(
                   vertical: 12.h,
                   horizontal: 16.w,
@@ -299,8 +363,9 @@ class _ProfileScreenState extends State<ProfileScreen>
             child: Text(
               "${_bioController.text.length}/70",
               style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+                fontSize: 12.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         ],
@@ -308,7 +373,14 @@ class _ProfileScreenState extends State<ProfileScreen>
     );
   }
 
-  Widget _buildProfileHeader() {
+  Widget _buildProfileHeader({
+    required String fullName,
+    int? age,
+    String? avatarUrl,
+    String? locationName,
+    required String bio,
+    required List<String> interests,
+  }) {
     return Column(
       children: [
         SizedBox(height: 16.h),
@@ -317,7 +389,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           child: Stack(
             alignment: Alignment.center,
             children: [
-              _profilePicWidget(),
+              _profilePicWidget(avatarUrl: avatarUrl),
               if (widget.isMyProfile)
                 Positioned(
                   right: 16.w,
@@ -335,8 +407,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                         color: Theme.of(context).colorScheme.surface,
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                Theme.of(context).shadowColor.withOpacity(0.1),
+                            color: Theme.of(
+                              context,
+                            ).shadowColor.withOpacity(0.1),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -354,48 +427,49 @@ class _ProfileScreenState extends State<ProfileScreen>
         ),
         SizedBox(height: 10.h),
         Text(
-          'Jenny Gomes, 23',
+          age != null ? '$fullName, $age' : fullName,
           style: TextStyle(
-              fontSize: 24.sp,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface),
+            fontSize: 24.sp,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         SizedBox(height: 4.h),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.location_on_outlined,
-                size: 16.h, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.location_on_outlined,
+              size: 16.h,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(width: 4),
-            Text('Approx. 400 km',
+            Flexible(
+              child: Text(
+                (locationName != null && locationName.isNotEmpty)
+                    ? locationName
+                    : 'Location not set',
+                overflow: TextOverflow.ellipsis,
                 style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                  fontSize: 14.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
           ],
         ),
         SizedBox(height: 8.h),
         if (!_isEditable)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Assets.icons.coffeeColor.svg(height: 16.h),
-              SizedBox(width: 4.w),
-              Text(
-                'Coffee enthusiast   |',
-                style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: Text(
+              bio.isNotEmpty ? bio : 'No bio yet',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
-              SizedBox(width: 8.w),
-              Assets.icons.musicColor.svg(height: 16.h),
-              SizedBox(width: 4.w),
-              Text(
-                'Music lover',
-                style: TextStyle(
-                    fontSize: 14.sp,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
-              ),
-            ],
+            ),
           ),
         if (_isEditable) _buildBioField(),
         SizedBox(height: 16.h),
@@ -406,16 +480,48 @@ class _ProfileScreenState extends State<ProfileScreen>
               alignment: WrapAlignment.center,
               spacing: 8.h,
               runSpacing: 8.h,
-              children: _allInterests
-                  .where((interest) => interest.isSelected)
-                  .map((interest) {
-                return _buildInterestTag(interest.icon, interest.label);
-              }).toList(),
+              children: interests.isNotEmpty
+                  ? interests
+                        .map((label) => _buildStringInterestTag(label))
+                        .toList()
+                  : _allInterests.where((interest) => interest.isSelected).map((
+                      interest,
+                    ) {
+                      return _buildInterestTag(interest.icon, interest.label);
+                    }).toList(),
             ),
           ),
         if (_isEditable) _buildInterestSection(),
         SizedBox(height: 28.h),
       ],
+    );
+  }
+
+  Widget _buildStringInterestTag(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Icon(
+          //   Icons.favorite,
+          //   size: 14.h,
+          //   color: Theme.of(context).colorScheme.primary,
+          // ),
+          // const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -431,16 +537,19 @@ class _ProfileScreenState extends State<ProfileScreen>
         children: [
           icon.svg(height: 16.h, width: 16.h),
           const SizedBox(width: 6),
-          Text(label,
-              style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildPhotosTab(bool isMyProfile) {
+  Widget _buildPhotosTab(bool isMyProfile, List<String> photos) {
     final width = (1.sw - 40.w - 12.w) / 2;
 
     List<Widget> photoItems = [];
@@ -460,6 +569,29 @@ class _ProfileScreenState extends State<ProfileScreen>
                 setState(() {
                   _selectedImage = image;
                 });
+
+                final uploaded = await onBoardingController
+                    .onboardingImageSubmit([image]);
+
+                if (!mounted) return;
+
+                if (uploaded) {
+                  AppSnackbar.show(
+                    message: 'Photo added successfully',
+                    type: SnackType.warning,
+                  );
+                  await profileController.fetchProfile();
+                  if (mounted) {
+                    setState(() {
+                      _selectedImage = null;
+                    });
+                  }
+                } else {
+                  AppSnackbar.show(
+                    message: 'Failed to upload photo. Please try again.',
+                    type: SnackType.warning,
+                  );
+                }
               }
             });
           },
@@ -504,7 +636,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
     // Add existing photos
     photoItems.addAll(
-      _photos.map((item) {
+      photos.map((item) {
         return Stack(
           children: [
             GestureDetector(
@@ -579,8 +711,10 @@ class _ProfileScreenState extends State<ProfileScreen>
         mainAxisAlignment: MainAxisAlignment.center,
         spacing: 18.h,
         children: [
-          Text('Are you sure you want to delete this photo?',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+          Text(
+            'Are you sure you want to delete this photo?',
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+          ),
           SizedBox(
             height: 32.h,
             child: Row(
@@ -701,7 +835,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                 : null,
                                             color: selected
                                                 ? null
-                                                : Theme.of(context).colorScheme.surfaceVariant,
+                                                : Theme.of(
+                                                    context,
+                                                  ).colorScheme.surfaceVariant,
                                             borderRadius: BorderRadius.circular(
                                               20,
                                             ),
@@ -715,7 +851,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                 width: 16.h,
                                                 color: selected
                                                     ? Colors.white
-                                                    : Theme.of(context).colorScheme.onSurfaceVariant,
+                                                    : Theme.of(context)
+                                                          .colorScheme
+                                                          .onSurfaceVariant,
                                               ),
                                               Text(
                                                 sub.name,
@@ -723,7 +861,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                                                   fontSize: 13.sp,
                                                   color: selected
                                                       ? Colors.white
-                                                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                                                      : Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurfaceVariant,
                                                 ),
                                               ),
                                             ],
@@ -785,7 +925,11 @@ class _ProfileScreenState extends State<ProfileScreen>
           ),
           title: Text(
             'Add Interest Category',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Theme.of(context).colorScheme.onSurface),
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -794,10 +938,15 @@ class _ProfileScreenState extends State<ProfileScreen>
               TextField(
                 controller: controller,
                 autofocus: true,
-                style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: InputDecoration(
                   hintText: "Enter interest name",
-                  hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 14),
+                  hintStyle: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 14,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
@@ -927,14 +1076,21 @@ class _ProfileScreenState extends State<ProfileScreen>
                 borderRadius: BorderRadius.circular(16.r),
               ),
               backgroundColor: Theme.of(context).colorScheme.surface,
-              title: Text("Add Sub Interest", style: TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+              title: Text(
+                "Add Sub Interest",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextField(
                     controller: _newInterestController,
                     autofocus: true,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                     decoration: InputDecoration(
                       hintText: "Enter interest name",
                       hintStyle: TextStyle(
@@ -977,7 +1133,9 @@ class _ProfileScreenState extends State<ProfileScreen>
                             ),
                             child: CustomElevatedButton(
                               btnColor: Theme.of(context).colorScheme.surface,
-                              textColor: Theme.of(context).colorScheme.onSurface,
+                              textColor: Theme.of(
+                                context,
+                              ).colorScheme.onSurface,
                               onTap: () => Navigator.pop(context),
                               buttonText: 'Cancel',
                               fontWeight: FontWeight.w400,

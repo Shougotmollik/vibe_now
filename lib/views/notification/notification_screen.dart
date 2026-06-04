@@ -188,11 +188,23 @@ class _NotificationScreenState extends State<NotificationScreen> {
       }
       final items = _controller.vibes;
       if (items.isEmpty) {
-        return Center(
-          child: Text(
-            'No waves yet',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+        final mq = MediaQuery.of(context);
+        final contentHeight =
+            mq.size.height -
+            mq.padding.top -
+            mq.padding.bottom -
+            56.h -
+            16.h -
+            40.h -
+            16.h;
+        return SizedBox(
+          height: contentHeight > 0 ? contentHeight : 0,
+          child: Center(
+            child: Text(
+              'No waves received yet',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         );
@@ -232,11 +244,23 @@ class _NotificationScreenState extends State<NotificationScreen> {
       }
       final items = _controller.events;
       if (items.isEmpty) {
-        return Center(
-          child: Text(
-            'No events yet',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+        final mq = MediaQuery.of(context);
+        final contentHeight =
+            mq.size.height -
+            mq.padding.top -
+            mq.padding.bottom -
+            56.h -
+            16.h -
+            40.h -
+            16.h;
+        return SizedBox(
+          height: contentHeight > 0 ? contentHeight : 0,
+          child: Center(
+            child: Text(
+              'No event updates yet',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         );
@@ -280,11 +304,23 @@ class _NotificationScreenState extends State<NotificationScreen> {
       }
       final items = _controller.communities;
       if (items.isEmpty) {
-        return Center(
-          child: Text(
-            'No community notifications yet',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
+        final mq = MediaQuery.of(context);
+        final contentHeight =
+            mq.size.height -
+            mq.padding.top -
+            mq.padding.bottom -
+            56.h -
+            16.h -
+            40.h -
+            16.h;
+        return SizedBox(
+          height: contentHeight > 0 ? contentHeight : 0,
+          child: Center(
+            child: Text(
+              'No community updates yet',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         );

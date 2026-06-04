@@ -2,13 +2,16 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/gen/assets.gen.dart' as svgs;
+import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
@@ -27,6 +30,7 @@ class ProfileSettingScreen extends StatefulWidget {
 
 class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
+  final ProfileController profileController = Get.find<ProfileController>();
   // File? _selectedImage;
 
   @override
@@ -43,41 +47,61 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                 CustomAppBar(title: 'Account Information'),
                 SizedBox(height: 16.h),
                 // Profile Section
-                Center(
-                  child: Column(
-                    children: [
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(50.r),
-                            child: Image.network(
-                              'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
-                              width: 78.w,
-                              height: 78.w,
-                              fit: BoxFit.cover,
+                Obx(() {
+                  final account = profileController.account.value;
+                  final userProfile = account?.profile;
+                  final fullName = userProfile?.fullName.isNotEmpty == true
+                      ? utils.titleCase(userProfile!.fullName)
+                      : 'User';
+                  final email = account?.email ?? '';
+                  final avatarUrl = userProfile?.primaryPhoto?.fullUrl;
+
+                  return Center(
+                    child: Column(
+                      children: [
+                        Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(50.r),
+                              child: avatarUrl != null && avatarUrl.isNotEmpty
+                                  ? Image.network(
+                                      avatarUrl,
+                                      width: 78.w,
+                                      height: 78.w,
+                                      fit: BoxFit.cover,
+                                    )
+                                  : Image.network(
+                                      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+                                      width: 78.w,
+                                      height: 78.w,
+                                      fit: BoxFit.cover,
+                                    ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 12.h),
+                        Text(
+                          fullName,
+                          style: TextStyle(
+                            fontSize: 22.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        if (email.isNotEmpty)
+                          Text(
+                            email,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                           ),
-                        ],
-                      ),
-                      SizedBox(height: 12.h),
-                      Text(
-                        'Jhon Gomes',
-                        style: TextStyle(
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                      Text(
-                        'john.gomes@me.com',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                      ],
+                    ),
+                  );
+                }),
                 SizedBox(height: 18.h),
                 // Text(
                 //   'Account Information',
@@ -239,7 +263,9 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
             Icon(
               Icons.arrow_forward_ios,
               size: 16.h,
-              color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withOpacity(0.5),
             ),
           ],
         ),

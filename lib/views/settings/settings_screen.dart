@@ -3,9 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/controller/auth_controller.dart';
+import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/gradient_switch.dart';
@@ -32,6 +34,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   bool events = true;
 
   final AuthController authController = Get.find<AuthController>();
+  final ProfileController profileController = Get.find<ProfileController>();
 
   @override
   Widget build(BuildContext context) {
@@ -51,67 +54,76 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     SizedBox(height: 20.h),
 
                     // Profile Section
-                    Center(
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 50.r,
-                                backgroundColor: Theme.of(
-                                  context,
-                                ).colorScheme.surfaceVariant,
-                                backgroundImage: const NetworkImage(
-                                  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+                    Obx(() {
+                      final userProfile =
+                          profileController.account.value?.profile;
+                      final fullName = userProfile?.fullName.isNotEmpty == true
+                          ? utils.titleCase(userProfile!.fullName)
+                          : 'User';
+                      final avatarUrl = userProfile?.primaryPhoto?.fullUrl;
+                      final bio = userProfile?.bio ?? '';
+
+                      return Center(
+                        child: Column(
+                          children: [
+                            Stack(
+                              children: [
+                                CircleAvatar(
+                                  radius: 50.r,
+                                  backgroundColor: Theme.of(
+                                    context,
+                                  ).colorScheme.surfaceVariant,
+                                  backgroundImage:
+                                      (avatarUrl != null && avatarUrl.isNotEmpty
+                                              ? NetworkImage(avatarUrl)
+                                              : const NetworkImage(
+                                                  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400',
+                                                ))
+                                          as ImageProvider,
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 16.h),
-                          Text(
-                            'Jhon Gomes',
-                            style: TextStyle(
-                              fontSize: 22.sp,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface,
+                              ],
                             ),
-                          ),
-                          SizedBox(height: 8.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Text('☕', style: TextStyle(fontSize: 16.sp)),
-                              Assets.icons.coffeeColor.svg(height: 16.h),
-                              SizedBox(width: 4.w),
-                              Text(
-                                'Coffee enthusiast   |',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
+                            SizedBox(height: 16.h),
+                            Text(
+                              fullName,
+                              style: TextStyle(
+                                fontSize: 22.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                            ),
+                            SizedBox(height: 8.h),
+                            if (bio.isNotEmpty)
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 24.w),
+                                child: Text(
+                                  bio,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                                 ),
                               ),
-                              SizedBox(width: 8.w),
-                              // Text('🎵', style: TextStyle(fontSize: 16.sp)),
-                              Assets.icons.musicColor.svg(height: 16.h),
-                              SizedBox(width: 4.w),
-                              Text(
-                                'Music lover',
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
+                          ],
+                        ),
+                      );
+                    }),
                     SizedBox(height: 32.h),
-                    TrustScoreCard(),
+                    Obx(() {
+                      final userProfile =
+                          profileController.account.value?.profile;
+                      final trustScore =
+                          userProfile?.trustedScore?.score ?? 0.0;
+                      final meetsCount =
+                          userProfile?.trustedScore?.meetsCount ?? 0;
+                      return TrustScoreCard(
+                        score: trustScore,
+                        meetsCount: meetsCount,
+                      );
+                    }),
                     SizedBox(height: 24.h),
                     // Profile Information
                     _buildMenuItem(

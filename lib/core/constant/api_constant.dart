@@ -7,6 +7,7 @@ class ApiConstant {
   static const String forgetPassword = "/auth/forgot-password";
   static const String forgetOtpVerification = "/auth/verify-reset-code";
   static const String resetPassword = "/auth/reset-password";
+  static const String changePassword = "/auth/change-password";
 
   static const String onboarding = "/onboarding/complete";
   static const String onboardingImage = "/onboarding/upload-photos";
@@ -21,4 +22,7 @@ class ApiConstant {
   static const String vibe = "/vibes";
 
   static const String notification = "/notifications";
+
+  static const String profile = "/auth/me";
+  static const String updateProfileImage = "/onboarding/upload-profile-photo";
 }
