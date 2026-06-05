@@ -27,4 +27,6 @@ class ApiConstant {
 
   static const String profile = "/auth/me";
   static const String updateProfileImage = "/onboarding/upload-profile-photo";
+
+  static const String chat = "/chats";
 }

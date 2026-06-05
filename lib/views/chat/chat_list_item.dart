@@ -16,7 +16,7 @@ class ChatListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Determine background color based on type
-    final backgroundColor = chat.type == ChatType.wave
+    final backgroundColor = chat.type == ChatType.community
         ? Theme.of(context).colorScheme.surfaceVariant
         : Theme.of(context).colorScheme.surface;
 
@@ -46,7 +46,7 @@ class ChatListItem extends StatelessWidget {
 
   /// Logic to decide which avatar style to show
   Widget _buildAvatar() {
-    if (chat.type == ChatType.community) {
+    if (chat.type == ChatType.community || chat.type == ChatType.event) {
       return CommunityAvatar(avatars: chat.avatars);
     }
     return ClipRRect(

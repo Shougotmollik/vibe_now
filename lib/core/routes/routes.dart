@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/env.dart';
+import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/services/local_storage.dart';
@@ -205,7 +206,29 @@ void setupRouter(bool hasToken) {
       GoRoute(
         path: '/community-chat-screen',
         name: RouteNames.communityChatScreen,
-        builder: (context, state) => const CommunityChatInboxScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          String? chatId;
+          String? title;
+          String? coverImage;
+
+          if (extra is Community) {
+            chatId = extra.chatId;
+            title = extra.title;
+            coverImage = extra.coverImage;
+          } else if (extra is Chat) {
+            chatId = extra.id.isNotEmpty ? extra.id : null;
+            title = extra.name.isNotEmpty ? extra.name : null;
+            coverImage = extra.avatar ??
+                (extra.avatars.isNotEmpty ? extra.avatars.first : null);
+          }
+
+          return CommunityChatInboxScreen(
+            chatId: chatId,
+            title: title,
+            coverImage: coverImage,
+          );
+        },
       ),
       GoRoute(
         path: '/report-screen',

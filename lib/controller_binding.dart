@@ -1,6 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:vibe_now/controller/auth_controller.dart';
+import 'package:vibe_now/controller/chat_controller.dart';
 import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/controller/home_controller.dart';
@@ -26,5 +27,6 @@ class ControllerBinding extends Bindings {
     Get.lazyPut<VibeController>(() => VibeController());
     Get.lazyPut<MeetupController>(() => MeetupController());
     Get.lazyPut<NotificationController>(() => NotificationController());
+    Get.lazyPut<ChatController>(() => ChatController());
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/chat_controller.dart';
 import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/controller/meetup_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
@@ -36,6 +37,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
   final CommunityController _communityController =
       Get.find<CommunityController>();
   final MeetupController _meetupController = Get.find<MeetupController>();
+  final ChatController _chatController = Get.find<ChatController>();
   String? _currentUserId;
 
   @override
@@ -164,11 +166,16 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                 ),
                               ),
                               GestureDetector(
-                                onTap: () {
-                                  context.pushNamed(
+                                onTap: () async {
+                                  await context.pushNamed(
                                     RouteNames.communityChatScreen,
                                     extra: community,
                                   );
+                                  if (mounted) {
+                                    _chatController.getChatList(
+                                      type: 'community',
+                                    );
+                                  }
                                 },
                                 child: Container(
                                   padding: EdgeInsets.all(6.w),

@@ -3,16 +3,22 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/chat_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/chat_message.dart' as api;
+import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/chat/chat_screen.dart';
+import 'package:vibe_now/views/chat/widgets/chat_message_shimmer.dart';
 
 //  Models
 
-enum MessageType { text, image, audio }
+enum MessageType { text, image, audio, mixed, deleted }
 
 class Reaction {
   final String emoji;
@@ -36,25 +42,37 @@ class ChatMessage {
   final MessageType type;
   final DateTime time;
   final List<Reaction> reactions;
+  final bool isEdited;
+  final bool isDeleted;
 
   ChatMessage({
     String? id,
     this.text,
     this.mediaUrl,
-    required this.senderAvatar,
-    required this.senderName,
-    required this.isMe,
-    required this.type,
+    this.senderAvatar = '',
+    this.senderName = '',
+    this.isMe = false,
+    this.type = MessageType.text,
     required this.time,
-    List<Reaction>? reactions,
-  }) : id = id ?? DateTime.now().microsecondsSinceEpoch.toString(),
-       reactions = reactions ?? [];
+    this.reactions = const [],
+    this.isEdited = false,
+    this.isDeleted = false,
+  }) : id = id ?? DateTime.now().microsecondsSinceEpoch.toString();
 }
 
 //  CommunityChatInboxScreen
 
 class CommunityChatInboxScreen extends StatefulWidget {
-  const CommunityChatInboxScreen({super.key});
+  final String? chatId;
+  final String? title;
+  final String? coverImage;
+
+  const CommunityChatInboxScreen({
+    super.key,
+    this.chatId,
+    this.title,
+    this.coverImage,
+  });
 
   @override
   State<CommunityChatInboxScreen> createState() =>
@@ -64,62 +82,19 @@ class CommunityChatInboxScreen extends StatefulWidget {
 class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  final ChatController _chatController = Get.find<ChatController>();
 
   OverlayEntry? _overlayEntry;
 
   bool _hasText = false;
-
   bool _isRecording = false;
   bool _isSending = false;
   String? _recordingPath;
   File? _selectedProfileImage;
 
-  final List<ChatMessage> _messages = [
-    ChatMessage(
-      text: 'Hey how are you',
-      senderAvatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-      senderName: 'Jony',
-      isMe: false,
-      type: MessageType.text,
-      time: DateTime.now().subtract(const Duration(minutes: 20)),
-      reactions: [
-        Reaction(emoji: '❤️', count: 3),
-        Reaction(emoji: '😂', count: 1, reactedByMe: true),
-      ],
-    ),
-    ChatMessage(
-      text: "I'm fine!",
-      senderAvatar: '',
-      senderName: 'Me',
-      isMe: true,
-      type: MessageType.text,
-      time: DateTime.now().subtract(const Duration(minutes: 18)),
-    ),
-    ChatMessage(
-      mediaUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-      senderAvatar: 'https://randomuser.me/api/portraits/women/2.jpg',
-      senderName: 'Sarah',
-      isMe: false,
-      type: MessageType.image,
-      time: DateTime.now().subtract(const Duration(minutes: 10)),
-    ),
-    ChatMessage(
-      mediaUrl: 'audio_file_url',
-      senderAvatar: '',
-      senderName: 'Me',
-      isMe: true,
-      type: MessageType.audio,
-      time: DateTime.now().subtract(const Duration(minutes: 5)),
-    ),
-    ChatMessage(
-      text: 'See you all there! 🎉',
-      senderAvatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-      senderName: 'Jony',
-      isMe: false,
-      type: MessageType.text,
-      time: DateTime.now().subtract(const Duration(minutes: 2)),
-    ),
-  ];
+  String? _currentUserId;
+  final List<ChatMessage> _localMessages = [];
+  bool _initialLoading = true;
 
   @override
   void initState() {
@@ -128,7 +103,19 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
       final has = _messageController.text.trim().isNotEmpty;
       if (has != _hasText) setState(() => _hasText = has);
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    _loadInitialData();
+  }
+
+  Future<void> _loadInitialData() async {
+    _currentUserId = await LocalStorage.user_id.get();
+    if (!mounted) return;
+    if (widget.chatId != null && widget.chatId!.isNotEmpty) {
+      _chatController.chatMessages.clear();
+      await _chatController.getChatHistory(chatId: widget.chatId!);
+    }
+    if (!mounted) return;
+    setState(() => _initialLoading = false);
+    _scrollToBottom();
   }
 
   @override
@@ -149,6 +136,62 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
         );
       }
     });
+  }
+
+  // ── Mapping: API model -> UI model ─────────────────────
+
+  ChatMessage _mapApiToUi(api.ChatMessage m) {
+    final senderId = m.sender?.id;
+    final isMe = senderId != null && senderId == _currentUserId;
+
+    final type = _resolveMessageType(m);
+    final reactions = (m.reactions ?? []).map((r) {
+      final reactedByMe = (r.users ?? []).any(
+        (u) => u.id == _currentUserId,
+      );
+      return Reaction(
+        emoji: r.emoji ?? '',
+        count: r.count ?? 0,
+        reactedByMe: reactedByMe,
+      );
+    }).toList();
+
+    return ChatMessage(
+      id: m.id,
+      text: m.content,
+      mediaUrl: m.file ?? m.voice,
+      senderAvatar: m.sender?.avatar ?? '',
+      senderName: m.sender?.fullName ?? '',
+      isMe: isMe,
+      type: type,
+      time: m.createdAt ?? DateTime.now(),
+      reactions: reactions,
+      isEdited: m.isEdited ?? false,
+      isDeleted: m.isDeleted ?? false,
+    );
+  }
+
+  MessageType _resolveMessageType(api.ChatMessage m) {
+    if (m.isDeleted == true) return MessageType.deleted;
+    final apiType = m.type?.toLowerCase();
+    switch (apiType) {
+      case 'voice':
+        return MessageType.audio;
+      case 'image':
+        return MessageType.image;
+      case 'mixed':
+        return MessageType.mixed;
+      case 'text':
+      default:
+        // Fallback: infer from fields if type is missing
+        if ((m.file ?? '').isNotEmpty) {
+          return (m.content ?? '').isNotEmpty
+              ? MessageType.mixed
+              : MessageType.image;
+        }
+        if ((m.voice ?? '').isNotEmpty) return MessageType.audio;
+        return MessageType.text;
+    }
   }
 
   // ── Overlay helpers ──────────────────────
@@ -202,7 +245,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
     setState(() {
-      _messages.add(
+      _localMessages.add(
         ChatMessage(
           text: text,
           senderAvatar: '',
@@ -231,31 +274,57 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
         appBar: _buildAppBar(context),
         body: Column(
           children: [
-            Expanded(
-              child: ListView.builder(
-                controller: _scrollController,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-                itemCount: _messages.length,
-                itemBuilder: (context, index) => _CommunityMessageTile(
-                  message: _messages[index],
-                  onLongPress: _showReactionOverlay,
-                  onToggleReaction: _toggleReaction,
-                  onMoreOptions: (msg) => _buildMoreOption(
-                    context,
-                    onDelete: () {
-                      Navigator.pop(context);
-                      setState(() => _messages.remove(msg));
-                    },
-                    onEdit: () => Navigator.pop(context),
-                  ),
-                ),
-              ),
-            ),
+            Expanded(child: _buildMessageList()),
             _buildInputArea(),
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildMessageList() {
+    if (_initialLoading) {
+      return const ChatMessageShimmer();
+    }
+
+    return Obx(() {
+      final apiMessages = _chatController.chatMessages;
+      final messages = <ChatMessage>[
+        ...apiMessages.reversed.map(_mapApiToUi),
+        ..._localMessages,
+      ];
+
+      if (messages.isEmpty) {
+        return Center(
+          child: Text(
+            'No messages yet',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 14.sp,
+            ),
+          ),
+        );
+      }
+
+      return ListView.builder(
+        controller: _scrollController,
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+        itemCount: messages.length,
+        itemBuilder: (context, index) => _CommunityMessageTile(
+          message: messages[index],
+          onLongPress: _showReactionOverlay,
+          onToggleReaction: _toggleReaction,
+          onMoreOptions: (msg) => _buildMoreOption(
+            context,
+            onDelete: () {
+              Navigator.pop(context);
+              setState(() => _localMessages.remove(msg));
+            },
+            onEdit: () => Navigator.pop(context),
+          ),
+        ),
+      );
+    });
   }
 
   // ── App Bar ──────────────────────────────
@@ -274,17 +343,13 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
         onTap: () => context.pushNamed(RouteNames.communityMemberScreen),
         child: Row(
           children: [
-            const CommunityAvatar(
-              avatars: [
-                'https://randomuser.me/api/portraits/men/32.jpg',
-                'https://randomuser.me/api/portraits/women/44.jpg',
-              ],
-              size: 40,
-            ),
+            _buildAppBarAvatar(),
             SizedBox(width: 12.w),
             Expanded(
               child: Text(
-                'Coffee Meetup at Central Park',
+                widget.title?.isNotEmpty == true
+                    ? widget.title!
+                    : 'Community Chat',
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
@@ -333,6 +398,33 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
           ],
         ),
       ],
+    );
+  }
+
+  Widget _buildAppBarAvatar() {
+    final cover = AppCredentials.fixurl(widget.coverImage);
+    if (cover.isNotEmpty) {
+      return ClipOval(
+        child: Image.network(
+          cover,
+          width: 40.w,
+          height: 40.w,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) =>
+              _buildFallbackAvatar(),
+        ),
+      );
+    }
+    return _buildFallbackAvatar();
+  }
+
+  Widget _buildFallbackAvatar() {
+    return const CommunityAvatar(
+      avatars: [
+        'https://randomuser.me/api/portraits/men/32.jpg',
+        'https://randomuser.me/api/portraits/women/44.jpg',
+      ],
+      size: 40,
     );
   }
 
@@ -508,7 +600,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
     await Future.delayed(const Duration(seconds: 1));
 
     setState(() {
-      _messages.add(
+      _localMessages.add(
         ChatMessage(
           text: '🎤 Voice message',
           senderAvatar: '',
@@ -588,6 +680,20 @@ class _CommunityMessageTileState extends State<_CommunityMessageTile>
             ? CrossAxisAlignment.end
             : CrossAxisAlignment.start,
         children: [
+          // Sender name (only for others)
+          if (!msg.isMe && msg.senderName.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.only(left: 44.w, bottom: 2.h, right: 8.w),
+              child: Text(
+                msg.senderName,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+
           // Avatar row + bubble
           Row(
             mainAxisAlignment: msg.isMe
@@ -596,11 +702,7 @@ class _CommunityMessageTileState extends State<_CommunityMessageTile>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (!msg.isMe) ...[
-                CircleAvatar(
-                  radius: 18.r,
-                  backgroundImage: NetworkImage(msg.senderAvatar),
-                  onBackgroundImageError: (_, __) {},
-                ),
+                _Avatar(url: msg.senderAvatar, radius: 18.r),
                 SizedBox(width: 8.w),
               ],
 
@@ -647,6 +749,35 @@ class _CommunityMessageTileState extends State<_CommunityMessageTile>
   }
 }
 
+//  Avatar with graceful fallback
+
+class _Avatar extends StatelessWidget {
+  final String url;
+  final double radius;
+
+  const _Avatar({required this.url, required this.radius});
+
+  @override
+  Widget build(BuildContext context) {
+    if (url.isEmpty) {
+      return CircleAvatar(
+        radius: radius,
+        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        child: Icon(
+          Icons.person,
+          size: radius,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      );
+    }
+    return CircleAvatar(
+      radius: radius,
+      backgroundImage: NetworkImage(url),
+      onBackgroundImageError: (_, __) {},
+    );
+  }
+}
+
 //  Bubble content (original ChatBubble design preserved)
 
 class _BubbleContent extends StatelessWidget {
@@ -656,15 +787,36 @@ class _BubbleContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (message.type == MessageType.deleted) {
+      return Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.surfaceVariant,
+          borderRadius: BorderRadius.only(
+            topLeft: const Radius.circular(20),
+            topRight: const Radius.circular(20),
+            bottomLeft: Radius.circular(message.isMe ? 20 : 0),
+            bottomRight: Radius.circular(message.isMe ? 0 : 20),
+          ),
+        ),
+        child: Text(
+          '🚫 This message was deleted',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 13.sp,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: message.isMe
           ? CrossAxisAlignment.end
           : CrossAxisAlignment.start,
       children: [
         Container(
-          padding: message.type == MessageType.image
-              ? EdgeInsets.all(4.w)
-              : EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+          padding: _bubblePaddingFor(message.type),
           decoration: BoxDecoration(
             color: message.isMe ? null : Theme.of(context).colorScheme.surfaceVariant,
             gradient: message.isMe ? AppColors.primaryGradient : null,
@@ -679,13 +831,48 @@ class _BubbleContent extends StatelessWidget {
         ),
         Padding(
           padding: EdgeInsets.only(top: 4.h, left: 4.w, right: 4.w),
-          child: Text(
-            '${message.time.hour.toString().padLeft(2, '0')}:${message.time.minute.toString().padLeft(2, '0')}',
-            style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                _formatTime(message.time),
+                style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+              ),
+              if (message.isEdited) ...[
+                SizedBox(width: 4.w),
+                Text(
+                  '(edited)',
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    color: Colors.grey,
+                    fontStyle: FontStyle.italic,
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
       ],
     );
+  }
+
+  EdgeInsets _bubblePaddingFor(MessageType type) {
+    switch (type) {
+      case MessageType.image:
+        return EdgeInsets.all(4.w);
+      case MessageType.mixed:
+        return EdgeInsets.all(6.w);
+      case MessageType.audio:
+      case MessageType.text:
+      case MessageType.deleted:
+        return EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h);
+    }
+  }
+
+  String _formatTime(DateTime t) {
+    final hh = t.hour.toString().padLeft(2, '0');
+    final mm = t.minute.toString().padLeft(2, '0');
+    return '$hh:$mm';
   }
 
   Widget _buildTypeSpecificUI(BuildContext context) {
@@ -703,7 +890,7 @@ class _BubbleContent extends StatelessWidget {
         return ClipRRect(
           borderRadius: BorderRadius.circular(16),
           child: Image.network(
-            message.mediaUrl!,
+            message.mediaUrl ?? '',
             width: 200.w,
             fit: BoxFit.cover,
             errorBuilder: (_, __, ___) => Container(
@@ -715,11 +902,46 @@ class _BubbleContent extends StatelessWidget {
           ),
         );
 
+      case MessageType.mixed:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if ((message.text ?? '').isNotEmpty)
+              Padding(
+                padding: EdgeInsets.only(bottom: 6.h, left: 4.w, right: 4.w),
+                child: Text(
+                  message.text!,
+                  style: TextStyle(
+                    color: message.isMe
+                        ? Colors.white
+                        : Theme.of(context).colorScheme.onSurface,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image.network(
+                message.mediaUrl ?? '',
+                width: 200.w,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 200.w,
+                  height: 150.h,
+                  color: Colors.grey[300],
+                  child: const Icon(Icons.broken_image, color: Colors.grey),
+                ),
+              ),
+            ),
+          ],
+        );
+
       case MessageType.audio:
         return Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.pause_circle_filled, color: Colors.white),
+            const Icon(Icons.play_circle_filled, color: Colors.white),
             SizedBox(width: 8.w),
             SizedBox(
               width: 100.w,
@@ -733,6 +955,9 @@ class _BubbleContent extends StatelessWidget {
             ),
           ],
         );
+
+      case MessageType.deleted:
+        return const SizedBox.shrink();
     }
   }
 }
@@ -1067,7 +1292,7 @@ Future<dynamic> _buildMoreOption(
                     Icon(
                       Icons.edit_outlined,
                       color: AppColors.primary,
-                      size: 20.sp,
+                      size: 20.w,
                     ),
                     SizedBox(width: 4.w),
                     Text(

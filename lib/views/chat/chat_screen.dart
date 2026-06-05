@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:timeago/timeago.dart' as timeago;
+import 'package:vibe_now/controller/chat_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
-import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/chat/chat_list_item.dart';
+import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/notification/widgets/notification_shimmer.dart';
 import 'package:vibe_now/views/qr_verification/qr_verification_screen.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -19,291 +24,287 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final ChatController _chatController = Get.find<ChatController>();
 
-  // ! chat dummy data
-  final List<Chat> _chatList = [
-    Chat(
-      avatars: ['https://randomuser.me/api/portraits/women/12.jpg'],
-      name: 'Sammy Smith',
-      message: 'Sent you a wave!',
-      time: '10:30 AM',
-      type: ChatType.wave,
-    ),
-    Chat(
-      name: "smith jane",
-      message: "my work is done please check it out",
-      time: "11:00 AM",
-      avatars: ['https://randomuser.me/api/portraits/women/14.jpg'],
-      type: ChatType.single,
-    ),
-    Chat(
-      avatars: [
-        'https://randomuser.me/api/portraits/men/32.jpg',
-        'https://randomuser.me/api/portraits/women/44.jpg',
-      ],
-      name: 'Coffee Meetup at Central Park',
-      message: 'Join us for a coffee meetup at Central Park',
-      time: '11:00 AM',
-      type: ChatType.community,
-    ),
-  ];
+  int _selectedTabIndex = 0;
+  static const _tabs = ['Waves', 'Event', 'Community'];
+  static const _tabKeys = ['private', 'event', 'community'];
+
+  @override
+  void initState() {
+    super.initState();
+    _chatController.getChatList(type: _tabKeys[_selectedTabIndex]);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onTabChanged(int index) {
+    setState(() => _selectedTabIndex = index);
+    _chatController.getChatList(type: _tabKeys[index]);
+  }
+
+  Future<void> _onRefresh() =>
+      _chatController.getChatList(type: _tabKeys[_selectedTabIndex]);
+
+  void _openChat(Chat chat) {
+    switch (chat.type) {
+      case ChatType.event:
+      case ChatType.community:
+        context.pushNamed(RouteNames.communityChatScreen, extra: chat);
+        break;
+      case ChatType.private:
+        context.pushNamed(RouteNames.chatInboxScreen, extra: chat);
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            Row(
-              children: [
-                const SizedBox(width: 18),
-                Text(
-                  'Chats',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontSize: 20.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Spacer(),
-                GestureDetector(
-                  onTap: () => context.pushNamed(
-                    RouteNames.qrVerificationScreen,
-                    extra: QRContext.chats,
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.surfaceVariant,
-                    ),
-                    child: Assets.icons.scan.svg(
-                      width: 24.w,
-                      height: 24.h,
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Theme.of(context).colorScheme.onSurface,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-              ],
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: TextField(
-                controller: _searchController,
-                decoration: InputDecoration(
-                  hintText: 'Search a person',
-                  hintStyle: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontSize: 14.sp,
-                  ),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Theme.of(context).colorScheme.onSurface,
-                    size: 20.sp,
-                  ),
-                  filled: true,
-                  fillColor: Theme.of(context).colorScheme.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(color: Color(0xff9d9d9d)),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(color: Color(0xff9d9d9d)),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(color: Color(0xff9d9d9d)),
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
-
-            Expanded(
-              child: Column(
-                children: _chatList
-                    .map(
-                      (item) => ChatListItem(
-                        chat: item,
-                        onTap: () {
-                          switch (item.type) {
-                            case ChatType.wave:
-                              context.pushNamed(
-                                RouteNames.waveScreen,
-                                extra: item,
-                              );
-                            case ChatType.community:
-                              context.pushNamed(
-                                RouteNames.communityChatScreen,
-                                extra: item,
-                              );
-                            case ChatType.single:
-                              context.pushNamed(
-                                RouteNames.chatInboxScreen,
-                                extra: item,
-                              );
-                          }
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-            ),
-
-            // Expanded(
-            //   child: Column(
-            //     children: _chatList
-            //         .map(
-            //           (item) => ChatListItem(
-            //             chat: item,
-            //             onTap: () {
-            //               item.wave == true
-            //                   ? context.pushNamed(
-            //                       RouteNames.waveScreen,
-            //                       extra: item,
-            //                     )
-            //                   : context.pushNamed(
-            //                       RouteNames.chatInboxScreen,
-            //                       extra: item,
-            //                     );
-            //             },
-            //           ),
-            //         )
-            //         .toList(),
-            //   ),
-            // ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              _buildHeader(),
+              const SizedBox(height: 12),
+              _buildSearchBar(),
+              const SizedBox(height: 12),
+              _buildTabBar(),
+              const SizedBox(height: 12),
+              Expanded(child: _buildTabContent()),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  // ── Header ─────────────────────────────────────────
+
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        Text(
+          'Chats',
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 20.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const Spacer(),
+        GestureDetector(
+          onTap: () => context.pushNamed(
+            RouteNames.qrVerificationScreen,
+            extra: QRContext.chats,
+          ),
+          child: Container(
+            padding: EdgeInsets.all(8.w),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
+            child: Assets.icons.scan.svg(
+              width: 24.w,
+              height: 24.h,
+              fit: BoxFit.cover,
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.onSurface,
+                BlendMode.srcIn,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ── Search ─────────────────────────────────────────
+
+  Widget _buildSearchBar() {
+    return TextField(
+      controller: _searchController,
+      decoration: InputDecoration(
+        hintText: 'Search a conversation',
+        hintStyle: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          fontSize: 14.sp,
+        ),
+        prefixIcon: Icon(
+          Icons.search,
+          color: Theme.of(context).colorScheme.onSurface,
+          size: 20.sp,
+        ),
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: BorderSide(color: const Color(0xff9d9d9d)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Color(0xff9d9d9d)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+          borderSide: const BorderSide(color: Color(0xff9d9d9d)),
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+      ),
+    );
+  }
+
+  // ── Tabs ───────────────────────────────────────────
+
+  List<LinearGradient> get _tabGradients => [
+    const LinearGradient(
+      colors: [Color(0xFF8663F6), Color(0xFFC470F5), Color(0xFF57C2FF)],
+      stops: [0.16, 0.54, 0.92],
+    ),
+    const LinearGradient(colors: [Color(0xfffbadd8), Color(0xffdeb5fe)]),
+    const LinearGradient(colors: [Color(0xff99e2f1), Color(0xffaaccff)]),
+  ];
+
+  List<Widget> get _tabIcons => [
+    Assets.icons.handWave.svg(
+      width: 18.w,
+      height: 18.h,
+      colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
+    ),
+    Assets.icons.calendarColor.svg(
+      width: 18.w,
+      height: 18.h,
+      colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
+    ),
+    Assets.icons.communityColor.svg(
+      width: 18.w,
+      height: 18.h,
+      colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
+    ),
+  ];
+
+  Widget _buildTabBar() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: List.generate(_tabs.length, (index) {
+          final isSelected = _selectedTabIndex == index;
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: GestureDetector(
+              onTap: () => _onTabChanged(index),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.w),
+                decoration: BoxDecoration(
+                  gradient: isSelected ? _tabGradients[index] : null,
+                  color: isSelected
+                      ? null
+                      : Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(20),
+                  border: isSelected
+                      ? null
+                      : Border.all(
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.15),
+                          width: 1,
+                        ),
+                ),
+                child: Row(
+                  spacing: 6.w,
+                  children: [
+                    isSelected ? _tabIcons[index] : const SizedBox.shrink(),
+                    Text(
+                      _tabs[index],
+                      style: TextStyle(
+                        color: isSelected
+                            ? Colors.black87
+                            : Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        }),
+      ),
+    );
+  }
+
+  // ── Tab Content ────────────────────────────────────
+
+  Widget _buildTabContent() {
+    final tab = _tabKeys[_selectedTabIndex];
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: Obx(() {
+        final list = _chatController.chatsForTab(tab);
+        final isLoading = _chatController.isLoadingTab(tab) && list.isEmpty;
+
+        if (isLoading) {
+          return const NotificationShimmer();
+        }
+
+        if (list.isEmpty) {
+          return ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              SizedBox(height: 80.h),
+              Center(
+                child: Text(
+                  _emptyMessage(tab),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+
+        return ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: list.length,
+          separatorBuilder: (_, __) => Divider(
+            height: 1,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.08),
+          ),
+          itemBuilder: (context, index) => ChatListItem(
+            chat: list[index],
+            onTap: () => _openChat(list[index]),
+          ),
+        );
+      }),
+    );
+  }
+
+  String _emptyMessage(String tab) {
+    switch (tab) {
+      case 'event':
+        return 'No event chats yet';
+      case 'community':
+        return 'No community chats yet';
+      case 'private':
+        return 'No waves yet';
+      default:
+        return 'No conversations yet';
+    }
+  }
 }
 
-// class Chat {
-//   final String name;
-//   final String message;
-//   final String time;
-//   final List<String> avatar;
-//   final int? unreadCount;
-//   final bool wave;
-//   final bool isCommunity;
-//   Chat({
-//     required this.name,
-//     required this.message,
-//     required this.time,
-//     required this.avatar,
-//     this.unreadCount,
-//     required this.wave,
-//     this.isCommunity = false,
-//   });
-// }
-
-// class ChatListItem extends StatelessWidget {
-//   final VoidCallback onTap;
-
-//   final Chat chat;
-
-//   const ChatListItem({super.key, required this.chat, required this.onTap});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return InkWell(
-//       onTap: onTap,
-//       onLongPress: () => _buildMoreOption(
-//         context,
-//         onDelete: () {
-//           AppSnackbar.show(message: 'Chat deleted successfully');
-//           Navigator.pop(context);
-//         },
-//         onBlockUser: () {
-//           context.pushNamed(RouteNames.blockScreen);
-//           context.pop();
-//         },
-//       ),
-//       child: Container(
-//         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-//         decoration: BoxDecoration(
-//           color: chat.wave ? AppColors.backgroundVariant : Colors.white,
-//         ),
-//         child: Row(
-//           children: [
-//             chat.isCommunity
-//                 ? CommunityAvatar(avatars: chat.avatar)
-//                 : ClipRRect(
-//                     borderRadius: BorderRadius.circular(50),
-//                     child: Image.network(
-//                       chat.avatar[0],
-//                       width: 50.w,
-//                       height: 50.w,
-//                       fit: BoxFit.cover,
-//                     ),
-//                   ),
-//             const SizedBox(width: 12),
-
-//             Expanded(
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text(
-//                     chat.name,
-//                     style: TextStyle(
-//                       fontSize: 16.sp,
-//                       fontWeight: FontWeight.w500,
-//                       color: Color(0xff303030),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 4),
-//                   Text(
-//                     chat.message,
-//                     style: TextStyle(fontSize: 14.sp, color: Color(0xff585858)),
-//                     maxLines: 1,
-//                     overflow: TextOverflow.ellipsis,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             // Time and unread badge
-//             Column(
-//               crossAxisAlignment: CrossAxisAlignment.end,
-//               children: [
-//                 Text(
-//                   chat.time,
-//                   style: TextStyle(fontSize: 12.sp, color: Colors.grey[500]),
-//                 ),
-//                 if (chat.unreadCount! > 0) ...[
-//                   const SizedBox(height: 4),
-//                   Container(
-//                     padding: const EdgeInsets.all(6),
-//                     decoration: BoxDecoration(
-//                       gradient: AppColors.primaryGradient,
-//                       shape: BoxShape.circle,
-//                     ),
-//                     child: Text(
-//                       chat.unreadCount.toString(),
-//                       style: TextStyle(
-//                         color: Colors.white,
-//                         fontSize: 14.sp,
-//                         fontWeight: FontWeight.bold,
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ],
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
+// Re-export CommunityAvatar so existing imports still resolve.
 class CommunityAvatar extends StatelessWidget {
   final List<String> avatars;
   final double size;
@@ -312,26 +313,44 @@ class CommunityAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (avatars.isEmpty) {
+      return _fallback(context);
+    }
+
+    // If only one image, show it normally.
+    if (avatars.length == 1) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(size / 2),
+        child: Image.network(
+          AppCredentials.fixurl(avatars.first),
+          width: size.w,
+          height: size.w,
+          fit: BoxFit.cover,
+          errorBuilder: (_, __, ___) => _fallback(context),
+        ),
+      );
+    }
+
+    // If multiple, show stacked UI.
     return SizedBox(
       width: size.w,
       height: size.w,
       child: Stack(
         children: [
-          // Background/First Avatar (slightly offset)
           Positioned(
             top: 0,
             left: 0,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(50),
+              borderRadius: BorderRadius.circular(size / 2),
               child: Image.network(
-                avatars[0],
+                AppCredentials.fixurl(avatars[0]),
                 width: (size * 0.8).w,
                 height: (size * 0.8).w,
                 fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => _fallback(context),
               ),
             ),
           ),
-          // Foreground/Second Avatar (bottom right)
           Positioned(
             bottom: 0,
             right: 0,
@@ -341,17 +360,34 @@ class CommunityAvatar extends StatelessWidget {
                 border: Border.all(color: Colors.white, width: 2),
               ),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(50),
+                borderRadius: BorderRadius.circular(size / 2),
                 child: Image.network(
-                  avatars.length > 1 ? avatars[1] : avatars[0],
+                  AppCredentials.fixurl(avatars[1]),
                   width: (size * 0.7).w,
                   height: (size * 0.7).w,
                   fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => _fallback(context),
                 ),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _fallback(BuildContext context) {
+    return Container(
+      width: size.w,
+      height: size.w,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        shape: BoxShape.circle,
+      ),
+      child: Icon(
+        Icons.group,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+        size: (size * 0.4).w,
       ),
     );
   }

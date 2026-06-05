@@ -40,7 +40,7 @@ class _QrScreenState extends State<QrScreen> {
             name: 'Sammy Smith',
             message: 'Sent you a wave!',
             time: '10:30 AM',
-            type: ChatType.wave,
+            type: ChatType.private,
           ),
         );
         break;
