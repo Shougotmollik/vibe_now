@@ -7,6 +7,7 @@ import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/model/chat_message.dart';
 import 'package:vibe_now/services/custom_http.dart';
+import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/services/web_socket_registry.dart';
 
 class ChatController extends GetxController {
@@ -24,8 +25,12 @@ class ChatController extends GetxController {
 
   final RxList<ChatMessage> chatMessages = <ChatMessage>[].obs;
 
+  final RxBool isOtherUserTyping = false.obs;
+  String _currentUserId = '';
+
   StreamSubscription<dynamic>? _wsSubscription;
   String? _activeChatId;
+  Timer? _typingDebounce;
 
   bool isLoadingTab(String tab) => loadingTabs[tab] ?? false;
 
@@ -44,6 +49,7 @@ class ChatController extends GetxController {
 
   @override
   void onClose() {
+    _typingDebounce?.cancel();
     disconnectFromChat();
     super.onClose();
   }
@@ -208,6 +214,7 @@ class ChatController extends GetxController {
     if (_activeChatId == chatId) return;
     disconnectFromChat();
     _activeChatId = chatId;
+    _currentUserId = (await LocalStorage.user_id.get()) ?? '';
 
     try {
       final stream = await WebSocketRegistry.instance.acquire(chatId);
@@ -224,6 +231,8 @@ class ChatController extends GetxController {
   void disconnectFromChat() {
     _wsSubscription?.cancel();
     _wsSubscription = null;
+    _typingDebounce?.cancel();
+    isOtherUserTyping.value = false;
     if (_activeChatId != null) {
       WebSocketRegistry.instance.release(_activeChatId!);
       _activeChatId = null;
@@ -258,8 +267,18 @@ class ChatController extends GetxController {
           }
           break;
 
+        case 'user_typing':
         case 'typing':
-          debugPrint('User typing: $data');
+          final userId = data['user_id'] as String?;
+          if (userId != null && userId == _currentUserId) break;
+          final isTyping = data['is_typing'] as bool? ?? false;
+          isOtherUserTyping.value = isTyping;
+          if (isTyping) {
+            _typingDebounce?.cancel();
+            _typingDebounce = Timer(const Duration(seconds: 3), () {
+              isOtherUserTyping.value = false;
+            });
+          }
           break;
 
         case 'user_status':

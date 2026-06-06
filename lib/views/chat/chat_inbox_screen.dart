@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vibe_now/controller/chat_controller.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -119,10 +123,14 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
   final ScrollController _scrollController = ScrollController();
   final ImagePicker _picker = ImagePicker();
   final FocusNode _textFocusNode = FocusNode();
+  final ChatController _chatController = Get.find<ChatController>();
   File? _selectedProfileImage;
 
   // Overlay for emoji reaction bar
   OverlayEntry? _overlayEntry;
+
+  Timer? _typingDebounce;
+  bool _typingIndicatorSent = false;
 
   final List<ChatMessage> _messages = [
     ChatMessage(content: 'Hi! how can I help? 👋', isSent: false),
@@ -151,25 +159,86 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
   @override
   void initState() {
     super.initState();
-    _messageController.addListener(_onTextChanged);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
+    _messageController.addListener(_onMessageChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final extra = GoRouterState.of(context).extra as Chat;
+      if (extra.id.isNotEmpty) {
+        _chatController.connectToChat(extra.id);
+      }
+      _scrollToBottom();
+    });
   }
 
   @override
   void dispose() {
     _removeOverlay();
-    _messageController.removeListener(_onTextChanged);
+    _messageController.removeListener(_onMessageChanged);
     _messageController.dispose();
     _scrollController.dispose();
     _textFocusNode.dispose();
+    _typingDebounce?.cancel();
+    _chatController.disconnectFromChat();
     super.dispose();
   }
 
-  // ── Text input listener ──────────────────
+  // ── Text input listener & Typing Indicator ──
 
-  void _onTextChanged() {
-    final hasText = _messageController.text.trim().isNotEmpty;
-    if (_hasTextInput != hasText) setState(() => _hasTextInput = hasText);
+  void _onMessageChanged() {
+    final has = _messageController.text.trim().isNotEmpty;
+    if (has != _hasTextInput) setState(() => _hasTextInput = has);
+
+    final extra = GoRouterState.of(context).extra as Chat;
+    final chatId = extra.id;
+
+    _typingDebounce?.cancel();
+    if (has) {
+      if (!_typingIndicatorSent) _sendTypingStatus(chatId, true);
+      _typingDebounce = Timer(const Duration(seconds: 2), () {
+        if (_typingIndicatorSent) _sendTypingStatus(chatId, false);
+      });
+    } else {
+      if (_typingIndicatorSent) _sendTypingStatus(chatId, false);
+    }
+  }
+
+  void _sendTypingStatus(String chatId, bool isTyping) {
+    _typingIndicatorSent = isTyping;
+    _chatController.sendTypingIndicator(
+      chatId: chatId,
+      isTyping: isTyping,
+    );
+  }
+
+  Widget _buildTypingIndicator() {
+    return Obx(() {
+      if (!_chatController.isOtherUserTyping.value) {
+        return const SizedBox.shrink();
+      }
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 22.w,
+              height: 12.w,
+              child: SpinKitThreeBounce(
+                color: AppColors.primary,
+                size: 10,
+              ),
+            ),
+            SizedBox(width: 6.w),
+            Text(
+              'typing...',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 12.sp,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   void _scrollToBottom() {
@@ -249,6 +318,7 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
             children: [
               _buildAppBar(context, avatar.first, name),
               Expanded(child: _buildMessageList()),
+              _buildTypingIndicator(),
               _buildInputArea(),
             ],
           ),

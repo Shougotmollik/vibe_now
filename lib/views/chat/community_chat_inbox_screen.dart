@@ -20,6 +20,7 @@ import 'package:audioplayers/audioplayers.dart' as ap;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:audio_waveforms/audio_waveforms.dart' as aw;
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:vibe_now/services/web_socket_registry.dart';
 
 //  Models
@@ -113,6 +114,8 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
 
   String? _currentUserId;
   bool _initialLoading = true;
+  Timer? _typingDebounce;
+  bool _typingIndicatorSent = false;
 
   @override
   void initState() {
@@ -169,17 +172,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
       if (mounted) setState(() => _isPreviewPlaying = false);
     });
 
-    _messageController.addListener(() {
-      final has = _messageController.text.trim().isNotEmpty;
-      if (has != _hasText) setState(() => _hasText = has);
-      // Typing indicator
-      if (widget.chatId != null) {
-        _chatController.sendTypingIndicator(
-          chatId: widget.chatId!,
-          isTyping: has,
-        );
-      }
-    });
+    _messageController.addListener(_onMessageChanged);
     _loadInitialData();
     if (widget.chatId != null) {
       _chatController.connectToChat(widget.chatId!);
@@ -205,11 +198,70 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
     _previewPlayer.dispose();
     _pulseController.dispose();
     _recordTimer?.cancel();
+    _typingDebounce?.cancel();
     _removeOverlay();
     _messageController.dispose();
     _scrollController.dispose();
     _chatController.disconnectFromChat();
     super.dispose();
+  }
+
+  // ── Typing Indicator ──────────────────────
+
+  void _onMessageChanged() {
+    final has = _messageController.text.trim().isNotEmpty;
+    if (has != _hasText) setState(() => _hasText = has);
+
+    _typingDebounce?.cancel();
+    if (has) {
+      if (!_typingIndicatorSent) _sendTypingStatus(true);
+      _typingDebounce = Timer(const Duration(seconds: 2), () {
+        if (_typingIndicatorSent) _sendTypingStatus(false);
+      });
+    } else {
+      if (_typingIndicatorSent) _sendTypingStatus(false);
+    }
+  }
+
+  void _sendTypingStatus(bool isTyping) {
+    if (widget.chatId == null) return;
+    _typingIndicatorSent = isTyping;
+    _chatController.sendTypingIndicator(
+      chatId: widget.chatId!,
+      isTyping: isTyping,
+    );
+  }
+
+  Widget _buildTypingIndicator() {
+    return Obx(() {
+      if (!_chatController.isOtherUserTyping.value) {
+        return const SizedBox.shrink();
+      }
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+        child: Row(
+          children: [
+            SizedBox(
+              width: 22.w,
+              height: 12.w,
+              child: SpinKitThreeBounce(
+                color: AppColors.primary,
+                size: 10,
+              ),
+            ),
+            SizedBox(width: 6.w),
+            Text(
+              'typing...',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 12.sp,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   void _scrollToBottom() {
@@ -354,6 +406,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
         body: Column(
           children: [
             Expanded(child: _buildMessageList()),
+            _buildTypingIndicator(),
             _buildInputArea(),
           ],
         ),
