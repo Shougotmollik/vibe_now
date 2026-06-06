@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,6 +14,11 @@ import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/chat/widgets/chat_message_shimmer.dart';
+import 'dart:async';
+import 'package:audioplayers/audioplayers.dart' as ap;
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:audio_waveforms/audio_waveforms.dart' as aw;
 
 //  Models
 
@@ -92,6 +96,15 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
   String? _recordingPath;
   File? _selectedProfileImage;
 
+  late final aw.RecorderController _recorderController;
+  late final aw.PlayerController _playerController;
+  bool _isRecorded = false;
+  int _recordDuration = 0;
+  Timer? _recordTimer;
+
+  late final ap.AudioPlayer _previewPlayer;
+  bool _isPreviewPlaying = false;
+
   String? _currentUserId;
   final List<ChatMessage> _localMessages = [];
   bool _initialLoading = true;
@@ -99,6 +112,31 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
   @override
   void initState() {
     super.initState();
+    _recorderController = aw.RecorderController()
+      ..androidEncoder = aw.AndroidEncoder.aac
+      ..androidOutputFormat = aw.AndroidOutputFormat.mpeg4
+      ..iosEncoder = aw.IosEncoder.kAudioFormatMPEG4AAC
+      ..sampleRate = 44100
+      ..bitRate = 48000;
+    
+    _playerController = aw.PlayerController();
+    _playerController.onPlayerStateChanged.listen((state) {
+      if (mounted) setState(() {});
+    });
+    _playerController.addListener(() {
+      if (mounted) setState(() {});
+    });
+
+    _previewPlayer = ap.AudioPlayer();
+    _previewPlayer.onPlayerStateChanged.listen((state) {
+      if (mounted) {
+        setState(() => _isPreviewPlaying = state == ap.PlayerState.playing);
+      }
+    });
+    _previewPlayer.onPlayerComplete.listen((event) {
+      if (mounted) setState(() => _isPreviewPlaying = false);
+    });
+
     _messageController.addListener(() {
       final has = _messageController.text.trim().isNotEmpty;
       if (has != _hasText) setState(() => _hasText = has);
@@ -120,6 +158,9 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
 
   @override
   void dispose() {
+    _recorderController.dispose();
+    _playerController.dispose();
+    _previewPlayer.dispose();
     _removeOverlay();
     _messageController.dispose();
     _scrollController.dispose();
@@ -431,7 +472,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
   // ── Input Area ───────────────────────────
 
   Widget _buildInputArea() {
-    final canSend = (_isRecording || _hasText) && !_isSending;
+    final canSend = (_isRecorded || _hasText) && !_isRecording && !_isSending;
 
     return SafeArea(
       child: Container(
@@ -494,50 +535,98 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
                     : null,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: !_isRecording ? Theme.of(context).colorScheme.surface : null,
-                    gradient: _isRecording ? AppColors.primaryGradient : null,
+                    color: (!_isRecording && !_isRecorded) ? Theme.of(context).colorScheme.surface : null,
+                    gradient: (_isRecording || _isRecorded) ? AppColors.primaryGradient : null,
                     borderRadius: BorderRadius.circular(30),
                   ),
                   child: Row(
                     children: [
                       /// 🎤 Mic Button
-                      IconButton(
-                        icon: Icon(
-                          _isRecording ? Icons.pause : Icons.mic,
-                          color: _isRecording
-                              ? Colors.white
-                              : AppColors.primary,
+                      if (!_isRecorded)
+                        IconButton(
+                          icon: Icon(
+                            _isRecording ? Icons.stop : Icons.mic,
+                            color: _isRecording
+                                ? Colors.white
+                                : AppColors.primary,
+                          ),
+                          onPressed: _isSending ? null : _toggleRecording,
                         ),
-                        onPressed: _isSending ? null : _toggleRecording,
-                      ),
 
-                      /// ✍️ Text OR Waveform
+                      /// ✍️ Text OR Waveform OR Preview
                       Expanded(
                         child: SizedBox(
                           height: 30,
-                          child: _isRecording
-                              ? CustomPaint(
-                                  painter: _WaveformPainter(
-                                    isWhite: true,
-                                    isAnimating: true,
-                                  ),
-                                )
-                              : TextField(
-                                  controller: _messageController,
-                                  enabled: !_isSending,
-                                  style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                                  decoration: InputDecoration(
-                                    hintText: 'Message...',
-                                    hintStyle: TextStyle(
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          child: _isRecorded
+                              ? Row(
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        _playerController.playerState.isPlaying ? Icons.pause : Icons.play_arrow,
+                                        color: Colors.white,
+                                      ),
+                                      padding: EdgeInsets.zero,
+                                      onPressed: _togglePreviewPlay,
                                     ),
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                  ),
-                                  onSubmitted: (_) {
-                                    if (canSend) _sendMessage();
-                                  },
-                                ),
+                                    Expanded(
+                                      child: aw.AudioFileWaveforms(
+                                        size: const Size(150, 30),
+                                        playerController: _playerController,
+                                        playerWaveStyle: const aw.PlayerWaveStyle(
+                                          fixedWaveColor: Colors.white,
+                                          liveWaveColor: Colors.white,
+                                          spacing: 6.0,
+                                          showSeekLine: false,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: const Icon(Icons.delete, color: Colors.white),
+                                      padding: EdgeInsets.zero,
+                                      onPressed: _deleteRecording,
+                                    ),
+                                  ],
+                                )
+                              : _isRecording
+                                  ? Row(
+                                      children: [
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          _formatDuration(_recordDuration),
+                                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: aw.AudioWaveforms(
+                                            size: const Size(100, 30),
+                                            recorderController: _recorderController,
+                                            enableGesture: false,
+                                            waveStyle: const aw.WaveStyle(
+                                              waveColor: Colors.white,
+                                              showDurationLabel: false,
+                                              spacing: 4.0,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                      ],
+                                    )
+                                  : TextField(
+                                      controller: _messageController,
+                                      enabled: !_isSending,
+                                      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                                      decoration: InputDecoration(
+                                        hintText: 'Message...',
+                                        hintStyle: TextStyle(
+                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                        ),
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                      ),
+                                      onSubmitted: (_) {
+                                        if (canSend) _sendMessage();
+                                      },
+                                    ),
                         ),
                       ),
 
@@ -579,24 +668,71 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
     );
   }
 
-  void _toggleRecording() {
-    setState(() {
-      _isRecording = !_isRecording;
-
-      if (_isRecording) {
-        FocusScope.of(context).unfocus();
+  Future<void> _toggleRecording() async {
+    if (_isRecording) {
+      _recordTimer?.cancel();
+      final path = await _recorderController.stop(false);
+      await _playerController.preparePlayer(path: path!);
+      setState(() {
+        _isRecording = false;
+        _isRecorded = true;
+        _recordingPath = path;
+      });
+    } else {
+      final status = await Permission.microphone.request();
+      if (status != PermissionStatus.granted) {
+        return;
       }
+      final tempDir = await getTemporaryDirectory();
+      final path = '${tempDir.path}/audio_${DateTime.now().millisecondsSinceEpoch}.m4a';
+      await _recorderController.record(path: path);
+      setState(() {
+        _isRecording = true;
+        _isRecorded = false;
+        _recordDuration = 0;
+      });
+      _recordTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+        setState(() => _recordDuration++);
+      });
+      FocusScope.of(context).unfocus();
+    }
+  }
+
+  void _deleteRecording() {
+    _playerController.stopPlayer();
+    _previewPlayer.stop();
+    setState(() {
+      _isRecorded = false;
+      _isRecording = false;
+      _recordingPath = null;
+      _recordDuration = 0;
     });
   }
 
+  void _togglePreviewPlay() async {
+    if (_playerController.playerState.isPlaying) {
+      await _playerController.pausePlayer();
+    } else {
+      await _playerController.startPlayer();
+    }
+  }
+
+  String _formatDuration(int seconds) {
+    final m = (seconds ~/ 60).toString().padLeft(2, '0');
+    final s = (seconds % 60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
   Future<void> _sendVoiceMessage() async {
-    if (_isSending) return;
+    if (_isSending || _recordingPath == null) return;
+
+    _previewPlayer.stop();
 
     setState(() {
       _isSending = true;
-      _isRecording = false;
     });
 
+    // Simulate upload delay
     await Future.delayed(const Duration(seconds: 1));
 
     setState(() {
@@ -607,11 +743,13 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen> {
           senderName: 'Me',
           isMe: true,
           type: MessageType.audio,
-          mediaUrl: 'voice_path',
+          mediaUrl: _recordingPath,
           time: DateTime.now(),
         ),
       );
       _isSending = false;
+      _isRecorded = false;
+      _recordingPath = null;
     });
 
     _scrollToBottom();
@@ -938,22 +1076,9 @@ class _BubbleContent extends StatelessWidget {
         );
 
       case MessageType.audio:
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.play_circle_filled, color: Colors.white),
-            SizedBox(width: 8.w),
-            SizedBox(
-              width: 100.w,
-              height: 24.h,
-              child: CustomPaint(painter: _WaveformPainter(isWhite: true)),
-            ),
-            SizedBox(width: 8.w),
-            Text(
-              '0:15',
-              style: TextStyle(color: Colors.white, fontSize: 12.sp),
-            ),
-          ],
+        return _MessageAudioPlayer(
+          url: message.mediaUrl ?? '',
+          isMe: message.isMe,
         );
 
       case MessageType.deleted:
@@ -1191,7 +1316,111 @@ class _WaveformPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => isAnimating;
+  bool shouldRepaint(_WaveformPainter oldDelegate) {
+    return oldDelegate.isAnimating != isAnimating || oldDelegate.isWhite != isWhite;
+  }
+}
+
+class _MessageAudioPlayer extends StatefulWidget {
+  final String url;
+  final bool isMe;
+
+  const _MessageAudioPlayer({required this.url, required this.isMe});
+
+  @override
+  State<_MessageAudioPlayer> createState() => _MessageAudioPlayerState();
+}
+
+class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
+  late ap.AudioPlayer _player;
+  bool _isPlaying = false;
+  Duration _duration = Duration.zero;
+  Duration _position = Duration.zero;
+
+  @override
+  void initState() {
+    super.initState();
+    _player = ap.AudioPlayer();
+    _player.onPlayerStateChanged.listen((state) {
+      if (mounted) {
+        setState(() => _isPlaying = state == ap.PlayerState.playing);
+      }
+    });
+    _player.onDurationChanged.listen((d) {
+      if (mounted) setState(() => _duration = d);
+    });
+    _player.onPositionChanged.listen((p) {
+      if (mounted) setState(() => _position = p);
+    });
+
+    if (widget.url.isNotEmpty) {
+      final isNetwork = widget.url.startsWith('http');
+      _player.setSource(isNetwork ? ap.UrlSource(widget.url) : ap.DeviceFileSource(widget.url));
+    }
+  }
+
+  @override
+  void dispose() {
+    _player.dispose();
+    super.dispose();
+  }
+
+  void _togglePlay() async {
+    if (widget.url.isEmpty) return;
+
+    if (_isPlaying) {
+      await _player.pause();
+    } else {
+      final isNetwork = widget.url.startsWith('http');
+      if (isNetwork) {
+        await _player.play(ap.UrlSource(widget.url));
+      } else {
+        await _player.play(ap.DeviceFileSource(widget.url));
+      }
+    }
+  }
+
+  String _formatDuration(Duration d) {
+    final m = d.inMinutes.toString().padLeft(2, '0');
+    final s = (d.inSeconds % 60).toString().padLeft(2, '0');
+    return '$m:$s';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final color = widget.isMe ? Colors.white : Theme.of(context).colorScheme.onSurface;
+    final displayDuration = _isPlaying ? _position : _duration;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+          onTap: _togglePlay,
+          child: Icon(
+            _isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
+            color: color,
+            size: 32,
+          ),
+        ),
+        SizedBox(width: 8.w),
+        SizedBox(
+          width: 100.w,
+          height: 24.h,
+          child: CustomPaint(
+            painter: _WaveformPainter(
+              isWhite: widget.isMe,
+              isAnimating: _isPlaying,
+            ),
+          ),
+        ),
+        SizedBox(width: 8.w),
+        Text(
+          _formatDuration(displayDuration),
+          style: TextStyle(color: color, fontSize: 12.sp),
+        ),
+      ],
+    );
+  }
 }
 
 //  More options bottom sheet

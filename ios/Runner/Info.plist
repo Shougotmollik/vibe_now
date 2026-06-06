@@ -10,6 +10,8 @@
 	<string>Vybin needs access to location to connect you with nearby events.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Vybin needs access to location to connect you with nearby events.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Vybin needs access to microphone to record voice messages.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
