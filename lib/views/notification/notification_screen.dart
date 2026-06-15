@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:vibe_now/core/constant/credential.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/controller/notification_controller.dart';
+import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/model/notification.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/community/meetup_details_screen.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 import 'package:vibe_now/views/notification/widgets/community_notification_card.dart';
 import 'package:vibe_now/views/notification/widgets/event_notification_card.dart';
@@ -300,6 +304,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     if (!n.isRead) {
                       _controller.readNotificationById(ids: [n.id]);
                     }
+                    if (n.relatedObject != null &&
+                        n.relatedObject!.type == 'event') {
+                      context.pushNamed(
+                        RouteNames.eventDetailsScreen,
+                        extra: n.relatedObject!.id,
+                      );
+                    }
                   },
                 ),
               ),
@@ -485,6 +496,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return CommunityNotificationCard(
       notification: notification,
       unreadGradient: _unreadGradient(2),
+      onTap: () {
+        if (!notification.isRead) {
+          _controller.readNotificationById(ids: [notification.id]);
+        }
+        if (notification.relatedObject != null) {
+          if (notification.relatedObject!.type == 'community') {
+            context.pushNamed(
+              RouteNames.communityDetailsScreen,
+              extra: Community(id: notification.relatedObject!.id),
+            );
+          } else if (notification.relatedObject!.type == 'meetup') {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MeetupDetailsScreen(
+                  meetupId: '${notification.relatedObject!.id}',
+                ),
+              ),
+            );
+          }
+        }
+      },
       acceptOnTap: () => _handleInvitationAction(
         context: context,
         notification: notification,
