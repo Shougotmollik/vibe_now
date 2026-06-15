@@ -92,6 +92,17 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                 onPressed: controller.isLoading.value
                     ? () {}
                     : () async {
+                        if (_selectedImage == null) {
+                          AppSnackbar.show(
+                            message: 'Please select cover image',
+                          );
+                          return;
+                        }
+
+                        if (_titleController.text.trim().isEmpty) {
+                          AppSnackbar.show(message: 'Please enter vibe title');
+                          return;
+                        }
                         final success = await controller.createVibe(
                           coverImage: _selectedImage!,
                           title: _titleController.text,

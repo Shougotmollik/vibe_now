@@ -37,15 +37,24 @@ class _NotificationScreenState extends State<NotificationScreen> {
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const CustomAppBar(title: "Notification"),
-                SizedBox(height: 16.h),
-                Obx(() => _buildTabBar()),
-                SizedBox(height: 16.h),
-                _buildTabContent(),
-              ],
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await _controller.getNotifications(
+                _tabKeys[_selectedTabIndex],
+                forceRefresh: true,
+              );
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  const CustomAppBar(title: "Notification"),
+                  SizedBox(height: 16.h),
+                  Obx(() => _buildTabBar()),
+                  SizedBox(height: 16.h),
+                  _buildTabContent(),
+                ],
+              ),
             ),
           ),
         ),

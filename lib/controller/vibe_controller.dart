@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:vibe_now/core/constant/api_constant.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/model/vibe_model.dart';
 import 'package:vibe_now/services/custom_http.dart';
 
@@ -39,7 +40,13 @@ class VibeController extends GetxController {
         method: "POST",
         fields: {'title': title, 'duration': duration},
       );
-      return response.ok;
+      if (response.ok) {
+        await getVibes();
+        return true;
+      } else {
+        AppSnackbar.show(message: response.error ?? "Something went wrong");
+        return false;
+      }
     } catch (e) {
       debugPrint("Error while create vibe $e");
       return false;

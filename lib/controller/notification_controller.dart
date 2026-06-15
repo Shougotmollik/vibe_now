@@ -21,10 +21,13 @@ class NotificationController extends GetxController {
   bool isLoading(String tab) => loadingTabs[tab] ?? false;
 
   // get notification
-  Future<void> getNotifications(String tab) async {
-    if (loadedTabs.contains(tab)) return;
+  Future<void> getNotifications(String tab, {bool forceRefresh = false}) async {
+    if (!forceRefresh && loadedTabs.contains(tab)) return;
     try {
       loadingTabs[tab] = true;
+      if (forceRefresh) {
+        loadedTabs.remove(tab);
+      }
       final response = await CustomHttp.get(
         endpoint: ApiConstant.notification,
         need_auth: true,
