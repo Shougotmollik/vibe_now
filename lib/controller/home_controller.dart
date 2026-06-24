@@ -1,7 +1,22 @@
+import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:vibe_now/model/map_item.dart';
 import 'package:vibe_now/model/nearby_user.dart';
+import 'package:vibe_now/services/map_socket_service.dart';
 
 class HomeController extends GetxController {
+  final MapSocketService _mapSocket = MapSocketService.instance;
+
+  // Current user location
+  final Rxn<double> currentLatitude = Rxn<double>();
+  final Rxn<double> currentLongitude = Rxn<double>();
+
+  // Map items from WebSocket
+  final RxList<MapItem> mapItems = <MapItem>[].obs;
+  final RxBool isMapLoading = false.obs;
+
+  // Hardcoded nearby users (for existing wave/profile dialogs)
   final List<NearbyUser> nearbyUsers = [
     NearbyUser(
       id: 'u1',
@@ -100,4 +115,85 @@ class HomeController extends GetxController {
       isWaved: false,
     ),
   ];
+
+  @override
+  void onClose() {
+    _mapSocket.disconnect();
+    super.onClose();
+  }
+
+  /// Load map data: get location + connect WS + send request
+  Future<void> loadMapData({
+    String type = 'all',
+    String search = '',
+    int radius = 50,
+  }) async {
+    isMapLoading(true);
+
+    // Get user location
+    final position = await _determinePosition();
+    if (position != null) {
+      currentLatitude.value = position.latitude;
+      currentLongitude.value = position.longitude;
+    }
+
+    // Fallback if no location
+    final lat = currentLatitude.value ?? 23.8103;
+    final lng = currentLongitude.value ?? 90.4125;
+
+    // Set up WS callback
+    _mapSocket.onItemsReceived = (response) {
+      mapItems.assignAll(response.results);
+      isMapLoading(false);
+    };
+    _mapSocket.onError = (error) {
+      debugPrint('Map WS error: $error');
+      isMapLoading(false);
+    };
+
+    // Connect and send
+    final connected = await _mapSocket.connect();
+    if (connected) {
+      // Small delay to ensure connection is established
+      await Future.delayed(const Duration(milliseconds: 300));
+      _mapSocket.sendLocation(
+        latitude: lat,
+        longitude: lng,
+        type: type,
+        search: search,
+        radius: radius,
+      );
+    } else {
+      isMapLoading(false);
+    }
+  }
+
+  Future<Position?> _determinePosition() async {
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return null;
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) return null;
+      }
+
+      if (permission == LocationPermission.deniedForever) return null;
+
+      return await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+    } catch (e) {
+      debugPrint('Error getting location: $e');
+      return null;
+    }
+  }
+
+  /// Refresh map data with current location
+  Future<void> refreshMapData() async {
+    await loadMapData();
+  }
 }
