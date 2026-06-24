@@ -16,6 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe_now/controller/home_controller.dart';
 import 'package:vibe_now/controller/notification_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
+import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -93,7 +94,6 @@ class _HomeScreenState extends State<HomeScreen> {
   LatLng? _selectedPosition;
   bool _markersBuilt = false;
   late final Worker _mapItemsWorker;
-  bool _locationAnimated = false;
 
   @override
   void initState() {
@@ -114,6 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
       );
       _handleTap(widget.initialPosition!);
     } else {
+      // Start with default — stored location will snap instantly after first frame
       _initialPosition = CameraPosition(target: _defaultLocation, zoom: 14);
     }
 
@@ -124,26 +125,35 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
 
-    // After first frame, load data, get location, animate camera
+    // After first frame: snap to stored location instantly → then get GPS & animate
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await homeController.loadMapData();
-      if (!mounted || _locationAnimated) return;
-      final lat = homeController.currentLatitude.value;
-      final lng = homeController.currentLongitude.value;
-      if (lat != null && lng != null) {
-        _locationAnimated = true;
-        _controller.future.then((controller) {
-          controller.animateCamera(
-            CameraUpdate.newCameraPosition(
-              CameraPosition(
-                target: LatLng(lat, lng),
-                zoom: 14,
-              ),
-            ),
-            duration: const Duration(milliseconds: 1200),
-          );
-        });
+      final GoogleMapController controller = await _controller.future;
+
+      // Step 1: Snap to stored location (instant — no visible jump from default)
+      final storedLat = await LocalStorage.last_latitude.get();
+      final storedLng = await LocalStorage.last_longitude.get();
+      if (storedLat != null && storedLng != null && mounted) {
+        controller.moveCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(target: LatLng(storedLat, storedLng), zoom: 14),
+          ),
+        );
       }
+
+      // Step 2: Get fresh GPS location → animate there → save replaces stored
+      final position = await homeController.loadMapData();
+      if (position != null && mounted) {
+        controller.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(position.latitude, position.longitude),
+              zoom: 14,
+            ),
+          ),
+          duration: const Duration(milliseconds: 1200),
+        );
+      }
+      // If position is null → GPS failed, stay at stored (or default if no stored)
     });
 
     notifController.getNotifications('vibes');

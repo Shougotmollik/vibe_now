@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:vibe_now/model/map_item.dart';
 import 'package:vibe_now/model/nearby_user.dart';
+import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/services/map_socket_service.dart';
 
 class HomeController extends GetxController {
@@ -123,7 +124,8 @@ class HomeController extends GetxController {
   }
 
   /// Load map data: get location + connect WS + send request
-  Future<void> loadMapData({
+  /// Returns the obtained Position, or null if GPS failed.
+  Future<Position?> loadMapData({
     String type = 'all',
     String search = '',
     int radius = 50,
@@ -131,15 +133,18 @@ class HomeController extends GetxController {
     isMapLoading(true);
 
     // Get user location
-    final position = await _determinePosition();
+    final Position? position = await _determinePosition();
     if (position != null) {
       currentLatitude.value = position.latitude;
       currentLongitude.value = position.longitude;
+      // Save to local storage for next launch
+      await LocalStorage.last_latitude.set(position.latitude);
+      await LocalStorage.last_longitude.set(position.longitude);
     }
 
-    // Fallback if no location
-    final lat = currentLatitude.value ?? 23.8103;
-    final lng = currentLongitude.value ?? 90.4125;
+    // Fallback if no location: use stored, then hardcoded default
+    double lat = currentLatitude.value ?? (await LocalStorage.last_latitude.get()) ?? 23.8103;
+    double lng = currentLongitude.value ?? (await LocalStorage.last_longitude.get()) ?? 90.4125;
 
     // Set up WS callback
     _mapSocket.onItemsReceived = (response) {
@@ -166,6 +171,8 @@ class HomeController extends GetxController {
     } else {
       isMapLoading(false);
     }
+
+    return position;
   }
 
   Future<Position?> _determinePosition() async {

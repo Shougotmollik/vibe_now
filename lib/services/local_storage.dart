@@ -14,9 +14,49 @@ class LocalStorage {
   static _localStorageHasSeenProTips has_seen_pro_tips =
       _localStorageHasSeenProTips();
   static _localStorageCookie cookie = _localStorageCookie();
+  static _localStorageLastLatitude last_latitude = _localStorageLastLatitude();
+  static _localStorageLastLongitude last_longitude = _localStorageLastLongitude();
   static Future<bool> clear() async {
     SharedPreferences localStorage = await SharedPreferences.getInstance();
     return localStorage.clear();
+  }
+}
+
+class _localStorageLastLatitude {
+  static const String key = 'last_latitude';
+
+  Future<bool> set(double value) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.setDouble(key, value);
+  }
+
+  Future<double?> get() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble(key);
+  }
+
+  Future<bool> remove() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.remove(key);
+  }
+}
+
+class _localStorageLastLongitude {
+  static const String key = 'last_longitude';
+
+  Future<bool> set(double value) async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.setDouble(key, value);
+  }
+
+  Future<double?> get() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getDouble(key);
+  }
+
+  Future<bool> remove() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.remove(key);
   }
 }
 
