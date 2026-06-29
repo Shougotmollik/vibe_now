@@ -502,10 +502,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
         }
         if (notification.relatedObject != null) {
           if (notification.relatedObject!.type == 'community') {
-            context.pushNamed(
-              RouteNames.communityDetailsScreen,
-              extra: Community(id: notification.relatedObject!.id),
-            );
+            if (notification.notificationType ==
+                'community_join_request_accepted') {
+              context.pushNamed(
+                RouteNames.communityAwaitingDestailsScreen,
+                extra: notification.relatedObject!.id,
+              );
+            } else {
+              context.pushNamed(
+                RouteNames.communityDetailsScreen,
+                extra: Community(id: notification.relatedObject!.id),
+              );
+            }
           } else if (notification.relatedObject!.type == 'meetup') {
             Navigator.push(
               context,
@@ -547,7 +555,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
       action: action,
     );
     if (!ok || !context.mounted) return;
-    showDialog(
+    await showDialog(
       context: context,
       barrierDismissible: true,
       builder: (context) {
@@ -566,5 +574,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
         );
       },
     );
+    // After accept success, navigate to community manage member screen
+    if (accept && context.mounted && notification.relatedObject != null) {
+      context.pushNamed(
+        RouteNames.communityManageMemberScreen,
+        extra: notification.relatedObject!.id,
+      );
+    }
   }
 }

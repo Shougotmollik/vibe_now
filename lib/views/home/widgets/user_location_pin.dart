@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -23,11 +24,18 @@ class UserLocationPin extends StatelessWidget {
           alignment: Alignment(0, -0.15),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(40.r),
-            child: Image.network(
-              imagePath,
+            child: CachedNetworkImage(
+              imageUrl: imagePath,
               width: 90.w,
               height: 90.w,
               fit: BoxFit.cover,
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, error, stackTrace) => Container(
+                width: 90.w,
+                height: 90.w,
+                color: Colors.grey[300],
+                child: Icon(Icons.image, size: 30.w, color: Colors.grey[500]),
+              ),
             ),
           ),
         ),

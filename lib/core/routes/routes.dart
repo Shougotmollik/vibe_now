@@ -28,11 +28,13 @@ import 'package:vibe_now/views/community/community_details_screen.dart';
 import 'package:vibe_now/views/community/community_screen.dart';
 import 'package:vibe_now/views/community/create_community_screen.dart';
 import 'package:vibe_now/views/community/community_member_screen.dart';
+import 'package:vibe_now/views/community/community_manage_member_screen.dart';
 import 'package:vibe_now/views/event/create_event_screen.dart';
 import 'package:vibe_now/views/event/edit_event_screen.dart';
 import 'package:vibe_now/views/event/event_details_screen.dart';
 import 'package:vibe_now/views/event/event_screen.dart';
 import 'package:vibe_now/views/main_nav_bar_screen.dart';
+import 'package:vibe_now/views/notification/community_awaitting_details_screen.dart';
 import 'package:vibe_now/views/notification/notification_screen.dart';
 import 'package:vibe_now/views/profile/like_list_screen.dart';
 import 'package:vibe_now/views/profile/locked_profile_screen.dart';
@@ -189,6 +191,18 @@ void setupRouter(bool hasToken) {
       ),
 
       GoRoute(
+        path: '/community-manage-member-screen',
+        name: RouteNames.communityManageMemberScreen,
+        builder: (context, state) =>
+            CommunityManageMemberScreen(communityId: state.extra as int),
+      ),
+      GoRoute(
+        path: '/community-awaiting-details-screen',
+        name: RouteNames.communityAwaitingDestailsScreen,
+        builder: (context, state) =>
+            CommunityAwaitingDetailsScreen(communityId: state.extra as int),
+      ),
+      GoRoute(
         path: '/notification-screen',
         name: RouteNames.notificationScreen,
         builder: (context, state) => const NotificationScreen(),
@@ -219,7 +233,8 @@ void setupRouter(bool hasToken) {
           } else if (extra is Chat) {
             chatId = extra.id.isNotEmpty ? extra.id : null;
             title = extra.name.isNotEmpty ? extra.name : null;
-            coverImage = extra.avatar ??
+            coverImage =
+                extra.avatar ??
                 (extra.avatars.isNotEmpty ? extra.avatars.first : null);
           }
 

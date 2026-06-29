@@ -18,6 +18,8 @@ class ApiConstant {
 
   static const String createCommunity = "/communities/create";
   static const String community = "/communities";
+  static String communitiesAwaitings({required int communityId}) =>
+      "/communities/$communityId/request-status";
 
   static const String vibe = "/vibes";
 

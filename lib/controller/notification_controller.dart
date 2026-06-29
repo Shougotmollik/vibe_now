@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:vibe_now/core/constant/api_constant.dart';
+import 'package:vibe_now/model/community_member.dart';
 import 'package:vibe_now/model/notification.dart';
 import 'package:vibe_now/services/custom_http.dart';
 
@@ -156,6 +157,43 @@ class NotificationController extends GetxController {
   ) {
     final matches = list.where((n) => idsMarkedRead.contains(n.id)).length;
     return (currentCount - matches).clamp(0, 1 << 30);
+  }
+
+  // ── Community Request Status ──────────────────────────
+
+  final Rx<CommunityMember?> communityRequestStatus = Rx<CommunityMember?>(null);
+  final RxBool isCommunityRequestLoading = false.obs;
+  final Rx<String?> communityRequestError = Rx<String?>(null);
+
+  Future<CommunityMember?> fetchCommunityRequestStatus({
+    required int communityId,
+  }) async {
+    try {
+      isCommunityRequestLoading.value = true;
+      communityRequestStatus.value = null;
+      communityRequestError.value = null;
+
+      final response = await CustomHttp.get(
+        endpoint: ApiConstant.communitiesAwaitings(communityId: communityId),
+        need_auth: true,
+      );
+
+      if (response.ok && response.data != null) {
+        final jsonData = response.data['data'] as Map<String, dynamic>;
+        final member = CommunityMember.fromJson(jsonData);
+        communityRequestStatus.value = member;
+        return member;
+      } else {
+        final error = response.error ?? 'Failed to load request status';
+        communityRequestError.value = error;
+        return null;
+      }
+    } catch (e) {
+      communityRequestError.value = 'Network error. Please try again.';
+      return null;
+    } finally {
+      isCommunityRequestLoading.value = false;
+    }
   }
 
   void _updateActionStatus(int notificationId, String action) {

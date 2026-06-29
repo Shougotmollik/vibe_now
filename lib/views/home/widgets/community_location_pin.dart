@@ -1,13 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 
 class CommunityLocationPin extends StatelessWidget {
-  const CommunityLocationPin({
-    super.key,
-    this.imageUrl,
-  });
+  const CommunityLocationPin({super.key, this.imageUrl});
 
   final String? imageUrl;
 
@@ -25,12 +23,13 @@ class CommunityLocationPin extends StatelessWidget {
           alignment: const Alignment(0, -0.15),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(40.r),
-            child: Image.network(
-              resolvedUrl,
+            child: CachedNetworkImage(
+              imageUrl: resolvedUrl,
               width: 90.w,
               height: 90.w,
               fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
+              placeholder: (context, url) => CircularProgressIndicator(),
+              errorWidget: (context, error, stackTrace) => Container(
                 width: 90.w,
                 height: 90.w,
                 color: Colors.grey[300],

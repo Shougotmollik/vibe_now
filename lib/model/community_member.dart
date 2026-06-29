@@ -8,6 +8,8 @@ class CommunityMember {
   final String? communityTitle;
   final String? communityDescription;
   final String? communityAddress;
+  final double? communityLatitude;
+  final double? communityLongitude;
   final String? qrCodeValue;
   final String? qrCodeImage;
 
@@ -21,6 +23,8 @@ class CommunityMember {
     this.communityTitle,
     this.communityDescription,
     this.communityAddress,
+    this.communityLatitude,
+    this.communityLongitude,
     this.qrCodeValue,
     this.qrCodeImage,
   });
@@ -37,6 +41,8 @@ class CommunityMember {
       communityTitle: json['community_title'],
       communityDescription: json['community_description'],
       communityAddress: location?['address'],
+      communityLatitude: (location?['latitude'] as num?)?.toDouble(),
+      communityLongitude: (location?['longitude'] as num?)?.toDouble(),
       qrCodeValue: json['qr_code_value'],
       qrCodeImage: json['qr_code_image'],
     );

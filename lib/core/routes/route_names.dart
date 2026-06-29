@@ -29,6 +29,10 @@ class RouteNames {
   static const String createCommunityScreen = "createCommunityScreen";
 
   static const String communityMemberScreen = "communityMemberScreen";
+  static const String communityManageMemberScreen =
+      "communityManageMemberScreen";
+  static const String communityAwaitingDestailsScreen =
+      "communityAwaitingDestailsScreen";
 
   static const String subscriptionScreen = "subscriptionScreen";
 
