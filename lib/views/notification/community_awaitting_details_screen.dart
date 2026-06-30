@@ -31,7 +31,7 @@ class _CommunityAwaitingDetailsScreenState
   void initState() {
     super.initState();
     _fetchRequestStatus();
-    rootBundle.loadString('assets/map_theme/pink_theme.json').then((string) {
+    rootBundle.loadString('assets/map_theme/dark_map.json').then((string) {
       if (mounted) setState(() => _mapStyle = string);
     });
   }
@@ -125,242 +125,367 @@ class _CommunityAwaitingDetailsScreenState
     return SingleChildScrollView(
       child: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: () => Navigator.pop(context),
-                  child: Container(
-                    padding: EdgeInsets.all(8.w),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainerHighest,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.arrow_back_ios_new,
-                      size: 16.w,
-                      color: theme.colorScheme.onSurface,
-                    ),
+          _buildHeader(theme),
+          SizedBox(height: 4.h),
+          _buildProfileCard(theme, member, user),
+          SizedBox(height: 12.h),
+          _buildCommunityCard(theme, member),
+          if (member.scheduledAt != null) ...[
+            SizedBox(height: 12.h),
+            _buildScheduledCard(theme, member),
+          ],
+          SizedBox(height: 12.h),
+          _buildRequestedCard(theme, member),
+          SizedBox(height: 12.h),
+          _buildLocationCard(theme, member, hasLocation),
+          SizedBox(height: 40.h),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(ThemeData theme) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainerHighest,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.arrow_back_ios_new,
+                size: 16.w,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Text(
+            'Awaiting',
+            style: TextStyle(
+              fontSize: 22.sp,
+              fontWeight: FontWeight.w600,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileCard(
+    ThemeData theme,
+    CommunityMember member,
+    MemberUser user,
+  ) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              AppColors.primary.withValues(alpha: 0.08),
+              AppColors.primaryVariant.withValues(alpha: 0.04),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: AppColors.primary.withValues(alpha: 0.12),
+            width: 1.w,
+          ),
+        ),
+        child: Column(
+          children: [
+            Container(
+              width: 88.w,
+              height: 88.w,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: AppColors.primaryGradient,
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
                   ),
+                ],
+              ),
+              padding: EdgeInsets.all(2.5.w),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: theme.colorScheme.surface,
                 ),
-                SizedBox(width: 12.w),
-                Text(
-                  'Awaiting',
-                  style: TextStyle(
-                    fontSize: 22.sp,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.onSurface,
+                padding: EdgeInsets.all(2.w),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(44.r),
+                  child: user.avatar.isNotEmpty
+                      ? Image.network(
+                          AppCredentials.fixurl(user.avatar),
+                          width: 88.w,
+                          height: 88.w,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _defaultAvatar(),
+                        )
+                      : _defaultAvatar(),
+                ),
+              ),
+            ),
+            SizedBox(height: 14.h),
+            Text(
+              user.fullName,
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w700,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            SizedBox(height: 4.h),
+            Text(
+              user.email,
+              style: TextStyle(
+                fontSize: 13.sp,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            SizedBox(height: 14.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildBadge(
+                  label: member.status.toUpperCase(),
+                  gradient: AppColors.primaryGradient,
+                ),
+                SizedBox(width: 8.w),
+                _buildBadge(
+                  label: member.scheduleStatus.toUpperCase(),
+                  gradient: const LinearGradient(
+                    colors: [Color(0xff99e2f1), Color(0xffaaccff)],
                   ),
                 ),
               ],
             ),
-          ),
+          ],
+        ),
+      ),
+    );
+  }
 
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(20.w),
+  Widget _buildCommunityCard(ThemeData theme, CommunityMember member) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20.r),
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(12.r),
               ),
+              child: Assets.icons.communityColor.svg(
+                width: 20.w,
+                height: 20.h,
+                colorFilter: ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ),
+            SizedBox(width: 14.w),
+            Expanded(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Avatar with gradient ring
-                  Container(
-                    width: 80.w,
-                    height: 80.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.primary,
-                        width: 2.5.w,
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(40.r),
-                      child: user.avatar.isNotEmpty
-                          ? Image.network(
-                              AppCredentials.fixurl(user.avatar),
-                              width: 80.w,
-                              height: 80.w,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => _defaultAvatar(),
-                            )
-                          : _defaultAvatar(),
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-
-                  // Name
                   Text(
-                    user.fullName,
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w700,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
-                  SizedBox(height: 2.h),
-                  Text(
-                    user.email,
+                    'Community',
                     style: TextStyle(
                       fontSize: 13.sp,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
-
-                  SizedBox(height: 16.h),
-
-                  // Status badges
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _buildBadge(
-                        label: member.status.toUpperCase(),
-                        gradient: AppColors.primaryGradient,
-                      ),
-                      SizedBox(width: 8.w),
-                      _buildBadge(
-                        label: member.scheduleStatus.toUpperCase(),
-                        gradient: const LinearGradient(
-                          colors: [Color(0xff99e2f1), Color(0xffaaccff)],
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          SizedBox(height: 12.h),
-
-          if (member.scheduledAt != null)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(10.w),
-                      decoration: BoxDecoration(
-                        gradient: AppColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Assets.icons.calenderHistory.svg(
-                        width: 20.w,
-                        height: 20.h,
-                      ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    member.communityTitle ?? 'Unknown Community',
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
                     ),
-                    SizedBox(width: 14.w),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Scheduled Meetup',
-                            style: TextStyle(
-                              fontSize: 13.sp,
-                              color: theme.colorScheme.onSurfaceVariant,
-                            ),
-                          ),
-                          SizedBox(height: 2.h),
-                          Text(
-                            member.scheduledAt!,
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w600,
-                              color: theme.colorScheme.onSurface,
-                            ),
-                          ),
-                        ],
+                  ),
+                  if ((member.communityDescription ?? '').isNotEmpty) ...[
+                    SizedBox(height: 8.h),
+                    Text(
+                      member.communityDescription!,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        color: theme.colorScheme.onSurfaceVariant,
+                        height: 1.4,
                       ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildScheduledCard(ThemeData theme, CommunityMember member) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(10.w),
+              decoration: BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Assets.icons.calender3.svg(
+                width: 20.w,
+                height: 20.h,
+                colorFilter: ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
                 ),
               ),
             ),
-
-          SizedBox(height: 12.h),
-
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16.w),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Row(
+            SizedBox(width: 14.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(10.w),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Assets.icons.timeCircle.svg(
-                      width: 20.w,
-                      height: 20.h,
-                      color: AppColors.primary,
+                  Text(
+                    'Scheduled Meetup',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  SizedBox(width: 14.w),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Requested',
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            color: theme.colorScheme.onSurfaceVariant,
-                          ),
-                        ),
-                        SizedBox(height: 2.h),
-                        Text(
-                          member.requestedAt != null
-                              ? timeago.format(
-                                  DateTime.parse(member.requestedAt!),
-                                )
-                              : '',
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w600,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
-                      ],
+                  SizedBox(height: 4.h),
+                  Text(
+                    member.scheduledAt!,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ],
               ),
             ),
-          ),
+          ],
+        ),
+      ),
+    );
+  }
 
-          SizedBox(height: 12.h),
-
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(16.w),
+  Widget _buildRequestedCard(ThemeData theme, CommunityMember member) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(16.w),
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(10.w),
               decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(20.r),
+                color: AppColors.primary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              child: Row(
+              child: Assets.icons.timeCircle.svg(
+                width: 20.w,
+                height: 20.h,
+                color: AppColors.primary,
+              ),
+            ),
+            SizedBox(width: 14.w),
+            Expanded(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Requested',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    member.requestedAt != null
+                        ? timeago.format(
+                            DateTime.parse(member.requestedAt!),
+                          )
+                        : '',
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLocationCard(
+    ThemeData theme,
+    CommunityMember member,
+    bool hasLocation,
+  ) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(16.w),
+              child: Row(
                 children: [
                   Container(
                     padding: EdgeInsets.all(10.w),
@@ -368,7 +493,7 @@ class _CommunityAwaitingDetailsScreenState
                       gradient: AppColors.primaryGradient,
                       borderRadius: BorderRadius.circular(12.r),
                     ),
-                    child: Assets.icons.communityColor.svg(
+                    child: Assets.icons.location.svg(
                       width: 20.w,
                       height: 20.h,
                       colorFilter: ColorFilter.mode(
@@ -383,30 +508,21 @@ class _CommunityAwaitingDetailsScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Community title',
+                          'Location',
                           style: TextStyle(
                             fontSize: 13.sp,
                             color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
-                        SizedBox(height: 2.h),
-                        Text(
-                          member.communityTitle ?? 'Unknown Community',
-                          style: TextStyle(
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.w600,
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
-                        if ((member.communityDescription ?? '').isNotEmpty)
+                        if ((member.communityAddress ?? '').isNotEmpty)
                           Padding(
-                            padding: EdgeInsets.only(top: 6.h),
+                            padding: EdgeInsets.only(top: 4.h),
                             child: Text(
-                              member.communityDescription!,
+                              member.communityAddress!,
                               style: TextStyle(
-                                fontSize: 13.sp,
-                                color: theme.colorScheme.onSurfaceVariant,
-                                height: 1.4,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: theme.colorScheme.onSurface,
                               ),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
@@ -418,22 +534,13 @@ class _CommunityAwaitingDetailsScreenState
                 ],
               ),
             ),
-          ),
-
-          SizedBox(height: 12.h),
-
-          if (hasLocation)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Container(
+            if (hasLocation)
+              SizedBox(
                 height: 200.h,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20.r),
-                  border: Border.all(color: theme.dividerColor, width: 1),
-                ),
-                clipBehavior: Clip.antiAlias,
                 child: GoogleMap(
-                  // style: _mapStyle,
+                  style: Theme.of(context).brightness == Brightness.dark
+                      ? _mapStyle
+                      : null,
                   initialCameraPosition: CameraPosition(
                     target: LatLng(
                       member.communityLatitude!,
@@ -463,17 +570,10 @@ class _CommunityAwaitingDetailsScreenState
                   mapType: MapType.normal,
                 ),
               ),
-            ),
-
-          if (!hasLocation)
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Container(
+            if (!hasLocation)
+              Container(
                 height: 120.h,
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
+                color: theme.colorScheme.surfaceContainerHighest,
                 child: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -495,10 +595,8 @@ class _CommunityAwaitingDetailsScreenState
                   ),
                 ),
               ),
-            ),
-
-          SizedBox(height: 40.h),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -506,15 +604,15 @@ class _CommunityAwaitingDetailsScreenState
   Widget _defaultAvatar() {
     final theme = Theme.of(context);
     return Container(
-      width: 80.w,
-      height: 80.w,
+      width: 88.w,
+      height: 88.w,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest,
         shape: BoxShape.circle,
       ),
       child: Icon(
         Icons.person,
-        size: 40.w,
+        size: 44.w,
         color: theme.colorScheme.onSurfaceVariant,
       ),
     );
