@@ -22,6 +22,7 @@ class ApiConstant {
       "/communities/$communityId/request-status";
 
   static const String vibe = "/vibes";
+  static String wave({required int vibeId}) => "/vibes/$vibeId/send-wave";
 
   static const String notification = "/notifications";
   static const String markNotificationAsRead = "/notifications/mark-as-read";

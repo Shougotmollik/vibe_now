@@ -117,4 +117,23 @@ class VibeController extends GetxController {
       isLoading(false);
     }
   }
+
+  // send wave
+  Future<bool> sendWave({required int vibeId}) async {
+    try {
+      isLoading(true);
+      final response = await CustomHttp.post(
+        endpoint: ApiConstant.wave(vibeId: vibeId),
+      );
+      if (response.ok) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint("Error while sending wave $e");
+      return false;
+    } finally {
+      isLoading(false);
+    }
+  }
 }

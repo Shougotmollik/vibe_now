@@ -56,6 +56,8 @@ class Vibe {
   final dynamic endedAt;
   final CreatedBy? createdBy;
   final DateTime? createdAt;
+  final bool hasSentWave;
+  final String? waveStatus;
 
   Vibe({
     this.id,
@@ -68,6 +70,8 @@ class Vibe {
     this.endedAt,
     this.createdBy,
     this.createdAt,
+    this.hasSentWave = false,
+    this.waveStatus,
   });
 
   factory Vibe.fromJson(Map<String, dynamic> json) => Vibe(
@@ -88,6 +92,8 @@ class Vibe {
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),
+        hasSentWave: json["has_sent_wave"] ?? false,
+        waveStatus: json["wave_status"],
       );
 }
 

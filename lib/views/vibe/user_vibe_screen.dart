@@ -131,7 +131,58 @@ class UserVibeCard extends StatefulWidget {
 }
 
 class _UserVibeCardState extends State<UserVibeCard> {
-  bool isWaved = false;
+  bool _isSending = false;
+  late bool _hasWaved;
+  late String? _waveStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    _hasWaved = widget.vibe.hasSentWave;
+    _waveStatus = widget.vibe.waveStatus;
+  }
+
+  bool get _showWaveButton =>
+      _waveStatus == null || _waveStatus == 'pending';
+
+  Future<void> _sendWave() async {
+    if (_isSending || widget.vibe.id == null) return;
+    setState(() => _isSending = true);
+
+    final ok = await Get.find<VibeController>().sendWave(
+      vibeId: widget.vibe.id!,
+    );
+
+    if (!mounted) return;
+
+    if (ok) {
+      setState(() {
+        _hasWaved = true;
+        _waveStatus = 'pending';
+      });
+      showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) {
+          return Center(
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              elevation: 0,
+              backgroundColor: Colors.transparent,
+              child: WaveAnimatedDialog(
+                content:
+                    "You waved to ${widget.vibe.createdBy?.fullName ?? "User"}",
+              ),
+            ),
+          );
+        },
+      );
+    }
+
+    setState(() => _isSending = false);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -208,49 +259,39 @@ class _UserVibeCardState extends State<UserVibeCard> {
               ],
             ),
           ),
-          GestureDetector(
-            onTap: () {
-              setState(() => isWaved = true);
-
-              showDialog(
-                context: context,
-                barrierDismissible: true,
-                builder: (context) {
-                  return Center(
-                    child: Dialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      elevation: 0,
-                      backgroundColor: Colors.transparent,
-                      child: WaveAnimatedDialog(
-                        content:
-                            "You waved to ${widget.vibe.createdBy?.fullName ?? "User"}",
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-              decoration: BoxDecoration(
-                gradient: isWaved
-                    ? AppColors.primaryGradientRotated.withOpacity(0.5)
-                    : AppColors.primaryGradientRotated,
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Text(
-                isWaved ? "Waved" : "Wave",
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+          if (_showWaveButton)
+            GestureDetector(
+              onTap: _sendWave,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                decoration: BoxDecoration(
+                  gradient: _hasWaved
+                      ? AppColors.primaryGradientRotated.withOpacity(0.5)
+                      : _isSending
+                          ? AppColors.primaryGradientRotated.withOpacity(0.7)
+                          : AppColors.primaryGradientRotated,
+                  borderRadius: BorderRadius.circular(20.r),
                 ),
+                child: _isSending
+                    ? SizedBox(
+                        width: 16.w,
+                        height: 16.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text(
+                        _hasWaved ? "Waved" : "Wave",
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
               ),
             ),
-          ),
         ],
       ),
     );
