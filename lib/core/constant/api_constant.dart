@@ -21,6 +21,10 @@ class ApiConstant {
   static String communitiesAwaitings({required int communityId}) =>
       "/communities/$communityId/request-status";
 
+  static const String waves = "/vibes/wave-list";
+  static String waveOperation({required int waveId}) =>
+      "/vibes/wave/$waveId/moderate";
+
   static const String vibe = "/vibes";
   static String wave({required int vibeId}) => "/vibes/$vibeId/send-wave";
 

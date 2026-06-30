@@ -10,6 +10,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/chat.dart';
+import 'package:vibe_now/model/incoming_wave.dart';
 import 'package:vibe_now/views/chat/chat_list_item.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/notification/widgets/notification_shimmer.dart';
@@ -27,13 +28,13 @@ class _ChatScreenState extends State<ChatScreen> {
   final ChatController _chatController = Get.find<ChatController>();
 
   int _selectedTabIndex = 0;
-  static const _tabs = ['Waves', 'Event', 'Community'];
-  static const _tabKeys = ['private', 'event', 'community'];
+  static const _tabs = ['Waves', 'Private', 'Event', 'Community'];
+  static const _tabKeys = ['waves', 'private', 'event', 'community'];
 
   @override
   void initState() {
     super.initState();
-    _chatController.getChatList(type: _tabKeys[_selectedTabIndex]);
+    _chatController.getWaves();
   }
 
   @override
@@ -44,11 +45,21 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _onTabChanged(int index) {
     setState(() => _selectedTabIndex = index);
-    _chatController.getChatList(type: _tabKeys[index]);
+    final tab = _tabKeys[index];
+    if (tab == 'waves') {
+      _chatController.getWaves();
+    } else {
+      _chatController.getChatList(type: tab);
+    }
   }
 
-  Future<void> _onRefresh() =>
-      _chatController.getChatList(type: _tabKeys[_selectedTabIndex]);
+  Future<void> _onRefresh() {
+    final tab = _tabKeys[_selectedTabIndex];
+    if (tab == 'waves') {
+      return _chatController.getWaves();
+    }
+    return _chatController.getChatList(type: tab);
+  }
 
   void _openChat(Chat chat) {
     switch (chat.type) {
@@ -168,12 +179,18 @@ class _ChatScreenState extends State<ChatScreen> {
       colors: [Color(0xFF8663F6), Color(0xFFC470F5), Color(0xFF57C2FF)],
       stops: [0.16, 0.54, 0.92],
     ),
+    const LinearGradient(colors: [Color(0xfff5a0d6), Color(0xffd494f7)]),
     const LinearGradient(colors: [Color(0xfffbadd8), Color(0xffdeb5fe)]),
     const LinearGradient(colors: [Color(0xff99e2f1), Color(0xffaaccff)]),
   ];
 
   List<Widget> get _tabIcons => [
     Assets.icons.handWave.svg(
+      width: 18.w,
+      height: 18.h,
+      colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
+    ),
+    Assets.icons.chatting.svg(
       width: 18.w,
       height: 18.h,
       colorFilter: const ColorFilter.mode(Colors.black87, BlendMode.srcIn),
@@ -244,6 +261,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _buildTabContent() {
     final tab = _tabKeys[_selectedTabIndex];
+    if (tab == 'waves') return _buildWavesTab();
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: Obx(() {
@@ -290,14 +308,159 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
+  Widget _buildWavesTab() {
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: Obx(() {
+        final list = _chatController.incomingWaves;
+        final isLoading =
+            _chatController.isLoadingTab('waves') && list.isEmpty;
+
+        if (isLoading) {
+          return const NotificationShimmer();
+        }
+
+        if (list.isEmpty) {
+          return ListView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            children: [
+              SizedBox(height: 80.h),
+              Center(
+                child: Text(
+                  _emptyMessage('waves'),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 14.sp,
+                  ),
+                ),
+              ),
+            ],
+          );
+        }
+
+        return ListView.separated(
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: list.length,
+          separatorBuilder: (_, __) => Divider(
+            height: 1,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.08),
+          ),
+          itemBuilder: (context, index) => _buildWaveItem(list[index]),
+        );
+      }),
+    );
+  }
+
+  Widget _buildWaveItem(IncomingWave wave) {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: () {
+        final chat = Chat(
+          id: wave.waveId.toString(),
+          name: wave.sender.fullName,
+          message: wave.vibe.title,
+          avatars: [wave.sender.avatar],
+        );
+        context.pushNamed(RouteNames.waveScreen, extra: chat);
+      },
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(25.r),
+              child: Image.network(
+                AppCredentials.fixurl(wave.sender.avatar),
+                width: 50.w,
+                height: 50.w,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 50.w,
+                  height: 50.w,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.person,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    wave.sender.fullName,
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Row(
+                    children: [
+                      Assets.icons.handWave.svg(
+                        width: 14.w,
+                        height: 14.h,
+                        color: AppColors.primary,
+                      ),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Waved at ${wave.vibe.title}',
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 4.h),
+              decoration: BoxDecoration(
+                color: wave.status == 'pending'
+                    ? AppColors.primary.withValues(alpha: 0.12)
+                    : Colors.green.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Text(
+                wave.status.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w600,
+                  color: wave.status == 'pending'
+                      ? AppColors.primary
+                      : Colors.green,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   String _emptyMessage(String tab) {
     switch (tab) {
+      case 'waves':
+        return 'No waves yet';
+      case 'private':
+        return 'No private chats yet';
       case 'event':
         return 'No event chats yet';
       case 'community':
         return 'No community chats yet';
-      case 'private':
-        return 'No waves yet';
       default:
         return 'No conversations yet';
     }
