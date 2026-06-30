@@ -93,6 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic>? _selectedPlaceDetails;
   LatLng? _selectedPosition;
   bool _markersBuilt = false;
+  bool _isBuildingMarkers = false;
   late final Worker _mapItemsWorker;
 
   @override
@@ -557,71 +558,99 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _buildDynamicMarkers() async {
     if (_markersBuilt) return;
     final items = homeController.mapItems.toList();
-    if (items.isEmpty) return;
+    if (items.isEmpty) {
+      if (mounted) setState(() => _isBuildingMarkers = false);
+      return;
+    }
 
-    final newMarkers = <Marker>{};
+    // Pre-cache images via CachedNetworkImageProvider so the
+    // CachedNetworkImage widgets in the pins reuse the same cache.
+    await Future.wait(
+      items.map((item) {
+        final urls = <String>[];
+        if (item.type == MapItemType.vibe) {
+          if ((item.createdBy?.avatarUrl ?? '').isNotEmpty) {
+            urls.add(AppCredentials.fixurl(item.createdBy!.avatarUrl));
+          }
+        } else {
+          if ((item.coverImageUrl ?? '').isNotEmpty) {
+            urls.add(AppCredentials.fixurl(item.coverImageUrl));
+          }
+        }
+        return Future.wait(
+          urls.map((url) => precacheImage(
+                CachedNetworkImageProvider(url),
+                context,
+              )),
+        );
+      }),
+    );
 
-    for (int i = 0; i < items.length; i++) {
-      final item = items[i];
+    // Build all marker bitmaps in parallel
+    final markerFutures = <Future<Marker?>>[];
+
+    for (final item in items) {
       if (item.latitude == null || item.longitude == null) continue;
 
       final position = LatLng(item.latitude!, item.longitude!);
       final markerId = MarkerId('map_${item.type.name}_${item.id}');
 
-      BitmapDescriptor? icon;
-
-      try {
-        switch (item.type) {
-          case MapItemType.vibe:
-            final hasVibe = item.status == 'live';
-            icon = await UserLocationPin(
-              imagePath: item.createdBy?.avatarUrl ?? '',
-              hasVibe: hasVibe,
-            ).toBitmapDescriptor(
-              logicalSize: const Size(300, 300),
-              imageSize: const Size(300, 300),
-            );
-            break;
-          case MapItemType.event:
-            icon = await EventLocationPin(
-              imageUrl: item.coverImageUrl,
-            ).toBitmapDescriptor(
-              logicalSize: const Size(300, 300),
-              imageSize: const Size(300, 300),
-            );
-            break;
-          case MapItemType.community:
-            icon = await CommunityLocationPin(
-              imageUrl: item.coverImageUrl,
-            ).toBitmapDescriptor(
-              logicalSize: const Size(300, 300),
-              imageSize: const Size(300, 300),
-            );
-            break;
-        }
-      } catch (e) {
-        debugPrint('Error creating marker bitmap for $markerId: $e');
-        continue;
-      }
-
-      if (icon == null) continue;
-
-      newMarkers.add(
-        Marker(
+      markerFutures.add(_buildMarkerBitmap(item).then((icon) {
+        if (icon == null) return null;
+        return Marker(
           markerId: markerId,
           position: position,
           icon: icon,
           onTap: () => _onMarkerTap(item),
-        ),
-      );
+        );
+      }).catchError((e) {
+        debugPrint('Error creating marker for $markerId: $e');
+        return null;
+      }));
     }
+
+    final results = await Future.wait(markerFutures);
 
     if (mounted) {
       setState(() {
         _markers.clear();
-        _markers.addAll(newMarkers);
+        _markers.addAll(results.whereType<Marker>());
         _markersBuilt = true;
+        _isBuildingMarkers = false;
       });
+    }
+  }
+
+  Future<BitmapDescriptor?> _buildMarkerBitmap(MapItem item) async {
+    try {
+      switch (item.type) {
+        case MapItemType.vibe:
+          final hasVibe = item.status == 'live';
+          return UserLocationPin(
+            imagePath: item.createdBy?.avatarUrl ?? '',
+            hasVibe: hasVibe,
+          ).toBitmapDescriptor(
+            logicalSize: const Size(300, 300),
+            imageSize: const Size(300, 300),
+          );
+        case MapItemType.event:
+          return EventLocationPin(
+            imageUrl: item.coverImageUrl,
+          ).toBitmapDescriptor(
+            logicalSize: const Size(300, 300),
+            imageSize: const Size(300, 300),
+          );
+        case MapItemType.community:
+          return CommunityLocationPin(
+            imageUrl: item.coverImageUrl,
+          ).toBitmapDescriptor(
+            logicalSize: const Size(300, 300),
+            imageSize: const Size(300, 300),
+          );
+      }
+    } catch (e) {
+      debugPrint('Error rendering pin bitmap for ${item.type}: $e');
+      return null;
     }
   }
 
@@ -1053,7 +1082,8 @@ class _HomeScreenState extends State<HomeScreen> {
     String? currentMapStyle = isDarkMode ? _darkMapStyle : null;
 
     // Build markers from WS data whenever mapItems changes
-    if (!_markersBuilt && homeController.mapItems.isNotEmpty) {
+    if (!_markersBuilt && !_isBuildingMarkers && homeController.mapItems.isNotEmpty) {
+      _isBuildingMarkers = true;
       _buildDynamicMarkers();
     }
 
@@ -1076,6 +1106,7 @@ class _HomeScreenState extends State<HomeScreen> {
               _controller.complete(controller);
             },
           ),
+
           _searchWidget(),
           _buildAllVibeButton(),
         ],
