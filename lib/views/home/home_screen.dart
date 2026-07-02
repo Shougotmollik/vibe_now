@@ -569,12 +569,17 @@ class _HomeScreenState extends State<HomeScreen> {
       items.map((item) {
         final urls = <String>[];
         if (item.type == MapItemType.vibe) {
+          // Pre-cache vibe cover for the dialog
+          if ((item.coverImageUrl).isNotEmpty) {
+            urls.add(item.coverImageUrl);
+          }
+          // Pre-cache creator avatar for the marker pin
           if ((item.createdBy?.avatarUrl ?? '').isNotEmpty) {
             urls.add(AppCredentials.fixurl(item.createdBy!.avatarUrl));
           }
         } else {
-          if ((item.coverImageUrl ?? '').isNotEmpty) {
-            urls.add(AppCredentials.fixurl(item.coverImageUrl));
+          if ((item.coverImageUrl).isNotEmpty) {
+            urls.add(item.coverImageUrl);
           }
         }
         return Future.wait(
@@ -670,12 +675,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _showVibeDialog(MapItem item) {
     final creator = item.createdBy;
+    final vibeTitle = item.title ?? 'Vibe';
+    final endsAt = item.raw['ends_at'] as String? ?? '';
+    final vibeCoverUrl = item.coverImageUrl;
     final nearbyUser = NearbyUser(
       id: creator?.id ?? '',
-      name: creator?.fullName ?? item.title ?? 'Unknown',
+      name: creator?.fullName ?? vibeTitle,
       imageUrl: creator?.avatarUrl ?? '',
-      bio: '${item.title ?? "Vibe"} • ${item.duration ?? ""}',
-      interest: item.title ?? 'Vibe',
+      bio: '$vibeTitle • ${item.duration ?? ""}',
+      interest: vibeTitle,
       distanceKm: item.distance ?? 0.0,
       lat: item.latitude ?? 0,
       lng: item.longitude ?? 0,
@@ -684,7 +692,14 @@ class _HomeScreenState extends State<HomeScreen> {
     final hasVibe = item.status == 'live';
 
     if (hasVibe) {
-      showUserVibeDialog(context: context, user: nearbyUser, hasVibe: true);
+      showUserVibeDialog(
+        context: context,
+        user: nearbyUser,
+        hasVibe: true,
+        vibeTitle: vibeTitle,
+        endsAt: endsAt,
+        vibeCoverUrl: vibeCoverUrl,
+      );
     } else {
       showUserProfileDialog(context, nearbyUser, hasVibe: false);
     }
@@ -784,7 +799,13 @@ class _HomeScreenState extends State<HomeScreen> {
     required BuildContext context,
     required NearbyUser user,
     required bool hasVibe,
+    String vibeTitle = 'Vibe',
+    String endsAt = '',
+    String vibeCoverUrl = '',
   }) {
+    final remaining = _formatRemainingTime(endsAt);
+    final displayImage = (vibeCoverUrl.isNotEmpty) ? vibeCoverUrl : user.imageUrl;
+
     showDialog(
       context: context,
       animationStyle: AnimationStyle(curve: Curves.easeInOut),
@@ -805,9 +826,23 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CircleAvatar(
-                  radius: 28,
-                  backgroundImage: NetworkImage(user.imageUrl),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: CachedNetworkImage(
+                    imageUrl: displayImage,
+                    width: 56,
+                    height: 56,
+                    fit: BoxFit.cover,
+                    placeholder: (_, __) => Container(
+                      width: 56,
+                      height: 56,
+                      color: Colors.grey[200],
+                    ),
+                    errorWidget: (_, __, ___) => CircleAvatar(
+                      radius: 28,
+                      backgroundImage: NetworkImage(user.imageUrl),
+                    ),
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Column(
@@ -823,21 +858,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Text(
-                          "Coffee break",
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
+                    Text(
+                      vibeTitle,
+                      style: const TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                    if (remaining.isNotEmpty)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          'Expires in $remaining',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black38,
+                          ),
                         ),
-                        const SizedBox(width: 4),
-                        const Text("☕", style: TextStyle(fontSize: 16)),
-                      ],
-                    ),
-                    const SizedBox(height: 2),
-                    const Text(
-                      "Expires in 20min",
-                      style: TextStyle(fontSize: 14, color: Colors.black38),
-                    ),
+                      ),
                   ],
                 ),
               ],
@@ -1046,6 +1081,36 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  /// Calculate remaining time from an ISO ends_at string.
+  /// Returns "2h", "1h 30m", "45m", or "Expired".
+  String _formatRemainingTime(String? endsAt) {
+    if (endsAt == null || endsAt.isEmpty) return '';
+    try {
+      // Normalize space separator to ISO 8601 'T' separator
+      final normalized = endsAt.contains(' ') ? endsAt.replaceFirst(' ', 'T') : endsAt;
+      final end = DateTime.parse(normalized);
+      final now = DateTime.now().toUtc();
+      final diff = end.difference(now);
+
+      if (diff.isNegative) return 'Expired';
+
+      final hours = diff.inHours;
+      final minutes = diff.inMinutes.remainder(60);
+
+      if (hours > 0 && minutes > 0) {
+        return '${hours}h ${minutes}m';
+      } else if (hours > 0) {
+        return '${hours}h';
+      } else if (minutes > 0) {
+        return '${minutes}m';
+      } else {
+        return 'Less than 1m';
+      }
+    } catch (e) {
+      return '';
+    }
   }
 
   void _openFullImage(String imageUrl, BuildContext context) {

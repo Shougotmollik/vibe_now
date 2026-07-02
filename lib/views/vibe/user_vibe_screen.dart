@@ -184,6 +184,20 @@ class _UserVibeCardState extends State<UserVibeCard> {
     setState(() => _isSending = false);
   }
 
+  String _formatRemainingTime(DateTime? endsAt) {
+    if (endsAt == null) return '';
+    final remaining = endsAt.difference(DateTime.now());
+    if (remaining.isNegative) return 'Expired';
+
+    final hours = remaining.inHours;
+    final minutes = remaining.inMinutes.remainder(60);
+
+    if (hours > 0 && minutes > 0) return '${hours}h ${minutes}m';
+    if (hours > 0) return '${hours}h';
+    if (minutes > 0) return '${minutes}m';
+    return 'Expiring soon';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -247,7 +261,7 @@ class _UserVibeCardState extends State<UserVibeCard> {
                   ),
                 ),
                 Text(
-                  "Expires in ${widget.vibe.duration}",
+                  "Expires in ${_formatRemainingTime(widget.vibe.endsAt)}",
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w400,

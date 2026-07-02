@@ -12,6 +12,7 @@ class ApiConstant {
   static const String onboarding = "/onboarding/complete";
   static const String onboardingImage = "/onboarding/upload-photos";
   static const String onboardingLocation = "/onboarding/location-setup";
+  static const String currentLocation = "/onboarding/current-location";
 
   static const String createEvent = "/events/create";
   static const String event = "/events";

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/model/map_item.dart';
 import 'package:vibe_now/model/nearby_user.dart';
+import 'package:vibe_now/services/custom_http.dart';
 import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/services/map_socket_service.dart';
 
@@ -123,8 +126,6 @@ class HomeController extends GetxController {
     super.onClose();
   }
 
-  /// Load map data: get location + connect WS + send request
-  /// Returns the obtained Position, or null if GPS failed.
   Future<Position?> loadMapData({
     String type = 'all',
     String search = '',
@@ -143,8 +144,14 @@ class HomeController extends GetxController {
     }
 
     // Fallback if no location: use stored, then hardcoded default
-    double lat = currentLatitude.value ?? (await LocalStorage.last_latitude.get()) ?? 23.8103;
-    double lng = currentLongitude.value ?? (await LocalStorage.last_longitude.get()) ?? 90.4125;
+    double lat =
+        currentLatitude.value ??
+        (await LocalStorage.last_latitude.get()) ??
+        23.8103;
+    double lng =
+        currentLongitude.value ??
+        (await LocalStorage.last_longitude.get()) ??
+        90.4125;
 
     // Set up WS callback
     _mapSocket.onItemsReceived = (response) {
@@ -171,6 +178,9 @@ class HomeController extends GetxController {
     } else {
       isMapLoading(false);
     }
+
+    // Notify backend of current location (fire & forget in background)
+    _notifyCurrentLocation(lat, lng);
 
     return position;
   }
@@ -202,5 +212,69 @@ class HomeController extends GetxController {
   /// Refresh map data with current location
   Future<void> refreshMapData() async {
     await loadMapData();
+  }
+
+  /// Notify backend of current location (fire & forget in background)
+  Future<void> _notifyCurrentLocation(double lat, double lng) async {
+    try {
+      // Default location name from coordinates
+      String locationName =
+          "${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}";
+
+      // Try to reverse-geocode for a proper location name
+      try {
+        final placemarks = await placemarkFromCoordinates(lat, lng)
+            .timeout(const Duration(seconds: 5));
+        if (placemarks.isNotEmpty) {
+          final p = placemarks.first;
+          final city =
+              p.locality ??
+              p.subAdministrativeArea ??
+              p.administrativeArea ??
+              "";
+          final country = p.country ?? "";
+          if (city.isNotEmpty && country.isNotEmpty) {
+            locationName = "$city, $country";
+          } else if (city.isNotEmpty) {
+            locationName = city;
+          } else if (country.isNotEmpty) {
+            locationName = country;
+          }
+        }
+      } catch (e) {
+        debugPrint('Geocoding for location notify failed: $e');
+        // Fall back to coordinates as location name
+      }
+
+      await sendCurrentLocation(
+        latitude: lat,
+        longitude: lng,
+        locationName: locationName,
+      );
+    } catch (e) {
+      debugPrint('Error notifying current location: $e');
+    }
+  }
+
+  // current location notify
+  Future<bool> sendCurrentLocation({
+    required double latitude,
+    required double longitude,
+    required String locationName,
+  }) async {
+    try {
+      final response = await CustomHttp.post(
+        endpoint: ApiConstant.currentLocation,
+        body: {
+          "current_latitude": latitude,
+          "current_longitude": longitude,
+          "current_location_name": locationName,
+        },
+      );
+      return response.ok;
+    } catch (e) {
+      debugPrint('Error sending current location: $e');
+      return false;
+    }
   }
 }
