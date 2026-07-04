@@ -209,21 +209,80 @@ class ChatController extends GetxController {
     return result;
   }
 
-  // ── Mark as read ─────────────────────────────
+  // ── Mark as read (via WebSocket) ────────────
 
-  Future<void> markAsRead({
+  void _markMessageAsRead({required String chatId, required String messageId}) {
+    WebSocketRegistry.instance.send(chatId, {
+      'type': 'read_message',
+      'message_id': messageId,
+    });
+  }
+
+  void markChatAsRead({required String chatId}) {
+    Future.microtask(() async {
+      final userId = await LocalStorage.user_id.get();
+      if (userId == null || userId.isEmpty) return;
+
+      final unread = chatMessages.where((m) {
+        if (m.sender?.id == userId) return false;
+        final reads = m.reads as List?;
+        if (reads != null) {
+          final alreadyRead = reads.any((r) {
+            if (r is Map) return r['id'] == userId;
+            return false;
+          });
+          if (alreadyRead) return false;
+        }
+        return true;
+      }).toList();
+
+      if (unread.isEmpty) return;
+
+      for (final m in unread) {
+        if (m.id != null) {
+          _markMessageAsRead(chatId: chatId, messageId: m.id!);
+        }
+      }
+    });
+  }
+
+  // ── Edit message (via WebSocket) ────────────
+
+  void editMessage({
     required String chatId,
     required String messageId,
-  }) async {
-    await CustomHttp.post(
-      need_auth: true,
-      endpoint: "${ApiConstant.chat}/$chatId/messages/$messageId/read",
-      body: {},
-    );
+    required String content,
+  }) {
+    WebSocketRegistry.instance.send(chatId, {
+      'type': 'edit_message',
+      'message_id': messageId,
+      'content': content,
+    });
+    // Optimistic update — server echoes back via message_edited
+    final idx = chatMessages.indexWhere((m) => m.id == messageId);
+    if (idx >= 0) {
+      chatMessages[idx].content = content;
+      chatMessages[idx].isEdited = true;
+      chatMessages.refresh();
+    }
+  }
+
+  // ── Delete message (via WebSocket) ───────────
+
+  void deleteMessage({required String chatId, required String messageId}) {
+    WebSocketRegistry.instance.send(chatId, {
+      'type': 'delete_message',
+      'message_id': messageId,
+    });
+    // Optimistic update — server echoes back via message_deleted
+    final idx = chatMessages.indexWhere((m) => m.id == messageId);
+    if (idx >= 0) {
+      chatMessages[idx].isDeleted = true;
+      chatMessages.refresh();
+    }
   }
 
   //   Reactions (sent via WebSocket)
-
   void sendReaction({
     required String chatId,
     required String messageId,
@@ -237,7 +296,6 @@ class ChatController extends GetxController {
   }
 
   //   WebSocket
-
   Future<void> connectToChat(String chatId) async {
     if (_activeChatId == chatId) return;
     disconnectFromChat();
@@ -274,6 +332,61 @@ class ChatController extends GetxController {
     });
   }
 
+  // WS event handlers
+  void _handleMessageRead(Map<String, dynamic> data) {
+    final messageId = data['message_id'] as String?;
+    if (messageId == null) return;
+    final idx = chatMessages.indexWhere((m) => m.id == messageId);
+    if (idx < 0) return;
+
+    final userId = data['user_id'] as String?;
+    if (userId == null) return;
+
+    final msg = chatMessages[idx];
+    final reads = ((msg.reads as List?) ?? []).toList();
+
+    // Check if this user already has a read entry
+    final alreadyRead = reads.any((r) {
+      if (r is Map) {
+        final user = r['user'];
+        if (user is Map) return user['id'] == userId;
+        return r['id'] == userId;
+      }
+      return false;
+    });
+
+    if (!alreadyRead) {
+      reads.add({
+        'user': {'id': userId},
+        'read_at': data['read_at'] as String? ??
+            DateTime.now().toUtc().toIso8601String(),
+      });
+      msg.reads = reads;
+      msg.readCount = (msg.readCount ?? 0) + 1;
+      chatMessages.refresh();
+    }
+  }
+
+  void _handleMessageDeleted(Map<String, dynamic> data) {
+    final messageId = data['message_id'] as String?;
+    if (messageId == null) return;
+    final idx = chatMessages.indexWhere((m) => m.id == messageId);
+    if (idx < 0) return;
+    chatMessages[idx].isDeleted = true;
+    chatMessages.refresh();
+  }
+
+  void _handleMessageEdited(Map<String, dynamic> data) {
+    final messageId = data['message_id'] as String?;
+    if (messageId == null) return;
+    final idx = chatMessages.indexWhere((m) => m.id == messageId);
+    if (idx < 0) return;
+    chatMessages[idx].content =
+        data['content'] as String? ?? chatMessages[idx].content;
+    chatMessages[idx].isEdited = data['is_edited'] as bool? ?? true;
+    chatMessages.refresh();
+  }
+
   void _onWsEvent(dynamic raw) {
     try {
       final data = jsonDecode(raw as String) as Map<String, dynamic>;
@@ -307,6 +420,18 @@ class ChatController extends GetxController {
               isOtherUserTyping.value = false;
             });
           }
+          break;
+
+        case 'message_read':
+          _handleMessageRead(data);
+          break;
+
+        case 'message_deleted':
+          _handleMessageDeleted(data);
+          break;
+
+        case 'message_edited':
+          _handleMessageEdited(data);
           break;
 
         case 'user_status':

@@ -189,6 +189,11 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
     if (!mounted) return;
     setState(() => _initialLoading = false);
     _scrollToBottom();
+
+    // Mark all messages from other users as read
+    if (widget.chatId != null) {
+      _chatController.markChatAsRead(chatId: widget.chatId!);
+    }
   }
 
   @override

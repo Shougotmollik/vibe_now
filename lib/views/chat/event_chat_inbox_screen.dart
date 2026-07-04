@@ -97,6 +97,7 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
   bool _hasText = false;
   bool _isRecording = false;
   bool _isSending = false;
+  String? _editingMessageId;
   String? _recordingPath;
 
   late final aw.RecorderController _recorderController;
@@ -214,6 +215,11 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
     if (!mounted) return;
     setState(() => _initialLoading = false);
     _scrollToBottom();
+
+    // Mark all messages from other users as read
+    if (widget.chatId != null) {
+      _chatController.markChatAsRead(chatId: widget.chatId!);
+    }
   }
 
   @override
@@ -395,19 +401,193 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
     );
   }
 
-  //Send
+  //Send / Edit
 
   void _sendMessage() async {
     final text = _messageController.text.trim();
     if (text.isEmpty || widget.chatId == null) return;
     _messageController.clear();
     setState(() => _isSending = true);
-    await _chatController.sendTextMessage(
-      chatId: widget.chatId!,
-      content: text,
-    );
+
+    if (_editingMessageId != null) {
+      _chatController.editMessage(
+        chatId: widget.chatId!,
+        messageId: _editingMessageId!,
+        content: text,
+      );
+      if (mounted) setState(() => _editingMessageId = null);
+    } else {
+      await _chatController.sendTextMessage(
+        chatId: widget.chatId!,
+        content: text,
+      );
+    }
+
     if (mounted) setState(() => _isSending = false);
     _scrollToBottom();
+  }
+
+  // ── Copy / Edit / Delete ──────────────────────────────────────────────────
+
+  void _copyMessage(ChatMessage msg) {
+    final text = msg.text;
+    if (text == null || text.isEmpty) return;
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Copied'),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _startEditMessage(ChatMessage msg) {
+    final text = msg.text;
+    if (text == null) return;
+    setState(() => _editingMessageId = msg.id);
+    _messageController.text = text;
+    _messageController.selection = TextSelection.fromPosition(
+      TextPosition(offset: text.length),
+    );
+    _scrollToBottom();
+  }
+
+  Future<void> _deleteMessage(ChatMessage msg) async {
+    if (widget.chatId == null) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Message'),
+        content: const Text('Are you sure you want to delete this message?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(
+              'Delete',
+              style: TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    // Clear edit mode if we were editing this message
+    if (_editingMessageId == msg.id) {
+      _messageController.clear();
+      setState(() => _editingMessageId = null);
+    }
+
+    _chatController.deleteMessage(
+      chatId: widget.chatId!,
+      messageId: msg.id,
+    );
+  }
+
+  void _showMessageOptions(ChatMessage msg) {
+    final hasText = (msg.text ?? '').isNotEmpty;
+    final canCopy = hasText && (msg.type == MessageType.text || msg.type == MessageType.mixed);
+    final canEdit = _isCreator && hasText && (msg.type == MessageType.text || msg.type == MessageType.mixed);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.12),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (canCopy) ...[
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _copyMessage(msg);
+                  },
+                  splashColor: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    child: Row(
+                      children: [
+                        Icon(Icons.file_copy_outlined, color: AppColors.primary, size: 20.w),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'Copy',
+                          style: TextStyle(fontSize: 16.sp, color: AppColors.primary, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(height: 1.h),
+              ],
+              if (canEdit) ...[
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _startEditMessage(msg);
+                  },
+                  splashColor: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    child: Row(
+                      children: [
+                        Icon(Icons.edit_outlined, color: AppColors.primary, size: 20.sp),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'Edit',
+                          style: TextStyle(fontSize: 16.sp, color: AppColors.primary, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(height: 1.h),
+              ],
+              InkWell(
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _deleteMessage(msg);
+                },
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  child: Row(
+                    children: [
+                      Assets.icons.trash.svg(width: 20.w, height: 20.h),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Delete',
+                        style: TextStyle(fontSize: 16.sp, color: AppColors.primary, fontWeight: FontWeight.w600),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   //   Build
@@ -462,13 +642,7 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
           message: messages[index],
           onLongPress: _showReactionOverlay,
           onToggleReaction: _toggleReaction,
-          onMoreOptions: (msg) => _buildMoreOption(
-            context,
-            onDelete: () {
-              Navigator.pop(context);
-            },
-            onEdit: () => Navigator.pop(context),
-          ),
+          onMoreOptions: (msg) => _showMessageOptions(msg),
         ),
       );
     });
@@ -714,7 +888,6 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
 
     return SafeArea(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           boxShadow: [
@@ -727,7 +900,53 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Edit mode banner
+            if (_editingMessageId != null)
+              Container(
+                padding: const EdgeInsets.only(left: 16, right: 8, top: 6, bottom: 2),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.edit_outlined,
+                      size: 14,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    SizedBox(width: 6.w),
+                    Expanded(
+                      child: Text(
+                        'Editing message',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        _messageController.clear();
+                        setState(() => _editingMessageId = null);
+                      },
+                      child: Container(
+                        width: 28,
+                        height: 28,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
           children: [
             /// 📎 Attachment
             GestureDetector(
@@ -1010,10 +1229,13 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
                       color: canSend ? null : Colors.grey,
                     ),
                   ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      ],
+    ),
+  ),
+  );
   }
 
   Future<void> _toggleRecording() async {
@@ -1035,6 +1257,11 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
       final status = await Permission.microphone.request();
       if (status != PermissionStatus.granted) {
         return;
+      }
+      // Clear edit mode if active
+      if (_editingMessageId != null) {
+        _messageController.clear();
+        setState(() => _editingMessageId = null);
       }
       if (_isRecorded) {
         await _playerController.stopPlayer();
@@ -1302,7 +1529,7 @@ class _EventMessageTileState extends State<_EventMessageTile>
   }
 }
 
-// ── _Avatar ─────────────────────────────────────────────────────────────────
+//Avatar
 
 class _Avatar extends StatelessWidget {
   final String url;
@@ -1369,7 +1596,18 @@ class _BubbleContent extends StatelessWidget {
         color: message.isMe
             ? null
             : Theme.of(context).colorScheme.surfaceContainerHighest,
-        gradient: message.isMe ? AppColors.primaryGradient : null,
+        gradient: message.isMe
+            ? AppColors.primaryGradient
+            : LinearGradient(
+                colors: [
+                  Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                  Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
+                ],
+              ),
         borderRadius: BorderRadius.only(
           topLeft: const Radius.circular(20),
           topRight: const Radius.circular(20),
@@ -1899,121 +2137,4 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
   }
 }
 
-// ── More options bottom sheet ───────────────────────────────────────────────
 
-Future<dynamic> _buildMoreOption(
-  BuildContext context, {
-  required VoidCallback onDelete,
-  required VoidCallback onEdit,
-}) {
-  return showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    builder: (context) => SafeArea(
-      child: Container(
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(
-                context,
-              ).colorScheme.shadow.withValues(alpha: 0.12),
-              blurRadius: 10,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            InkWell(
-              onTap: onDelete,
-              splashColor: Colors.transparent,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.file_copy_outlined,
-                      color: AppColors.primary,
-                      size: 20.w,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      'Copy',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Divider(height: 1.h),
-            InkWell(
-              onTap: onDelete,
-              splashColor: Colors.transparent,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Assets.icons.trash.svg(width: 20.w, height: 20.h),
-                    SizedBox(width: 4.w),
-                    Text(
-                      'Delete',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Divider(height: 1),
-            InkWell(
-              onTap: onEdit,
-              splashColor: Colors.transparent,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.edit_outlined,
-                      color: AppColors.primary,
-                      size: 20.sp,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      'Edit',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
-}
