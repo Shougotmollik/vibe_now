@@ -20,6 +20,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:audio_waveforms/audio_waveforms.dart' as aw;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
 
 // ── Models ──────────────────────────────────────────────────────────────────
 
@@ -1053,32 +1054,18 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
       return;
     }
 
-    final atEnd = _previewMaxMs > 0 && _previewCurrentMs >= _previewMaxMs - 200;
-    final isStopped = _playerController.playerState.isStopped;
-
-    if (isStopped) {
+    // Reset if reached end or player is stopped
+    if (_playerController.playerState.isStopped ||
+        (_previewMaxMs > 0 && _previewCurrentMs >= _previewMaxMs - 200)) {
+      await _playerController.stopPlayer();
       if (_recordingPath != null) {
         await _playerController.preparePlayer(path: _recordingPath!);
         await _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
-      }
-      if (!mounted) return;
-      setState(() {
-        _previewCurrentMs = 0;
-        _previewMaxMs = _playerController.maxDuration;
-      });
-    } else if (atEnd) {
-      if (_recordingPath != null) {
-        await _playerController.stopPlayer();
-        await _playerController.preparePlayer(path: _recordingPath!);
-        await _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
-      }
-      if (mounted) {
-        setState(() {
-          _previewCurrentMs = 0;
-          _previewMaxMs = _playerController.maxDuration;
-        });
       }
     }
+
+    // Always seek to start before playing to ensure repeat playback
+    await _playerController.seekTo(0);
 
     await _playerController.startPlayer();
     if (mounted) setState(() => _isPreviewPlaying = true);
@@ -1666,15 +1653,21 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
 
 class _WaveformPainter extends CustomPainter {
   final bool isWhite;
-  final bool isAnimating;
+  final double progress; // 0.0 to 1.0, portion played
 
-  _WaveformPainter({this.isWhite = false, this.isAnimating = false});
+  _WaveformPainter({this.isWhite = false, this.progress = 0.0});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = isWhite ? Colors.white : Colors.black54
+    final basePaint = Paint()
+      ..color = (isWhite ? Colors.white : Colors.black54)
+          .withValues(alpha: 0.3)
       ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+
+    final progressPaint = Paint()
+      ..color = isWhite ? Colors.white : Colors.black87
+      ..strokeWidth = 2.5
       ..strokeCap = StrokeCap.round;
 
     const barCount = 30;
@@ -1691,13 +1684,19 @@ class _WaveformPainter extends CustomPainter {
       final barHeight = size.height * heightFactor;
       final y1 = (size.height - barHeight) / 2;
       final y2 = y1 + barHeight;
+
+      // Bars before the progress point are highlighted, after are dimmed
+      final barCenter = x + barWidth / 2;
+      final barProgress = barCenter / size.width;
+      final paint = barProgress <= progress ? progressPaint : basePaint;
+
       canvas.drawLine(Offset(x, y1), Offset(x, y2), paint);
     }
   }
 
   @override
   bool shouldRepaint(_WaveformPainter oldDelegate) {
-    return oldDelegate.isAnimating != isAnimating ||
+    return oldDelegate.progress != progress ||
         oldDelegate.isWhite != isWhite;
   }
 }
@@ -1717,9 +1716,11 @@ class _MessageAudioPlayer extends StatefulWidget {
 class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
   late ap.AudioPlayer _player;
   bool _isPlaying = false;
+  bool _isDownloading = false;
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
   late final String _resolvedUrl;
+  String? _localPath;
 
   @override
   void initState() {
@@ -1737,16 +1738,33 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
     _player.onPositionChanged.listen((p) {
       if (mounted) setState(() => _position = p);
     });
-
-    if (_resolvedUrl.isNotEmpty) {
-      _player.setSource(ap.UrlSource(_resolvedUrl));
-    }
   }
 
   @override
   void dispose() {
     _player.dispose();
+    // Clean up temp file
+    if (_localPath != null) {
+      File(_localPath!).delete().then((_) {}, onError: (_) {});
+    }
     super.dispose();
+  }
+
+  Future<String> _downloadAudio() async {
+    if (_localPath != null) return _localPath!;
+
+    final dir = await getTemporaryDirectory();
+    final ext = _resolvedUrl.endsWith('.m4a') ? '.m4a' : '.mp3';
+    final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}$ext';
+
+    final response = await http.get(Uri.parse(_resolvedUrl));
+    if (response.statusCode == 200) {
+      final file = File(path);
+      await file.writeAsBytes(response.bodyBytes);
+      _localPath = path;
+      return path;
+    }
+    throw Exception('Failed to download audio: ${response.statusCode}');
   }
 
   void _togglePlay() async {
@@ -1754,9 +1772,34 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
 
     if (_isPlaying) {
       await _player.pause();
-    } else {
-      await _player.play(ap.UrlSource(_resolvedUrl));
+      return;
     }
+
+    // If we already have a local file, play from it
+    if (_localPath != null) {
+      await _playLocal();
+      return;
+    }
+
+    // Download first, then play
+    setState(() => _isDownloading = true);
+    try {
+      final localPath = await _downloadAudio();
+      if (!mounted) return;
+      setState(() => _isDownloading = false);
+      await _player.stop();
+      await _player.play(ap.DeviceFileSource(localPath));
+      if (mounted) setState(() => _isPlaying = true);
+    } catch (e) {
+      debugPrint('Audio download/play error: $e');
+      if (mounted) setState(() => _isDownloading = false);
+    }
+  }
+
+  Future<void> _playLocal() async {
+    // Stop first to reset player state, then play from beginning
+    await _player.stop();
+    await _player.play(ap.DeviceFileSource(_localPath!));
   }
 
   String _formatDuration(Duration d) {
@@ -1771,33 +1814,68 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
         ? Colors.white
         : Theme.of(context).colorScheme.onSurface;
     final displayDuration = _isPlaying ? _position : _duration;
+    final progress = _duration.inMilliseconds > 0
+        ? (_position.inMilliseconds / _duration.inMilliseconds).clamp(0.0, 1.0)
+        : 0.0;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Play button with subtle loading overlay
         GestureDetector(
-          onTap: _togglePlay,
-          child: Icon(
-            _isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
-            color: color,
-            size: 32,
+          onTap: _isDownloading ? null : _togglePlay,
+          child: SizedBox(
+            width: 32,
+            height: 32,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
+                  _isPlaying
+                      ? Icons.pause_circle_filled
+                      : Icons.play_circle_filled,
+                  color: _isDownloading
+                      ? color.withValues(alpha: 0.4)
+                      : color,
+                  size: 32,
+                ),
+                if (_isDownloading)
+                  SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: color,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
         SizedBox(width: 8.w),
-        SizedBox(
-          width: 100.w,
-          height: 24.h,
-          child: CustomPaint(
-            painter: _WaveformPainter(
-              isWhite: widget.isMe,
-              isAnimating: _isPlaying,
+        // Waveform always visible (dimmed during download)
+        Opacity(
+          opacity: _isDownloading ? 0.35 : 1.0,
+          child: SizedBox(
+            width: 100.w,
+            height: 24.h,
+            child: CustomPaint(
+              painter: _WaveformPainter(
+                isWhite: widget.isMe,
+                progress: progress,
+              ),
             ),
           ),
         ),
         SizedBox(width: 8.w),
         Text(
-          _formatDuration(displayDuration),
-          style: TextStyle(color: color, fontSize: 12.sp),
+          _isDownloading ? '-- : --' : _formatDuration(displayDuration),
+          style: TextStyle(
+            color: _isDownloading
+                ? color.withValues(alpha: 0.4)
+                : color,
+            fontSize: 12.sp,
+          ),
         ),
       ],
     );
