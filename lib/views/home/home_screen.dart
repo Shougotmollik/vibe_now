@@ -12,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:recase/recase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe_now/controller/home_controller.dart';
 import 'package:vibe_now/controller/notification_controller.dart';
@@ -583,10 +584,9 @@ class _HomeScreenState extends State<HomeScreen> {
           }
         }
         return Future.wait(
-          urls.map((url) => precacheImage(
-                CachedNetworkImageProvider(url),
-                context,
-              )),
+          urls.map(
+            (url) => precacheImage(CachedNetworkImageProvider(url), context),
+          ),
         );
       }),
     );
@@ -600,18 +600,22 @@ class _HomeScreenState extends State<HomeScreen> {
       final position = LatLng(item.latitude!, item.longitude!);
       final markerId = MarkerId('map_${item.type.name}_${item.id}');
 
-      markerFutures.add(_buildMarkerBitmap(item).then((icon) {
-        if (icon == null) return null;
-        return Marker(
-          markerId: markerId,
-          position: position,
-          icon: icon,
-          onTap: () => _onMarkerTap(item),
-        );
-      }).catchError((e) {
-        debugPrint('Error creating marker for $markerId: $e');
-        return null;
-      }));
+      markerFutures.add(
+        _buildMarkerBitmap(item)
+            .then((icon) {
+              if (icon == null) return null;
+              return Marker(
+                markerId: markerId,
+                position: position,
+                icon: icon,
+                onTap: () => _onMarkerTap(item),
+              );
+            })
+            .catchError((e) {
+              debugPrint('Error creating marker for $markerId: $e');
+              return null;
+            }),
+      );
     }
 
     final results = await Future.wait(markerFutures);
@@ -729,7 +733,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 isInterested: item.isInterested ?? false,
                 accessLevel: item.accessLevel ?? 'public',
                 chatId: item.chatId,
-                participants: (item.raw['participants'] as List?)
+                participants:
+                    (item.raw['participants'] as List?)
                         ?.map((p) => Participant.fromJson(p))
                         .toList() ??
                     [],
@@ -773,7 +778,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 isRequested: item.isRequested ?? false,
                 accessLevel: item.accessLevel ?? 'public',
                 chatId: item.chatId,
-                participants: (item.raw['participants'] as List?)
+                participants:
+                    (item.raw['participants'] as List?)
                         ?.map((p) => CommunityParticipant.fromJson(p))
                         .toList() ??
                     [],
@@ -804,17 +810,19 @@ class _HomeScreenState extends State<HomeScreen> {
     String vibeCoverUrl = '',
   }) {
     final remaining = _formatRemainingTime(endsAt);
-    final displayImage = (vibeCoverUrl.isNotEmpty) ? vibeCoverUrl : user.imageUrl;
+    final displayImage = (vibeCoverUrl.isNotEmpty)
+        ? vibeCoverUrl
+        : user.imageUrl;
 
     showDialog(
       context: context,
       animationStyle: AnimationStyle(curve: Curves.easeInOut),
       builder: (context) => Dialog(
-        backgroundColor: Colors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         insetPadding: const EdgeInsets.symmetric(horizontal: 20),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: GestureDetector(
             onTap: () {
               Navigator.push(
@@ -850,11 +858,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      user.name,
-                      style: const TextStyle(
+                      user.name.titleCase,
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -867,9 +875,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
                           'Expires in $remaining',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
-                            color: Colors.black38,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.7),
                           ),
                         ),
                       ),
@@ -896,7 +906,7 @@ class _HomeScreenState extends State<HomeScreen> {
             margin: const EdgeInsets.symmetric(horizontal: 16),
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
@@ -944,7 +954,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           padding: EdgeInsets.all(2.w),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.surface,
                           ),
                           child: CircleAvatar(
                             radius: 48,
@@ -1089,7 +1099,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (endsAt == null || endsAt.isEmpty) return '';
     try {
       // Normalize space separator to ISO 8601 'T' separator
-      final normalized = endsAt.contains(' ') ? endsAt.replaceFirst(' ', 'T') : endsAt;
+      final normalized = endsAt.contains(' ')
+          ? endsAt.replaceFirst(' ', 'T')
+          : endsAt;
       final end = DateTime.parse(normalized);
       final now = DateTime.now().toUtc();
       final diff = end.difference(now);
@@ -1147,7 +1159,9 @@ class _HomeScreenState extends State<HomeScreen> {
     String? currentMapStyle = isDarkMode ? _darkMapStyle : null;
 
     // Build markers from WS data whenever mapItems changes
-    if (!_markersBuilt && !_isBuildingMarkers && homeController.mapItems.isNotEmpty) {
+    if (!_markersBuilt &&
+        !_isBuildingMarkers &&
+        homeController.mapItems.isNotEmpty) {
       _isBuildingMarkers = true;
       _buildDynamicMarkers();
     }

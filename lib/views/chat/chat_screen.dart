@@ -64,6 +64,8 @@ class _ChatScreenState extends State<ChatScreen> {
   void _openChat(Chat chat) {
     switch (chat.type) {
       case ChatType.event:
+        context.pushNamed(RouteNames.eventChatScreen, extra: chat);
+        break;
       case ChatType.community:
         context.pushNamed(RouteNames.communityChatScreen, extra: chat);
         break;
@@ -97,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  // ── Header ─────────────────────────────────────────
+  //  Header
 
   Widget _buildHeader() {
     return Row(
@@ -137,7 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  // ── Search ─────────────────────────────────────────
+  //   Search
 
   Widget _buildSearchBar() {
     return TextField(
@@ -172,7 +174,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  // ── Tabs ───────────────────────────────────────────
+  // Tabs
 
   List<LinearGradient> get _tabGradients => [
     const LinearGradient(
@@ -257,7 +259,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  // ── Tab Content ────────────────────────────────────
+  //   Tab Content
 
   Widget _buildTabContent() {
     final tab = _tabKeys[_selectedTabIndex];
@@ -313,8 +315,7 @@ class _ChatScreenState extends State<ChatScreen> {
       onRefresh: _onRefresh,
       child: Obx(() {
         final list = _chatController.incomingWaves;
-        final isLoading =
-            _chatController.isLoadingTab('waves') && list.isEmpty;
+        final isLoading = _chatController.isLoadingTab('waves') && list.isEmpty;
 
         if (isLoading) {
           return const NotificationShimmer();

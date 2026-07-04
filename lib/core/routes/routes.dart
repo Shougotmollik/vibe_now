@@ -22,6 +22,7 @@ import 'package:vibe_now/views/chat/block_screen.dart';
 import 'package:vibe_now/views/chat/chat_inbox_screen.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/chat/community_chat_inbox_screen.dart';
+import 'package:vibe_now/views/chat/event_chat_inbox_screen.dart';
 import 'package:vibe_now/views/chat/report_screen.dart';
 import 'package:vibe_now/views/chat/chat_wave_screen.dart';
 import 'package:vibe_now/views/community/community_details_screen.dart';
@@ -216,6 +217,31 @@ void setupRouter(bool hasToken) {
         path: '/chat-inbox-screen',
         name: RouteNames.chatInboxScreen,
         builder: (context, state) => const ChatInboxScreen(),
+      ),
+      GoRoute(
+        path: '/event-chat-screen',
+        name: RouteNames.eventChatScreen,
+        builder: (context, state) {
+          final extra = state.extra;
+          String? chatId;
+          String? title;
+          String? coverImage;
+
+          if (extra is Chat) {
+            chatId = extra.id.isNotEmpty ? extra.id : null;
+            title = extra.name.isNotEmpty ? extra.name : null;
+            coverImage =
+                extra.avatar ??
+                (extra.avatars.isNotEmpty ? extra.avatars.first : null);
+          }
+
+          return EventChatInboxScreen(
+            chatId: chatId,
+            title: title,
+            coverImage: coverImage,
+            eventId: extra is Chat ? extra.eventId : null,
+          );
+        },
       ),
       GoRoute(
         path: '/community-chat-screen',

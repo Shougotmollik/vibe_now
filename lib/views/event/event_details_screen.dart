@@ -13,7 +13,7 @@ import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
-import 'package:vibe_now/views/event/event_chat_screen.dart';
+import 'package:vibe_now/views/chat/event_chat_inbox_screen.dart';
 import 'package:vibe_now/views/event/event_member_screen.dart';
 
 class EventDetailsScreen extends StatefulWidget {
@@ -263,7 +263,13 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                               onTap: () {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
-                                    builder: (context) => EventChatScreen(),
+                                    builder: (context) =>
+                                        EventChatInboxScreen(
+                                      chatId: event.chatId,
+                                      title: event.title,
+                                      coverImage: event.coverImage,
+                                      eventId: event.id,
+                                    ),
                                   ),
                                 );
                               },
@@ -394,8 +400,19 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
         final parts = dateStr.split('-');
         if (parts.length != 3) return dateStr;
         final months = [
-          '', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+          '',
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
         ];
         final month = int.tryParse(parts[1]) ?? 0;
         return '${int.parse(parts[2])} ${month > 0 && month <= 12 ? months[month] : parts[1]} ${parts[0]}';
@@ -412,9 +429,11 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     String dateTimeText = '';
 
     if (startDate != null) {
-      final start = '${formatDate(startDate)}${startTime != null ? "  $startTime" : ""}';
+      final start =
+          '${formatDate(startDate)}${startTime != null ? "  $startTime" : ""}';
       if (endDate != null) {
-        final end = '${formatDate(endDate)}${endTime != null ? "  $endTime" : ""}';
+        final end =
+            '${formatDate(endDate)}${endTime != null ? "  $endTime" : ""}';
         dateTimeText = '$start  —  $end';
       } else {
         dateTimeText = start;
@@ -444,4 +463,3 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
     );
   }
 }
-

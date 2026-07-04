@@ -41,6 +41,7 @@ class RouteNames {
   static const String chatInboxScreen = "chatInboxScreen";
   static const String chatScreen = "chatScreen";
   static const String communityChatScreen = "communityChatScreen";
+  static const String eventChatScreen = "eventChatScreen";
 
   static const String reportScreen = "reportScreen";
   static const String blockScreen = "blockScreen";
