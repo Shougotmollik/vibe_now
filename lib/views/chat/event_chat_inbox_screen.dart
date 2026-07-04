@@ -143,12 +143,18 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
         _previewMaxMs = _playerController.maxDuration;
       });
     });
-    _playerController.onCompletion.listen((_) {
+    _playerController.onCompletion.listen((_) async {
       if (!mounted) return;
       setState(() {
         _isPreviewPlaying = false;
         _previewCurrentMs = _previewMaxMs;
       });
+      // Reset player so it's ready for the next play
+      if (_recordingPath != null) {
+        await _playerController.stopPlayer();
+        await _playerController.preparePlayer(path: _recordingPath!);
+        await _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
+      }
     });
     _playerController.addListener(() {
       if (mounted) setState(() {});
@@ -794,22 +800,28 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
                     children: [
                       /// 🎤 Mic Button
                       if (!_isRecorded)
-                        IconButton(
-                          icon: Icon(
-                            _isRecording ? Icons.stop : Icons.mic,
-                            color: _isRecording
-                                ? Colors.white
-                                : AppColors.primary,
+                        GestureDetector(
+                          onTap: _isSending ? null : _toggleRecording,
+                          child: Container(
+                            width: 32,
+                            height: 32,
+                            alignment: Alignment.center,
+                            child: Icon(
+                              _isRecording ? Icons.stop : Icons.mic,
+                              color: _isRecording
+                                  ? Colors.white
+                                  : AppColors.primary,
+                              size: 22,
+                            ),
                           ),
-                          onPressed: _isSending ? null : _toggleRecording,
                         ),
 
                       /// ✍️ Text OR Waveform OR Preview
                       Expanded(
-                        child: SizedBox(
-                          height: 30,
-                          child: _isRecorded
-                              ? Row(
+                        child: _isRecorded
+                            ? SizedBox(
+                                height: 45,
+                                child: Row(
                                   children: [
                                     GestureDetector(
                                       onTap: _togglePreviewPlay,
@@ -830,7 +842,7 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
                                     const SizedBox(width: 4),
                                     Expanded(
                                       child: aw.AudioFileWaveforms(
-                                        size: const Size(150, 30),
+                                        size: const Size(150, 45),
                                         playerController: _playerController,
                                         playerWaveStyle:
                                             const aw.PlayerWaveStyle(
@@ -868,9 +880,12 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
                                       ),
                                     ),
                                   ],
-                                )
-                              : _isRecording
-                              ? Row(
+                                ),
+                              )
+                            : _isRecording
+                            ? SizedBox(
+                                height: 45,
+                                child: Row(
                                   children: [
                                     const SizedBox(width: 8),
                                     AnimatedBuilder(
@@ -914,7 +929,7 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: aw.AudioWaveforms(
-                                        size: const Size(100, 30),
+                                        size: const Size(100, 45),
                                         recorderController: _recorderController,
                                         enableGesture: false,
                                         waveStyle: const aw.WaveStyle(
@@ -927,30 +942,40 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
                                     ),
                                     const SizedBox(width: 8),
                                   ],
-                                )
-                              : TextField(
-                                  controller: _messageController,
-                                  enabled: !_isSending,
-                                  style: TextStyle(
+                                ),
+                              )
+                            : TextField(
+                                controller: _messageController,
+                                enabled: !_isSending,
+                                maxLines: 3,
+                                minLines: 1,
+                                style: TextStyle(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Type a message...',
+                                  hintStyle: TextStyle(
                                     color: Theme.of(
                                       context,
-                                    ).colorScheme.onSurface,
+                                    ).colorScheme.onSurfaceVariant,
+                                    fontSize: 14.sp,
                                   ),
-                                  decoration: InputDecoration(
-                                    hintText: 'Message...',
-                                    hintStyle: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurfaceVariant,
-                                    ),
-                                    border: InputBorder.none,
-                                    isDense: true,
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(14.r),
+                                    borderSide: BorderSide.none,
                                   ),
-                                  onSubmitted: (_) {
-                                    if (canSend) _sendMessage();
-                                  },
+                                  contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 10.w,
+                                    vertical: 8.h,
+                                  ),
+                                  isDense: true,
                                 ),
-                        ),
+                                onSubmitted: (_) {
+                                  if (canSend) _sendMessage();
+                                },
+                              ),
                       ),
 
                       const SizedBox(width: 8),
@@ -1054,19 +1079,16 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
       return;
     }
 
-    // Reset if reached end or player is stopped
-    if (_playerController.playerState.isStopped ||
-        (_previewMaxMs > 0 && _previewCurrentMs >= _previewMaxMs - 200)) {
-      await _playerController.stopPlayer();
-      if (_recordingPath != null) {
-        await _playerController.preparePlayer(path: _recordingPath!);
-        await _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
-      }
+    if (_recordingPath == null) return;
+
+    // Only prepare if player is stopped (first play or after delete)
+    if (_playerController.playerState.isStopped) {
+      await _playerController.preparePlayer(path: _recordingPath!);
+      await _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
     }
 
-    // Always seek to start before playing to ensure repeat playback
+    // Seek to start and play — works for both first and repeated plays
     await _playerController.seekTo(0);
-
     await _playerController.startPlayer();
     if (mounted) setState(() => _isPreviewPlaying = true);
   }
@@ -1660,8 +1682,7 @@ class _WaveformPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final basePaint = Paint()
-      ..color = (isWhite ? Colors.white : Colors.black54)
-          .withValues(alpha: 0.3)
+      ..color = (isWhite ? Colors.white : Colors.black54).withValues(alpha: 0.3)
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 
@@ -1696,8 +1717,7 @@ class _WaveformPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_WaveformPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.isWhite != isWhite;
+    return oldDelegate.progress != progress || oldDelegate.isWhite != isWhite;
   }
 }
 
@@ -1755,7 +1775,8 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
 
     final dir = await getTemporaryDirectory();
     final ext = _resolvedUrl.endsWith('.m4a') ? '.m4a' : '.mp3';
-    final path = '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}$ext';
+    final path =
+        '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}$ext';
 
     final response = await http.get(Uri.parse(_resolvedUrl));
     if (response.statusCode == 200) {
@@ -1834,9 +1855,7 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
                   _isPlaying
                       ? Icons.pause_circle_filled
                       : Icons.play_circle_filled,
-                  color: _isDownloading
-                      ? color.withValues(alpha: 0.4)
-                      : color,
+                  color: _isDownloading ? color.withValues(alpha: 0.4) : color,
                   size: 32,
                 ),
                 if (_isDownloading)
@@ -1871,9 +1890,7 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
         Text(
           _isDownloading ? '-- : --' : _formatDuration(displayDuration),
           style: TextStyle(
-            color: _isDownloading
-                ? color.withValues(alpha: 0.4)
-                : color,
+            color: _isDownloading ? color.withValues(alpha: 0.4) : color,
             fontSize: 12.sp,
           ),
         ),

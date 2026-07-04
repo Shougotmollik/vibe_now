@@ -222,7 +222,7 @@ class ChatController extends GetxController {
     );
   }
 
-  // ── Reactions (sent via WebSocket) ───────────
+  //   Reactions (sent via WebSocket)
 
   void sendReaction({
     required String chatId,
@@ -236,7 +236,7 @@ class ChatController extends GetxController {
     });
   }
 
-  // ── WebSocket ────────────────────────────────
+  //   WebSocket
 
   Future<void> connectToChat(String chatId) async {
     if (_activeChatId == chatId) return;
