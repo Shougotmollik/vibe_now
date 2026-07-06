@@ -61,18 +61,19 @@ class _ChatScreenState extends State<ChatScreen> {
     return _chatController.getChatList(type: tab);
   }
 
-  void _openChat(Chat chat) {
+  Future<void> _openChat(Chat chat) async {
     switch (chat.type) {
       case ChatType.event:
-        context.pushNamed(RouteNames.eventChatScreen, extra: chat);
+        await context.pushNamed(RouteNames.eventChatScreen, extra: chat);
         break;
       case ChatType.community:
-        context.pushNamed(RouteNames.communityChatScreen, extra: chat);
+        await context.pushNamed(RouteNames.communityChatScreen, extra: chat);
         break;
       case ChatType.private:
-        context.pushNamed(RouteNames.chatInboxScreen, extra: chat);
+        await context.pushNamed(RouteNames.chatInboxScreen, extra: chat);
         break;
     }
+    _onRefresh();
   }
 
   @override
@@ -100,7 +101,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   //  Header
-
   Widget _buildHeader() {
     return Row(
       children: [
@@ -140,7 +140,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   //   Search
-
   Widget _buildSearchBar() {
     return TextField(
       controller: _searchController,
@@ -260,7 +259,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 
   //   Tab Content
-
   Widget _buildTabContent() {
     final tab = _tabKeys[_selectedTabIndex];
     if (tab == 'waves') return _buildWavesTab();
@@ -468,7 +466,6 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-// Re-export CommunityAvatar so existing imports still resolve.
 class CommunityAvatar extends StatelessWidget {
   final List<String> avatars;
   final double size;
@@ -481,7 +478,6 @@ class CommunityAvatar extends StatelessWidget {
       return _fallback(context);
     }
 
-    // If only one image, show it normally.
     if (avatars.length == 1) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(size / 2),
@@ -495,7 +491,6 @@ class CommunityAvatar extends StatelessWidget {
       );
     }
 
-    // If multiple, show stacked UI.
     return SizedBox(
       width: size.w,
       height: size.w,
