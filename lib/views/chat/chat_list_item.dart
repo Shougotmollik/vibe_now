@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
@@ -32,7 +34,7 @@ class ChatListItem extends StatelessWidget {
         color: backgroundColor,
         child: Row(
           children: [
-            _buildAvatar(), // Extracted Logic
+            _buildAvatar(context), // Extracted Logic
             SizedBox(width: 12.w),
             Expanded(
               child: _buildChatDetails(context: context),
@@ -45,17 +47,34 @@ class ChatListItem extends StatelessWidget {
   }
 
   /// Logic to decide which avatar style to show
-  Widget _buildAvatar() {
+  Widget _buildAvatar(BuildContext context) {
     if (chat.type == ChatType.community || chat.type == ChatType.event) {
       return CommunityAvatar(avatars: chat.avatars);
     }
     return ClipRRect(
       borderRadius: BorderRadius.circular(50),
-      child: Image.network(
-        chat.avatars.first,
+      child: CachedNetworkImage(
+        imageUrl: AppCredentials.fixurl(chat.avatars.first),
         width: 50.w,
         height: 50.w,
         fit: BoxFit.cover,
+        placeholder: (_, __) => Container(
+          width: 50.w,
+          height: 50.w,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        ),
+        errorWidget: (_, __, ___) => Container(
+          width: 50.w,
+          height: 50.w,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            shape: BoxShape.circle,
+          ),
+          child: Icon(
+            Icons.person,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
       ),
     );
   }

@@ -1,12 +1,15 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/controller/chat_controller.dart';
+import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/chat_message.dart' as api;
@@ -15,15 +18,12 @@ import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/chat/widgets/chat_message_shimmer.dart';
 import 'dart:async';
-import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart' as ap;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:audio_waveforms/audio_waveforms.dart' as aw;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:vibe_now/services/web_socket_registry.dart';
-
-//  Models
+import 'package:http/http.dart' as http;
 
 enum MessageType { text, image, audio, mixed, deleted }
 
@@ -67,18 +67,22 @@ class ChatMessage {
   }) : id = id ?? DateTime.now().microsecondsSinceEpoch.toString();
 }
 
-//  CommunityChatInboxScreen
+// CommunityChatInboxScreen
 
 class CommunityChatInboxScreen extends StatefulWidget {
   final String? chatId;
   final String? title;
   final String? coverImage;
+  final Community? community;
+  final int? communityId;
 
   const CommunityChatInboxScreen({
     super.key,
     this.chatId,
     this.title,
     this.coverImage,
+    this.community,
+    this.communityId,
   });
 
   @override
@@ -91,12 +95,14 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final ChatController _chatController = Get.find<ChatController>();
+  final CommunityController _communityController = Get.find<CommunityController>();
 
   OverlayEntry? _overlayEntry;
 
   bool _hasText = false;
   bool _isRecording = false;
   bool _isSending = false;
+  String? _editingMessageId;
   String? _recordingPath;
 
   late final aw.RecorderController _recorderController;
@@ -128,8 +134,6 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
       ..bitRate = 48000;
 
     _playerController = aw.PlayerController();
-    // Keep the player's resources alive after natural completion so that
-    // `startPlayer()` can resume/replay without re-preparation.
     _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
     _playerController.onPlayerStateChanged.listen((state) {
       if (mounted) {
@@ -143,12 +147,18 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
         _previewMaxMs = _playerController.maxDuration;
       });
     });
-    _playerController.onCompletion.listen((_) {
+    _playerController.onCompletion.listen((_) async {
       if (!mounted) return;
       setState(() {
         _isPreviewPlaying = false;
         _previewCurrentMs = _previewMaxMs;
       });
+      // Reset player so it's ready for the next play
+      if (_recordingPath != null) {
+        await _playerController.stopPlayer();
+        await _playerController.preparePlayer(path: _recordingPath!);
+        await _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
+      }
     });
     _playerController.addListener(() {
       if (mounted) setState(() {});
@@ -211,7 +221,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
     super.dispose();
   }
 
-  // ── Typing Indicator ──────────────────────
+  // Typing Indicator
 
   void _onMessageChanged() {
     final has = _messageController.text.trim().isNotEmpty;
@@ -249,10 +259,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
             SizedBox(
               width: 22.w,
               height: 12.w,
-              child: SpinKitThreeBounce(
-                color: AppColors.primary,
-                size: 10,
-              ),
+              child: SpinKitThreeBounce(color: AppColors.primary, size: 10),
             ),
             SizedBox(width: 6.w),
             Text(
@@ -280,8 +287,6 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
       }
     });
   }
-
-  // ── Mapping: API model -> UI model ─────────────────────
 
   ChatMessage _mapApiToUi(api.ChatMessage m) {
     final senderId = m.sender?.id;
@@ -324,7 +329,6 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
         return MessageType.mixed;
       case 'text':
       default:
-        // Fallback: infer from fields if type is missing
         if ((m.file ?? '').isNotEmpty) {
           return (m.content ?? '').isNotEmpty
               ? MessageType.mixed
@@ -335,7 +339,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
     }
   }
 
-  // ── Overlay helpers ──────────────────────
+  //  Overlay helpers
 
   void _removeOverlay() {
     _overlayEntry?.remove();
@@ -381,22 +385,225 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
     );
   }
 
-  // ── Send ─────────────────────────────────
+  //  Send / Edit
 
   void _sendMessage() async {
     final text = _messageController.text.trim();
     if (text.isEmpty || widget.chatId == null) return;
     _messageController.clear();
     setState(() => _isSending = true);
-    await _chatController.sendTextMessage(
-      chatId: widget.chatId!,
-      content: text,
-    );
+
+    if (_editingMessageId != null) {
+      _chatController.editMessage(
+        chatId: widget.chatId!,
+        messageId: _editingMessageId!,
+        content: text,
+      );
+      if (mounted) setState(() => _editingMessageId = null);
+    } else {
+      await _chatController.sendTextMessage(
+        chatId: widget.chatId!,
+        content: text,
+      );
+    }
+
     if (mounted) setState(() => _isSending = false);
     _scrollToBottom();
   }
 
-  // ── Build ────────────────────────────────
+  //  Copy / Edit / Delete
+
+  void _copyMessage(ChatMessage msg) {
+    final text = msg.text;
+    if (text == null || text.isEmpty) return;
+    Clipboard.setData(ClipboardData(text: text));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Copied'),
+        duration: const Duration(seconds: 1),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+
+  void _startEditMessage(ChatMessage msg) {
+    final text = msg.text;
+    if (text == null) return;
+    setState(() => _editingMessageId = msg.id);
+    _messageController.text = text;
+    _messageController.selection = TextSelection.fromPosition(
+      TextPosition(offset: text.length),
+    );
+    _scrollToBottom();
+  }
+
+  Future<void> _deleteMessage(ChatMessage msg) async {
+    if (widget.chatId == null) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Message'),
+        content: const Text('Are you sure you want to delete this message?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    // Clear edit mode if we were editing this message
+    if (_editingMessageId == msg.id) {
+      _messageController.clear();
+      setState(() => _editingMessageId = null);
+    }
+
+    _chatController.deleteMessage(chatId: widget.chatId!, messageId: msg.id);
+  }
+
+  void _showMessageOptions(ChatMessage msg) {
+    final hasText = (msg.text ?? '').isNotEmpty;
+    final canCopy =
+        hasText &&
+        (msg.type == MessageType.text || msg.type == MessageType.mixed);
+    final canEdit =
+        hasText &&
+        (msg.type == MessageType.text || msg.type == MessageType.mixed);
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(
+                  context,
+                ).colorScheme.shadow.withValues(alpha: 0.12),
+                blurRadius: 10,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (canCopy) ...[
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _copyMessage(msg);
+                  },
+                  splashColor: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.file_copy_outlined,
+                          color: AppColors.primary,
+                          size: 20.w,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'Copy',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(height: 1.h),
+              ],
+              if (canEdit) ...[
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    _startEditMessage(msg);
+                  },
+                  splashColor: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.edit_outlined,
+                          color: AppColors.primary,
+                          size: 20.w,
+                        ),
+                        SizedBox(width: 4.w),
+                        Text(
+                          'Edit',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Divider(height: 1.h),
+              ],
+              InkWell(
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _deleteMessage(msg);
+                },
+                splashColor: Colors.transparent,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
+                  child: Row(
+                    children: [
+                      Assets.icons.trash.svg(width: 20.w, height: 20.h),
+                      SizedBox(width: 4.w),
+                      Text(
+                        'Delete',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Build
 
   @override
   Widget build(BuildContext context) {
@@ -448,20 +655,32 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
           message: messages[index],
           onLongPress: _showReactionOverlay,
           onToggleReaction: _toggleReaction,
-          onMoreOptions: (msg) => _buildMoreOption(
-            context,
-            onDelete: () {
-              Navigator.pop(context);
-            },
-            onEdit: () => Navigator.pop(context),
-          ),
+          onMoreOptions: (msg) => _showMessageOptions(msg),
         ),
       );
     });
   }
 
-  // ── App Bar ──────────────────────────────
+  // ── Community Navigation ─────────────────────────────────────────────────
 
+  Future<void> _navigateToCommunityDetails() async {
+    final id = widget.communityId;
+    if (id == null) return;
+
+    await _communityController.getCommunityDetails(id: id);
+    if (!mounted) return;
+
+    final community = _communityController.communityDetails.value;
+    if (community != null) {
+      if (!mounted) return;
+      context.pushNamed(
+        RouteNames.communityDetailsScreen,
+        extra: community,
+      );
+    }
+  }
+
+  // App Bar
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -475,67 +694,73 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
           color: Theme.of(context).colorScheme.onSurface,
         ),
       ),
-      title: GestureDetector(
-        onTap: () => context.pushNamed(RouteNames.communityMemberScreen),
-        child: Row(
-          children: [
-            _buildAppBarAvatar(),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: Text(
-                widget.title?.isNotEmpty == true
-                    ? widget.title!
-                    : 'Community Chat',
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w500,
-                ),
+      title: Row(
+        children: [            GestureDetector(
+            onTap: widget.community != null
+                ? () => context.pushNamed(
+                      RouteNames.communityDetailsScreen,
+                      extra: widget.community,
+                    )
+                : widget.communityId != null
+                    ? () => _navigateToCommunityDetails()
+                    : null,
+            child: _buildAppBarAvatar(),
+          ),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Text(
+              widget.title?.isNotEmpty == true
+                  ? widget.title!
+                  : 'Community Chat',
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
       actions: [
-        PopupMenuButton<String>(
-          icon: Icon(
-            Icons.more_vert,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          offset: const Offset(0, 50),
-          color: Theme.of(context).colorScheme.surfaceVariant,
-          itemBuilder: (_) => [
-            PopupMenuItem<String>(
-              value: 'block',
-              child: Row(
-                children: [
-                  Assets.icons.block.svg(width: 20.w, height: 20.h),
-                  SizedBox(width: 8.w),
-                  const Text('Block'),
-                ],
-              ),
-              onTap: () => Future.delayed(
-                Duration.zero,
-                () => context.pushNamed(RouteNames.blockScreen),
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'report',
-              child: Row(
-                children: [
-                  Assets.icons.report.svg(width: 20.w, height: 20.h),
-                  SizedBox(width: 8.w),
-                  const Text('Report'),
-                ],
-              ),
-              onTap: () => Future.delayed(
-                Duration.zero,
-                () => context.pushNamed(RouteNames.reportScreen),
-              ),
-            ),
-          ],
-        ),
+        // PopupMenuButton<String>(
+        //   icon: Icon(
+        //     Icons.more_vert,
+        //     color: Theme.of(context).colorScheme.onSurface,
+        //   ),
+        //   offset: const Offset(0, 50),
+        //   color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        //   itemBuilder: (_) => [
+        //     PopupMenuItem<String>(
+        //       value: 'block',
+        //       child: Row(
+        //         children: [
+        //           Assets.icons.block.svg(width: 20.w, height: 20.h),
+        //           SizedBox(width: 8.w),
+        //           const Text('Block'),
+        //         ],
+        //       ),
+        //       onTap: () => Future.delayed(
+        //         Duration.zero,
+        //         () => context.pushNamed(RouteNames.blockScreen),
+        //       ),
+        //     ),
+        //     PopupMenuItem<String>(
+        //       value: 'report',
+        //       child: Row(
+        //         children: [
+        //           Assets.icons.report.svg(width: 20.w, height: 20.h),
+        //           SizedBox(width: 8.w),
+        //           const Text('Report'),
+        //         ],
+        //       ),
+        //       onTap: () => Future.delayed(
+        //         Duration.zero,
+        //         () => context.pushNamed(RouteNames.reportScreen),
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }
@@ -544,12 +769,13 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
     final cover = AppCredentials.fixurl(widget.coverImage);
     if (cover.isNotEmpty) {
       return ClipOval(
-        child: Image.network(
-          cover,
+        child: CachedNetworkImage(
+          imageUrl: cover,
           width: 40.w,
           height: 40.w,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _buildFallbackAvatar(),
+          placeholder: (_, __) => _buildFallbackAvatar(),
+          errorWidget: (_, __, ___) => _buildFallbackAvatar(),
         ),
       );
     }
@@ -566,8 +792,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
     );
   }
 
-  // ── Input Area ───────────────────────────
-
+  //Input Area
   void _showFullScreenImagePreview(File image) {
     final captionController = TextEditingController();
 
@@ -593,7 +818,9 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
                 onPressed: () {
                   final caption = captionController.text.trim();
                   Navigator.of(ctx).pop();
-                  _sendImageMessage(image, caption: caption);
+                  if (mounted) {
+                    _sendImageMessage(image, caption: caption);
+                  }
                 },
               ),
             ],
@@ -674,7 +901,6 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
 
     return SafeArea(
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           boxShadow: [
@@ -687,277 +913,354 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
             ),
           ],
         ),
-        child: Row(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            /// 📎 Attachment (optional)
-            GestureDetector(
-              onTap: _isSending
-                  ? null
-                  : () {
-                      utils.showImagePickerOptions(context, (
-                        imageSource,
-                      ) async {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (_) => const Center(
-                            child: Card(
-                              child: Padding(
-                                padding: EdgeInsets.all(24),
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                          ),
-                        );
-
-                        final image = await utils.pickSingleImage(
-                          context: context,
-                          source: imageSource,
-                          compress: true,
-                        );
-
-                        if (mounted) Navigator.of(context).pop();
-
-                        if (image != null && mounted) {
-                          _showFullScreenImagePreview(image);
-                        }
-                      });
-                    },
-              child: Assets.icons.attachedFile.svg(
-                width: 24.w,
-                height: 24.h,
-                color: _isSending
-                    ? Colors.grey.withValues(alpha: 0.5)
-                    : AppColors.primary,
-              ),
-            ),
-
-            SizedBox(width: 10.w),
-
-            /// 🧠 Input Container
-            Expanded(
-              child: Container(
-                padding: !_isRecording
-                    ? const EdgeInsets.all(2)
-                    : EdgeInsets.zero,
-                decoration: !_isRecording
-                    ? BoxDecoration(
-                        gradient: AppColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(30),
-                      )
-                    : null,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: (!_isRecording && !_isRecorded)
-                        ? Theme.of(context).colorScheme.surface
-                        : null,
-                    gradient: (_isRecording || _isRecorded)
-                        ? AppColors.primaryGradient
-                        : null,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    children: [
-                      /// 🎤 Mic Button
-                      if (!_isRecorded)
-                        IconButton(
-                          icon: Icon(
-                            _isRecording ? Icons.stop : Icons.mic,
-                            color: _isRecording
-                                ? Colors.white
-                                : AppColors.primary,
-                          ),
-                          onPressed: _isSending ? null : _toggleRecording,
-                        ),
-
-                      /// ✍️ Text OR Waveform OR Preview
-                      Expanded(
-                        child: SizedBox(
-                          height: 30,
-                          child: _isRecorded
-                              ? Row(
-                                  children: [
-                                    // Play/Pause button
-                                    GestureDetector(
-                                      onTap: _togglePreviewPlay,
-                                      behavior: HitTestBehavior.opaque,
-                                      child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        alignment: Alignment.center,
-                                        child: Icon(
-                                          _isPreviewPlaying
-                                              ? Icons.pause_rounded
-                                              : Icons.play_arrow_rounded,
-                                          color: Colors.white,
-                                          size: 26,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    // Waveform with progress
-                                    Expanded(
-                                      child: aw.AudioFileWaveforms(
-                                        size: const Size(150, 30),
-                                        playerController: _playerController,
-                                        playerWaveStyle:
-                                            const aw.PlayerWaveStyle(
-                                              fixedWaveColor: Colors.white60,
-                                              liveWaveColor: Colors.white,
-                                              spacing: 6.0,
-                                              showSeekLine: true,
-                                              seekLineColor: Colors.white,
-                                              seekLineThickness: 2,
-                                            ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    // Time display (current / total)
-                                    Text(
-                                      '${_formatMs(_previewCurrentMs)} / ${_formatMs(_previewMaxMs)}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    // Delete button
-                                    GestureDetector(
-                                      onTap: _deleteRecording,
-                                      behavior: HitTestBehavior.opaque,
-                                      child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        alignment: Alignment.center,
-                                        child: const Icon(
-                                          Icons.delete_outline_rounded,
-                                          color: Colors.white,
-                                          size: 22,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : _isRecording
-                              ? Row(
-                                  children: [
-                                    const SizedBox(width: 8),
-                                    // Pulsing red recording dot
-                                    AnimatedBuilder(
-                                      animation: _pulseAnimation,
-                                      builder: (_, __) {
-                                        return Container(
-                                          width: 12,
-                                          height: 12,
-                                          decoration: BoxDecoration(
-                                            color: Color.lerp(
-                                              Colors.red.withValues(alpha: 0.5),
-                                              Colors.red,
-                                              _pulseAnimation.value,
-                                            ),
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.red.withValues(
-                                                  alpha:
-                                                      0.4 *
-                                                      _pulseAnimation.value,
-                                                ),
-                                                blurRadius: 6,
-                                                spreadRadius: 1,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(width: 8),
-                                    // Recording timer
-                                    Text(
-                                      _formatDuration(_recordDuration),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    // Live waveform
-                                    Expanded(
-                                      child: aw.AudioWaveforms(
-                                        size: const Size(100, 30),
-                                        recorderController: _recorderController,
-                                        enableGesture: false,
-                                        waveStyle: const aw.WaveStyle(
-                                          waveColor: Colors.white,
-                                          showDurationLabel: false,
-                                          spacing: 4.0,
-                                          waveThickness: 2.5,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                  ],
-                                )
-                              : TextField(
-                                  controller: _messageController,
-                                  enabled: !_isSending,
-                                  style: TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurface,
-                                  ),
-                                  decoration: InputDecoration(
-                                    hintText: 'Message...',
-                                    hintStyle: TextStyle(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.onSurfaceVariant,
-                                    ),
-                                    border: InputBorder.none,
-                                    isDense: true,
-                                  ),
-                                  onSubmitted: (_) {
-                                    if (canSend) _sendMessage();
-                                  },
-                                ),
+            // Edit mode banner
+            if (_editingMessageId != null)
+              Container(
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 8,
+                  top: 6,
+                  bottom: 2,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.edit_outlined,
+                      size: 14,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    SizedBox(width: 6.w),
+                    Expanded(
+                      child: Text(
+                        'Editing message',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-
-                      const SizedBox(width: 8),
-                    ],
-                  ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        _messageController.clear();
+                        setState(() => _editingMessageId = null);
+                      },
+                      child: Container(
+                        width: 28,
+                        height: 28,
+                        alignment: Alignment.center,
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              child: Row(
+                children: [
+                  /// 📎 Attachment
+                  GestureDetector(
+                    onTap: _isSending
+                        ? null
+                        : () {
+                            utils.showImagePickerOptions(context, (
+                              imageSource,
+                            ) async {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => const Center(
+                                  child: Card(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(24),
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  ),
+                                ),
+                              );
 
-            SizedBox(width: 10.w),
+                              final image = await utils.pickSingleImage(
+                                context: context,
+                                source: imageSource,
+                                compress: true,
+                              );
 
-            /// 🚀 Send Button
-            _isSending
-                ? SizedBox(
-                    width: 24.w,
-                    height: 24.h,
-                    child: const CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : GestureDetector(
-                    onTap: canSend
-                        ? () {
-                            if (_isRecorded && _recordingPath != null) {
-                              _sendVoiceMessage();
-                            } else {
-                              _sendMessage();
-                            }
-                          }
-                        : null,
-                    child: Assets.icons.send.svg(
+                              if (mounted) Navigator.of(context).pop();
+
+                              if (image != null && mounted) {
+                                _showFullScreenImagePreview(image);
+                              }
+                            });
+                          },
+                    child: Assets.icons.attachedFile.svg(
                       width: 24.w,
                       height: 24.h,
-                      color: canSend ? null : Colors.grey,
+                      color: _isSending
+                          ? Colors.grey.withValues(alpha: 0.5)
+                          : AppColors.primary,
                     ),
                   ),
+
+                  SizedBox(width: 10.w),
+
+                  /// Input Container
+                  Expanded(
+                    child: Container(
+                      padding: !_isRecording
+                          ? const EdgeInsets.all(2)
+                          : EdgeInsets.zero,
+                      decoration: !_isRecording
+                          ? BoxDecoration(
+                              gradient: AppColors.primaryGradient,
+                              borderRadius: BorderRadius.circular(30),
+                            )
+                          : null,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: (!_isRecording && !_isRecorded)
+                              ? Theme.of(context).colorScheme.surface
+                              : null,
+                          gradient: (_isRecording || _isRecorded)
+                              ? AppColors.primaryGradient
+                              : null,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          children: [
+                            /// Mic Button
+                            if (!_isRecorded)
+                              GestureDetector(
+                                onTap: _isSending ? null : _toggleRecording,
+                                child: Container(
+                                  width: 32,
+                                  height: 32,
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    _isRecording ? Icons.stop : Icons.mic,
+                                    color: _isRecording
+                                        ? Colors.white
+                                        : AppColors.primary,
+                                    size: 22,
+                                  ),
+                                ),
+                              ),
+
+                            /// Text OR Waveform OR Preview
+                            Expanded(
+                              child: _isRecorded
+                                  ? SizedBox(
+                                      height: 45,
+                                      child: Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: _togglePreviewPlay,
+                                            behavior: HitTestBehavior.opaque,
+                                            child: Container(
+                                              width: 30,
+                                              height: 30,
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                _isPreviewPlaying
+                                                    ? Icons.pause_rounded
+                                                    : Icons.play_arrow_rounded,
+                                                color: Colors.white,
+                                                size: 26,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Expanded(
+                                            child: aw.AudioFileWaveforms(
+                                              size: const Size(150, 45),
+                                              playerController:
+                                                  _playerController,
+                                              playerWaveStyle:
+                                                  const aw.PlayerWaveStyle(
+                                                    fixedWaveColor:
+                                                        Colors.white60,
+                                                    liveWaveColor: Colors.white,
+                                                    spacing: 6.0,
+                                                    showSeekLine: true,
+                                                    seekLineColor: Colors.white,
+                                                    seekLineThickness: 2,
+                                                  ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            '${_formatMs(_previewCurrentMs)} / ${_formatMs(_previewMaxMs)}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 11.sp,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          GestureDetector(
+                                            onTap: _deleteRecording,
+                                            behavior: HitTestBehavior.opaque,
+                                            child: Container(
+                                              width: 30,
+                                              height: 30,
+                                              alignment: Alignment.center,
+                                              child: const Icon(
+                                                Icons.delete_outline_rounded,
+                                                color: Colors.white,
+                                                size: 22,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : _isRecording
+                                  ? SizedBox(
+                                      height: 45,
+                                      child: Row(
+                                        children: [
+                                          const SizedBox(width: 8),
+                                          AnimatedBuilder(
+                                            animation: _pulseAnimation,
+                                            builder: (_, __) {
+                                              return Container(
+                                                width: 12,
+                                                height: 12,
+                                                decoration: BoxDecoration(
+                                                  color: Color.lerp(
+                                                    Colors.red.withValues(
+                                                      alpha: 0.5,
+                                                    ),
+                                                    Colors.red,
+                                                    _pulseAnimation.value,
+                                                  ),
+                                                  shape: BoxShape.circle,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.red
+                                                          .withValues(
+                                                            alpha:
+                                                                0.4 *
+                                                                _pulseAnimation
+                                                                    .value,
+                                                          ),
+                                                      blurRadius: 6,
+                                                      spreadRadius: 1,
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            _formatDuration(_recordDuration),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: aw.AudioWaveforms(
+                                              size: const Size(100, 45),
+                                              recorderController:
+                                                  _recorderController,
+                                              enableGesture: false,
+                                              waveStyle: const aw.WaveStyle(
+                                                waveColor: Colors.white,
+                                                showDurationLabel: false,
+                                                spacing: 4.0,
+                                                waveThickness: 2.5,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                        ],
+                                      ),
+                                    )
+                                  : TextField(
+                                      controller: _messageController,
+                                      enabled: !_isSending,
+                                      maxLines: 3,
+                                      minLines: 1,
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: 'Type a message...',
+                                        hintStyle: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                          fontSize: 14.sp,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            14.r,
+                                          ),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 10.w,
+                                          vertical: 8.h,
+                                        ),
+                                        isDense: true,
+                                      ),
+                                      onSubmitted: (_) {
+                                        if (canSend) _sendMessage();
+                                      },
+                                    ),
+                            ),
+
+                            const SizedBox(width: 8),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(width: 10.w),
+
+                  /// Send Button
+                  _isSending
+                      ? SizedBox(
+                          width: 24.w,
+                          height: 24.h,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: canSend
+                              ? () {
+                                  if (_isRecorded && _recordingPath != null) {
+                                    _sendVoiceMessage();
+                                  } else {
+                                    _sendMessage();
+                                  }
+                                }
+                              : null,
+                          child: Assets.icons.send.svg(
+                            width: 24.w,
+                            height: 24.h,
+                            color: canSend ? null : Colors.grey,
+                          ),
+                        ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -970,7 +1273,6 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
       _pulseController.stop();
       final path = await _recorderController.stop(false);
       if (path == null) return;
-      // Reset player to a clean state for fresh preview
       await _playerController.stopPlayer();
       await _playerController.preparePlayer(path: path);
       if (!mounted) return;
@@ -985,7 +1287,11 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
       if (status != PermissionStatus.granted) {
         return;
       }
-      // Clean up any previous recording state
+      // Clear edit mode if active
+      if (_editingMessageId != null) {
+        _messageController.clear();
+        setState(() => _editingMessageId = null);
+      }
       if (_isRecorded) {
         await _playerController.stopPlayer();
       }
@@ -1029,36 +1335,16 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
       return;
     }
 
-    // If the player is stopped or the audio has finished, we need to
-    // reset it to position 0 and ensure it can be started again.
-    final atEnd = _previewMaxMs > 0 && _previewCurrentMs >= _previewMaxMs - 200;
-    final isStopped = _playerController.playerState.isStopped;
+    if (_recordingPath == null) return;
 
-    if (isStopped) {
-      // Player was disposed by the package; re-prepare from the file.
-      if (_recordingPath != null) {
-        await _playerController.preparePlayer(path: _recordingPath!);
-        await _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
-      }
-      if (!mounted) return;
-      setState(() {
-        _previewCurrentMs = 0;
-        _previewMaxMs = _playerController.maxDuration;
-      });
-    } else if (atEnd) {
-      // Reached the end; seek alone can be unreliable, so stop+re-prepare.
-      if (_recordingPath != null) {
-        await _playerController.stopPlayer();
-        await _playerController.preparePlayer(path: _recordingPath!);
-        await _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
-      }
-      if (mounted)
-        setState(() {
-          _previewCurrentMs = 0;
-          _previewMaxMs = _playerController.maxDuration;
-        });
+    // Only prepare if player is stopped (first play or after delete)
+    if (_playerController.playerState.isStopped) {
+      await _playerController.preparePlayer(path: _recordingPath!);
+      await _playerController.setFinishMode(finishMode: aw.FinishMode.pause);
     }
 
+    // Seek to start and play — works for both first and repeated plays
+    await _playerController.seekTo(0);
     await _playerController.startPlayer();
     if (mounted) setState(() => _isPreviewPlaying = true);
   }
@@ -1102,8 +1388,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
   }
 }
 
-//  _CommunityMessageTile — long press + reactions
-
+// CommunityMessageTile
 class _CommunityMessageTile extends StatefulWidget {
   final ChatMessage message;
   final void Function(ChatMessage, Offset) onLongPress;
@@ -1151,6 +1436,13 @@ class _CommunityMessageTileState extends State<_CommunityMessageTile>
     if (box == null) return Offset.zero;
     final pos = box.localToGlobal(Offset.zero);
     return Offset(pos.dx + box.size.width / 2, pos.dy);
+  }
+
+  String _formatTime(DateTime t) {
+    final local = t.toLocal();
+    final hh = local.hour.toString().padLeft(2, '0');
+    final mm = local.minute.toString().padLeft(2, '0');
+    return '$hh:$mm';
   }
 
   @override
@@ -1214,26 +1506,58 @@ class _CommunityMessageTileState extends State<_CommunityMessageTile>
             ],
           ),
 
-          // Reactions
+          // Reactions (attached to the message bubble)
           if (msg.reactions.isNotEmpty)
-            Padding(
-              padding: EdgeInsets.only(
-                top: 4,
-                left: msg.isMe ? 0 : 44.w,
-                right: msg.isMe ? 8 : 0,
-              ),
-              child: _ReactionChips(
-                reactions: msg.reactions,
-                onToggle: (e) => widget.onToggleReaction(msg, e),
+            Transform.translate(
+              offset: const Offset(0, -2),
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: 0,
+                  left: msg.isMe ? 0 : 44.w,
+                  right: msg.isMe ? 8 : 0,
+                ),
+                child: _ReactionChips(
+                  reactions: msg.reactions,
+                  onToggle: (e) => widget.onToggleReaction(msg, e),
+                ),
               ),
             ),
+
+          // Time (below emoji, showing local time)
+          Padding(
+            padding: EdgeInsets.only(
+              top: 4.h,
+              left: msg.isMe ? 0 : 44.w,
+              right: msg.isMe ? 8 : 0,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  _formatTime(msg.time),
+                  style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+                ),
+                if (msg.isEdited) ...[
+                  SizedBox(width: 4.w),
+                  Text(
+                    '(edited)',
+                    style: TextStyle(
+                      fontSize: 10.sp,
+                      color: Colors.grey,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-//  Avatar with graceful fallback
+//Avatar
 
 class _Avatar extends StatelessWidget {
   final String url;
@@ -1246,7 +1570,7 @@ class _Avatar extends StatelessWidget {
     if (url.isEmpty) {
       return CircleAvatar(
         radius: radius,
-        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
         child: Icon(
           Icons.person,
           size: radius,
@@ -1256,14 +1580,13 @@ class _Avatar extends StatelessWidget {
     }
     return CircleAvatar(
       radius: radius,
-      backgroundImage: NetworkImage(url),
+      backgroundImage: CachedNetworkImageProvider(AppCredentials.fixurl(url)),
       onBackgroundImageError: (_, __) {},
     );
   }
 }
 
-//  Bubble content (original ChatBubble design preserved)
-
+//BubbleContent
 class _BubbleContent extends StatelessWidget {
   final ChatMessage message;
 
@@ -1275,7 +1598,7 @@ class _BubbleContent extends StatelessWidget {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(20),
             topRight: const Radius.circular(20),
@@ -1294,51 +1617,29 @@ class _BubbleContent extends StatelessWidget {
       );
     }
 
-    return Column(
-      crossAxisAlignment: message.isMe
-          ? CrossAxisAlignment.end
-          : CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: _bubblePaddingFor(message.type),
-          decoration: BoxDecoration(
-            color: message.isMe
-                ? null
-                : Theme.of(context).colorScheme.surfaceVariant,
-            gradient: message.isMe ? AppColors.primaryGradient : null,
-            borderRadius: BorderRadius.only(
-              topLeft: const Radius.circular(20),
-              topRight: const Radius.circular(20),
-              bottomLeft: Radius.circular(message.isMe ? 20 : 0),
-              bottomRight: Radius.circular(message.isMe ? 0 : 20),
-            ),
-          ),
-          child: _buildTypeSpecificUI(context),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 4.h, left: 4.w, right: 4.w),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                _formatTime(message.time),
-                style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+    return Container(
+      padding: _bubblePaddingFor(message.type),
+      decoration: BoxDecoration(
+        gradient: message.isMe
+            ? AppColors.primaryGradient
+            : LinearGradient(
+                colors: [
+                  Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.2),
+                  Theme.of(
+                    context,
+                  ).colorScheme.onSurfaceVariant.withValues(alpha: 0.1),
+                ],
               ),
-              if (message.isEdited) ...[
-                SizedBox(width: 4.w),
-                Text(
-                  '(edited)',
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    color: Colors.grey,
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
-            ],
-          ),
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(20),
+          topRight: const Radius.circular(20),
+          bottomLeft: Radius.circular(message.isMe ? 20 : 0),
+          bottomRight: Radius.circular(message.isMe ? 0 : 20),
         ),
-      ],
+      ),
+      child: _buildTypeSpecificUI(context),
     );
   }
 
@@ -1353,12 +1654,6 @@ class _BubbleContent extends StatelessWidget {
       case MessageType.deleted:
         return EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h);
     }
-  }
-
-  String _formatTime(DateTime t) {
-    final hh = t.hour.toString().padLeft(2, '0');
-    final mm = t.minute.toString().padLeft(2, '0');
-    return '$hh:$mm';
   }
 
   Widget _buildTypeSpecificUI(BuildContext context) {
@@ -1437,8 +1732,7 @@ class _BubbleContent extends StatelessWidget {
   }
 }
 
-//  Reaction Chips
-
+//ReactionChips
 class _ReactionChips extends StatelessWidget {
   final List<Reaction> reactions;
   final void Function(String) onToggle;
@@ -1458,8 +1752,8 @@ class _ReactionChips extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
               color: r.reactedByMe
-                  ? Theme.of(context).colorScheme.surfaceVariant
-                  : Theme.of(context).colorScheme.surfaceVariant,
+                  ? Theme.of(context).colorScheme.surfaceContainerHighest
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
               border: Border.all(
                 color: r.reactedByMe ? AppColors.primary : Colors.transparent,
                 width: 1.w,
@@ -1490,7 +1784,7 @@ class _ReactionChips extends StatelessWidget {
   }
 }
 
-//  Reaction Overlay
+// ReactionOverlay
 
 class _ReactionOverlay extends StatefulWidget {
   final ChatMessage message;
@@ -1638,19 +1932,24 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
   }
 }
 
-//  Waveform Painter
+// WaveformPainter
 
 class _WaveformPainter extends CustomPainter {
-  final bool isWhite;
-  final bool isAnimating;
+  final Color color;
+  final double progress; // 0.0 to 1.0, portion played
 
-  _WaveformPainter({this.isWhite = false, this.isAnimating = false});
+  _WaveformPainter({required this.color, this.progress = 0.0});
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = isWhite ? Colors.white : Colors.black54
+    final basePaint = Paint()
+      ..color = color.withValues(alpha: 0.3)
       ..strokeWidth = 2
+      ..strokeCap = StrokeCap.round;
+
+    final progressPaint = Paint()
+      ..color = color
+      ..strokeWidth = 2.5
       ..strokeCap = StrokeCap.round;
 
     const barCount = 30;
@@ -1667,16 +1966,23 @@ class _WaveformPainter extends CustomPainter {
       final barHeight = size.height * heightFactor;
       final y1 = (size.height - barHeight) / 2;
       final y2 = y1 + barHeight;
+
+      // Bars before the progress point are highlighted, after are dimmed
+      final barCenter = x + barWidth / 2;
+      final barProgress = barCenter / size.width;
+      final paint = barProgress <= progress ? progressPaint : basePaint;
+
       canvas.drawLine(Offset(x, y1), Offset(x, y2), paint);
     }
   }
 
   @override
   bool shouldRepaint(_WaveformPainter oldDelegate) {
-    return oldDelegate.isAnimating != isAnimating ||
-        oldDelegate.isWhite != isWhite;
+    return oldDelegate.progress != progress || oldDelegate.color != color;
   }
 }
+
+// MessageAudioPlayer
 
 class _MessageAudioPlayer extends StatefulWidget {
   final String url;
@@ -1691,9 +1997,11 @@ class _MessageAudioPlayer extends StatefulWidget {
 class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
   late ap.AudioPlayer _player;
   bool _isPlaying = false;
+  bool _isDownloading = false;
   Duration _duration = Duration.zero;
   Duration _position = Duration.zero;
   late final String _resolvedUrl;
+  String? _localPath;
 
   @override
   void initState() {
@@ -1711,16 +2019,34 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
     _player.onPositionChanged.listen((p) {
       if (mounted) setState(() => _position = p);
     });
-
-    if (_resolvedUrl.isNotEmpty) {
-      _player.setSource(ap.UrlSource(_resolvedUrl));
-    }
   }
 
   @override
   void dispose() {
     _player.dispose();
+    // Clean up temp file
+    if (_localPath != null) {
+      File(_localPath!).delete().then((_) {}, onError: (_) {});
+    }
     super.dispose();
+  }
+
+  Future<String> _downloadAudio() async {
+    if (_localPath != null) return _localPath!;
+
+    final dir = await getTemporaryDirectory();
+    final ext = _resolvedUrl.endsWith('.m4a') ? '.m4a' : '.mp3';
+    final path =
+        '${dir.path}/voice_${DateTime.now().millisecondsSinceEpoch}$ext';
+
+    final response = await http.get(Uri.parse(_resolvedUrl));
+    if (response.statusCode == 200) {
+      final file = File(path);
+      await file.writeAsBytes(response.bodyBytes);
+      _localPath = path;
+      return path;
+    }
+    throw Exception('Failed to download audio: ${response.statusCode}');
   }
 
   void _togglePlay() async {
@@ -1728,9 +2054,34 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
 
     if (_isPlaying) {
       await _player.pause();
-    } else {
-      await _player.play(ap.UrlSource(_resolvedUrl));
+      return;
     }
+
+    // If we already have a local file, play from it
+    if (_localPath != null) {
+      await _playLocal();
+      return;
+    }
+
+    // Download first, then play
+    setState(() => _isDownloading = true);
+    try {
+      final localPath = await _downloadAudio();
+      if (!mounted) return;
+      setState(() => _isDownloading = false);
+      await _player.stop();
+      await _player.play(ap.DeviceFileSource(localPath));
+      if (mounted) setState(() => _isPlaying = true);
+    } catch (e) {
+      debugPrint('Audio download/play error: $e');
+      if (mounted) setState(() => _isDownloading = false);
+    }
+  }
+
+  Future<void> _playLocal() async {
+    // Stop first to reset player state, then play from beginning
+    await _player.stop();
+    await _player.play(ap.DeviceFileSource(_localPath!));
   }
 
   String _formatDuration(Duration d) {
@@ -1745,157 +2096,63 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
         ? Colors.white
         : Theme.of(context).colorScheme.onSurface;
     final displayDuration = _isPlaying ? _position : _duration;
+    final progress = _duration.inMilliseconds > 0
+        ? (_position.inMilliseconds / _duration.inMilliseconds).clamp(0.0, 1.0)
+        : 0.0;
 
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        // Play button with subtle loading overlay
         GestureDetector(
-          onTap: _togglePlay,
-          child: Icon(
-            _isPlaying ? Icons.pause_circle_filled : Icons.play_circle_filled,
-            color: color,
-            size: 32,
+          onTap: _isDownloading ? null : _togglePlay,
+          child: SizedBox(
+            width: 32,
+            height: 32,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Icon(
+                  _isPlaying
+                      ? Icons.pause_circle_filled
+                      : Icons.play_circle_filled,
+                  color: _isDownloading ? color.withValues(alpha: 0.4) : color,
+                  size: 32,
+                ),
+                if (_isDownloading)
+                  SizedBox(
+                    width: 28,
+                    height: 28,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: color,
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
         SizedBox(width: 8.w),
-        SizedBox(
-          width: 100.w,
-          height: 24.h,
-          child: CustomPaint(
-            painter: _WaveformPainter(
-              isWhite: widget.isMe,
-              isAnimating: _isPlaying,
+        // Waveform always visible (dimmed during download)
+        Opacity(
+          opacity: _isDownloading ? 0.35 : 1.0,
+          child: SizedBox(
+            width: 100.w,
+            height: 24.h,
+            child: CustomPaint(
+              painter: _WaveformPainter(color: color, progress: progress),
             ),
           ),
         ),
         SizedBox(width: 8.w),
         Text(
-          _formatDuration(displayDuration),
-          style: TextStyle(color: color, fontSize: 12.sp),
+          _isDownloading ? '-- : --' : _formatDuration(displayDuration),
+          style: TextStyle(
+            color: _isDownloading ? color.withValues(alpha: 0.4) : color,
+            fontSize: 12.sp,
+          ),
         ),
       ],
     );
   }
-}
-
-//  More options bottom sheet
-
-Future<dynamic> _buildMoreOption(
-  BuildContext context, {
-  required VoidCallback onDelete,
-  required VoidCallback onEdit,
-}) {
-  return showModalBottomSheet(
-    context: context,
-    backgroundColor: Colors.transparent,
-    builder: (context) => SafeArea(
-      child: Container(
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceVariant,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(
-                context,
-              ).colorScheme.shadow.withValues(alpha: 0.12),
-              blurRadius: 10,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Copy
-            InkWell(
-              onTap: onDelete,
-              splashColor: Colors.transparent,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.file_copy_outlined,
-                      color: AppColors.primary,
-                      size: 20.w,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      'Copy',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Divider(height: 1.h),
-            // Delete
-            InkWell(
-              onTap: onDelete,
-              splashColor: Colors.transparent,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Assets.icons.trash.svg(width: 20.w, height: 20.h),
-                    SizedBox(width: 4.w),
-                    Text(
-                      'Delete',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const Divider(height: 1),
-            // Edit
-            InkWell(
-              onTap: onEdit,
-              splashColor: Colors.transparent,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 16,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.edit_outlined,
-                      color: AppColors.primary,
-                      size: 20.w,
-                    ),
-                    SizedBox(width: 4.w),
-                    Text(
-                      'Edit',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  );
 }

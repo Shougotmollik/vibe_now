@@ -268,6 +268,8 @@ void setupRouter(bool hasToken) {
             chatId: chatId,
             title: title,
             coverImage: coverImage,
+            community: extra is Community ? extra : null,
+            communityId: extra is Chat ? extra.community?.id : null,
           );
         },
       ),

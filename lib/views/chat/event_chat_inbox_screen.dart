@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -468,10 +469,7 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text(
-              'Delete',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -485,16 +483,18 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
       setState(() => _editingMessageId = null);
     }
 
-    _chatController.deleteMessage(
-      chatId: widget.chatId!,
-      messageId: msg.id,
-    );
+    _chatController.deleteMessage(chatId: widget.chatId!, messageId: msg.id);
   }
 
   void _showMessageOptions(ChatMessage msg) {
     final hasText = (msg.text ?? '').isNotEmpty;
-    final canCopy = hasText && (msg.type == MessageType.text || msg.type == MessageType.mixed);
-    final canEdit = _isCreator && hasText && (msg.type == MessageType.text || msg.type == MessageType.mixed);
+    final canCopy =
+        hasText &&
+        (msg.type == MessageType.text || msg.type == MessageType.mixed);
+    final canEdit =
+        _isCreator &&
+        hasText &&
+        (msg.type == MessageType.text || msg.type == MessageType.mixed);
 
     showModalBottomSheet(
       context: context,
@@ -508,7 +508,9 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: Theme.of(context).colorScheme.shadow.withValues(alpha: 0.12),
+                color: Theme.of(
+                  context,
+                ).colorScheme.shadow.withValues(alpha: 0.12),
                 blurRadius: 10,
                 spreadRadius: 2,
               ),
@@ -525,14 +527,25 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
                   },
                   splashColor: Colors.transparent,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
                     child: Row(
                       children: [
-                        Icon(Icons.file_copy_outlined, color: AppColors.primary, size: 20.w),
+                        Icon(
+                          Icons.file_copy_outlined,
+                          color: AppColors.primary,
+                          size: 20.w,
+                        ),
                         SizedBox(width: 4.w),
                         Text(
                           'Copy',
-                          style: TextStyle(fontSize: 16.sp, color: AppColors.primary, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
@@ -548,14 +561,25 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
                   },
                   splashColor: Colors.transparent,
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
                     child: Row(
                       children: [
-                        Icon(Icons.edit_outlined, color: AppColors.primary, size: 20.sp),
+                        Icon(
+                          Icons.edit_outlined,
+                          color: AppColors.primary,
+                          size: 20.sp,
+                        ),
                         SizedBox(width: 4.w),
                         Text(
                           'Edit',
-                          style: TextStyle(fontSize: 16.sp, color: AppColors.primary, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ],
                     ),
@@ -570,14 +594,21 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
                 },
                 splashColor: Colors.transparent,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
                   child: Row(
                     children: [
                       Assets.icons.trash.svg(width: 20.w, height: 20.h),
                       SizedBox(width: 4.w),
                       Text(
                         'Delete',
-                        style: TextStyle(fontSize: 16.sp, color: AppColors.primary, fontWeight: FontWeight.w600),
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -665,7 +696,15 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
       ),
       title: Row(
         children: [
-          _buildAppBarAvatar(),
+          GestureDetector(
+            onTap: widget.eventId != null
+                ? () => context.pushNamed(
+                      RouteNames.eventDetailsScreen,
+                      extra: widget.eventId,
+                    )
+                : null,
+            child: _buildAppBarAvatar(),
+          ),
           SizedBox(width: 12.w),
           Expanded(
             child: Text(
@@ -681,44 +720,44 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
         ],
       ),
       actions: [
-        PopupMenuButton<String>(
-          icon: Icon(
-            Icons.more_vert,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-          offset: const Offset(0, 50),
-          color: Theme.of(context).colorScheme.surfaceContainerHighest,
-          itemBuilder: (_) => [
-            PopupMenuItem<String>(
-              value: 'block',
-              child: Row(
-                children: [
-                  Assets.icons.block.svg(width: 20.w, height: 20.h),
-                  SizedBox(width: 8.w),
-                  const Text('Block'),
-                ],
-              ),
-              onTap: () => Future.delayed(
-                Duration.zero,
-                () => context.pushNamed(RouteNames.blockScreen),
-              ),
-            ),
-            PopupMenuItem<String>(
-              value: 'report',
-              child: Row(
-                children: [
-                  Assets.icons.report.svg(width: 20.w, height: 20.h),
-                  SizedBox(width: 8.w),
-                  const Text('Report'),
-                ],
-              ),
-              onTap: () => Future.delayed(
-                Duration.zero,
-                () => context.pushNamed(RouteNames.reportScreen),
-              ),
-            ),
-          ],
-        ),
+        // PopupMenuButton<String>(
+        //   icon: Icon(
+        //     Icons.more_vert,
+        //     color: Theme.of(context).colorScheme.onSurface,
+        //   ),
+        //   offset: const Offset(0, 50),
+        //   color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        //   itemBuilder: (_) => [
+        //     PopupMenuItem<String>(
+        //       value: 'block',
+        //       child: Row(
+        //         children: [
+        //           Assets.icons.block.svg(width: 20.w, height: 20.h),
+        //           SizedBox(width: 8.w),
+        //           const Text('Block'),
+        //         ],
+        //       ),
+        //       onTap: () => Future.delayed(
+        //         Duration.zero,
+        //         () => context.pushNamed(RouteNames.blockScreen),
+        //       ),
+        //     ),
+        //     PopupMenuItem<String>(
+        //       value: 'report',
+        //       child: Row(
+        //         children: [
+        //           Assets.icons.report.svg(width: 20.w, height: 20.h),
+        //           SizedBox(width: 8.w),
+        //           const Text('Report'),
+        //         ],
+        //       ),
+        //       onTap: () => Future.delayed(
+        //         Duration.zero,
+        //         () => context.pushNamed(RouteNames.reportScreen),
+        //       ),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }
@@ -727,12 +766,13 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
     final cover = AppCredentials.fixurl(widget.coverImage);
     if (cover.isNotEmpty) {
       return ClipOval(
-        child: Image.network(
-          cover,
+        child: CachedNetworkImage(
+          imageUrl: cover,
           width: 40.w,
           height: 40.w,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _buildFallbackAvatar(),
+          placeholder: (_, __) => _buildFallbackAvatar(),
+          errorWidget: (_, __, ___) => _buildFallbackAvatar(),
         ),
       );
     }
@@ -906,7 +946,12 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
             // Edit mode banner
             if (_editingMessageId != null)
               Container(
-                padding: const EdgeInsets.only(left: 16, right: 8, top: 6, bottom: 2),
+                padding: const EdgeInsets.only(
+                  left: 16,
+                  right: 8,
+                  top: 6,
+                  bottom: 2,
+                ),
                 child: Row(
                   children: [
                     Icon(
@@ -947,295 +992,306 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Row(
-          children: [
-            /// 📎 Attachment
-            GestureDetector(
-              onTap: _isSending
-                  ? null
-                  : () {
-                      utils.showImagePickerOptions(context, (
-                        imageSource,
-                      ) async {
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (_) => const Center(
-                            child: Card(
-                              child: Padding(
-                                padding: EdgeInsets.all(24),
-                                child: CircularProgressIndicator(),
-                              ),
-                            ),
-                          ),
-                        );
-
-                        final image = await utils.pickSingleImage(
-                          context: context,
-                          source: imageSource,
-                          compress: true,
-                        );
-
-                        if (mounted) Navigator.of(context).pop();
-
-                        if (image != null && mounted) {
-                          _showFullScreenImagePreview(image);
-                        }
-                      });
-                    },
-              child: Assets.icons.attachedFile.svg(
-                width: 24.w,
-                height: 24.h,
-                color: _isSending
-                    ? Colors.grey.withValues(alpha: 0.5)
-                    : AppColors.primary,
-              ),
-            ),
-
-            SizedBox(width: 10.w),
-
-            /// 🧠 Input Container
-            Expanded(
-              child: Container(
-                padding: !_isRecording
-                    ? const EdgeInsets.all(2)
-                    : EdgeInsets.zero,
-                decoration: !_isRecording
-                    ? BoxDecoration(
-                        gradient: AppColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(30),
-                      )
-                    : null,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: (!_isRecording && !_isRecorded)
-                        ? Theme.of(context).colorScheme.surface
-                        : null,
-                    gradient: (_isRecording || _isRecorded)
-                        ? AppColors.primaryGradient
-                        : null,
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Row(
-                    children: [
-                      /// 🎤 Mic Button
-                      if (!_isRecorded)
-                        GestureDetector(
-                          onTap: _isSending ? null : _toggleRecording,
-                          child: Container(
-                            width: 32,
-                            height: 32,
-                            alignment: Alignment.center,
-                            child: Icon(
-                              _isRecording ? Icons.stop : Icons.mic,
-                              color: _isRecording
-                                  ? Colors.white
-                                  : AppColors.primary,
-                              size: 22,
-                            ),
-                          ),
-                        ),
-
-                      /// ✍️ Text OR Waveform OR Preview
-                      Expanded(
-                        child: _isRecorded
-                            ? SizedBox(
-                                height: 45,
-                                child: Row(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: _togglePreviewPlay,
-                                      behavior: HitTestBehavior.opaque,
-                                      child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        alignment: Alignment.center,
-                                        child: Icon(
-                                          _isPreviewPlaying
-                                              ? Icons.pause_rounded
-                                              : Icons.play_arrow_rounded,
-                                          color: Colors.white,
-                                          size: 26,
-                                        ),
-                                      ),
+                children: [
+                  /// 📎 Attachment
+                  GestureDetector(
+                    onTap: _isSending
+                        ? null
+                        : () {
+                            utils.showImagePickerOptions(context, (
+                              imageSource,
+                            ) async {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (_) => const Center(
+                                  child: Card(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(24),
+                                      child: CircularProgressIndicator(),
                                     ),
-                                    const SizedBox(width: 4),
-                                    Expanded(
-                                      child: aw.AudioFileWaveforms(
-                                        size: const Size(150, 45),
-                                        playerController: _playerController,
-                                        playerWaveStyle:
-                                            const aw.PlayerWaveStyle(
-                                              fixedWaveColor: Colors.white60,
-                                              liveWaveColor: Colors.white,
-                                              spacing: 6.0,
-                                              showSeekLine: true,
-                                              seekLineColor: Colors.white,
-                                              seekLineThickness: 2,
-                                            ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      '${_formatMs(_previewCurrentMs)} / ${_formatMs(_previewMaxMs)}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                                    GestureDetector(
-                                      onTap: _deleteRecording,
-                                      behavior: HitTestBehavior.opaque,
-                                      child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        alignment: Alignment.center,
-                                        child: const Icon(
-                                          Icons.delete_outline_rounded,
-                                          color: Colors.white,
-                                          size: 22,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            : _isRecording
-                            ? SizedBox(
-                                height: 45,
-                                child: Row(
-                                  children: [
-                                    const SizedBox(width: 8),
-                                    AnimatedBuilder(
-                                      animation: _pulseAnimation,
-                                      builder: (_, __) {
-                                        return Container(
-                                          width: 12,
-                                          height: 12,
-                                          decoration: BoxDecoration(
-                                            color: Color.lerp(
-                                              Colors.red.withValues(alpha: 0.5),
-                                              Colors.red,
-                                              _pulseAnimation.value,
-                                            ),
-                                            shape: BoxShape.circle,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.red.withValues(
-                                                  alpha:
-                                                      0.4 *
-                                                      _pulseAnimation.value,
-                                                ),
-                                                blurRadius: 6,
-                                                spreadRadius: 1,
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      _formatDuration(_recordDuration),
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14,
-                                        letterSpacing: 0.5,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: aw.AudioWaveforms(
-                                        size: const Size(100, 45),
-                                        recorderController: _recorderController,
-                                        enableGesture: false,
-                                        waveStyle: const aw.WaveStyle(
-                                          waveColor: Colors.white,
-                                          showDurationLabel: false,
-                                          spacing: 4.0,
-                                          waveThickness: 2.5,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                  ],
-                                ),
-                              )
-                            : TextField(
-                                controller: _messageController,
-                                enabled: !_isSending,
-                                maxLines: 3,
-                                minLines: 1,
-                                style: TextStyle(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.onSurface,
-                                ),
-                                decoration: InputDecoration(
-                                  hintText: 'Type a message...',
-                                  hintStyle: TextStyle(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                    fontSize: 14.sp,
                                   ),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(14.r),
-                                    borderSide: BorderSide.none,
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 10.w,
-                                    vertical: 8.h,
-                                  ),
-                                  isDense: true,
                                 ),
-                                onSubmitted: (_) {
-                                  if (canSend) _sendMessage();
-                                },
-                              ),
-                      ),
+                              );
 
-                      const SizedBox(width: 8),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                              final image = await utils.pickSingleImage(
+                                context: context,
+                                source: imageSource,
+                                compress: true,
+                              );
 
-            SizedBox(width: 10.w),
+                              if (mounted) Navigator.of(context).pop();
 
-            /// 🚀 Send Button
-            _isSending
-                ? SizedBox(
-                    width: 24.w,
-                    height: 24.h,
-                    child: const CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : GestureDetector(
-                    onTap: canSend
-                        ? () {
-                            if (_isRecorded && _recordingPath != null) {
-                              _sendVoiceMessage();
-                            } else {
-                              _sendMessage();
-                            }
-                          }
-                        : null,
-                    child: Assets.icons.send.svg(
+                              if (image != null && mounted) {
+                                _showFullScreenImagePreview(image);
+                              }
+                            });
+                          },
+                    child: Assets.icons.attachedFile.svg(
                       width: 24.w,
                       height: 24.h,
-                      color: canSend ? null : Colors.grey,
+                      color: _isSending
+                          ? Colors.grey.withValues(alpha: 0.5)
+                          : AppColors.primary,
                     ),
                   ),
-            ],
-          ),
+
+                  SizedBox(width: 10.w),
+
+                  /// 🧠 Input Container
+                  Expanded(
+                    child: Container(
+                      padding: !_isRecording
+                          ? const EdgeInsets.all(2)
+                          : EdgeInsets.zero,
+                      decoration: !_isRecording
+                          ? BoxDecoration(
+                              gradient: AppColors.primaryGradient,
+                              borderRadius: BorderRadius.circular(30),
+                            )
+                          : null,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: (!_isRecording && !_isRecorded)
+                              ? Theme.of(context).colorScheme.surface
+                              : null,
+                          gradient: (_isRecording || _isRecorded)
+                              ? AppColors.primaryGradient
+                              : null,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Row(
+                          children: [
+                            /// 🎤 Mic Button
+                            if (!_isRecorded)
+                              GestureDetector(
+                                onTap: _isSending ? null : _toggleRecording,
+                                child: Container(
+                                  width: 32,
+                                  height: 32,
+                                  alignment: Alignment.center,
+                                  child: Icon(
+                                    _isRecording ? Icons.stop : Icons.mic,
+                                    color: _isRecording
+                                        ? Colors.white
+                                        : AppColors.primary,
+                                    size: 22,
+                                  ),
+                                ),
+                              ),
+
+                            /// ✍️ Text OR Waveform OR Preview
+                            Expanded(
+                              child: _isRecorded
+                                  ? SizedBox(
+                                      height: 45,
+                                      child: Row(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: _togglePreviewPlay,
+                                            behavior: HitTestBehavior.opaque,
+                                            child: Container(
+                                              width: 30,
+                                              height: 30,
+                                              alignment: Alignment.center,
+                                              child: Icon(
+                                                _isPreviewPlaying
+                                                    ? Icons.pause_rounded
+                                                    : Icons.play_arrow_rounded,
+                                                color: Colors.white,
+                                                size: 26,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Expanded(
+                                            child: aw.AudioFileWaveforms(
+                                              size: const Size(150, 45),
+                                              playerController:
+                                                  _playerController,
+                                              playerWaveStyle:
+                                                  const aw.PlayerWaveStyle(
+                                                    fixedWaveColor:
+                                                        Colors.white60,
+                                                    liveWaveColor: Colors.white,
+                                                    spacing: 6.0,
+                                                    showSeekLine: true,
+                                                    seekLineColor: Colors.white,
+                                                    seekLineThickness: 2,
+                                                  ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Text(
+                                            '${_formatMs(_previewCurrentMs)} / ${_formatMs(_previewMaxMs)}',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 11.sp,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          GestureDetector(
+                                            onTap: _deleteRecording,
+                                            behavior: HitTestBehavior.opaque,
+                                            child: Container(
+                                              width: 30,
+                                              height: 30,
+                                              alignment: Alignment.center,
+                                              child: const Icon(
+                                                Icons.delete_outline_rounded,
+                                                color: Colors.white,
+                                                size: 22,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  : _isRecording
+                                  ? SizedBox(
+                                      height: 45,
+                                      child: Row(
+                                        children: [
+                                          const SizedBox(width: 8),
+                                          AnimatedBuilder(
+                                            animation: _pulseAnimation,
+                                            builder: (_, __) {
+                                              return Container(
+                                                width: 12,
+                                                height: 12,
+                                                decoration: BoxDecoration(
+                                                  color: Color.lerp(
+                                                    Colors.red.withValues(
+                                                      alpha: 0.5,
+                                                    ),
+                                                    Colors.red,
+                                                    _pulseAnimation.value,
+                                                  ),
+                                                  shape: BoxShape.circle,
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.red
+                                                          .withValues(
+                                                            alpha:
+                                                                0.4 *
+                                                                _pulseAnimation
+                                                                    .value,
+                                                          ),
+                                                      blurRadius: 6,
+                                                      spreadRadius: 1,
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            _formatDuration(_recordDuration),
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              letterSpacing: 0.5,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          Expanded(
+                                            child: aw.AudioWaveforms(
+                                              size: const Size(100, 45),
+                                              recorderController:
+                                                  _recorderController,
+                                              enableGesture: false,
+                                              waveStyle: const aw.WaveStyle(
+                                                waveColor: Colors.white,
+                                                showDurationLabel: false,
+                                                spacing: 4.0,
+                                                waveThickness: 2.5,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                        ],
+                                      ),
+                                    )
+                                  : TextField(
+                                      controller: _messageController,
+                                      enabled: !_isSending,
+                                      maxLines: 3,
+                                      minLines: 1,
+                                      style: TextStyle(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                                      decoration: InputDecoration(
+                                        hintText: 'Type a message...',
+                                        hintStyle: TextStyle(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                          fontSize: 14.sp,
+                                        ),
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            14.r,
+                                          ),
+                                          borderSide: BorderSide.none,
+                                        ),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 10.w,
+                                          vertical: 8.h,
+                                        ),
+                                        isDense: true,
+                                      ),
+                                      onSubmitted: (_) {
+                                        if (canSend) _sendMessage();
+                                      },
+                                    ),
+                            ),
+
+                            const SizedBox(width: 8),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(width: 10.w),
+
+                  /// 🚀 Send Button
+                  _isSending
+                      ? SizedBox(
+                          width: 24.w,
+                          height: 24.h,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: canSend
+                              ? () {
+                                  if (_isRecorded && _recordingPath != null) {
+                                    _sendVoiceMessage();
+                                  } else {
+                                    _sendMessage();
+                                  }
+                                }
+                              : null,
+                          child: Assets.icons.send.svg(
+                            width: 24.w,
+                            height: 24.h,
+                            color: canSend ? null : Colors.grey,
+                          ),
+                        ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
-    ),
-  ),
-  );
+      ),
+    );
   }
 
   Future<void> _toggleRecording() async {
@@ -1552,13 +1608,13 @@ class _Avatar extends StatelessWidget {
     }
     return CircleAvatar(
       radius: radius,
-      backgroundImage: NetworkImage(url),
+      backgroundImage: CachedNetworkImageProvider(AppCredentials.fixurl(url)),
       onBackgroundImageError: (_, __) {},
     );
   }
 }
 
-// ── _BubbleContent ──────────────────────────────────────────────────────────
+// BubbleContent
 
 class _BubbleContent extends StatelessWidget {
   final ChatMessage message;
@@ -1708,8 +1764,7 @@ class _BubbleContent extends StatelessWidget {
   }
 }
 
-// ── Reaction Chips ──────────────────────────────────────────────────────────
-
+// Reaction Chips
 class _ReactionChips extends StatelessWidget {
   final List<Reaction> reactions;
   final void Function(String) onToggle;
@@ -1761,7 +1816,7 @@ class _ReactionChips extends StatelessWidget {
   }
 }
 
-// ── Reaction Overlay ────────────────────────────────────────────────────────
+//  Reaction Overlay
 
 class _ReactionOverlay extends StatefulWidget {
   final ChatMessage message;
@@ -1909,23 +1964,22 @@ class _ReactionOverlayState extends State<_ReactionOverlay>
   }
 }
 
-// ── Waveform Painter ────────────────────────────────────────────────────────
-
+//Waveform Painter
 class _WaveformPainter extends CustomPainter {
-  final bool isWhite;
-  final double progress; // 0.0 to 1.0, portion played
+  final Color color;
+  final double progress;
 
-  _WaveformPainter({this.isWhite = false, this.progress = 0.0});
+  _WaveformPainter({required this.color, this.progress = 0.0});
 
   @override
   void paint(Canvas canvas, Size size) {
     final basePaint = Paint()
-      ..color = (isWhite ? Colors.white : Colors.black54).withValues(alpha: 0.3)
+      ..color = color.withValues(alpha: 0.3)
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 
     final progressPaint = Paint()
-      ..color = isWhite ? Colors.white : Colors.black87
+      ..color = color
       ..strokeWidth = 2.5
       ..strokeCap = StrokeCap.round;
 
@@ -1944,7 +1998,6 @@ class _WaveformPainter extends CustomPainter {
       final y1 = (size.height - barHeight) / 2;
       final y2 = y1 + barHeight;
 
-      // Bars before the progress point are highlighted, after are dimmed
       final barCenter = x + barWidth / 2;
       final barProgress = barCenter / size.width;
       final paint = barProgress <= progress ? progressPaint : basePaint;
@@ -1955,11 +2008,11 @@ class _WaveformPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_WaveformPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.isWhite != isWhite;
+    return oldDelegate.progress != progress || oldDelegate.color != color;
   }
 }
 
-// ── Audio Player (in-message) ───────────────────────────────────────────────
+// Audio Player (in-message)
 
 class _MessageAudioPlayer extends StatefulWidget {
   final String url;
@@ -2117,10 +2170,7 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
             width: 100.w,
             height: 24.h,
             child: CustomPaint(
-              painter: _WaveformPainter(
-                isWhite: widget.isMe,
-                progress: progress,
-              ),
+              painter: _WaveformPainter(color: color, progress: progress),
             ),
           ),
         ),
@@ -2136,5 +2186,3 @@ class _MessageAudioPlayerState extends State<_MessageAudioPlayer> {
     );
   }
 }
-
-

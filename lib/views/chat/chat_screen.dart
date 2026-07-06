@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -370,12 +371,17 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(25.r),
-              child: Image.network(
-                AppCredentials.fixurl(wave.sender.avatar),
+              child: CachedNetworkImage(
+                imageUrl: AppCredentials.fixurl(wave.sender.avatar),
                 width: 50.w,
                 height: 50.w,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+                placeholder: (_, __) => Container(
+                  width: 50.w,
+                  height: 50.w,
+                  color: theme.colorScheme.surfaceContainerHighest,
+                ),
+                errorWidget: (_, __, ___) => Container(
                   width: 50.w,
                   height: 50.w,
                   decoration: BoxDecoration(
@@ -481,12 +487,13 @@ class CommunityAvatar extends StatelessWidget {
     if (avatars.length == 1) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(size / 2),
-        child: Image.network(
-          AppCredentials.fixurl(avatars.first),
+        child: CachedNetworkImage(
+          imageUrl: AppCredentials.fixurl(avatars.first),
           width: size.w,
           height: size.w,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => _fallback(context),
+          placeholder: (_, __) => _fallback(context),
+          errorWidget: (_, __, ___) => _fallback(context),
         ),
       );
     }
@@ -501,12 +508,13 @@ class CommunityAvatar extends StatelessWidget {
             left: 0,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(size / 2),
-              child: Image.network(
-                AppCredentials.fixurl(avatars[0]),
+              child: CachedNetworkImage(
+                imageUrl: AppCredentials.fixurl(avatars[0]),
                 width: (size * 0.8).w,
                 height: (size * 0.8).w,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => _fallback(context),
+                placeholder: (_, __) => _fallback(context),
+                errorWidget: (_, __, ___) => _fallback(context),
               ),
             ),
           ),
@@ -520,12 +528,13 @@ class CommunityAvatar extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(size / 2),
-                child: Image.network(
-                  AppCredentials.fixurl(avatars[1]),
+                child: CachedNetworkImage(
+                  imageUrl: AppCredentials.fixurl(avatars[1]),
                   width: (size * 0.7).w,
                   height: (size * 0.7).w,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => _fallback(context),
+                  placeholder: (_, __) => _fallback(context),
+                  errorWidget: (_, __, ___) => _fallback(context),
                 ),
               ),
             ),

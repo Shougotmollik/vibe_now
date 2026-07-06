@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -364,12 +366,17 @@ class _ChatInboxScreenState extends State<ChatInboxScreen> {
               children: [
                 ClipRRect(
                   borderRadius: BorderRadius.circular(20.r),
-                  child: Image.network(
-                    avatar,
+                  child: CachedNetworkImage(
+                    imageUrl: AppCredentials.fixurl(avatar),
                     width: 40,
                     height: 40,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
+                    placeholder: (_, __) => Container(
+                      width: 40,
+                      height: 40,
+                      color: Theme.of(context).colorScheme.surfaceVariant,
+                    ),
+                    errorWidget: (_, __, ___) => Container(
                       width: 40,
                       height: 40,
                       color: Theme.of(context).colorScheme.surfaceVariant,

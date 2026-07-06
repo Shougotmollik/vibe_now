@@ -48,7 +48,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        final String title = community?.title ?? 'Running Club';
+        final String title = community?.title ?? 'the community';
 
         return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -131,7 +131,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
           _buildListTile(
             context: context,
             icon: Assets.icons.calendarColor,
-            title: "Events",
+            title: "Meetups",
           ),
           _buildListTile(
             context: context,

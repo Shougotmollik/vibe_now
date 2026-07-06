@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 
 class AvatarStack extends StatelessWidget {
   final List<String> imageUrls;
@@ -27,7 +29,7 @@ class AvatarStack extends StatelessWidget {
                 backgroundColor: Theme.of(context).colorScheme.surface,
                 child: CircleAvatar(
                   radius: (size / 2) - 2,
-                  backgroundImage: NetworkImage(imageUrls[i]),
+                  backgroundImage: CachedNetworkImageProvider(AppCredentials.fixurl(imageUrls[i])),
                 ),
               ),
             ),

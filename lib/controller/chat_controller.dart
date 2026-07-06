@@ -247,7 +247,6 @@ class ChatController extends GetxController {
   }
 
   // ── Edit message (via WebSocket) ────────────
-
   void editMessage({
     required String chatId,
     required String messageId,
@@ -358,7 +357,8 @@ class ChatController extends GetxController {
     if (!alreadyRead) {
       reads.add({
         'user': {'id': userId},
-        'read_at': data['read_at'] as String? ??
+        'read_at':
+            data['read_at'] as String? ??
             DateTime.now().toUtc().toIso8601String(),
       });
       msg.reads = reads;
