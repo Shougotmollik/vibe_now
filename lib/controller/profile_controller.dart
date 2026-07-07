@@ -125,6 +125,11 @@ class ProfileController extends GetxController {
     selectedSubcategories.clear();
   }
 
+  /// Clears profile data on logout so stale data is never shown.
+  void clearProfile() {
+    account.value = null;
+  }
+
   bool isParentSelected(Interest group) {
     return group.children.every((c) => selectedSubcategories.contains(c));
   }

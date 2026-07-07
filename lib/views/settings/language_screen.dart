@@ -14,14 +14,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
   //! Language data list
   List<LanguageModel> languages = [
     LanguageModel(name: "English", flag: Assets.flags.unitedKingdom),
-    LanguageModel(name: "Spanish", flag: Assets.flags.spain),
-    LanguageModel(name: "Italy", flag: Assets.flags.italy),
-    LanguageModel(name: "american samoa", flag: Assets.flags.americanSamoa),
     LanguageModel(name: "German", flag: Assets.flags.germany),
-    LanguageModel(name: "Tonga", flag: Assets.flags.tonga),
-    LanguageModel(name: "Papua New Guinea", flag: Assets.flags.papuaNewGuinea),
-    LanguageModel(name: "Turkish", flag: Assets.flags.turkey),
-    LanguageModel(name: "Vanuatu", flag: Assets.flags.vanuatu),
   ];
 
   int selectedIndex = 0;

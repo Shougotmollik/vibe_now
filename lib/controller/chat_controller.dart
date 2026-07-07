@@ -30,6 +30,7 @@ class ChatController extends GetxController {
   final RxList<ChatMessage> chatMessages = <ChatMessage>[].obs;
 
   final RxBool isOtherUserTyping = false.obs;
+  final RxBool isOtherUserOnline = false.obs;
   String _currentUserId = '';
 
   StreamSubscription<dynamic>? _wsSubscription;
@@ -318,6 +319,7 @@ class ChatController extends GetxController {
     _wsSubscription = null;
     _typingDebounce?.cancel();
     isOtherUserTyping.value = false;
+    isOtherUserOnline.value = false;
     if (_activeChatId != null) {
       WebSocketRegistry.instance.release(_activeChatId!);
       _activeChatId = null;
@@ -435,7 +437,9 @@ class ChatController extends GetxController {
           break;
 
         case 'user_status':
-          debugPrint('User status: $data');
+          final userId = data['user_id'] as String?;
+          if (userId != null && userId == _currentUserId) break;
+          isOtherUserOnline.value = data['is_online'] as bool? ?? false;
           break;
 
         default:

@@ -7,6 +7,7 @@ import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/core/routes/routes.dart';
+import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/services/custom_http.dart';
 import 'package:vibe_now/services/local_storage.dart';
 
@@ -388,6 +389,8 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     await LocalStorage.clear();
+    // Clear any cached profile data so it doesn't flash on next visit
+    Get.find<ProfileController>().clearProfile();
     // setupRouter(false);
     appRouter.goNamed(RouteNames.splashScreen);
   }
