@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 
 class MeetupSentDialog extends StatelessWidget {
   const MeetupSentDialog({super.key, required this.onWithDrawTap});
@@ -35,7 +36,7 @@ class MeetupSentDialog extends StatelessWidget {
               ),
             ),
             Text(
-              "You've joined the \nmeetup!",
+              AppLocalizations.of(context).translate('youJoinedTheMeetup'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 24.sp,
@@ -79,7 +80,7 @@ class WithdrawButton extends StatelessWidget {
             ),
           ),
           child: Text(
-            'Withdraw Request',
+            AppLocalizations.of(context).translate('withdrawRequest'),
             style: TextStyle(
               fontSize: 18.sp,
               color: Theme.of(context).colorScheme.onSurface,

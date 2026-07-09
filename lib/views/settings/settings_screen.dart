@@ -7,6 +7,7 @@ import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
@@ -38,13 +39,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: CustomAppBar(title: 'Settings', canBack: true),
+              child: CustomAppBar(title: loc.translate('settings'), canBack: true),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -59,7 +61,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                           profileController.account.value?.profile;
                       final fullName = userProfile?.fullName.isNotEmpty == true
                           ? utils.titleCase(userProfile!.fullName)
-                          : 'User';
+                          : loc.translate('defaultUserName');
                       final avatarUrl = userProfile?.primaryPhoto?.fullUrl;
                       final bio = userProfile?.bio ?? '';
 
@@ -129,7 +131,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildMenuItem(
                       icon: Assets.icons.userColor,
                       iconColor: Colors.purple,
-                      title: 'Account information',
+                      title: loc.translate('account'),
                       hasArrow: true,
                       isFullRounded: true,
                       onTap: () {
@@ -142,11 +144,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       },
                     ),
                     SizedBox(height: 12.h),
-                    // Profile Information
                     _buildMenuItem(
                       icon: Assets.icons.lock,
                       iconColor: Theme.of(context).colorScheme.onSurface,
-                      title: 'Subscriptions',
+                      title: loc.translate('subscription'),
                       hasArrow: true,
                       isFullRounded: true,
                       onTap: () {
@@ -159,7 +160,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: Text(
-                        'Privacy & safety',
+                        loc.translate('privacy'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
@@ -172,8 +173,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildSwitchItem(
                       icon: Assets.icons.locationColor,
                       iconColor: Colors.purple,
-                      title: 'Location Sharing',
-                      subtitle: 'Only active during vibes',
+                      title: loc.translate('locationSharing'),
+                      subtitle: loc.translate('locationSharingDesc'),
                       value: locationSharing,
                       isTopRound: true,
                       onChanged: (val) {
@@ -186,7 +187,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildMenuItem(
                       icon: Assets.icons.shieldColor,
                       iconColor: Colors.purple,
-                      title: 'Blocked',
+                      title: loc.translate('blocked'),
                       hasArrow: true,
                       isBottomRound: true,
                       onTap: () {
@@ -204,7 +205,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: Text(
-                        'Notification',
+                        loc.translate('notifications'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
@@ -217,7 +218,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildSwitchItem(
                       icon: Assets.icons.messageCircleColor,
                       iconColor: Colors.purple,
-                      title: 'Messages',
+                      title: loc.translate('messages'),
                       value: messages,
                       isTopRound: true,
                       onChanged: (val) {
@@ -230,7 +231,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildSwitchItem(
                       icon: Assets.icons.notificationColor,
                       iconColor: Colors.purple,
-                      title: 'Waves',
+                      title: loc.translate('waves'),
                       value: waves,
                       onChanged: (val) {
                         setState(() {
@@ -242,7 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildSwitchItem(
                       icon: Assets.icons.communityColor,
                       iconColor: Colors.purple,
-                      title: 'Community',
+                      title: loc.translate('community'),
                       value: communities,
                       onChanged: (val) {
                         setState(() {
@@ -254,7 +255,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildSwitchItem(
                       icon: Assets.icons.calendarColor,
                       iconColor: Colors.purple,
-                      title: 'Events',
+                      title: loc.translate('events'),
                       value: events,
                       isBottomRound: true,
                       onChanged: (val) {
@@ -269,7 +270,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: Text(
-                        'App setting',
+                        loc.translate('appSetting'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
@@ -282,7 +283,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildMenuItem(
                       icon: Assets.icons.basketballColor,
                       iconColor: Colors.purple,
-                      title: 'Language',
+                      title: loc.translate('language'),
                       isTopRound: true,
                       hasArrow: true,
                       onTap: () {
@@ -298,7 +299,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildMenuItem(
                       icon: Assets.icons.gridColor,
                       iconColor: Colors.purple,
-                      title: 'Theme',
+                      title: loc.translate('theme'),
                       isBottomRound: true,
                       hasArrow: true,
                       onTap: () {
@@ -316,7 +317,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       child: Text(
-                        'About',
+                        loc.translate('about'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,
@@ -329,7 +330,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildMenuItem(
                       icon: Assets.icons.shieldColor,
                       iconColor: Colors.purple,
-                      title: 'Terms & Privacy',
+                      title: loc.translate('termsAndPrivacy'),
                       isFullRounded: true,
                       hasArrow: true,
                       onTap: () {
@@ -347,7 +348,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     _buildMenuItem(
                       icon: Assets.icons.logoutColor,
                       iconColor: Colors.red,
-                      title: 'Log Out',
+                      title: loc.translate('logOut'),
                       isFullRounded: true,
                       hasArrow: true,
                       onTap: () {
@@ -384,7 +385,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  "Are you sure you want to log out?",
+                  AppLocalizations.of(context).translate('areYouSureLogOut'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -402,7 +403,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onTap: () {
                           Navigator.pop(context);
                         },
-                        buttonText: "Cancel",
+                        buttonText: AppLocalizations.of(context).translate('cancel'),
                         btnColor: Theme.of(context).colorScheme.surfaceVariant,
                         textColor: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -413,7 +414,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onTap: () {
                           authController.logout();
                         },
-                        buttonText: "Log Out",
+                        buttonText: AppLocalizations.of(context).translate('logOut'),
                       ),
                     ),
                   ],

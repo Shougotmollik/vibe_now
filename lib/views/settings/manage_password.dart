@@ -7,6 +7,7 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/views/auth/widgets/custom_text_form_field.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 
 class ManagePassword extends StatefulWidget {
@@ -63,12 +64,12 @@ class _ManagePasswordState extends State<ManagePassword> {
       // Check minimum length
       if (newPass.length < 6 || confirmPass.length < 6) {
         _isPasswordValid = false;
-        _passwordError = 'Password must be at least 6 characters';
+        _passwordError = AppLocalizations.of(context).translate('passwordMinLengthError');
       }
       // Check match
       else if (newPass != confirmPass) {
         _isPasswordValid = false;
-        _passwordError = 'Passwords do not match';
+        _passwordError = AppLocalizations.of(context).translate('passwordsDoNotMatchError');
       } else {
         _isPasswordValid = true;
         _passwordError = null;
@@ -119,20 +120,20 @@ class _ManagePasswordState extends State<ManagePassword> {
             child: Column(
               spacing: 18.h,
               children: [
-                CustomAppBar(title: "Manage Password"),
+                CustomAppBar(title: AppLocalizations.of(context).translate('managePassword')),
                 SizedBox(height: 24.h),
                 CustomTextFormField(
-                  hintText: 'Current Password',
+                  hintText: AppLocalizations.of(context).translate('currentPassword'),
                   controller: _currentPasswordController,
                   isPassword: true,
                 ),
                 CustomTextFormField(
-                  hintText: 'New Password',
+                  hintText: AppLocalizations.of(context).translate('newPassword'),
                   controller: _newPasswordController,
                   isPassword: true,
                 ),
                 CustomTextFormField(
-                  hintText: 'Confirm Password',
+                  hintText: AppLocalizations.of(context).translate('confirmPassword'),
                   controller: _confirmPasswordController,
                   isPassword: true,
                 ),
@@ -152,7 +153,7 @@ class _ManagePasswordState extends State<ManagePassword> {
 
                 PrimaryButton.text(
                   onPressed: canSubmit ? _onUpdatePassword : () {},
-                  text: _isSubmitting ? 'Updating...' : 'Update Password',
+                  text: _isSubmitting ? AppLocalizations.of(context).translate('uploading') : AppLocalizations.of(context).translate('updatePassword'),
                   isEnabled: canSubmit,
                 ),
               ],

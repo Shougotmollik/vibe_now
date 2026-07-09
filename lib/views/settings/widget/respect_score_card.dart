@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 
 class TrustScoreCard extends StatelessWidget {
   const TrustScoreCard({
@@ -52,7 +53,7 @@ class TrustScoreCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Respect Score',
+                      AppLocalizations.of(context).translate('respectScore'),
                       style: TextStyle(
                         fontSize: 14.sp,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -73,8 +74,8 @@ class TrustScoreCard extends StatelessWidget {
                     children: [
                       Icon(Icons.star, color: Colors.amber, size: 20.sp),
                       const SizedBox(width: 6),
-                      const Text(
-                        'Trusted',
+                      Text(
+                        AppLocalizations.of(context).translate('trusted'),
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
@@ -89,8 +90,8 @@ class TrustScoreCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               meetsCount == 0
-                  ? 'No real-life meets yet'
-                  : 'Based on $meetsCount real-life ${meetsCount == 1 ? 'meet' : 'meets'}',
+                  ? AppLocalizations.of(context).translate('noRealLifeMeets')
+                  : '${AppLocalizations.of(context).translate('basedOnMeets')} $meetsCount ${AppLocalizations.of(context).translate('realLifeMeets')}',
               style: TextStyle(
                 fontSize: 14.sp,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,

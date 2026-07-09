@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 
 class IntroTileModel {
   final String title;
@@ -165,6 +166,7 @@ class _IntroScreenState extends State<IntroScreen>
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
@@ -181,7 +183,7 @@ class _IntroScreenState extends State<IntroScreen>
                 child: FadeTransition(
                   opacity: _titleFadeAnimation,
                   child: Text(
-                    "Let’s vibe together",
+                    "Let\u2019s vibe together",
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -221,7 +223,7 @@ class _IntroScreenState extends State<IntroScreen>
                     onPressed: () {
                       context.pushNamed(RouteNames.signInScreen);
                     },
-                    text: 'Get Started',
+                    text: loc.translate('getStarted'),
                   ),
                 ),
               ),

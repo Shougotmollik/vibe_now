@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/controller/vibe_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/vibe_model.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/home/widgets/wave_animated_dialog.dart';
@@ -42,6 +43,7 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: RefreshIndicator(
@@ -53,7 +55,7 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomAppBar(title: "All Vibes"),
+                CustomAppBar(title: loc.translate('allVibes')),
                 SizedBox(height: 20.h),
                 Obx(() {
                   if (_vibeController.isVibesLoading.value) {
@@ -75,7 +77,7 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
                 }),
                 SizedBox(height: 12.h),
                 Text(
-                  "Other Vibes",
+                  loc.translate('otherVibes'),
                   style:
                       TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
                 ),
@@ -89,7 +91,7 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
                     );
                   }
                   if (_vibeController.othersVibe.isEmpty) {
-                    return const Center(child: Text("No other vibes found."));
+                    return Center(child: Text(loc.translate('noOtherVibes')));
                   }
                   return Column(
                     children: [
@@ -173,7 +175,7 @@ class _UserVibeCardState extends State<UserVibeCard> {
               backgroundColor: Colors.transparent,
               child: WaveAnimatedDialog(
                 content:
-                    "You waved to ${widget.vibe.createdBy?.fullName ?? "User"}",
+                    "${AppLocalizations.of(context).translate('waveSent')} ${widget.vibe.createdBy?.fullName ?? "User"}",
               ),
             ),
           );
@@ -185,9 +187,10 @@ class _UserVibeCardState extends State<UserVibeCard> {
   }
 
   String _formatRemainingTime(DateTime? endsAt) {
+    final loc = AppLocalizations.of(context);
     if (endsAt == null) return '';
     final remaining = endsAt.difference(DateTime.now());
-    if (remaining.isNegative) return 'Expired';
+    if (remaining.isNegative) return loc.translate('expired');
 
     final hours = remaining.inHours;
     final minutes = remaining.inMinutes.remainder(60);
@@ -195,11 +198,12 @@ class _UserVibeCardState extends State<UserVibeCard> {
     if (hours > 0 && minutes > 0) return '${hours}h ${minutes}m';
     if (hours > 0) return '${hours}h';
     if (minutes > 0) return '${minutes}m';
-    return 'Expiring soon';
+    return loc.translate('lessThan1m');
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -261,7 +265,7 @@ class _UserVibeCardState extends State<UserVibeCard> {
                   ),
                 ),
                 Text(
-                  "Expires in ${_formatRemainingTime(widget.vibe.endsAt)}",
+                  "${loc.translate('expiresIn')} ${_formatRemainingTime(widget.vibe.endsAt)}",
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
@@ -297,7 +301,7 @@ class _UserVibeCardState extends State<UserVibeCard> {
                         ),
                       )
                     : Text(
-                        _hasWaved ? "Waved" : "Wave",
+                        _hasWaved ? loc.translate('waved') : loc.translate('wave'),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w600,

@@ -8,6 +8,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/core/routes/routes.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/auth/widgets/custom_text_form_field.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 
@@ -26,8 +27,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   late Map<String, String> data;
   String secretKey = "";
   String userId = "";
-
-  // bool _isFieldsFilled = true;
   bool _isPasswordValid = false;
 
   @override
@@ -48,7 +47,6 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
   void _onPasswordChanged() {
     final newPassword = _newPasswordController.text.trim();
     final confirmPassword = _confirmPasswordController.text.trim();
-
     setState(() {
       _isPasswordValid =
           newPassword.isNotEmpty &&
@@ -66,6 +64,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -78,7 +77,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
             children: [
               SizedBox(height: 24.h),
               Text(
-                "Set New Password",
+                loc.translate('resetPassword'),
                 style: TextStyle(
                   fontSize: 24.sp,
                   fontWeight: FontWeight.w500,
@@ -89,20 +88,20 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
 
               CustomTextFormField(
                 controller: _newPasswordController,
-                hintText: 'Enter New Password',
+                hintText: loc.translate('enterNewPassword'),
               ),
               CustomTextFormField(
                 controller: _confirmPasswordController,
-                hintText: 'Enter Confirm Password',
+                hintText: loc.translate('confirmPassword'),
                 validator: (value) {
                   if (value != _newPasswordController.text) {
-                    return 'Passwords do not match';
+                    return loc.translate('confirmPassword');
                   }
                   return null;
                 },
               ),
 
-              Spacer(),
+              const Spacer(),
               Obx(
                 () => PrimaryButton.text(
                   onPressed: !_isPasswordValid
@@ -119,7 +118,7 @@ class _NewPasswordScreenState extends State<NewPasswordScreen> {
                             appRouter.goNamed(RouteNames.signInScreen);
                           }
                         },
-                  text: 'Set Password',
+                  text: loc.translate('setPassword'),
                   isEnabled: _isPasswordValid,
                   isLoading: controller.isLoading.value,
                 ),

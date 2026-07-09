@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
@@ -14,6 +15,7 @@ class VibeConnectScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
@@ -47,7 +49,7 @@ class VibeConnectScreen extends StatelessWidget {
                 const Spacer(flex: 3),
 
                 Text(
-                  "It's a Vibe",
+                  loc.translate('itsAVibe'),
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -56,7 +58,7 @@ class VibeConnectScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  "You both want to connect!",
+                  loc.translate('youBothWantToConnect'),
                   style: TextStyle(
                     fontSize: 16,
                     color: Theme.of(
@@ -114,28 +116,10 @@ class VibeConnectScreen extends StatelessWidget {
                       ),
                     );
                   },
-                  text: "Suggest meeting spot",
+                  text: loc.translate('suggestMeetingSpot'),
                 ),
                 const SizedBox(height: 12),
 
-                // CancelButton(
-                //   onTap: () {
-                //     context.pushNamed(
-                //       RouteNames.chatInboxScreen,
-                //       extra: Chat(
-                //         avatars: [
-                //           'https://randomuser.me/api/portraits/women/12.jpg',
-                //         ],
-                //         name: 'Jhon Gomes',
-                //         message: 'Sent you a wave!',
-                //         time: '10:30 AM',
-                //         type: ChatType.wave,
-                //       ),
-                //     );
-                //   },
-                //   btnText: "Chat with Jhon Gomes",
-                // ),
-                // const Spacer(flex: 3),
                 CustomElevatedButton(
                   btnColor: Theme.of(context).colorScheme.surfaceVariant,
                   textColor: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -143,7 +127,7 @@ class VibeConnectScreen extends StatelessWidget {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
-                  buttonText: "Cancel",
+                  buttonText: loc.translate('cancel'),
                 ),
 
                 SizedBox(height: 48.h),

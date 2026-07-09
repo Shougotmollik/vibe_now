@@ -20,6 +20,7 @@ import 'package:vibe_now/views/common/custom_date_picker.dart';
 import 'package:vibe_now/views/common/location_selection_screen.dart';
 import 'package:vibe_now/views/event/widgets/event_animated_dialog.dart';
 import 'package:vibe_now/views/home/widgets/google_map.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 
 enum EventAccessType { public, private }
 
@@ -90,7 +91,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const CustomAppBar(title: 'Create Event'),
+                CustomAppBar(title: AppLocalizations.of(context).translate('createEvent')),
                 const SizedBox(height: 24),
                 _buildHeaderCard(),
                 const SizedBox(height: 24),
@@ -123,7 +124,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Access Level',
+          AppLocalizations.of(context).translate('accessLevel'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -141,7 +142,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           child: Row(
             children: [
               _accessToggleItem(
-                label: 'Public',
+                label: AppLocalizations.of(context).translate('public'),
                 icon: Icons.people_alt_outlined,
                 isSelected: _accessType == EventAccessType.public,
                 onTap: () {
@@ -152,7 +153,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 },
               ),
               _accessToggleItem(
-                label: 'Private',
+                label: AppLocalizations.of(context).translate('private'),
                 icon: Icons.lock_person_outlined,
                 isSelected: _accessType == EventAccessType.private,
                 onTap: () {
@@ -393,7 +394,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Event Title',
+          AppLocalizations.of(context).translate('eventTitle'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -430,7 +431,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Select Location',
+          AppLocalizations.of(context).translate('selectLocation'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -502,7 +503,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Event Date & Time',
+          AppLocalizations.of(context).translate('eventDateTime'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -514,7 +515,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           children: [
             Expanded(
               child: _buildDateField(
-                label: 'Starting Date',
+                label: AppLocalizations.of(context).translate('startingDate'),
                 date: _startingDate,
                 onTap: () => _selectDate(
                   context: context,
@@ -525,7 +526,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: _buildTimeField(
-                label: 'Starting Time',
+                label: AppLocalizations.of(context).translate('startingTime'),
                 time: _startingTime,
                 onTap: () => _showTimePicker(context, (time) => _startingTime = time),
               ),
@@ -537,7 +538,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           children: [
             Expanded(
               child: _buildDateField(
-                label: 'Ending Date',
+                label: AppLocalizations.of(context).translate('endingDate'),
                 date: _endingDate,
                 onTap: () => _selectDate(
                   context: context,
@@ -548,7 +549,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: _buildTimeField(
-                label: 'Ending Time',
+                label: AppLocalizations.of(context).translate('endingTime'),
                 time: _endingTime,
                 onTap: () => _showTimePicker(context, (time) => _endingTime = time),
               ),
@@ -666,7 +667,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Max Attendees',
+          AppLocalizations.of(context).translate('maxAttendees'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -796,7 +797,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Event Category',
+          AppLocalizations.of(context).translate('eventCategoryLabel'),
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
@@ -954,7 +955,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            'Add New Category',
+            AppLocalizations.of(context).translate('addNewCategory'),
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           content: TextField(
@@ -1066,7 +1067,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            'Add Sub Category',
+            AppLocalizations.of(context).translate('addSubCategory'),
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           content: TextField(
@@ -1144,12 +1145,12 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   void onCreate() async {
     if (_selectedImage == null) {
-      AppSnackbar.show(message: 'Please select cover image');
+      AppSnackbar.show(message: AppLocalizations.of(context).translate('uploadCoverImage'));
       return;
     }
 
     if (_titleController.text.trim().isEmpty) {
-      AppSnackbar.show(message: 'Please enter event title');
+      AppSnackbar.show(message: AppLocalizations.of(context).translate('eventTitle'));
       return;
     }
 
@@ -1233,7 +1234,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
         },
       );
     } else {
-      AppSnackbar.show(message: 'Failed to create event');
+      AppSnackbar.show(message: AppLocalizations.of(context).translate('failed'));
     }
   }
 }

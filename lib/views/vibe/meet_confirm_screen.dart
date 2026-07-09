@@ -4,10 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
-// Assuming your design system imports
-// import 'package:vibe_now/design_system/design_system.dart';
 
 class MeetupConfirmationScreen extends StatefulWidget {
   const MeetupConfirmationScreen({super.key});
@@ -18,7 +17,6 @@ class MeetupConfirmationScreen extends StatefulWidget {
 }
 
 class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
-  // Mock positions for the two users
   static const LatLng _posA = LatLng(50.937, 6.953);
   static const LatLng _posB = LatLng(50.938, 6.958);
   String? _darkMapStyle;
@@ -37,8 +35,8 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
-      // backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
@@ -50,7 +48,7 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Define Meetup",
+          loc.translate('confirmMeetup'),
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontSize: 20.sp,
@@ -76,7 +74,7 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
                   SizedBox(height: 16.h),
 
                   Text(
-                    "Meetup Confirmed!",
+                    loc.translate('confirmMeetup'),
                     style: TextStyle(
                       fontSize: 26.sp,
                       fontWeight: FontWeight.bold,
@@ -171,13 +169,13 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
                     Navigator.pop(context);
                     Navigator.pop(context);
                   },
-                  buttonText: "Cancel Meetup",
+                  buttonText: loc.translate('cancelMeetup'),
                   btnColor: Theme.of(context).colorScheme.surfaceVariant,
                   textColor: Theme.of(context).colorScheme.onSurface,
                 ),
                 SizedBox(height: 14.h),
                 Text(
-                  "Great, see you soon!",
+                  loc.translate('greatSeeYouSoon'),
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: Theme.of(context).colorScheme.onSurfaceVariant,

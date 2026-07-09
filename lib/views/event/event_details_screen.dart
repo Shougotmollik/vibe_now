@@ -9,6 +9,7 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/services/local_storage.dart';
@@ -56,7 +57,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
 
       final event = _eventController.eventDetails.value;
       if (event == null) {
-        return Scaffold(body: Center(child: Text('Event not found')));
+        return Scaffold(body: Center(child: Text(AppLocalizations.of(context).translate('eventNotFound'))));
       }
 
       return Scaffold(
@@ -193,7 +194,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                       Row(
                         children: [
                           Text(
-                            "${event.interestedCount} Interested • ${event.joinedCount} Going",
+                            '${event.interestedCount} ${AppLocalizations.of(context).translate("interested")} • ${event.joinedCount} ${AppLocalizations.of(context).translate("going")}',
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Theme.of(
@@ -210,7 +211,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                           Assets.icons.community.svg(width: 16.w, height: 16.h),
                           SizedBox(width: 4.w),
                           Text(
-                            '${event.joinedCount}/${event.maxAttendees} attending',
+                            '${event.joinedCount}/${event.maxAttendees} ${AppLocalizations.of(context).translate("attending")}',
                             style: TextStyle(
                               fontSize: 12.sp,
                               color: Theme.of(
@@ -249,7 +250,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                 ),
                               );
                             },
-                            child: Text("View all"),
+                            child: Text(AppLocalizations.of(context).translate('viewAll')),
                           ),
                         ],
                       ),
@@ -348,7 +349,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                   if (success) {
                                     Navigator.of(context).pop();
                                     AppSnackbar.show(
-                                      message: "You Leave from ${event.title}",
+                                      message: '${AppLocalizations.of(context).translate("youLeft")} ${event.title}',
                                       type: SnackType.info,
                                     );
                                   }
@@ -366,7 +367,7 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
                                       ),
                                       SizedBox(width: 10.w),
                                       Text(
-                                        'Leave Event',
+                                        AppLocalizations.of(context).translate('leaveEvent'),
                                         style: TextStyle(
                                           color: AppColors.primary,
                                           fontSize: 14.sp,
@@ -399,20 +400,21 @@ class _EventDetailsScreenState extends State<EventDetailsScreen> {
       try {
         final parts = dateStr.split('-');
         if (parts.length != 3) return dateStr;
+        final loc = AppLocalizations.of(context);
         final months = [
           '',
-          'Jan',
-          'Feb',
-          'Mar',
-          'Apr',
-          'May',
-          'Jun',
-          'Jul',
-          'Aug',
-          'Sep',
-          'Oct',
-          'Nov',
-          'Dec',
+          loc.translate('jan'),
+          loc.translate('feb'),
+          loc.translate('mar'),
+          loc.translate('apr'),
+          loc.translate('may'),
+          loc.translate('jun'),
+          loc.translate('jul'),
+          loc.translate('aug'),
+          loc.translate('sep'),
+          loc.translate('oct'),
+          loc.translate('nov'),
+          loc.translate('dec'),
         ];
         final month = int.tryParse(parts[1]) ?? 0;
         return '${int.parse(parts[2])} ${month > 0 && month <= 12 ? months[month] : parts[1]} ${parts[0]}';

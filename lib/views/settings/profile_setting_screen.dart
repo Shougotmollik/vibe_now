@@ -11,6 +11,7 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/gen/assets.gen.dart' as svgs;
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
@@ -31,10 +32,10 @@ class ProfileSettingScreen extends StatefulWidget {
 class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
   final TextEditingController _passwordTEController = TextEditingController();
   final ProfileController profileController = Get.find<ProfileController>();
-  // File? _selectedImage;
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -43,10 +44,8 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
-                CustomAppBar(title: 'Account Information'),
+                CustomAppBar(title: loc.translate('accountInformation')),
                 SizedBox(height: 16.h),
-                // Profile Section
                 Obx(() {
                   final account = profileController.account.value;
                   final userProfile = account?.profile;
@@ -103,18 +102,10 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                   );
                 }),
                 SizedBox(height: 18.h),
-                // Text(
-                //   'Account Information',
-                //   style: TextStyle(
-                //     fontSize: 14.sp,
-                //     fontWeight: FontWeight.w400,
-                //     color: Color(0XFF555555),
-                //   ),
-                // ),
                 SizedBox(height: 12.h),
                 _buildOption(
                   context,
-                  title: 'Change Your Password',
+                  title: loc.translate('changeYourPassword'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -126,7 +117,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
 
                 _buildOption(
                   context,
-                  title: 'Pause Your Account',
+                  title: loc.translate('pauseYourAccount'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -140,7 +131,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                 SizedBox(height: 12.h),
                 _buildOption(
                   context,
-                  title: 'Delete Your Account',
+                  title: loc.translate('deleteYourAccount'),
                   onTap: () {
                     context.pushNamed(RouteNames.reasonScreen);
                   },
@@ -154,6 +145,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
   }
 
   Widget _buildDeleteDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return AlertDialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
@@ -179,7 +171,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
           SizedBox(height: 16.h),
 
           Text(
-            "Delete Confirmation",
+            loc.translate('deleteConfirmation'),
             style: TextStyle(
               fontSize: 18.sp,
               fontWeight: FontWeight.w600,
@@ -192,7 +184,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             child: Text(
-              "You can delete your account, but please note the process may take some time to complete. Once deleted, it cannot be undone later.",
+              loc.translate('deleteAccountDesc'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -203,7 +195,6 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
 
           SizedBox(height: 24.h),
 
-          // Buttons
           SizedBox(
             height: 28.h,
             child: Row(
@@ -214,7 +205,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                     btnColor: Theme.of(context).colorScheme.surfaceVariant,
                     textColor: Theme.of(context).colorScheme.onSurface,
                     onTap: () => Navigator.pop(context),
-                    buttonText: 'Cancel',
+                    buttonText: loc.translate('cancel'),
                   ),
                 ),
 
@@ -224,7 +215,7 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                       context.pushNamed(RouteNames.reasonScreen);
                       Navigator.pop(context);
                     },
-                    text: 'Delete',
+                    text: loc.translate('delete'),
                   ),
                 ),
               ],
@@ -272,96 +263,4 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
       ),
     );
   }
-
-  // Widget _buildPauseAccountSection(BuildContext context) {
-  //   return GestureDetector(
-  //     onTap: () {
-  //       Navigator.push(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => ManagePassword()),
-  //       );
-  //     },
-  //     child: Container(
-  //       width: double.infinity,
-  //       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-  //       decoration: BoxDecoration(
-  //         border: Border.all(color: Color(0xffE0E0E0)),
-  //         borderRadius: BorderRadius.circular(40.r),
-  //       ),
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text(
-  //             "Pause Your Account",
-  //             style: TextStyle(
-  //               fontSize: 16.sp,
-  //               color: Color(0xFF202020),
-  //               fontWeight: FontWeight.w400,
-  //             ),
-  //           ),
-  //           Icon(Icons.arrow_forward_ios, size: 16.h, color: Color(0xFFCFCFCF)),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Widget _buildProfileInfo({required String label, required String value}) {
-  //   return Container(
-  //     width: double.infinity,
-  //     // height: 70.h,
-  //     padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-
-  //     decoration: BoxDecoration(
-  //       border: Border.all(color: Color(0xffE0E0E0)),
-  //       borderRadius: BorderRadius.circular(40.r),
-  //     ),
-  //     child: Column(
-  //       mainAxisSize: MainAxisSize.min,
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Text(
-  //           label,
-  //           style: TextStyle(
-  //             fontSize: 16.sp,
-  //             color: Color(0xff202020),
-  //             fontWeight: FontWeight.w400,
-  //           ),
-  //         ),
-  //         Text(
-  //           value,
-  //           style: TextStyle(
-  //             fontSize: 14.sp,
-  //             color: Color(0xff908F90),
-  //             fontWeight: FontWeight.w400,
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-  // Widget _buildOptionTile({required String title, VoidCallback? onTap}) {
-  //   return Padding(
-  //     padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 20.h),
-  //     child: GestureDetector(
-  //       onTap: onTap,
-  //       behavior: HitTestBehavior.translucent,
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //         children: [
-  //           Text(
-  //             title,
-  //             style: TextStyle(
-  //               fontSize: 16.sp,
-  //               color: Color(0xff2A2A2A),
-  //               fontWeight: FontWeight.w400,
-  //             ),
-  //           ),
-
-  //           Icon(Icons.arrow_forward_ios, size: 20.h, color: Color(0xFFCFCFCF)),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
 }

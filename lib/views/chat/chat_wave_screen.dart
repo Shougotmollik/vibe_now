@@ -6,6 +6,7 @@ import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/model/chat.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 import 'package:vibe_now/views/vibe/vibe_connect_screen.dart';
@@ -135,7 +136,7 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                                 ),
                               );
                             },
-                            text: 'Accept',
+                            text: AppLocalizations.of(context).translate('accept'),
                           ),
                           Container(
                             decoration: BoxDecoration(
@@ -173,7 +174,7 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                                   },
                                 );
                               },
-                              buttonText: 'Reject',
+                              buttonText: AppLocalizations.of(context).translate('rejectWave'),
                               btnColor: Theme.of(context).colorScheme.surface,
                               textColor: Theme.of(
                                 context,

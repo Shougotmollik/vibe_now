@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/auth/steps/step_gender_screen.dart';
 import 'package:vibe_now/views/auth/widgets/custom_text_form_field.dart';
 import 'package:vibe_now/views/auth/widgets/step_page.dart';
@@ -57,6 +58,7 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return StepPage(
       currentStep: widget.step,
       footer: PrimaryButton.text(
@@ -75,13 +77,12 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
                   ),
                 );
               },
-        text: 'Continue',
+        text: loc.translate('continueText'),
         isEnabled: !_isbirthdayEmpty,
       ),
       isSkippable: true,
       onSkip: () {
         controller.dob = "";
-        print("----------birth ${controller.dob}");
         Navigator.push(
           context,
           PageRouteBuilder(
@@ -96,9 +97,8 @@ class _StepBirthdayScreenState extends State<StepBirthdayScreen> {
         children: [
           SizedBox(height: 32.h),
           StepTitle(
-            title: 'What\'s your birthday?',
-            subtitle:
-                'Your profile will only show your age, never your full birth date.',
+            title: loc.translate('stepBirthday'),
+            subtitle: loc.translate('stepBirthdaySubtitle'),
           ),
           SizedBox(height: 16.h),
           GestureDetector(

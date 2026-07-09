@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 
 class TermsAndPrivacy extends StatelessWidget {
@@ -15,7 +16,7 @@ class TermsAndPrivacy extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomAppBar(title: "Terms and Privacy"),
+                CustomAppBar(title: AppLocalizations.of(context).translate('termsAndPrivacy')),
                 SizedBox(height: 20.h),
                 _buildHeadingText(
                   context,

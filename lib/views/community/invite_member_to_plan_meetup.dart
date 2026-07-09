@@ -5,6 +5,7 @@ import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/controller/meetup_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/design_system.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/community_member.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/community/widgets/invitation_success_dialog.dart';
@@ -93,7 +94,7 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
           child: PrimaryButton.text(
             onPressed: _sendInvitation,
             isEnabled: _selectedIds.isNotEmpty,
-            text: "Send Invitation",
+            text: AppLocalizations.of(context).translate('sendInvitation'),
           ),
         ),
       ),
@@ -103,7 +104,7 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: CustomAppBar(
-                title: "Invite members to meetup plan",
+                title: AppLocalizations.of(context).translate('inviteMembersToMeetup'),
                 canBack: true,
               ),
             ),
@@ -133,7 +134,7 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
                           color: Theme.of(context).colorScheme.surfaceVariant,
                         ),
                         child: Text(
-                          "Selected members will receive an invitation to join for the event",
+                          AppLocalizations.of(context).translate('selectedMembersWillReceive'),
                           style: TextStyle(
                             fontWeight: FontWeight.w400,
                             fontSize: 14.sp,
@@ -150,7 +151,7 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
                             _buildCheckbox(isAllSelected),
                             SizedBox(width: 12.w),
                             Text(
-                              "Invited All",
+                              AppLocalizations.of(context).translate('invitedAll'),
                               style: TextStyle(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
@@ -198,7 +199,7 @@ class _InviteMemberToPlanMeetupState extends State<InviteMemberToPlanMeetup> {
                               ),
                             ),
                             subtitle: Text(
-                              "Member",
+                              AppLocalizations.of(context).translate('member'),
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 color: Theme.of(context)

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 
 class LikeListScreen extends StatelessWidget {
@@ -7,13 +8,14 @@ class LikeListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: CustomAppBar(title: 'Likes', canBack: true),
+              child: CustomAppBar(title: loc.translate('likedProfiles'), canBack: true),
             ),
             Expanded(
               child: ListView.builder(
@@ -30,7 +32,7 @@ class LikeListScreen extends StatelessWidget {
                         ),
                         children: [
                           TextSpan(
-                            text: 'liked your status',
+                            text: loc.translate('likedProfiles'),
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,

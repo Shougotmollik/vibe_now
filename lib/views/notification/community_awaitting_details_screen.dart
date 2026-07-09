@@ -8,6 +8,7 @@ import 'package:vibe_now/controller/notification_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/community_member.dart';
 
 class CommunityAwaitingDetailsScreen extends StatefulWidget {
@@ -99,7 +100,7 @@ class _CommunityAwaitingDetailsScreenState
                   borderRadius: BorderRadius.circular(24.r),
                 ),
                 child: Text(
-                  'Retry',
+                  AppLocalizations.of(context).translate('retry'),
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.w600,
@@ -166,7 +167,7 @@ class _CommunityAwaitingDetailsScreenState
           ),
           SizedBox(width: 12.w),
           Text(
-            'Awaiting',
+            AppLocalizations.of(context).translate('awaiting'),
             style: TextStyle(
               fontSize: 22.sp,
               fontWeight: FontWeight.w600,
@@ -314,7 +315,7 @@ class _CommunityAwaitingDetailsScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Community',
+                    AppLocalizations.of(context).translate('community'),
                     style: TextStyle(
                       fontSize: 13.sp,
                       color: theme.colorScheme.onSurfaceVariant,
@@ -384,7 +385,7 @@ class _CommunityAwaitingDetailsScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Scheduled Meetup',
+                    AppLocalizations.of(context).translate('scheduledMeetup'),
                     style: TextStyle(
                       fontSize: 13.sp,
                       color: theme.colorScheme.onSurfaceVariant,
@@ -438,7 +439,7 @@ class _CommunityAwaitingDetailsScreenState
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Requested',
+                    AppLocalizations.of(context).translate('requested'),
                     style: TextStyle(
                       fontSize: 13.sp,
                       color: theme.colorScheme.onSurfaceVariant,
@@ -508,7 +509,7 @@ class _CommunityAwaitingDetailsScreenState
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Location',
+                          AppLocalizations.of(context).translate('location'),
                           style: TextStyle(
                             fontSize: 13.sp,
                             color: theme.colorScheme.onSurfaceVariant,
@@ -585,7 +586,7 @@ class _CommunityAwaitingDetailsScreenState
                       ),
                       SizedBox(height: 8.h),
                       Text(
-                        'Location not available',
+                        AppLocalizations.of(context).translate('locationNotAvailable'),
                         style: TextStyle(
                           color: theme.colorScheme.onSurfaceVariant,
                           fontSize: 13.sp,

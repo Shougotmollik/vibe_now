@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/controller/meetup_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/meetup.dart';
 import 'package:vibe_now/utils.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
@@ -20,9 +21,9 @@ class MeetupMemberScreen extends StatefulWidget {
 class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
   final MeetupController _controller = Get.find<MeetupController>();
 
-  final List<_TabConfig> _tabs = const [
-    _TabConfig(label: 'Participants', apiTab: 'joined'),
-    _TabConfig(label: 'Invited', apiTab: 'invited'),
+  final List<_TabConfig> _tabs = [
+    _TabConfig(labelKey: 'participantsTab', apiTab: 'joined'),
+    _TabConfig(labelKey: 'invitedTab', apiTab: 'invited'),
   ];
 
   String _selectedTab = 'joined';
@@ -38,18 +39,20 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
   }
 
   String get _emptyMessage {
+    final loc = AppLocalizations.of(context);
     switch (_selectedTab) {
       case 'joined':
-        return 'No participants yet';
+        return loc.translate('noParticipantsYet');
       case 'invited':
-        return 'No invited members yet';
+        return loc.translate('noInvitedMembers');
       default:
-        return 'No members found';
+        return loc.translate('noMembersFound');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -57,7 +60,7 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: CustomAppBar(title: "Meetup Members"),
+              child: CustomAppBar(title: loc.translate('meetupMembers')),
             ),
             const SizedBox(height: 16),
             SingleChildScrollView(
@@ -115,7 +118,7 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
                             : null,
                       ),
                       title: Text(
-                        member.fullName ?? 'Unknown',
+                        member.fullName ?? loc.translate('unknown'),
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           color: Theme.of(context).colorScheme.onSurface,
@@ -123,10 +126,10 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
                       ),
                       subtitle: Text(
                         _selectedTab == 'joined' && member.joinedAt != null
-                            ? 'Joined ${timeAgo(DateTime.parse(member.joinedAt!))}'
+                            ? '${loc.translate('joinedAgo')}${timeAgo(DateTime.parse(member.joinedAt!), context: context)}'
                             : _selectedTab == 'invited' &&
                                   member.joinedAt != null
-                            ? 'Invited ${timeAgo(DateTime.parse(member.joinedAt!))}'
+                            ? '${loc.translate('invitedAgo')}${timeAgo(DateTime.parse(member.joinedAt!), context: context)}'
                             : '',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -144,6 +147,7 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
   }
 
   Widget _buildTabTrigger(_TabConfig tab) {
+    final loc = AppLocalizations.of(context);
     bool isActive = _selectedTab == tab.apiTab;
     return GestureDetector(
       onTap: () {
@@ -163,7 +167,7 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
               : Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
         child: Text(
-          tab.label,
+          loc.translate(tab.labelKey),
           style: TextStyle(
             color: isActive
                 ? Colors.white
@@ -177,8 +181,8 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
 }
 
 class _TabConfig {
-  final String label;
+  final String labelKey;
   final String apiTab;
 
-  const _TabConfig({required this.label, required this.apiTab});
+  const _TabConfig({required this.labelKey, required this.apiTab});
 }

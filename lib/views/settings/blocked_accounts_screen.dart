@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 
@@ -14,7 +15,7 @@ class BlockedAccountsScreen extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(
             children: [
-              CustomAppBar(title: "Blocked Accounts"),
+              CustomAppBar(title: AppLocalizations.of(context).translate('blockedAccounts')),
               SizedBox(height: 20.h),
               Expanded(
                 child: ListView.builder(
@@ -105,7 +106,7 @@ class BlockedAccountsScreen extends StatelessWidget {
                                   onTap: () {
                                     Navigator.pop(context);
                                   },
-                                  buttonText: "Cancel",
+                                  buttonText: AppLocalizations.of(context).translate('cancel'),
                                   btnColor: Theme.of(context).colorScheme.surfaceVariant,
                                   textColor: Theme.of(context).colorScheme.onSurface,
                                 ),
@@ -116,7 +117,7 @@ class BlockedAccountsScreen extends StatelessWidget {
                                   onTap: () {
                                     Navigator.pop(context);
                                   },
-                                  buttonText: "Unblock",
+                                  buttonText: AppLocalizations.of(context).translate('unblock'),
                                 ),
                               ),
                             ],

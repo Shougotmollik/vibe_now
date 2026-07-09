@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe_now/controller/home_controller.dart';
 import 'package:vibe_now/controller/notification_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
@@ -464,7 +465,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     SizedBox(width: 12.w),
                     Text(
-                      'Search ...',
+                      AppLocalizations.of(context).translate('searchDot'),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 14.sp,
@@ -975,10 +976,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(24.r),
                   ),
-                  child: const Text(
-                    "sunday coffee vibes - who's in? 🌞",
+                  child: Text(
+                    AppLocalizations.of(context).translate('sundayCoffeeVibes'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 13, color: Colors.black),
+                    style: const TextStyle(fontSize: 13, color: Colors.black),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -1004,7 +1005,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      "• ${user.distanceKm} km away",
+                      "• ${user.distanceKm} ${AppLocalizations.of(context).translate('km')} ${AppLocalizations.of(context).translate('away')}",
                       style: TextStyle(
                         fontSize: 13,
                         color: Colors.grey.shade600,
@@ -1045,7 +1046,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             context: context,
                             barrierDismissible: true,
                             builder: (context) => WaveAnimatedDialog(
-                              content: 'You have wave to ${user.name}',
+                              content: '${AppLocalizations.of(context).translate('waveSent')} ${user.name}',
                             ),
                           );
                         },
@@ -1065,7 +1066,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               spacing: 4.w,
                               children: [
                                 Text(
-                                  user.isWaved == true ? 'Waved' : 'Wave',
+                                  user.isWaved == true
+                                      ? AppLocalizations.of(
+                                          context,
+                                        ).translate('waved')
+                                      : AppLocalizations.of(
+                                          context,
+                                        ).translate('wave'),
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
@@ -1106,7 +1113,8 @@ class _HomeScreenState extends State<HomeScreen> {
       final now = DateTime.now().toUtc();
       final diff = end.difference(now);
 
-      if (diff.isNegative) return 'Expired';
+      if (diff.isNegative)
+        return AppLocalizations.of(context).translate('expired');
 
       final hours = diff.inHours;
       final minutes = diff.inMinutes.remainder(60);
@@ -1118,7 +1126,7 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (minutes > 0) {
         return '${minutes}m';
       } else {
-        return 'Less than 1m';
+        return AppLocalizations.of(context).translate('lessThan1m');
       }
     } catch (e) {
       return '';
@@ -1220,7 +1228,7 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Assets.icons.creationStar.svg(width: 18.w, height: 18.h),
               Text(
-                "All Vibes",
+                AppLocalizations.of(context).translate('allVibes'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 14.sp,

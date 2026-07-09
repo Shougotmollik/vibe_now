@@ -5,6 +5,7 @@ import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/auth/steps/step_upload_image_screen.dart';
 import 'package:vibe_now/views/auth/widgets/option_card.dart';
 import 'package:vibe_now/views/auth/widgets/step_page.dart';
@@ -21,7 +22,6 @@ class StepInterestSelectionScreen extends StatefulWidget {
 
 class _StepInterestSelectionScreenState
     extends State<StepInterestSelectionScreen> {
-  // For multiple selection
   final Set<int> selectedIndexes = {};
   final OnBoardingController controller = Get.find<OnBoardingController>();
 
@@ -42,6 +42,7 @@ class _StepInterestSelectionScreenState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: StepPage(
         currentStep: widget.step,
@@ -54,8 +55,6 @@ class _StepInterestSelectionScreenState
               controller.interests = selectedOptions
                   .map((e) => e.title)
                   .toList();
-              print("----------interests ${controller.interests}");
-
               final success = await controller.onboardingDataSubmit();
               if (success) {
                 Navigator.push(
@@ -69,22 +68,12 @@ class _StepInterestSelectionScreenState
                 );
               } else {
                 AppSnackbar.show(
-                  message: "Something went wrong, Please try again",
+                  message: loc.translate('somethingWentWrong'),
                   type: SnackType.info,
                 );
               }
-
-              // Navigate to the next screen
-
-              // if (selectedOptions.isNotEmpty) {
-              // } else {
-              //   AppSnackbar.show(
-              //     message: 'Please select at least one option to continue',
-              //     type: SnackType.info,
-              //   );
-              // }
             },
-            text: 'Continue',
+            text: loc.translate('continueText'),
             isEnabled: selectedIndexes.isNotEmpty,
             isLoading: controller.isLoading.value,
           ),
@@ -92,7 +81,6 @@ class _StepInterestSelectionScreenState
         isSkippable: true,
         onSkip: () async {
           controller.interests = [];
-          print("----------interests ${controller.interests}");
           final success = await controller.onboardingDataSubmit();
           if (success) {
             Navigator.push(
@@ -106,7 +94,7 @@ class _StepInterestSelectionScreenState
             );
           } else {
             AppSnackbar.show(
-              message: "Something went wrong, Please try again",
+              message: loc.translate('somethingWentWrong'),
               type: SnackType.info,
             );
           }
@@ -115,14 +103,11 @@ class _StepInterestSelectionScreenState
           child: Column(
             children: [
               SizedBox(height: 32.h),
-
-              const StepTitle(
-                title: 'What are you into?',
-                subtitle: 'You can update your interests anytime.',
+              StepTitle(
+                title: loc.translate('stepInterests'),
+                subtitle: loc.translate('selectInterests'),
               ),
-
               SizedBox(height: 16.h),
-
               GridView.builder(
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
@@ -149,7 +134,6 @@ class _StepInterestSelectionScreenState
                   );
                 },
               ),
-
               SizedBox(height: 32.h),
             ],
           ),

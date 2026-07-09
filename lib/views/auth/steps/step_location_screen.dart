@@ -11,6 +11,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/auth/widgets/step_page.dart';
 import 'package:vibe_now/views/auth/widgets/step_title.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
@@ -29,6 +30,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
   final OnBoardingController controller = Get.find<OnBoardingController>();
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return StepPage(
       currentStep: widget.step,
       footer: Row(
@@ -48,7 +50,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
                 onTap: () {
                   context.pushNamed(RouteNames.mainNavBar);
                 },
-                buttonText: 'Not Now',
+                buttonText: loc.translate('notNow'),
               ),
             ),
           ),
@@ -59,7 +61,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
                 onPressed: _isLoading.value
                     ? () {}
                     : () => _getCurrentLocation(),
-                text: 'Allow',
+                text: loc.translate('allow'),
                 isLoading: _isLoading.value,
               ),
             ),
@@ -71,7 +73,17 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
           children: [
             SizedBox(height: 32.h),
 
-            const StepTitle(title: 'Location access', subtitle: ""),
+            const StepTitle(title: "", subtitle: ""),
+            SizedBox(height: 8.h),
+            Text(
+              loc.translate('locationAccess'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.w700,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
 
             SizedBox(height: 68.h),
 
@@ -101,7 +113,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 8.w),
               child: Text(
-                'Used to connect you with what’s nearby.',
+                loc.translate('locationAccessDesc'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16.sp,
@@ -112,7 +124,7 @@ class _StepLocationScreenState extends State<StepLocationScreen> {
             ),
             SizedBox(height: 8.h),
             Text(
-              'Only while using the app.',
+              loc.translate('locationAccessSubtitle'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,

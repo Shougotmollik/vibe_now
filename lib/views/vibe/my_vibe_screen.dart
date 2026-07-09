@@ -5,6 +5,7 @@ import 'package:vibe_now/controller/vibe_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/vibe_model.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
@@ -19,6 +20,7 @@ class MyVibeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -28,9 +30,9 @@ class MyVibeScreen extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const CustomAppBar(title: "My Vibe"),
+                  CustomAppBar(title: loc.translate('myVibe')),
                   GestureDetector(
-                    onTap: () => showEndVibeDialog(context: context),
+                    onTap: () => showEndVibeDialog(context: context, loc: loc),
                     child: Container(
                       padding: EdgeInsets.symmetric(
                         vertical: 8.h,
@@ -41,7 +43,7 @@ class MyVibeScreen extends StatelessWidget {
                         gradient: AppColors.primaryGradientRotated,
                       ),
                       child: Text(
-                        "End Vibe",
+                        loc.translate('endVibe'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,
@@ -55,7 +57,6 @@ class MyVibeScreen extends StatelessWidget {
             ),
             SizedBox(height: 18.h),
             Obx(() {
-              // Read observable variable immediately to ensure GetX registers this Obx
               final loading = _vibeController.isVibesLoading.value;
               final displayVibe = vibe ?? _vibeController.ownVibe.value;
 
@@ -63,7 +64,7 @@ class MyVibeScreen extends StatelessWidget {
                 if (loading) {
                   return const OwnVibeShimmer();
                 } else {
-                  return const Center(child: Text("No active vibe found."));
+                  return Center(child: Text(loc.translate('noActiveVibe')));
                 }
               }
 
@@ -82,14 +83,14 @@ class MyVibeScreen extends StatelessWidget {
           padding: const EdgeInsets.all(20.0),
           child: PrimaryButton.text(
             onPressed: () => Navigator.pop(context),
-            text: "View on Map",
+            text: loc.translate('viewOnMap'),
           ),
         ),
       ),
     );
   }
 
-  void showEndVibeDialog({required BuildContext context}) {
+  void showEndVibeDialog({required BuildContext context, required loc}) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -115,7 +116,7 @@ class MyVibeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'End Vibe Early?',
+                  loc.translate('endVibeEarly'),
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w600,
@@ -124,7 +125,7 @@ class MyVibeScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Your Vibe will disappear immediately from the map',
+                  loc.translate('endVibeDesc'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -142,7 +143,7 @@ class MyVibeScreen extends StatelessWidget {
                       child: SizedBox(
                         child: CustomElevatedButton(
                           onTap: () => Navigator.pop(context),
-                          buttonText: 'Cancel',
+                          buttonText: loc.translate('cancel'),
                           btnColor: Theme.of(
                             context,
                           ).colorScheme.surfaceVariant,
@@ -164,14 +165,14 @@ class MyVibeScreen extends StatelessWidget {
                                 final success = await _vibeController.endVibe(displayVibe!.id!);
                                 if (success) {
                                   if (context.mounted) {
-                                    Navigator.pop(context); // Pop the dialog
-                                    Navigator.pop(context); // Navigate back to previous screen
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
                                   }
                                 }
                               }
                             },
                             radius: 50.r,
-                            text: "End Now",
+                            text: loc.translate('endNow'),
                           );
                         }),
                       ),
@@ -193,6 +194,7 @@ class VibeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -271,7 +273,7 @@ class VibeCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 6),
                       Text(
-                        vibe.status?.toUpperCase() ?? 'LIVE',
+                        loc.translate('statusLive'),
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -290,7 +292,7 @@ class VibeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      vibe.title ?? 'No Title',
+                      vibe.title ?? loc.translate('noTitle'),
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24.sp,
@@ -318,7 +320,7 @@ class VibeCard extends StatelessWidget {
                 ),
                 SizedBox(width: 12.w),
                 Text(
-                  '${vibe.duration} left',
+                  '${vibe.duration} ${loc.translate('vibeDurationLeft')}',
                   style: TextStyle(
                     color: Colors.grey.shade600,
                     fontSize: 18.sp,

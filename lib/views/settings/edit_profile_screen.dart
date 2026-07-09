@@ -6,6 +6,7 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
@@ -67,7 +68,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomAppBar(title: "Settings"),
+              CustomAppBar(title: AppLocalizations.of(context).translate('settings')),
               SizedBox(height: 20),
               _buildProfileSection(),
               SizedBox(height: 28.h),
@@ -76,7 +77,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Profile Completion',
+                    AppLocalizations.of(context).translate('profileCompletion'),
                     style: TextStyle(
                       fontSize: 14.sp,
                       fontWeight: FontWeight.w400,
@@ -99,19 +100,19 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(height: 28.h),
 
               // Name
-              _buildHeadingText(text: 'Name'),
+              _buildHeadingText(text: AppLocalizations.of(context).translate('name')),
               SizedBox(height: 12.h),
               _buildInputField(hint: 'John Gomes', controller: nameController),
               SizedBox(height: 28.h),
 
               // Bio
-              _buildHeadingText(text: 'Bio'),
+              _buildHeadingText(text: AppLocalizations.of(context).translate('bio')),
               SizedBox(height: 12.h),
               _buildBioField(),
               SizedBox(height: 28.h),
 
               // Password
-              _buildHeadingText(text: 'Password'),
+              _buildHeadingText(text: AppLocalizations.of(context).translate('password')),
               SizedBox(height: 12.h),
               _buildInputField(
                 hint: '********',
@@ -121,7 +122,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               SizedBox(height: 28.h),
 
               // Interests
-              _buildHeadingText(text: "Interests (select up to 5)"),
+              _buildHeadingText(text: AppLocalizations.of(context).translate('selectUpTo5')),
               SizedBox(height: 16.h),
               _buildInterestSection(),
               SizedBox(height: 84.h),
@@ -132,7 +133,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     type: SnackType.success,
                   );
                 },
-                buttonText: "Save",
+                buttonText: AppLocalizations.of(context).translate('save'),
               ),
               SizedBox(height: 74.h),
             ],

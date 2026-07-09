@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 
 class CustomDatePicker extends StatefulWidget {
   final Function(DateTime) onDateSelected;
@@ -200,7 +201,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: Text(
-            'Cancel',
+            AppLocalizations.of(context).translate('cancel'),
             style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 15),
@@ -240,7 +241,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
           builder: (context, setDialogState) {
             return AlertDialog(
               backgroundColor: Theme.of(context).colorScheme.surface,
-              title: Text('Select month',
+              title: Text(AppLocalizations.of(context).translate('selectMonth'),
                   style:
                       TextStyle(color: Theme.of(context).colorScheme.onSurface)),
               content: SizedBox(
@@ -317,7 +318,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text('Cancel',
+                  child: Text(AppLocalizations.of(context).translate('cancel'),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurfaceVariant)),
                 ),
@@ -337,7 +338,7 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
 
                     Navigator.pop(context);
                   },
-                  child: Text('OK',
+                  child: Text(AppLocalizations.of(context).translate('ok'),
                       style: TextStyle(
                           color: Theme.of(context).colorScheme.primary)),
                 ),

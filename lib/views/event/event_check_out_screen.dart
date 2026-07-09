@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart'; // Added Lottie import
+import 'package:lottie/lottie.dart';
+import 'package:vibe_now/localization/app_localizations.dart'; // Added Lottie import
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -12,6 +13,7 @@ class EventCheckOutScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -20,12 +22,12 @@ class EventCheckOutScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
-                  const CustomAppBar(title: "Event Check Out"),
+                  CustomAppBar(title: loc.translate('eventCheckout')),
                   SizedBox(height: 120.h),
                   Assets.icons.checkboxGradient.svg(width: 60.h, height: 60.h),
                   SizedBox(height: 20.h),
                   Text(
-                    "Left Event Zone",
+                    loc.translate('leftEventZone'),
                     style: TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 24.sp,
@@ -35,7 +37,7 @@ class EventCheckOutScreen extends StatelessWidget {
                   SizedBox(
                     width: 280.w,
                     child: Text(
-                      "You've left the Event Zone. Returning to the map....",
+                      loc.translate('leftEventDesc'),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
@@ -49,7 +51,7 @@ class EventCheckOutScreen extends StatelessWidget {
                     onPressed: () {
                       context.pushNamed(RouteNames.mainNavBar);
                     },
-                    text: "Continue",
+                    text: loc.translate('continueText'),
                   ),
                 ],
               ),

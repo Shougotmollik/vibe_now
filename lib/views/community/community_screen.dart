@@ -8,6 +8,7 @@ import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_search_bar.dart';
@@ -44,6 +45,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -57,17 +59,16 @@ class _CommunityScreenState extends State<CommunityScreen> {
               child: Obx(() {
                 return Column(
                   children: [
-                    _buildAppBar(context),
+                    _buildAppBar(context, loc),
                     SizedBox(height: 12.h),
 
-                    // Search bar with filter
                     CustomSearchBar(
                       controller: searchController,
                       onFilterTap: () => showDialog(
                         context: context,
                         builder: (context) => const CommunityFilterDialog(),
                       ),
-                      hintText: 'Search for communities',
+                      hintText: loc.translate('searchForCommunities'),
                       onChanged: (query) {
                         _debounce?.cancel();
                         _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -81,7 +82,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
                     SizedBox(height: 12.h),
 
-                    // Category tabs
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
@@ -130,7 +130,6 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
                     SizedBox(height: 14.h),
 
-                    // Community list based on selected tab
                     Obx(() {
                       final isLoading = communityController.isLoading.value;
                       final communities = communityController.communityList;
@@ -163,7 +162,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
                       }
 
                       if (communities.isEmpty) {
-                        return _buildEmptyState(context, selectedTab.value);
+                        return _buildEmptyState(context, selectedTab.value, loc);
                       }
 
                       return Column(
@@ -189,11 +188,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
-  // Custom AppBar with QR and Add buttons
-  Row _buildAppBar(BuildContext context) {
+  Row _buildAppBar(BuildContext context, AppLocalizations loc) {
     return Row(
       children: [
-        const CustomAppBar(title: 'Community'),
+        CustomAppBar(title: loc.translate('communities')),
         const Spacer(),
         GestureDetector(
           onTap: () => context.pushNamed(
@@ -230,26 +228,26 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context, String tab) {
+  Widget _buildEmptyState(BuildContext context, String tab, AppLocalizations loc) {
     String message;
     String subMessage;
 
     switch (tab) {
       case 'Joined':
-        message = 'No communities joined yet';
-        subMessage = 'Browse & join communities';
+        message = loc.translate('noCommunities');
+        subMessage = loc.translate('communities');
         break;
       case 'Organized':
-        message = 'No communities organized yet';
-        subMessage = 'Create your first community';
+        message = loc.translate('noCommunities');
+        subMessage = loc.translate('createCommunity');
         break;
       case 'Interested':
-        message = 'No interested communities yet';
-        subMessage = 'Browse & mark your interest';
+        message = loc.translate('noCommunities');
+        subMessage = loc.translate('communities');
         break;
       default:
-        message = 'No communities available';
-        subMessage = 'Check back later or create a new community';
+        message = loc.translate('noCommunities');
+        subMessage = loc.translate('discover');
     }
 
     return Center(

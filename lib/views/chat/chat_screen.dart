@@ -10,6 +10,7 @@ import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/model/incoming_wave.dart';
 import 'package:vibe_now/views/chat/chat_list_item.dart';
@@ -79,6 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -87,13 +89,13 @@ class _ChatScreenState extends State<ChatScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 8),
-              _buildHeader(),
+              _buildHeader(loc),
               const SizedBox(height: 12),
-              _buildSearchBar(),
+              _buildSearchBar(loc),
               const SizedBox(height: 12),
               _buildTabBar(),
               const SizedBox(height: 12),
-              Expanded(child: _buildTabContent()),
+              Expanded(child: _buildTabContent(loc)),
             ],
           ),
         ),
@@ -101,12 +103,11 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  //  Header
-  Widget _buildHeader() {
+  Widget _buildHeader(AppLocalizations loc) {
     return Row(
       children: [
         Text(
-          'Chats',
+          loc.translate('chats'),
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontSize: 20.sp,
@@ -140,12 +141,11 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  //   Search
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(AppLocalizations loc) {
     return TextField(
       controller: _searchController,
       decoration: InputDecoration(
-        hintText: 'Search a conversation',
+        hintText: loc.translate('searchConversation'),
         hintStyle: TextStyle(
           color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: 14.sp,
@@ -173,8 +173,6 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-
-  // Tabs
 
   List<LinearGradient> get _tabGradients => [
     const LinearGradient(
@@ -259,10 +257,9 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  //   Tab Content
-  Widget _buildTabContent() {
+  Widget _buildTabContent(AppLocalizations loc) {
     final tab = _tabKeys[_selectedTabIndex];
-    if (tab == 'waves') return _buildWavesTab();
+    if (tab == 'waves') return _buildWavesTab(loc);
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: Obx(() {
@@ -280,7 +277,7 @@ class _ChatScreenState extends State<ChatScreen> {
               SizedBox(height: 80.h),
               Center(
                 child: Text(
-                  _emptyMessage(tab),
+                  _emptyMessage(tab, loc),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 14.sp,
@@ -309,7 +306,7 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  Widget _buildWavesTab() {
+  Widget _buildWavesTab(AppLocalizations loc) {
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: Obx(() {
@@ -327,7 +324,7 @@ class _ChatScreenState extends State<ChatScreen> {
               SizedBox(height: 80.h),
               Center(
                 child: Text(
-                  _emptyMessage('waves'),
+                  _emptyMessage('waves', loc),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 14.sp,
@@ -456,18 +453,18 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  String _emptyMessage(String tab) {
+  String _emptyMessage(String tab, AppLocalizations loc) {
     switch (tab) {
       case 'waves':
-        return 'No waves yet';
+        return loc.translate('noVibes');
       case 'private':
-        return 'No private chats yet';
+        return loc.translate('noMessages');
       case 'event':
-        return 'No event chats yet';
+        return loc.translate('noMessages');
       case 'community':
-        return 'No community chats yet';
+        return loc.translate('noMessages');
       default:
-        return 'No conversations yet';
+        return loc.translate('noMessages');
     }
   }
 }

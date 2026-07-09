@@ -11,8 +11,8 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/core/routes/routes.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
-import 'package:vibe_now/views/common/custom_elevated_button.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   const OtpVerificationScreen({super.key});
@@ -32,6 +32,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   String userId = "";
 
   final TextEditingController _otpTEController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +51,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void _onOtpChanged() {
     final otp = _otpTEController.text.trim();
     setState(() {
-      // _isOtpEmpty = _otpTEController.text.trim().isEmpty;
       _isOtpEmpty = otp.length != 6;
     });
   }
@@ -96,6 +96,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       body: SafeArea(
@@ -108,7 +109,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               CustomAppBar(title: "", canBack: true),
               SizedBox(height: 100.h),
               Text(
-                'Check your inbox',
+                loc.translate('otpVerification'),
                 style: Theme.of(context).textTheme.displaySmall?.copyWith(
                   fontSize: 28.sp,
                   fontWeight: FontWeight.w700,
@@ -120,7 +121,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  text: 'We sent you a 6-digit code to\n',
+                  text: loc.translate('enterOtp'),
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     color: Theme.of(context).colorScheme.onSurface,
                     fontSize: 14.sp,
@@ -148,7 +149,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                     fontWeight: FontWeight.w700,
                     fontSize: 18.sp,
                   ),
-
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     borderRadius: BorderRadius.circular(8.r),
@@ -164,7 +164,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                   ? GestureDetector(
                       onTap: _onResendPressed,
                       child: Text(
-                        'Resend Code',
+                        loc.translate('resendCode'),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.primary,
                           fontSize: 14.sp,
@@ -176,7 +176,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Resend Code in ',
+                          '${loc.translate('resendCode')} in ',
                           style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
@@ -194,7 +194,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       ],
                     ),
 
-              Spacer(),
+              const Spacer(),
               Obx(
                 () => PrimaryButton.text(
                   onPressed: _isOtpEmpty
@@ -202,7 +202,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                       : () async {
                           if (_otpTEController.text.isEmpty) {
                             AppSnackbar.show(
-                              message: 'OTP is not matched',
+                              message: loc.translate('otpVerification'),
                               type: SnackType.info,
                             );
                           } else {
@@ -219,7 +219,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                             }
                           }
                         },
-                  text: 'Verify',
+                  text: loc.translate('verify'),
                   isEnabled: !_isOtpEmpty,
                   isLoading: controller.isLoading.value,
                 ),

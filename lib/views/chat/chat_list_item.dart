@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 

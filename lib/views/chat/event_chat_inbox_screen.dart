@@ -22,6 +22,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:audio_waveforms/audio_waveforms.dart' as aw;
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
+import 'package:vibe_now/localization/app_localizations.dart';
 
 // ── Models ──────────────────────────────────────────────────────────────────
 
@@ -436,7 +437,7 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
     Clipboard.setData(ClipboardData(text: text));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: const Text('Copied'),
+        content: Text(AppLocalizations.of(context).translate('messageCopied')),
         duration: const Duration(seconds: 1),
         behavior: SnackBarBehavior.floating,
       ),
@@ -460,16 +461,16 @@ class _EventChatInboxScreenState extends State<EventChatInboxScreen>
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Message'),
-        content: const Text('Are you sure you want to delete this message?'),
+        title: Text(AppLocalizations.of(context).translate('deleteMessage')),
+        content: Text(AppLocalizations.of(context).translate('areYouSureDelete')),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
+            child: Text(AppLocalizations.of(context).translate('cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text(AppLocalizations.of(context).translate('delete'), style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

@@ -7,6 +7,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/core/routes/routes.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/auth/widgets/custom_text_form_field.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/utils.dart';
@@ -22,8 +23,6 @@ class EmailVerificationScreen extends StatefulWidget {
 class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   final TextEditingController _emailController = TextEditingController();
   final AuthController controller = Get.find<AuthController>();
-
-  // bool _isEmailEmpty = true;
   bool _isEmailValid = false;
 
   @override
@@ -34,7 +33,6 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
 
   void _onEmailChanged() {
     final email = _emailController.text.trim();
-
     setState(() {
       _isEmailValid = email.isNotEmpty && isValidEmail(email);
     });
@@ -47,8 +45,10 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       body: SafeArea(
@@ -56,12 +56,12 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
-              CustomAppBar(title: 'Email Verification'),
+              CustomAppBar(title: loc.translate('emailVerification')),
               SizedBox(height: 72.h),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Text(
-                  'A 6 digit verification code will be sent to your email address.',
+                  loc.translate('enterOtp'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -75,20 +75,20 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 key: _formKey,
                 child: CustomTextFormField(
                   controller: _emailController,
-                  hintText: 'Enter your email address',
+                  hintText: loc.translate('enterEmail'),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
-                      return 'Please enter your email address';
+                      return loc.translate('pleaseEnterEmail');
                     }
                     if (!isValidEmail(value)) {
-                      return 'Please enter a valid email address';
+                      return loc.translate('pleaseEnterValidEmail');
                     }
                     return null;
                   },
                 ),
               ),
 
-              Spacer(),
+              const Spacer(),
 
               Obx(
                 () => PrimaryButton.text(
@@ -108,7 +108,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                             }
                           }
                         },
-                  text: 'Send Code',
+                  text: loc.translate('sendOtp'),
                   isEnabled: _isEmailValid,
                   isLoading: controller.isLoading.value,
                 ),

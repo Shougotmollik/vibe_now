@@ -6,6 +6,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/community_member.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
@@ -47,15 +48,15 @@ class _CommunityManageMemberScreenState
     );
   }
 
-  Future<void> _selectDateTime() async {
+  Future<void> _selectDateTime(loc) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime.now(),
       lastDate: DateTime(2030),
       helpText: 'SELECT MEETUP DATE',
-      cancelText: 'CANCEL',
-      confirmText: 'CONFIRM',
+      cancelText: loc.translate('cancel').toUpperCase(),
+      confirmText: loc.translate('confirm').toUpperCase(),
     );
 
     if (pickedDate != null) {
@@ -83,6 +84,7 @@ class _CommunityManageMemberScreenState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -94,7 +96,7 @@ class _CommunityManageMemberScreenState
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Manage Request',
+          loc.translate('manageRequest'),
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontSize: 20,
@@ -106,7 +108,7 @@ class _CommunityManageMemberScreenState
       ),
       body: Column(
         children: [
-          _buildToggleTabs(),
+          _buildToggleTabs(loc),
           SizedBox(height: 20.h),
           Expanded(
             child: Obx(() {
@@ -121,8 +123,8 @@ class _CommunityManageMemberScreenState
                 return Center(
                   child: Text(
                     _tab == 'pending'
-                        ? 'No pending requests'
-                        : 'No awaiting members',
+                        ? loc.translate('noPendingRequests')
+                        : loc.translate('noAwaitingMembers'),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 16,
@@ -137,10 +139,10 @@ class _CommunityManageMemberScreenState
                   children: [
                     if (_tab == 'pending')
                       isApproved
-                          ? _buildApprovedView(member)
+                          ? _buildApprovedView(member, loc)
                           : _buildPendingView(member)
                     else
-                      _buildAwaitingList(members),
+                      _buildAwaitingList(members, loc),
                   ],
                 ),
               );
@@ -152,6 +154,7 @@ class _CommunityManageMemberScreenState
   }
 
   Widget _buildPendingView(dynamic member) {
+    final loc = AppLocalizations.of(context);
     final title = member?.communityTitle ?? 'Community';
     final address = member?.communityAddress ?? 'Location not set';
     final description =
@@ -172,11 +175,11 @@ class _CommunityManageMemberScreenState
         const SizedBox(height: 30),
         PrimaryButton.text(
           onPressed: () => setState(() => isApproved = true),
-          text: "Approve for Meetup",
+          text: loc.translate('approve'),
         ),
         const SizedBox(height: 30),
         Text(
-          'About Community',
+          loc.translate('aboutCommunity'),
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w500,
@@ -195,7 +198,7 @@ class _CommunityManageMemberScreenState
     );
   }
 
-  Widget _buildApprovedView(dynamic member) {
+  Widget _buildApprovedView(dynamic member, loc) {
     final name = member?.user.fullName ?? '';
     final address = member?.communityAddress ?? ' address not found';
 
@@ -249,7 +252,7 @@ class _CommunityManageMemberScreenState
         _buildInfoCard(
           children: [
             GestureDetector(
-              onTap: _selectDateTime,
+              onTap: () => _selectDateTime(loc),
               child: _buildIconTextRow(
                 Assets.icons.calendarColor,
                 _hasSelectedDateTime
@@ -262,7 +265,7 @@ class _CommunityManageMemberScreenState
                           selectedTime.minute,
                         ),
                       )
-                    : 'Select date and time first',
+                    : loc.translate('selectDateAndTimeFirst'),
               ),
             ),
           ],
@@ -271,7 +274,7 @@ class _CommunityManageMemberScreenState
         PrimaryButton.text(
           onPressed: () async {
             if (!_hasSelectedDateTime) {
-              AppSnackbar.show(message: 'Select date and time first');
+              AppSnackbar.show(message: loc.translate('selectDateAndTimeFirst'));
               return;
             }
             final scheduledAt = DateFormat("EEE,MMM d , yyyy 'at' hh:mm a").format(
@@ -312,23 +315,21 @@ class _CommunityManageMemberScreenState
               Navigator.pop(context);
             }
           },
-          text: "Schedule Meetup",
+          text: loc.translate('scheduleMeetup'),
         ),
         const SizedBox(height: 40),
         _buildBulletPoint(
-          "Schedule a meetup to verify $name before they can join.",
+          loc.translate('scheduleMeetupConfirm').replaceAll('{name}', name),
         ),
         const SizedBox(height: 15),
-        _buildBulletPoint(
-          "They need to scan your QR code to join the community.",
-        ),
+        _buildBulletPoint(loc.translate('scheduleQRDesc')),
         const SizedBox(height: 40),
-        _buildCancelButton(),
+        _buildCancelButton(loc),
       ],
     );
   }
 
-  Widget _buildToggleTabs() {
+  Widget _buildToggleTabs(loc) {
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
@@ -349,7 +350,7 @@ class _CommunityManageMemberScreenState
               });
               _fetchMembers();
             },
-            child: _buildStatusTab("Pending", _tab == 'pending'),
+            child: _buildStatusTab(loc.translate('pending'), _tab == 'pending'),
           ),
           GestureDetector(
             onTap: () {
@@ -360,14 +361,14 @@ class _CommunityManageMemberScreenState
               });
               _fetchMembers();
             },
-            child: _buildStatusTab("Awaiting Meetup", _tab == 'awaiting'),
+            child: _buildStatusTab(loc.translate('awaitingMeetup'), _tab == 'awaiting'),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildAwaitingList(List<CommunityMember> members) {
+  Widget _buildAwaitingList(List<CommunityMember> members, loc) {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -404,7 +405,7 @@ class _CommunityManageMemberScreenState
                     ),
                     SizedBox(height: 4.h),
                     Text(
-                      'Awaiting QR verification',
+                      loc.translate('awaitingApproval'),
                       style: TextStyle(
                         fontSize: 13.sp,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -438,7 +439,7 @@ class _CommunityManageMemberScreenState
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
-                    'View QR',
+                    loc.translate('viewQR'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 12.sp,
@@ -515,7 +516,7 @@ class _CommunityManageMemberScreenState
     );
   }
 
-  Widget _buildCancelButton() {
+  Widget _buildCancelButton(loc) {
     return Container(
       width: double.infinity,
       height: 55,
@@ -532,7 +533,7 @@ class _CommunityManageMemberScreenState
         child: TextButton(
           onPressed: () => setState(() => isApproved = false),
           child: Text(
-            "Cancel Request",
+            loc.translate('cancelMeetup'),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurface,
               fontSize: 18,

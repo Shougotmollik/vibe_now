@@ -5,6 +5,7 @@ import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/auth/steps/step_interest_selection_screen.dart';
 import 'package:vibe_now/views/auth/widgets/option_card.dart';
 import 'package:vibe_now/views/auth/widgets/step_page.dart';
@@ -20,7 +21,6 @@ class StepLookingForScreen extends StatefulWidget {
 
 class _StepLookingForScreenState extends State<StepLookingForScreen> {
   int? selectedIndex;
-  // For multiple selection
   final Set<int> selectedIndexes = {};
   final OnBoardingController controller = Get.find<OnBoardingController>();
 
@@ -29,11 +29,12 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
     OptionModel(icon: Assets.icons.calender, title: "Event"),
     OptionModel(icon: Assets.icons.community, title: "Community"),
     OptionModel(icon: Assets.icons.relationShip, title: "Relationship"),
-    OptionModel(icon: Assets.icons.stashQuestion, title: "I’m not sure yet"),
+    OptionModel(icon: Assets.icons.stashQuestion, title: "I\u2019m not sure yet"),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: StepPage(
         currentStep: widget.step,
@@ -45,8 +46,6 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
             controller.lookingFor = selectedOptions
                 .map((e) => e.title)
                 .toList();
-            print("----------lookingFor ${controller.lookingFor}");
-            // Navigate to the next screen
             Navigator.push(
               context,
               PageRouteBuilder(
@@ -56,22 +55,13 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
                     StepInterestSelectionScreen(step: widget.step + 1),
               ),
             );
-
-            // if (selectedOptions.isNotEmpty) {
-            // } else {
-            //   AppSnackbar.show(
-            //     message: 'Please select an option to continue',
-            //     type: SnackType.info,
-            //   );
-            // }
           },
-          text: 'Continue',
+          text: loc.translate('continueText'),
           isEnabled: selectedIndexes.isNotEmpty,
         ),
         isSkippable: true,
         onSkip: () {
           controller.lookingFor = [];
-          print("----------lookingFor ${controller.lookingFor}");
           Navigator.push(
             context,
             PageRouteBuilder(
@@ -85,14 +75,11 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
         child: Column(
           children: [
             SizedBox(height: 32.h),
-
-            const StepTitle(
-              title: 'What are you looking for?',
-              subtitle: 'No pressure — you can change this anytime.',
+            StepTitle(
+              title: loc.translate('stepLookingFor'),
+              subtitle: loc.translate('stepLookingFor'),
             ),
-
             SizedBox(height: 16.h),
-
             Expanded(
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -125,71 +112,3 @@ class _StepLookingForScreenState extends State<StepLookingForScreen> {
     );
   }
 }
-
-// class OptionCard extends StatelessWidget {
-//   final OptionModel model;
-//   final bool isSelected;
-//   final VoidCallback onTap;
-
-//   const OptionCard({
-//     required this.model,
-//     required this.isSelected,
-//     required this.onTap,
-//     super.key,
-//   });
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: onTap,
-//       child: Container(
-//         padding: EdgeInsets.all(2),
-//         decoration: BoxDecoration(
-//           gradient: isSelected
-//               ? const LinearGradient(
-//                   colors: [
-//                     Color(0xFF8663F6),
-//                     Color(0xFFC470F5),
-//                     Color(0XFF57C2FF),
-//                   ],
-//                   begin: Alignment.topRight,
-//                   end: Alignment.bottomLeft,
-//                 )
-//               : null,
-//           borderRadius: BorderRadius.circular(24.r),
-//         ),
-//         child: Container(
-//           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-//           decoration: BoxDecoration(
-//             color: const Color(0xffFEFEFE),
-//             borderRadius: BorderRadius.circular(22.r),
-//           ),
-//           child: Center(
-//             child: Column(
-//               mainAxisSize: MainAxisSize.min,
-//               children: [
-//                 model.icon.svg(width: 32.w, height: 32.h),
-//                 SizedBox(height: 7.h),
-//                 Text(
-//                   model.title,
-//                   style: TextStyle(
-//                     fontSize: 16.sp,
-//                     fontWeight: FontWeight.w400,
-//                     color: const Color(0xff6E6E6E),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// class OptionModel {
-//   final SvgGenImage icon;
-//   final String title;
-
-//   OptionModel({required this.icon, required this.title});
-// }

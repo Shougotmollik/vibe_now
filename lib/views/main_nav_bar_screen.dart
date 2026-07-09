@@ -4,11 +4,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 import 'package:vibe_now/views/vibe/create_vibe_screen.dart';
 import 'package:vibe_now/views/event/event_or_community_screen.dart';
 import 'package:vibe_now/views/home/home_screen.dart';
-import 'package:vibe_now/views/home/widgets/google_map.dart';
 import 'package:vibe_now/views/profile/profile_screen.dart';
 import 'package:vibe_now/views/settings/settings_screen.dart';
 
@@ -31,7 +31,6 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
     ProfileScreen(isMyProfile: true),
   ];
 
-  /// Colored icons (active)
   final List<SvgGenImage> colorIcons = [
     Assets.icons.locationColor,
     Assets.icons.communityColor,
@@ -40,7 +39,6 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
     Assets.icons.peopleColor,
   ];
 
-  /// Gray icons (inactive)
   final List<SvgGenImage> grayIcons = [
     Assets.icons.location,
     Assets.icons.communityLight,
@@ -60,12 +58,12 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
         now.difference(lastBackPressed!) > const Duration(seconds: 2)) {
       lastBackPressed = now;
 
-      // Show snackbar
       if (mounted) {
+        final loc = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Tap again to exit'),
-            duration: Duration(seconds: 2),
+          SnackBar(
+            content: Text(loc.translate('tapAgainToExit')),
+            duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -73,7 +71,6 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
       return false;
     }
 
-    // Exit the app
     return true;
   }
 
@@ -106,7 +103,6 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
 class CustomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
-
   final List<SvgGenImage> colorIcons;
   final List<SvgGenImage> grayIcons;
 

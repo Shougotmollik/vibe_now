@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/auth/steps/step_looking_for_screen.dart';
 import 'package:vibe_now/views/auth/widgets/step_page.dart';
 import 'package:vibe_now/views/auth/widgets/step_title.dart';
@@ -29,12 +30,12 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return StepPage(
       currentStep: widget.step,
       footer: PrimaryButton.text(
         onPressed: () {
           controller.gender = genderMapping[selected] ?? '';
-          print("--------gender ${controller.gender}");
           Navigator.push(
             context,
             PageRouteBuilder(
@@ -45,12 +46,11 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
             ),
           );
         },
-        text: 'Continue',
+        text: loc.translate('continueText'),
       ),
       isSkippable: true,
       onSkip: () async {
         controller.gender = 'prefer_not_to_say';
-        print("----------gender ${controller.gender}");
         Navigator.push(
           context,
           PageRouteBuilder(
@@ -65,15 +65,14 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
         children: [
           SizedBox(height: 32.h),
           StepTitle(
-            title: 'What\'s your gender?',
-            subtitle:
-                'Choose what best describes you. You can update or add more details anytime.',
+            title: loc.translate('stepGender'),
+            subtitle: loc.translate('stepGender'),
           ),
           SizedBox(height: 16.h),
-          _buildRadio("Man"),
-          _buildRadio("Woman"),
-          _buildRadio("Beyond Binary"),
-          _buildRadio("Prefer not to say"),
+          _buildRadio(loc.translate('male')),
+          _buildRadio(loc.translate('female')),
+          _buildRadio(loc.translate('other')),
+          _buildRadio(loc.translate('preferNotToSay')),
         ],
       ),
     );
@@ -86,7 +85,6 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
         borderRadius: BorderRadius.circular(30),
         splashColor: Colors.transparent,
         highlightColor: Colors.transparent,
-
         onTap: () {
           setState(() {
             selected = label;
@@ -97,7 +95,7 @@ class _StepGenderScreenState extends State<StepGenderScreen> {
             selected == label
                 ? Assets.icons.gradientCheck.svg(width: 20.h, height: 20.h)
                 : Assets.icons.uncheckedCircle.svg(width: 20.h, height: 20.h),
-            SizedBox(width: 8.w), // a bit more space looks nicer
+            SizedBox(width: 8.w),
             Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(

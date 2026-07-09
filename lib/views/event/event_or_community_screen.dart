@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/services/local_storage.dart';
 
 class EventOrCommunityScreen extends StatefulWidget {
@@ -34,6 +35,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
+        final loc = AppLocalizations.of(context);
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(18),
@@ -74,7 +76,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Pro tip:',
+                              loc.translate('proTip'),
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w500,
@@ -83,7 +85,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                             ),
                             SizedBox(height: 8.h),
                             Text(
-                              'Communities are for long-term connections, Events are for specific occasions, and Vibes are for capturing fleeting moments.',
+                              loc.translate('proTipDesc'),
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w400,
@@ -110,7 +112,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Text(
-                        "Got it!",
+                        loc.translate('gotIt'),
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onPrimary,
@@ -131,6 +133,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
@@ -141,7 +144,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
               child: Row(
                 children: [
                   Text(
-                    'Create something new',
+                    loc.translate('createSomethingNew'),
                     style: TextStyle(
                       fontSize: 18,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -174,7 +177,7 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
 
                     // Title
                     Text(
-                      'Start an event or build a community.',
+                      loc.translate('startEventOrCommunity'),
                       style: TextStyle(
                         fontSize: 20.sp,
                         color: Theme.of(context).colorScheme.onSurface,
@@ -195,9 +198,8 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                       onTap: () {
                         context.pushNamed(RouteNames.eventScreen);
                       },
-                      title: 'Event',
-                      subtitle:
-                          'Organize gatherings, meetups, or special occasions that bring people together',
+                      title: loc.translate('eventOption'),
+                      subtitle: loc.translate('eventOptionDesc'),
                       icon: Assets.icons.calender2.svg(),
                       iconBackground: Color(0xfff0b7eb),
                       gradient: LinearGradient(
@@ -211,9 +213,8 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                       onTap: () {
                         context.pushNamed(RouteNames.communityScreen);
                       },
-                      title: 'Community',
-                      subtitle:
-                          'Build a space where people with shared interests can connect and grow together',
+                      title: loc.translate('communityOption'),
+                      subtitle: loc.translate('communityOptionDesc'),
                       icon: Assets.icons.community.svg(
                         color: AppColors.onBackground,
                       ),

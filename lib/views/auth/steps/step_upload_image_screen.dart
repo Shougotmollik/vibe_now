@@ -12,6 +12,7 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/views/auth/steps/step_location_screen.dart';
 import 'package:vibe_now/views/auth/widgets/step_page.dart';
 import 'package:vibe_now/views/auth/widgets/step_title.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/utils.dart' as utils;
 
 class StepUploadImageScreen extends StatefulWidget {
@@ -28,9 +29,10 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
   final OnBoardingController controller = Get.find<OnBoardingController>();
 
   Future<void> _pickImage() async {
+    final loc = AppLocalizations.of(context);
     if (_selectedImages.length >= _maxImages) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Maximum $_maxImages images allowed')),
+        SnackBar(content: Text('${loc.translate("maxImages")} $_maxImages')),
       );
       return;
     }
@@ -51,7 +53,7 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text('Error picking image: $e')));
+      ).showSnackBar(SnackBar(content: Text('${loc.translate("failedToPickImage")}: $e')));
     }
   }
 
@@ -63,6 +65,7 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: StepPage(
         currentStep: widget.step,
@@ -85,18 +88,18 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
                   );
                 } else {
                   AppSnackbar.show(
-                    message: 'Something went wrong please try again',
+                    message: loc.translate('somethingWentWrong'),
                     type: SnackType.info,
                   );
                 }
               } else {
                 AppSnackbar.show(
-                  message: 'Please upload at least one image to continue',
+                  message: loc.translate('uploadPhoto'),
                   type: SnackType.info,
                 );
               }
             },
-            text: 'Continue',
+            text: loc.translate('continueText'),
             isEnabled: _selectedImages.isNotEmpty,
             isLoading: controller.isLoading.value,
           ),
@@ -118,16 +121,13 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
           child: Column(
             children: [
               SizedBox(height: 32.h),
-
-              const StepTitle(
-                title: 'Upload Photos',
-                subtitle:
-                    "You're almost there! Add at least one pictures. Also can upload picture later.",
+              StepTitle(
+                title: loc.translate('uploadPhoto'),
+                subtitle: loc.translate('uploadPhoto'),
               ),
-
               SizedBox(height: 32.h),
 
-              // Main image picker (first image)
+              // Main image picker
               GestureDetector(
                 onTap: _pickImage,
                 child: _selectedImages.isNotEmpty
@@ -167,7 +167,6 @@ class _StepUploadImageScreenState extends State<StepUploadImageScreen> {
 
               SizedBox(height: 30.h),
 
-              // Additional image pickers (3 more slots)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 spacing: 12.w,

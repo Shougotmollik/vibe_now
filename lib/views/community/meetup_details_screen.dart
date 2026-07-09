@@ -5,6 +5,7 @@ import 'package:vibe_now/controller/meetup_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/meetup.dart';
 import 'package:vibe_now/views/common/avatar_stack.dart';
 import 'package:vibe_now/views/community/meetup_member_screen.dart';
@@ -31,6 +32,7 @@ class _MeetupDetailsScreenState extends State<MeetupDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: Obx(() {
         final meetup = _meetupController.meetupDetails.value;
@@ -160,7 +162,7 @@ class _MeetupDetailsScreenState extends State<MeetupDetailsScreen> {
                           ),
                           SizedBox(width: 4.w),
                           Text(
-                            '${meetup.joinedCount ?? 0}/${meetup.maxAttendees ?? 0} attending',
+                            '${meetup.joinedCount ?? 0}/${meetup.maxAttendees ?? 0} ${loc.translate('attending')}',
                             style: TextStyle(
                                fontSize: 12.sp,
                               color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -191,14 +193,14 @@ class _MeetupDetailsScreenState extends State<MeetupDetailsScreen> {
                                   ),
                                 );
                               },
-                              child: Text("View all"),
+                              child: Text(loc.translate('viewAll')),
                             ),
                           ],
                         ),
                       ],
                       SizedBox(height: 20.h),
                       Text(
-                        "About",
+                        loc.translate('description'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w500,

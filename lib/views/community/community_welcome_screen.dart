@@ -6,6 +6,7 @@ import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 
 class CommunityWelcomeScreen extends StatefulWidget {
   const CommunityWelcomeScreen({super.key, this.qrCode});
@@ -28,6 +29,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
@@ -73,7 +75,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
               ),
 
               Text(
-                "Welcome To\n$title!",
+                "${loc.translate('welcomeTo')}\n$title!",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 28,
@@ -83,7 +85,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
               ),
               const SizedBox(height: 16),
               Text(
-                "You're now an official member,\nFeel free to say hi to the group",
+                "${loc.translate('youreOfficialMember')}\n${loc.translate('feelFreeToSayHi')}",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
@@ -94,10 +96,10 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
 
               SizedBox(height: 24.h),
 
-              _buildFeaturesCard(context: context),
+              _buildFeaturesCard(context: context, loc: loc),
               const SizedBox(height: 24),
 
-              _buildTrustNote(context: context),
+              _buildTrustNote(context: context, loc: loc),
               const SizedBox(height: 48),
             ],
           ),
@@ -106,7 +108,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
     );
   }
 
-  Widget _buildFeaturesCard({required BuildContext context}) {
+  Widget _buildFeaturesCard({required BuildContext context, required loc}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -126,17 +128,17 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
           _buildListTile(
             context: context,
             icon: Assets.icons.chatting,
-            title: "Chats",
+            title: loc.translate('chats'),
           ),
           _buildListTile(
             context: context,
             icon: Assets.icons.calendarColor,
-            title: "Meetups",
+            title: loc.translate('meetups'),
           ),
           _buildListTile(
             context: context,
             icon: Assets.icons.communityColor,
-            title: "Members",
+            title: loc.translate('members'),
           ),
           const SizedBox(height: 24),
 
@@ -145,7 +147,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
               Navigator.pop(context);
               Navigator.pop(context);
             },
-            text: "Enter Community",
+            text: loc.translate('enterCommunity'),
           ),
         ],
       ),
@@ -187,7 +189,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
     );
   }
 
-  Widget _buildTrustNote({required BuildContext context}) {
+  Widget _buildTrustNote({required BuildContext context, required loc}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -204,8 +206,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text:
-                        '"Pending meetups not completed may affect your Respect Score." ',
+                    text: loc.translate('pendingMeetupsNote') + ' ',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.onSurface,
@@ -213,8 +214,7 @@ class _CommunityWelcomeScreenState extends State<CommunityWelcomeScreen> {
                     ),
                   ),
                   TextSpan(
-                    text:
-                        'This connects Communities with your Trust ecosystem.',
+                    text: loc.translate('trustEcosystem'),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 13.sp,

@@ -7,6 +7,7 @@ import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/event_participants.dart';
 import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
@@ -30,7 +31,6 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
   final isEventCreator = false.obs;
   String? _currentUserId;
 
-  // If user is NOT event creator, show all participants by default
   bool get _showAllParticipants => !isEventCreator.value;
 
   @override
@@ -42,7 +42,6 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
   Future<void> _loadData() async {
     _currentUserId = await LocalStorage.user_id.get();
 
-    // Fetch participants based on tab
     await _loadParticipantsByTab(
       selectedStatus.value == "Participant" ? "joined" : "requested",
     );
@@ -73,12 +72,13 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Obx(() {
           final title = isEventCreator.value
-              ? "Manage Request"
-              : "Participants";
+              ? loc.translate('manageRequest')
+              : loc.translate('participants');
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,16 +89,15 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
               ),
               const SizedBox(height: 16),
 
-              // Tabs - show tabs only if user is event creator
               if (!isLoading.value && isEventCreator.value)
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Row(
                     children: [
-                      _buildTabTrigger("Participant"),
+                      _buildTabTrigger(loc.translate('participants')),
                       const SizedBox(width: 12),
-                      _buildTabTrigger("Requested"),
+                      _buildTabTrigger(loc.translate('requested')),
                     ],
                   ),
                 ),
@@ -110,11 +109,11 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                     return const Center(child: CircularProgressIndicator());
                   }
                   if (_showAllParticipants) {
-                    return _buildAllParticipantsList();
+                    return _buildAllParticipantsList(loc);
                   }
                   return selectedStatus.value == "Participant"
-                      ? _buildJoinedList()
-                      : _buildRequestedList();
+                      ? _buildJoinedList(loc)
+                      : _buildRequestedList(loc);
                 }),
               ),
             ],
@@ -124,8 +123,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
     );
   }
 
-  // For non-creator users: show all participants (both joined and requested)
-  Widget _buildAllParticipantsList() {
+  Widget _buildAllParticipantsList(loc) {
     final joined = _eventController.joinedParticipants;
     final requested = _eventController.requestedParticipants;
     final allParticipants = [...joined, ...requested];
@@ -133,7 +131,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
     if (allParticipants.isEmpty) {
       return Center(
         child: Text(
-          'No participants yet',
+          loc.translate('noParticipants'),
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -176,7 +174,6 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                 'Unknown',
             style: const TextStyle(fontWeight: FontWeight.w500),
           ),
-          // subtitle: Text(participant.user?. ?? ''),
           trailing: isEventCreator.value
               ? PopupMenuButton<String>(
                   color: Theme.of(context).colorScheme.surfaceVariant,
@@ -187,12 +184,11 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                     ).colorScheme.onSurface.withAlpha(150),
                   ),
                   onSelected: (value) {
-                    // Handle accept/reject/remove based on status
                     if (participant.status == 'requested') {
                       showDialog(
                         context: context,
                         builder: (context) => MemberConfirmationDialog(
-                          confirmBtnText: "Accept",
+                          confirmBtnText: loc.translate('accept'),
                           onCancel: () {
                             Navigator.pop(context);
                           },
@@ -200,24 +196,24 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                             Navigator.pop(context);
                           },
                           title:
-                              "Accept ${participant.user?.fullName ?? 'user'}?",
+                              "${loc.translate('accept')} ${participant.user?.fullName ?? 'user'}?",
                         ),
                       );
                     }
                   },
                   itemBuilder: (BuildContext context) => [
                     if (participant.status == 'requested')
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'accept',
                         child: Text(
-                          'Accept',
+                          loc.translate('accept'),
                           style: TextStyle(color: AppColors.primary),
                         ),
                       ),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'remove',
                       child: Text(
-                        'Remove',
+                        loc.translate('removeMember'),
                         style: TextStyle(color: Colors.red),
                       ),
                     ),
@@ -248,12 +244,12 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
     );
   }
 
-  Widget _buildJoinedList() {
+  Widget _buildJoinedList(loc) {
     final participants = _eventController.joinedParticipants;
     if (participants.isEmpty) {
       return Center(
         child: Text(
-          'No participants yet',
+          loc.translate('noParticipants'),
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -307,12 +303,11 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                       showDialog(
                         context: context,
                         builder: (context) => MemberConfirmationDialog(
-                          confirmBtnText: "Remove",
+                          confirmBtnText: loc.translate('removeMember'),
                           onCancel: () {
                             Navigator.pop(context);
                           },
                           onConfirm: () async {
-                            // Navigator.pop(context);
                             final success = await _eventController
                                 .removeParticipant(
                                   participantId: participant.participantId ?? 0,
@@ -327,15 +322,15 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                               _refreshCurrentTab();
                             }
                           },
-                          title: "Give a reason for removing the  member",
+                          title: "Give a reason for removing the member",
                         ),
                       );
                     },
                     itemBuilder: (BuildContext context) => [
-                      const PopupMenuItem(
+                      PopupMenuItem(
                         value: 'remove',
                         child: Text(
-                          'Remove Member',
+                          loc.translate('removeMember'),
                           style: TextStyle(color: AppColors.primary),
                         ),
                       ),
@@ -348,7 +343,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
     );
   }
 
-  Widget _buildRequestedList() {
+  Widget _buildRequestedList(loc) {
     final participants = _eventController.requestedParticipants;
 
     if (_eventController.isLoading.value) {
@@ -358,7 +353,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
     if (participants.isEmpty) {
       return Center(
         child: Text(
-          'No pending requests',
+          loc.translate('noPendingRequests'),
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurfaceVariant,
           ),
@@ -415,7 +410,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                             if (success && mounted) {
                               _showActionDialog(
                                 context,
-                                'You have accepted ${participant.user?.fullName ?? 'user\'s'} event join request.',
+                                'You have accepted ${participant.user?.fullName ?? "user\'s"} event join request.',
                                 true,
                               );
                               _refreshCurrentTab();
@@ -437,7 +432,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
                             if (success && mounted) {
                               _showActionDialog(
                                 context,
-                                'You have rejected ${participant.user?.fullName ?? 'user\'s'} event join request.',
+                                'You have rejected ${participant.user?.fullName ?? "user\'s"} event join request.',
                                 false,
                               );
                               _refreshCurrentTab();

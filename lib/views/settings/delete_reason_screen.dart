@@ -5,6 +5,7 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/settings/delete_confirm_screen.dart';
@@ -43,7 +44,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
           child: Column(
             children: [
               // _buildAppBar(),
-              CustomAppBar(title: "Reason", canBack: true),
+              CustomAppBar(title: AppLocalizations.of(context).translate('reason'), canBack: true),
 
               SizedBox(height: 14.h),
 
@@ -74,7 +75,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                       ),
                       child: CustomElevatedButton(
                         onTap: () {},
-                        buttonText: 'Clear',
+                        buttonText: AppLocalizations.of(context).translate('clear'),
                         btnColor: Theme.of(context).colorScheme.surface,
                         textColor: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -206,7 +207,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                           ),
                         );
                       },
-                      text: 'Save',
+                      text: AppLocalizations.of(context).translate('save'),
                     ),
                   ),
                 ],

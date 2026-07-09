@@ -74,7 +74,7 @@ class _ReportWidgetState extends State<ReportWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Report',
+            AppLocalizations.of(context).translate('report'),
             style: TextStyle(
               color: Theme.of(context).colorScheme.tertiary,
               fontSize: 21,
@@ -107,7 +107,7 @@ class _ReportWidgetState extends State<ReportWidget> {
                     },
                   ),
                   Text(
-                    'Spam or Misinformation',
+                    AppLocalizations.of(context).translate('reportSpam'),
                     style: _reportOptionTextStyle(),
                   ),
                 ],
@@ -132,7 +132,7 @@ class _ReportWidgetState extends State<ReportWidget> {
                     },
                   ),
                   Text(
-                    'Hate Speech or Violence',
+                    AppLocalizations.of(context).translate('reportHateSpeech'),
                     style: _reportOptionTextStyle(),
                   ),
                 ],
@@ -157,7 +157,7 @@ class _ReportWidgetState extends State<ReportWidget> {
                     },
                   ),
                   Text(
-                    'Threats or Harassment',
+                    AppLocalizations.of(context).translate('reportThreats'),
                     style: _reportOptionTextStyle(),
                   ),
                 ],
@@ -181,7 +181,7 @@ class _ReportWidgetState extends State<ReportWidget> {
                       });
                     },
                   ),
-                  Text('Others', style: _reportOptionTextStyle()),
+                  Text(AppLocalizations.of(context).translate('others'), style: _reportOptionTextStyle()),
                 ],
               ),
             ],
@@ -205,7 +205,7 @@ class _ReportWidgetState extends State<ReportWidget> {
                 horizontal: 18,
                 vertical: 16,
               ),
-              hintText: 'Give a brief description ...',
+              hintText: AppLocalizations.of(context).translate('reportHint'),
               hintStyle: TextStyle(
                 color: Theme.of(
                   context,
@@ -264,7 +264,7 @@ class _ReportWidgetState extends State<ReportWidget> {
                   Navigator.of(context).pop();
                 },
                 child: Text(
-                  'Cancel',
+                  AppLocalizations.of(context).translate('cancel'),
                   style: TextStyle(
                     color: Theme.of(
                       context,
@@ -280,7 +280,7 @@ class _ReportWidgetState extends State<ReportWidget> {
                   Navigator.of(context).pop();
                 },
                 child: Text(
-                  'Submit',
+                  AppLocalizations.of(context).translate('submit'),
                   style: TextStyle(
                     color: Theme.of(
                       context,

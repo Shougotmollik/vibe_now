@@ -22,6 +22,7 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:wechat_assets_picker/wechat_assets_picker.dart';
 // import 'package:blurhash_dart/blurhash_dart.dart';

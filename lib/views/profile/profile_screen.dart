@@ -15,6 +15,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/interest_model.dart';
 import 'package:vibe_now/model/profile_model.dart';
@@ -36,7 +37,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen>
     with SingleTickerProviderStateMixin {
   final TextEditingController _bioController = TextEditingController(
-    text: 'Coffee enthusiast. Music lover. Avid traveler. Foodie.',
+    text: '', // Filled from profile or default loc.translate('defaultBio')
   );
 
   // final _tabs = ['Photos', 'Posts'];
@@ -50,26 +51,27 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   File? _selectedProfileImage;
 
-  final List<InterestTag> _allInterests = [
-    InterestTag(label: 'Coffee', icon: Assets.icons.coffee, isSelected: true),
-    InterestTag(label: 'Music', icon: Assets.icons.music, isSelected: true),
-    InterestTag(label: 'Books', icon: Assets.icons.book, isSelected: true),
-    InterestTag(label: 'Gaming', icon: Assets.icons.aiGame, isSelected: false),
-    InterestTag(
-      label: 'Calendar',
+  // Interest labels use translation keys
+  final List<_InterestTagKey> _allInterestKeys = [
+    _InterestTagKey(key: 'interestCoffee', icon: Assets.icons.coffee, isSelected: true),
+    _InterestTagKey(key: 'interestMusic', icon: Assets.icons.music, isSelected: true),
+    _InterestTagKey(key: 'interestBooks', icon: Assets.icons.book, isSelected: true),
+    _InterestTagKey(key: 'interestGaming', icon: Assets.icons.aiGame, isSelected: false),
+    _InterestTagKey(
+      key: 'interestCalendar',
       icon: Assets.icons.calender,
       isSelected: false,
     ),
-    InterestTag(label: 'Travel', icon: Assets.icons.book, isSelected: false),
-    InterestTag(
-      label: 'Fitness',
+    _InterestTagKey(key: 'interestTravel', icon: Assets.icons.book, isSelected: false),
+    _InterestTagKey(
+      key: 'interestFitness',
       icon: Assets.icons.creationStar,
       isSelected: true,
     ),
-    InterestTag(label: 'Cooking', icon: Assets.icons.gift, isSelected: false),
-    InterestTag(label: 'Art', icon: Assets.icons.community, isSelected: false),
-    InterestTag(
-      label: 'Photography',
+    _InterestTagKey(key: 'interestCooking', icon: Assets.icons.gift, isSelected: false),
+    _InterestTagKey(key: 'interestArt', icon: Assets.icons.community, isSelected: false),
+    _InterestTagKey(
+      key: 'interestPhotography',
       icon: Assets.icons.camera,
       isSelected: false,
     ),
@@ -108,14 +110,17 @@ class _ProfileScreenState extends State<ProfileScreen>
 
         final account = profileController.account.value;
         final userProfile = account?.profile;
-        final fullName = userProfile?.fullName.isNotEmpty == true
+        final loc = AppLocalizations.of(context);
+    final fullName = userProfile?.fullName.isNotEmpty == true
             ? utils.titleCase(userProfile!.fullName)
-            : 'User';
+            : loc.translate('defaultUserName');
         final age = _ageFromDob(userProfile?.dateOfBirth);
         final avatarUrl = userProfile?.primaryPhoto?.fullUrl;
         final photoUrls =
             userProfile?.photos.map((p) => p.fullUrl).toList() ?? _photos;
-        final bio = userProfile?.bio ?? _bioController.text;
+        final bio = userProfile?.bio?.isNotEmpty == true
+            ? userProfile!.bio
+            : loc.translate('defaultBio');
         final locationName = userProfile?.locationName;
         final interests = userProfile?.interests ?? <String>[];
         final trustScore = userProfile?.trustedScore?.score ?? 0.0;
@@ -165,6 +170,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   PreferredSize _buildAppBar(BuildContext context, bool isMyProfile) {
+    final loc = AppLocalizations.of(context);
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
       child: Padding(
@@ -223,6 +229,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _profilePicWidget({String? avatarUrl}) {
+    final loc = AppLocalizations.of(context);
     return Stack(
       alignment: Alignment.bottomRight,
       children: [
@@ -266,7 +273,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
                           if (success) {
                             AppSnackbar.show(
-                              message: 'Profile photo updated',
+                              message: loc.translate('profilePhotoUpdated'),
                               type: SnackType.warning,
                             );
                             if (mounted) {
@@ -276,8 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             }
                           } else {
                             AppSnackbar.show(
-                              message:
-                                  'Failed to update profile photo. Please try again.',
+                              message: loc.translate('failedToUpdatePhoto'),
                               type: SnackType.warning,
                             );
                           }
@@ -312,6 +318,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _buildBioField() {
+    final loc = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -321,7 +328,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
-                'Bio',
+                loc.translate('bio'),
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
@@ -344,7 +351,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               decoration: InputDecoration(
                 counterText: "",
                 hintText:
-                    "Enter your bio here. It will be visible to your friends",
+                    loc.translate('enterYourBio'),
                 hintStyle: TextStyle(
                   fontSize: 14.sp,
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -381,6 +388,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     required String bio,
     required List<String> interests,
   }) {
+    final loc = AppLocalizations.of(context);
     return Column(
       children: [
         SizedBox(height: 16.h),
@@ -448,7 +456,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               child: Text(
                 (locationName != null && locationName.isNotEmpty)
                     ? locationName
-                    : 'Location not set',
+                    : loc.translate('locationNotSet'),
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontSize: 14.sp,
@@ -463,7 +471,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: Text(
-              bio.isNotEmpty ? bio : 'No bio yet',
+              bio.isNotEmpty ? bio : loc.translate('noBioYet'),
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14.sp,
@@ -484,10 +492,10 @@ class _ProfileScreenState extends State<ProfileScreen>
                   ? interests
                         .map((label) => _buildStringInterestTag(label))
                         .toList()
-                  : _allInterests.where((interest) => interest.isSelected).map((
+                  : _allInterestKeys.where((i) => i.isSelected).map((
                       interest,
                     ) {
-                      return _buildInterestTag(interest.icon, interest.label);
+                      return _buildInterestTag(interest.icon, loc.translate(interest.key));
                     }).toList(),
             ),
           ),
@@ -550,6 +558,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _buildPhotosTab(bool isMyProfile, List<String> photos) {
+    final loc = AppLocalizations.of(context);
     final width = (1.sw - 40.w - 12.w) / 2;
 
     List<Widget> photoItems = [];
@@ -577,7 +586,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
                 if (uploaded) {
                   AppSnackbar.show(
-                    message: 'Photo added successfully',
+                    message: loc.translate('photoAdded'),
                     type: SnackType.warning,
                   );
                   await profileController.fetchProfile();
@@ -588,7 +597,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   }
                 } else {
                   AppSnackbar.show(
-                    message: 'Failed to upload photo. Please try again.',
+                    message: loc.translate('failedToUpload'),
                     type: SnackType.warning,
                   );
                 }
@@ -686,6 +695,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _buildImageDeleteAlertDialog(BuildContext context, String item) {
+    final loc = AppLocalizations.of(context);
     return AlertDialog(
       elevation: 0,
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -712,7 +722,7 @@ class _ProfileScreenState extends State<ProfileScreen>
         spacing: 18.h,
         children: [
           Text(
-            'Are you sure you want to delete this photo?',
+            loc.translate('areYouSureDeletePhoto'),
             style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           SizedBox(
@@ -733,7 +743,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       btnColor: Theme.of(context).colorScheme.surface,
                       textColor: Theme.of(context).colorScheme.onSurface,
                       onTap: () => Navigator.pop(context),
-                      buttonText: 'Cancel',
+                      buttonText: loc.translate('cancel'),
                     ),
                   ),
                 ),
@@ -745,7 +755,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Navigator.pop(context);
                       });
                     },
-                    text: 'Delete',
+                    text: loc.translate('delete'),
                   ),
                 ),
               ],
@@ -757,13 +767,14 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _buildInterestSection() {
+    final loc = AppLocalizations.of(context);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 14.0.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Interests',
+            loc.translate('interests'),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w500,
@@ -913,6 +924,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   void _showAddParentInterestDialog() {
+    final loc = AppLocalizations.of(context);
     final TextEditingController controller = TextEditingController();
 
     showDialog(
@@ -924,7 +936,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             borderRadius: BorderRadius.circular(16.r),
           ),
           title: Text(
-            'Add Interest Category',
+            loc.translate('addInterestCategory'),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -942,7 +954,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 decoration: InputDecoration(
-                  hintText: "Enter interest name",
+                  hintText: loc.translate('enterInterestName'),
                   hintStyle: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 14,
@@ -980,7 +992,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                           onTap: () {
                             Navigator.pop(context);
                           },
-                          buttonText: 'Cancel',
+                          buttonText: loc.translate('cancel'),
                         ),
                       ),
                     ),
@@ -995,7 +1007,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             Navigator.pop(context);
                           }
                         },
-                        text: "Add",
+                        text: loc.translate('addCategory'),
                       ),
                     ),
                   ],
@@ -1037,6 +1049,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   void _showAddInterestDialog() {
+    final loc = AppLocalizations.of(context);
     final TextEditingController _newInterestController =
         TextEditingController();
     SvgGenImage? selectedIcon;
@@ -1077,7 +1090,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               ),
               backgroundColor: Theme.of(context).colorScheme.surface,
               title: Text(
-                "Add Sub Interest",
+                loc.translate('addSubInterest'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
@@ -1092,7 +1105,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                     decoration: InputDecoration(
-                      hintText: "Enter interest name",
+                      hintText: loc.translate('enterInterestName'),
                       hintStyle: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                         fontSize: 14,
@@ -1137,7 +1150,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 context,
                               ).colorScheme.onSurface,
                               onTap: () => Navigator.pop(context),
-                              buttonText: 'Cancel',
+                              buttonText: loc.translate('cancel'),
                               fontWeight: FontWeight.w400,
                             ),
                           ),
@@ -1162,7 +1175,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 Navigator.pop(context);
                               }
                             },
-                            text: 'Add',
+                            text: loc.translate('addCategory'),
                           ),
                         ),
                       ],
@@ -1204,13 +1217,13 @@ void _openFullImage(String imageUrl, BuildContext context) {
   );
 }
 
-class InterestTag {
-  final String label;
+class _InterestTagKey {
+  final String key;
   final SvgGenImage icon;
   bool isSelected;
 
-  InterestTag({
-    required this.label,
+  _InterestTagKey({
+    required this.key,
     required this.icon,
     required this.isSelected,
   });

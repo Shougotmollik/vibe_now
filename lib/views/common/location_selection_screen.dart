@@ -12,6 +12,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/utils.dart' as utils;
 
 class GoogleMapSearchModel {
@@ -165,8 +166,8 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
           markerId: MarkerId(position.hashCode.toString()),
           position: LatLng(position.latitude, position.longitude),
           infoWindow: InfoWindow(
-            title: 'Selected Location',
-            snippet: '${position.latitude}, ${position.longitude}',
+          title: AppLocalizations.of(context).translate('selectedLocation'),
+          snippet: '${position.latitude}, ${position.longitude}',
           ),
         ),
       );
@@ -219,8 +220,8 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
           ),
           position: tappedPoint,
           infoWindow: InfoWindow(
-            title: 'Selected Location',
-            snippet: '${tappedPoint.latitude}, ${tappedPoint.longitude}',
+          title: AppLocalizations.of(context).translate('selectedLocation'),
+          snippet: '${tappedPoint.latitude}, ${tappedPoint.longitude}',
           ),
         ),
       );
@@ -420,7 +421,7 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
                     ),
                     SizedBox(width: 12.w),
                     Text(
-                      'Search ...',
+                      AppLocalizations.of(context).translate('searchDot'),
                       style: TextStyle(
                         color: textColorVariant,
                         fontSize: 14.sp,
@@ -504,9 +505,8 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
       Marker(
         markerId: MarkerId(item.placeId),
         position: LatLng(location['lat'], location['lng']),
-        infoWindow: InfoWindow(
-          title: 'Selected Location',
-          snippet: '${location['lat']}, ${location['lng']}',
+        infoWindow: InfoWindow(            title: AppLocalizations.of(context).translate('selectedLocation'),
+            snippet: '${location['lat']}, ${location['lng']}',
         ),
       ),
     );
@@ -654,7 +654,7 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
                           borderRadius: BorderRadius.circular(24.r),
                         ),
                         child: Text(
-                          'Cancel',
+                          AppLocalizations.of(context).translate('cancel'),
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: textColorSecondary,
@@ -691,7 +691,7 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
                             borderRadius: BorderRadius.circular(24.r),
                           ),
                           child: Text(
-                            'Select',
+                            AppLocalizations.of(context).translate('select'),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onPrimary,
                               fontSize: 14.sp,
@@ -993,7 +993,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                         ),
                         isDense: true,
                         border: InputBorder.none,
-                        hintText: 'Search ...',
+                        hintText: AppLocalizations.of(context).translate('searchDot'),
                         contentPadding: EdgeInsets.all(0),
                       ),
                     ),
@@ -1125,7 +1125,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'History',
+                        AppLocalizations.of(context).translate('history'),
                         style: TextStyle(
                           color: textColor,
                           fontSize: 14.sp,
@@ -1135,7 +1135,7 @@ class _MapSearchScreenState extends State<MapSearchScreen> {
                       GestureDetector(
                         onTap: _removeAllHistory,
                         child: Text(
-                          'Clear All',
+                          AppLocalizations.of(context).translate('clearAll'),
                           style: TextStyle(
                             color: primaryColor,
                             fontSize: 14.sp,

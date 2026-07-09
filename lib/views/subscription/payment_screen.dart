@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/subscription/payment_success.dart';
 
@@ -18,6 +19,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: AppColors.backgroundVariant,
       body: Padding(
@@ -25,7 +27,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
         child: Column(
           children: [
             SafeArea(
-              child: CustomAppBar(title: "Payment Method", canBack: true),
+              child: CustomAppBar(title: loc.translate('paymentMethod'), canBack: true),
             ),
 
             SizedBox(height: 40.h),
@@ -39,7 +41,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
               child: Column(
                 children: [
                   _buildPaymentTile(
-                    title: "PayPal",
+                    title: loc.translate('paypal'),
                     value: "paypal",
                     imagePath: "assets/icons/paypal.svg",
                   ),
@@ -47,7 +49,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   Divider(color: Colors.grey[300], height: 1.h),
 
                   _buildPaymentTile(
-                    title: "Stripe",
+                    title: loc.translate('stripe'),
                     value: "stripe",
                     imagePath: "assets/icons/stripe.svg",
                   ),
@@ -63,7 +65,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   MaterialPageRoute(builder: (context) => PaymentSuccess()),
                 );
               },
-              text: "Next",
+              text: loc.translate('next'),
               isEnabled: selectedPayment != null,
             ),
             SizedBox(height: 48.h),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/controller/onboarding_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/auth/steps/step_birthday_screen.dart';
 import 'package:vibe_now/views/auth/widgets/custom_text_form_field.dart';
 import 'package:vibe_now/views/auth/widgets/step_page.dart';
@@ -43,6 +44,7 @@ class _StepNameScreenState extends State<StepNameScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return StepPage(
       currentStep: widget.step,
       footer: PrimaryButton.text(
@@ -63,12 +65,12 @@ class _StepNameScreenState extends State<StepNameScreen> {
                   );
                 } else {
                   AppSnackbar.show(
-                    message: 'Please enter your name',
+                    message: loc.translate('enterYourName'),
                     type: SnackType.info,
                   );
                 }
               },
-        text: 'Continue',
+        text: loc.translate('continueText'),
         isEnabled: !_isNameFilled,
       ),
       isSkippable: false,
@@ -88,14 +90,13 @@ class _StepNameScreenState extends State<StepNameScreen> {
         children: [
           SizedBox(height: 32.h),
           StepTitle(
-            title: 'What\'s your name',
-            subtitle:
-                'This is how others will see you on vibe.now. You won’t be able to change it later.',
+            title: loc.translate('stepName'),
+            subtitle: loc.translate('enterYourName'),
           ),
           SizedBox(height: 16.h),
           CustomTextFormField(
             controller: _nameController,
-            hintText: 'Enter your name',
+            hintText: loc.translate('enterYourName'),
           ),
         ],
       ),

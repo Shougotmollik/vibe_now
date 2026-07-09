@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 
 class ConfirmationDialog extends StatelessWidget {
@@ -41,7 +42,7 @@ class ConfirmationDialog extends StatelessWidget {
                 Expanded(
                   child: CustomElevatedButton(
                     onTap: onCancel,
-                    buttonText: "Cancel",
+                    buttonText: AppLocalizations.of(context).translate('cancel'),
                     btnColor: Theme.of(context).colorScheme.surfaceVariant,
                     textColor: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),

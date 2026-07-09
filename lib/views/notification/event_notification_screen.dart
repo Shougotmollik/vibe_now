@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/notification.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/community/community_awaiting_qrscreen.dart';
@@ -36,7 +37,7 @@ class _EventNotificationScreenState extends State<EventNotificationScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            SafeArea(child: CustomAppBar(title: "Event Notifications")),
+            SafeArea(child: CustomAppBar(title: AppLocalizations.of(context).translate('eventNotifications'))),
             SizedBox(height: 18.h),
             Column(
               spacing: 8.h,

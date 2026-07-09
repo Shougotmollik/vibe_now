@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 
 class EventAccessGrandScreen extends StatelessWidget {
@@ -10,6 +11,7 @@ class EventAccessGrandScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
 
@@ -18,7 +20,7 @@ class EventAccessGrandScreen extends StatelessWidget {
         child: Column(
           children: [
             SafeArea(
-              child: CustomAppBar(title: "Event Access Granted", canBack: true),
+              child: CustomAppBar(title: loc.translate('eventAccessGranted'), canBack: true),
             ),
             SizedBox(height: 100.h),
             Image.asset(
@@ -53,7 +55,7 @@ class EventAccessGrandScreen extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    "Your request accessed to attend this event!",
+                    loc.translate('yourRequestHasBeenSent'),
                     style: TextStyle(
                       fontWeight: FontWeight.w400,
                       fontSize: 14.sp,
@@ -63,7 +65,7 @@ class EventAccessGrandScreen extends StatelessWidget {
                   SizedBox(
                     width: 220.w,
                     child: Text(
-                      "Remember to scan the QR code on arrival to check in",
+                      loc.translate('qrCodeDescription'),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontWeight: FontWeight.w400,
@@ -110,7 +112,7 @@ class EventAccessGrandScreen extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.pop(context);
               },
-              text: "Ok",
+              text: loc.translate('ok'),
             ),
           ],
         ),
@@ -126,7 +128,6 @@ class EventAccessGrandScreen extends StatelessWidget {
     return Row(
       spacing: 6.w,
       children: [
-        // Assets.icons.calendarColor.svg(width: 16.w, height: 16.h),
         icons.svg(width: 18.w, height: 18.h),
         Text(
           title,

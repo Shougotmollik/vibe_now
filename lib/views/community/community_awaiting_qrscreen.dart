@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 
 import 'package:vibe_now/core/constant/credential.dart';
@@ -24,14 +25,15 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SafeArea(
+            SafeArea(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20),
-                child: CustomAppBar(title: "Awaiting QR", canBack: true),
+                child: CustomAppBar(title: loc.translate('awaitingQR'), canBack: true),
               ),
             ),
 
@@ -74,7 +76,7 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                                   ),
                               ),
                               TextSpan(
-                                text: ' has been approved!',
+                                text: loc.translate('hasBeenApproved'),
                                   style: TextStyle(
                                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w400,
@@ -148,7 +150,7 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                               Text(
-                                "Scan QR Code",
+                                loc.translate('scanQRCode'),
                                 style: TextStyle(
                                   color: Theme.of(context).colorScheme.onSurface,
                                   fontSize: 14.sp,
@@ -194,14 +196,11 @@ class CommunityAwaitingQrScreen extends StatelessWidget {
 
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 30.w),
-              child: const Column(
+              child: Column(
                 children: [
-                  _InfoBullet(
-                    text:
-                        'QR code must be scanned in person to become a member',
-                  ),
-                  SizedBox(height: 12),
-                  _InfoBullet(text: 'You can cancel this meetup anytime'),
+                  _InfoBullet(text: loc.translate('qrMustBeScanned')),
+                  const SizedBox(height: 12),
+                  _InfoBullet(text: loc.translate('cancelMeetupAnytime')),
                 ],
               ),
             ),

@@ -10,6 +10,7 @@ import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
@@ -91,6 +92,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -101,29 +103,27 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                 padding: EdgeInsets.all(16.w),
                 child: Column(
                   children: [
-                    const CustomAppBar(title: "Create Community"),
+                    CustomAppBar(title: loc.translate('createCommunity')),
                     SizedBox(height: 16.h),
                     _buildCommunityHeaderSection(),
                     SizedBox(height: 16.h),
-                    _buildImageUploadSection(),
+                    _buildImageUploadSection(loc),
                     SizedBox(height: 24.h),
-                    _buildCommunityTitle(),
+                    _buildCommunityTitle(loc),
                     SizedBox(height: 24.h),
-                    _buildCommunityDescription(),
+                    _buildCommunityDescription(loc),
                     SizedBox(height: 24.h),
-                    _buildCommunityCategory(),
+                    _buildCommunityCategory(loc),
                     SizedBox(height: 24.h),
-                    // _buildAccessLevel(),
-                    // SizedBox(height: 24.h),
-                    _buildSelectLocation(),
+                    _buildSelectLocation(loc),
                     SizedBox(height: 24.h),
-                    _buildDateTimeRow(),
+                    _buildDateTimeRow(loc),
                     SizedBox(height: 24.h),
-                    _buildMaxAttendees(),
+                    _buildMaxAttendees(loc),
                     SizedBox(height: 24.h),
-                    _buildCommunityRules(),
+                    _buildCommunityRules(loc),
                     SizedBox(height: 24.h),
-                    _buildActionButtons(),
+                    _buildActionButtons(loc),
                     SizedBox(height: 24.h),
                   ],
                 ),
@@ -135,7 +135,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(loc) {
     return Row(
       children: [
         Expanded(
@@ -151,7 +151,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               side: BorderSide(color: Theme.of(context).dividerColor),
             ),
             child: Text(
-              'Cancel',
+              loc.translate('cancel'),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 15,
@@ -171,7 +171,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               child: ElevatedButton(
                 onPressed: communityController.isLoading.value
                     ? null
-                    : onCreate,
+                    : () => onCreate(loc),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
@@ -191,9 +191,9 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                           ),
                         ),
                       )
-                    : const Text(
-                        'Create',
-                        style: TextStyle(
+                    : Text(
+                        loc.translate('create'),
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -207,7 +207,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  void onCreate() async {
+  void onCreate(loc) async {
     if (_selectedImage == null) {
       AppSnackbar.show(message: 'Please select cover image');
       return;
@@ -238,7 +238,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
       return;
     }
 
-    // Build categories json
     final List<Map<String, dynamic>> categoryJson = [];
 
     for (final group in communityController.categoryGroups) {
@@ -297,12 +296,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     }
   }
 
-  Widget _buildMaxAttendees() {
+  Widget _buildMaxAttendees(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Max Attendees',
+          loc.translate('maxAttendees'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -334,12 +333,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityRules() {
+  Widget _buildCommunityRules(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Rules',
+          loc.translate('communityRules'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -385,7 +384,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildDateTimeRow() {
+  Widget _buildDateTimeRow(loc) {
     return Row(
       children: [
         Expanded(
@@ -393,7 +392,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Date',
+                loc.translate('communityDate'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -422,7 +421,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                       const SizedBox(width: 12),
                       Text(
                         _selectedDate == null
-                            ? 'Select'
+                            ? loc.translate('select')
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
@@ -442,7 +441,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Time',
+                loc.translate('communityTime'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -471,7 +470,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                       const SizedBox(width: 12),
                       Text(
                         _selectedTime == null
-                            ? 'Select'
+                            ? loc.translate('select')
                             : _selectedTime!.format(context),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
@@ -489,20 +488,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  // void _showDatePicker(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //     ),
-  //     builder: (context) => CustomDatePicker(
-  //       onDateSelected: (date) {
-  //         setState(() => _selectedDate = date);
-  //       },
-  //     ),
-  //   );
-  // }
-
   void _showTimePicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -517,12 +502,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildSelectLocation() {
+  Widget _buildSelectLocation(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Select Location',
+          loc.translate('selectLocation'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -543,11 +528,6 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                       selectedLatitude = location.position.latitude;
                       selectedLongitude = location.position.longitude;
                     });
-
-                    print(
-                      'Selected location: $selectedLatitude, $selectedLongitude',
-                    );
-                    print('Location name: ${location.name}');
                   },
                 ),
               ),
@@ -573,7 +553,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                 Expanded(
                   child: Text(
                     locationController.text.isEmpty
-                        ? 'Select address'
+                        ? loc.translate('selectAddress')
                         : locationController.text,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -589,12 +569,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityCategory() {
+  Widget _buildCommunityCategory(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Community Category',
+          loc.translate('communityCategoryLabel'),
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
@@ -616,13 +596,11 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
 
               return Column(
                 children: [
-                  // Parent
                   GestureDetector(
                     onTap: () => communityController.toggleExpand(group.parent),
                     child: newMethod(isSelected, isPartial, group, isExpanded),
                   ),
 
-                  // Subcategories
                   SizedBox(
                     width: double.infinity,
                     child: AnimatedSize(
@@ -679,7 +657,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                                   child: GestureDetector(
                                     onTap: () {
                                       _activeParentForSub = group.parent;
-                                      _showAddCategoryDialog();
+                                      _showAddCategoryDialog(loc);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -715,7 +693,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
         }),
         GestureDetector(
           onTap: () {
-            _buildNewCategoryDialog();
+            _buildNewCategoryDialog(loc);
           },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
@@ -726,7 +704,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             ),
             child: Center(
               child: Text(
-                "Add New Category",
+                loc.translate('addNewCategory'),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
@@ -740,7 +718,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Future<dynamic> _buildNewCategoryDialog() {
+  Future<dynamic> _buildNewCategoryDialog(loc) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -750,7 +728,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            'Add New Category',
+            loc.translate('addNewCategory'),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -761,7 +739,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Enter category name',
+              hintText: loc.translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -786,7 +764,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Cancel',
+                loc.translate('cancel'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 14,
@@ -811,8 +789,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Add',
+                child: Text(
+                  loc.translate('addCategory'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -827,7 +805,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  void _showAddCategoryDialog() {
+  void _showAddCategoryDialog(loc) {
     showDialog(
       context: context,
       builder: (context) {
@@ -837,7 +815,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            'Add New Category',
+            loc.translate('addNewCategory'),
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -848,7 +826,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Enter category name',
+              hintText: loc.translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -873,7 +851,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Cancel',
+                loc.translate('cancel'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 14,
@@ -900,8 +878,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Add',
+                child: Text(
+                  loc.translate('addCategory'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -916,12 +894,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityDescription() {
+  Widget _buildCommunityDescription(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Description',
+          loc.translate('description'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -967,12 +945,12 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityTitle() {
+  Widget _buildCommunityTitle(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Community Title',
+          loc.translate('communityTitle'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -1004,7 +982,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildImageUploadSection() {
+  Widget _buildImageUploadSection(loc) {
     return GestureDetector(
       onTap: () async {
         utils.showImagePickerOptions(context, (imageSource) async {
@@ -1018,7 +996,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               _selectedImage = image;
             });
           } else {
-            AppSnackbar.show(message: 'Failed to pick image');
+            AppSnackbar.show(message: loc.translate('failedToPickImage'));
           }
         });
       },
@@ -1085,7 +1063,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                     Assets.icons.uploadImage.svg(width: 40.w, height: 40.h),
                     SizedBox(height: 8.h),
                     Text(
-                      "Upload Cover Image",
+                      loc.translate('uploadCoverImage'),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
@@ -1093,7 +1071,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                       ),
                     ),
                     Text(
-                      "Click to browse",
+                      loc.translate('clickToBrowse'),
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w400,

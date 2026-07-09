@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/community/community_manage_member_screen.dart';
 
@@ -26,7 +27,7 @@ class _CommunityMembersScreenState extends State<CommunityMembersScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomAppBar(title: "Members", canBack: true),
+                  CustomAppBar(title: AppLocalizations.of(context).translate('members'), canBack: true),
                   // GestureDetector(
                   //   onTap: () {
                   //     Navigator.push(
@@ -78,9 +79,9 @@ class _CommunityMembersScreenState extends State<CommunityMembersScreen> {
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
       child: Row(
         children: [
-          _tabButton(label: "Active members", index: 0),
+          _tabButton(label: AppLocalizations.of(context).translate('activeMembers'), index: 0),
           SizedBox(width: 10.w),
-          _tabButton(label: "Invited members", index: 1),
+          _tabButton(label: AppLocalizations.of(context).translate('invitedMembers'), index: 1),
         ],
       ),
     );

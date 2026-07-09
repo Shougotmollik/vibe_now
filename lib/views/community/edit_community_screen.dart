@@ -11,6 +11,7 @@ import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/utils.dart' as utils;
@@ -81,7 +82,6 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     super.initState();
     communityController.selectedSubcategories.clear();
 
-    // Initialize controllers with existing community data
     _titleController = TextEditingController(text: widget.community.title);
     _descriptionController = TextEditingController(text: widget.community.description);
     _rulesController = TextEditingController(text: widget.community.rules);
@@ -90,16 +90,13 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
     _locationController = TextEditingController(text: widget.community.address ?? '');
 
-    // Set location coordinates
     _selectedLatitude = widget.community.latitude;
     _selectedLongitude = widget.community.longitude;
 
-    // Set access type
     _accessType = widget.community.isPrivate
         ? CommunityAccessType.private
         : CommunityAccessType.public;
 
-    // Parse date from communityDate string (format: "2026-05-22")
     if (widget.community.communityDate != null && widget.community.communityDate!.isNotEmpty) {
       final parts = widget.community.communityDate!.split('-');
       if (parts.length == 3) {
@@ -111,7 +108,6 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
       }
     }
 
-    // Parse time from communityTime string (format: "08:15 PM")
     if (widget.community.communityTime != null && widget.community.communityTime!.isNotEmpty) {
       try {
         final timeParts = widget.community.communityTime!.split(' ');
@@ -129,7 +125,6 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
       }
     }
 
-    // Initialize selected categories from community
     if (widget.community.categories != null) {
       for (final cat in widget.community.categories!) {
         if (cat.subcategories != null) {
@@ -160,6 +155,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -171,7 +167,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const CustomAppBar(title: "Community info"),
+                    CustomAppBar(title: loc.translate('communityInfo')),
                     GestureDetector(
                       onTap: () {
                         editCommunityAction(
@@ -181,8 +177,8 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                               context: context,
                               builder: (context) {
                                 return ConfirmationDialog(
-                                  title: 'Are you sure you want to Delete it?',
-                                  confirmBtnText: 'Delete',
+                                  title: loc.translate('deleteEventConfirm'),
+                                  confirmBtnText: loc.translate('delete'),
                                   onConfirm: () {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
@@ -201,8 +197,8 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                               context: context,
                               builder: (context) {
                                 return ConfirmationDialog(
-                                  title: 'Are you sure you want to Archive it?',
-                                  confirmBtnText: 'Yes',
+                                  title: loc.translate('archiveConfirm'),
+                                  confirmBtnText: loc.translate('yes'),
                                   onConfirm: () {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
@@ -230,35 +226,31 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   ],
                 ),
                 SizedBox(height: 16.h),
-                _buildAdminCard(),
+                _buildAdminCard(loc),
                 SizedBox(height: 16.h),
-                _buildImageUploadSection(context),
+                _buildImageUploadSection(context, loc),
                 SizedBox(height: 24.h),
-                _buildCommunityTitle(),
+                _buildCommunityTitle(loc),
                 SizedBox(height: 24.h),
-                _buildCommunityDescription(),
+                _buildCommunityDescription(loc),
                 SizedBox(height: 24.h),
-                _buildCommunityCategory(),
+                _buildCommunityCategory(loc),
                 SizedBox(height: 24.h),
-                // _buildAccessLevel(),
-                // SizedBox(height: 24.h),
-                _buildSelectLocation(),
+                _buildSelectLocation(loc),
                 SizedBox(height: 24.h),
-                _buildDateTimeRow(),
+                _buildDateTimeRow(loc),
                 SizedBox(height: 24.h),
-                _buildMaxAttendees(),
+                _buildMaxAttendees(loc),
                 SizedBox(height: 24.h),
-                _buildCommunityRules(),
-                // SizedBox(height: 24.h),
-                // _buildCommunityMember(),
+                _buildCommunityRules(loc),
                 SizedBox(height: 24.h),
                 Obx(() => PrimaryButton.text(
                   onPressed: () {
                     if (!communityController.isLoading.value) {
-                      _handleUpdate();
+                      _handleUpdate(loc);
                     }
                   },
-                  text: communityController.isLoading.value ? "Updating..." : "Update",
+                  text: communityController.isLoading.value ? loc.translate('updating') : loc.translate('update'),
                 )),
                 SizedBox(height: 24.h),
               ],
@@ -269,16 +261,15 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Future<void> _handleUpdate() async {
+  Future<void> _handleUpdate(loc) async {
     if (widget.community.id == null) {
       AppSnackbar.show(
-        message: 'Invalid community',
+        message: loc.translate('invalidCommunity'),
         type: SnackType.error,
       );
       return;
     }
 
-    // Validate required fields
     if (_titleController.text.isEmpty) {
       AppSnackbar.show(
         message: 'Please enter a title',
@@ -319,11 +310,9 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
       return;
     }
 
-    // Format date and time for API
     final dateStr = '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}';
     final timeStr = '${_selectedTime!.hour.toString().padLeft(2, '0')}:${_selectedTime!.minute.toString().padLeft(2, '0')}';
 
-    // Build categories json
     final List<Map<String, dynamic>> categoryJson = [];
 
     for (final group in communityController.categoryGroups) {
@@ -357,37 +346,19 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
 
     if (success && mounted) {
       AppSnackbar.show(
-        message: 'Community updated successfully',
+        message: loc.translate('communityUpdatedSuccess'),
         type: SnackType.success,
       );
       Navigator.pop(context);
     } else if (mounted) {
       AppSnackbar.show(
-        message: 'Failed to update community',
+        message: loc.translate('failedToUpdateCommunity'),
         type: SnackType.error,
       );
     }
   }
 
-  // Widget _buildCommunityMember() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(
-  //         "Members(24)",
-  //         style: TextStyle(
-  //           fontWeight: FontWeight.w500,
-  //           fontSize: 14.sp,
-  //           color: Theme.of(context).colorScheme.onSurface,
-  //         ),
-  //       ),
-
-  //       Column(children: List.generate(3, (index) => UserProfileTile())),
-  //     ],
-  //   );
-  // }
-
-  Widget _buildAdminCard() {
+  Widget _buildAdminCard(loc) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -408,7 +379,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             ),
           ),
           Text(
-            "You are an Admin",
+            loc.translate('youAreAdmin'),
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
@@ -421,213 +392,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  // Widget _buildAccessLevel() {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       const Text(
-  //         'Access Level',
-  //         style: TextStyle(
-  //           fontSize: 15,
-  //           fontWeight: FontWeight.w500,
-  //           color: Colors.black87,
-  //         ),
-  //       ),
-  //       const SizedBox(height: 8),
-
-  //       Container(
-  //         padding: EdgeInsets.all(4.w),
-  //         decoration: BoxDecoration(
-  //           color: Colors.grey[100],
-  //           borderRadius: BorderRadius.circular(14.r),
-  //         ),
-  //         child: Row(
-  //           children: [
-  //             _accessToggleItem(
-  //               label: 'Public',
-  //               icon: Icons.people_alt_outlined,
-  //               isSelected: _accessType == CommunityAccessType.public,
-  //               onTap: () {
-  //                 HapticFeedback.selectionClick();
-  //                 setState(() {
-  //                   _accessType = CommunityAccessType.public;
-  //                 });
-  //               },
-  //             ),
-  //             _accessToggleItem(
-  //               label: 'Private',
-  //               icon: Icons.lock_person_outlined,
-  //               isSelected: _accessType == CommunityAccessType.private,
-  //               onTap: () {
-  //                 HapticFeedback.selectionClick();
-  //                 setState(() {
-  //                   _accessType = CommunityAccessType.private;
-  //                 });
-  //               },
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-
-  //       const SizedBox(height: 6),
-  //       Padding(
-  //         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //         child: Text(
-  //           _accessType == CommunityAccessType.public
-  //               ? 'Anyone can discover and join this community instantly without approval.'
-  //               : 'People will need your approval before they can join this community.',
-  //           textAlign: TextAlign.start,
-  //           style: TextStyle(fontSize: 14.sp, color: Colors.grey.shade500),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  Widget _accessToggleItem({
-    required String label,
-    required bool isSelected,
-    required VoidCallback onTap,
-    IconData? icon,
-  }) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            AnimatedAlign(
-              duration: const Duration(milliseconds: 420),
-              curve: Curves.easeInOutCubic,
-              alignment: isSelected ? Alignment.center : Alignment.center,
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 200),
-                opacity: isSelected ? 1 : 0,
-                child: Container(
-                  height: 42.h,
-                  decoration: BoxDecoration(
-                    gradient: AppColors.primaryGradientRotated,
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                ),
-              ),
-            ),
-
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  size: 20.sp,
-                  color: isSelected ? Colors.white : Colors.grey[600],
-                ),
-                SizedBox(width: 6.w),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected
-                        ? Colors.white
-                        : Theme.of(context).colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: OutlinedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              side: BorderSide(color: Theme.of(context).dividerColor),
-            ),
-            child: Text(
-              'Cancel',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurface,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              borderRadius: BorderRadius.circular(30),
-            ),
-            child: ElevatedButton(
-              onPressed: () {
-                // AppSnackbar.show(
-                //   message: 'Your community has been created successfully',
-                //   type: SnackType.success,
-                // );
-                Navigator.pop(context);
-                showDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (context) {
-                    return Center(
-                      child: Dialog(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        elevation: 0,
-                        backgroundColor: Colors.transparent,
-                        child: CommunityAnimatedDialog(
-                          content:
-                              'Congratulations! Your community is now live.',
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              child: const Text(
-                'Create',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMaxAttendees() {
+  Widget _buildMaxAttendees(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Max Attendees',
+          loc.translate('maxAttendees'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -659,7 +429,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Widget _buildDateTimeRow() {
+  Widget _buildDateTimeRow(loc) {
     return Row(
       children: [
         Expanded(
@@ -667,7 +437,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Date',
+                loc.translate('communityDate'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -696,7 +466,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                       const SizedBox(width: 12),
                       Text(
                         _selectedDate == null
-                            ? 'Select'
+                            ? loc.translate('select')
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
@@ -716,7 +486,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Time',
+                loc.translate('communityTime'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -745,7 +515,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                       const SizedBox(width: 12),
                       Text(
                         _selectedTime == null
-                            ? 'Select'
+                            ? loc.translate('select')
                             : _selectedTime!.format(context),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
@@ -763,20 +533,6 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  // void _showDatePicker(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-  //     ),
-  //     builder: (context) => CustomDatePicker(
-  //       onDateSelected: (date) {
-  //         setState(() => _selectedDate = date);
-  //       },
-  //     ),
-  //   );
-  // }
-
   void _showTimePicker(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -791,12 +547,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Widget _buildSelectLocation() {
+  Widget _buildSelectLocation(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Select Location',
+          loc.translate('selectLocation'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -806,8 +562,6 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
         const SizedBox(height: 8),
         GestureDetector(
           onTap: () {
-            // TODO: Navigate to location selection screen
-            // For now, just show the existing address
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -827,7 +581,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   child: Text(
                     _locationController.text.isNotEmpty
                         ? _locationController.text
-                        : 'Select address',
+                        : loc.translate('selectAddress'),
                     style: TextStyle(
                       color: _locationController.text.isNotEmpty
                           ? Theme.of(context).colorScheme.onSurface
@@ -846,12 +600,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityCategory() {
+  Widget _buildCommunityCategory(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Community Category',
+          loc.translate('communityCategoryLabel'),
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
@@ -873,13 +627,11 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
 
               return Column(
                 children: [
-                  // Parent
                   GestureDetector(
                     onTap: () => communityController.toggleExpand(group.parent),
                     child: newMethod(isSelected, isPartial, group, isExpanded),
                   ),
 
-                  // Subcategories
                   SizedBox(
                     width: double.infinity,
                     child: AnimatedSize(
@@ -936,7 +688,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                                   child: GestureDetector(
                                     onTap: () {
                                       _activeParentForSub = group.parent;
-                                      _showAddCategoryDialog();
+                                      _showAddCategoryDialog(loc);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -972,7 +724,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
         }),
         GestureDetector(
           onTap: () {
-            _buildNewCategoryDialog();
+            _buildNewCategoryDialog(loc);
           },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
@@ -983,7 +735,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             ),
             child: Center(
               child: Text(
-                "Add New Category",
+                loc.translate('addNewCategory'),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
@@ -997,7 +749,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Future<dynamic> _buildNewCategoryDialog() {
+  Future<dynamic> _buildNewCategoryDialog(loc) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -1007,14 +759,14 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            'Add New Category',
+            loc.translate('addNewCategory'),
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           content: TextField(
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Enter category name',
+              hintText: loc.translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -1039,7 +791,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Cancel',
+                loc.translate('cancel'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -1064,8 +816,8 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Add',
+                child: Text(
+                  loc.translate('addCategory'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -1080,7 +832,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  void _showAddCategoryDialog() {
+  void _showAddCategoryDialog(loc) {
     showDialog(
       context: context,
       builder: (context) {
@@ -1089,15 +841,15 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             borderRadius: BorderRadius.circular(16.r),
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
-          title: const Text(
-            'Add New Category',
+          title: Text(
+            loc.translate('addNewCategory'),
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           content: TextField(
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Enter category name',
+              hintText: loc.translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -1122,7 +874,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Cancel',
+                loc.translate('cancel'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -1149,8 +901,8 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Add',
+                child: Text(
+                  loc.translate('addCategory'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -1165,12 +917,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityDescription() {
+  Widget _buildCommunityDescription(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Description',
+          loc.translate('description'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -1216,12 +968,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityRules() {
+  Widget _buildCommunityRules(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Rules',
+          loc.translate('communityRules'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -1267,12 +1019,12 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityTitle() {
+  Widget _buildCommunityTitle(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Community Title',
+          loc.translate('communityTitle'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -1304,7 +1056,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
   }
 
-  Widget _buildImageUploadSection(BuildContext context) {
+  Widget _buildImageUploadSection(BuildContext context, loc) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.r),
       child: Stack(
@@ -1361,7 +1113,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   });
                 } else {
                   AppSnackbar.show(
-                    message: 'Failed to pick image',
+                    message: loc.translate('failedToPickImage'),
                     type: SnackType.warning,
                   );
                 }
@@ -1380,7 +1132,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                   const Icon(Icons.photo_camera_rounded, color: Colors.white),
                   const SizedBox(width: 8),
                   Text(
-                    'Change',
+                    loc.translate('changePhoto'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -1418,45 +1170,6 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
           Icon(
             isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
             color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCommunityHeaderSection() {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.1),
-            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(14.r),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 12.w,
-            children: [
-              Assets.icons.community.svg(width: 24.w, height: 24.h),
-              Expanded(
-                child: Text(
-                  "Build a space where people with shared interests can connect and grow together",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w400,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              ),
-            ],
           ),
         ],
       ),

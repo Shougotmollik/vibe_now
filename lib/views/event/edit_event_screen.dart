@@ -12,6 +12,7 @@ import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/env.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/utils.dart' as utils;
@@ -64,7 +65,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
         ? EventAccessType.private
         : EventAccessType.public;
 
-    // Parse dates from event data
     if (widget.event.eventStartingDate != null &&
         widget.event.eventStartingDate!.isNotEmpty) {
       final parts = widget.event.eventStartingDate!.split('-');
@@ -99,7 +99,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
       }
     }
 
-    // Parse times from event data
     void parseTime(String? timeStr, Function(TimeOfDay) assign) {
       if (timeStr == null || timeStr.isEmpty) return;
       try {
@@ -124,7 +123,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
     }
     parseTime(widget.event.eventEndingTime, (time) => _endingTime = time);
 
-    // Initialize selected categories from event
     if (widget.event.categories != null) {
       for (final cat in widget.event.categories!) {
         if (cat.subcategories != null) {
@@ -159,6 +157,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
@@ -170,8 +169,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomAppBar(title: "Edit Event"),
-
+                  CustomAppBar(title: loc.translate('editEvent')),
                   GestureDetector(
                     onTap: () {
                       editEventAction(
@@ -181,8 +179,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
                             context: context,
                             builder: (context) {
                               return ConfirmationDialog(
-                                title: 'Are you sure you want to Delete it?',
-                                confirmBtnText: 'Delete',
+                                title: loc.translate('deleteEventConfirm'),
+                                confirmBtnText: loc.translate('delete'),
                                 onConfirm: () async {
                                   final success = await eventController
                                       .deleteEvent(id: widget.event.id ?? 0);
@@ -190,7 +188,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                     Navigator.pop(context);
                                     Navigator.pop(context);
                                     AppSnackbar.show(
-                                      message: "You deleted the event",
+                                      message: loc.translate('youDeletedEvent'),
                                     );
                                   }
                                 },
@@ -206,8 +204,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
                             context: context,
                             builder: (context) {
                               return ConfirmationDialog(
-                                title: 'Are you sure you want to Archive it?',
-                                confirmBtnText: 'Yes',
+                                title: loc.translate('archiveConfirm'),
+                                confirmBtnText: loc.translate('yes'),
                                 onConfirm: () {
                                   Navigator.pop(context);
                                   Navigator.pop(context);
@@ -231,31 +229,28 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 ],
               ),
               SizedBox(height: 12.h),
-              _buildAdminCard(),
+              _buildAdminCard(loc),
               SizedBox(height: 12.h),
-              _buildImageUploadSection(context),
+              _buildImageUploadSection(context, loc),
               const SizedBox(height: 24),
-              _buildEventTitle(),
+              _buildEventTitle(loc),
               const SizedBox(height: 24),
-              _buildEventCategory(),
+              _buildEventCategory(loc),
               const SizedBox(height: 20),
-              _buildSelectLocation(),
+              _buildSelectLocation(loc),
               const SizedBox(height: 20),
-              _buildDateTimeRow(),
+              _buildDateTimeRow(loc),
               const SizedBox(height: 20),
-              _buildMaxAttendees(),
+              _buildMaxAttendees(loc),
               const SizedBox(height: 20),
-              // _buildEventMember(),
-              // const SizedBox(height: 20),
-              // _buildActionButtons(),
               Obx(
                 () => PrimaryButton.text(
                   onPressed: eventController.isLoading.value
                       ? () {}
                       : () {
-                          _showUpdateConfirmationDialog();
+                          _showUpdateConfirmationDialog(loc);
                         },
-                  text: "Update",
+                  text: loc.translate('update'),
                 ),
               ),
               const SizedBox(height: 32),
@@ -266,30 +261,29 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Widget _buildEventMember() {
+  Widget _buildEventMember(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Members(24)",
+          loc.translate('membersCount'),
           style: TextStyle(
             fontWeight: FontWeight.w500,
             fontSize: 14.sp,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-
         Column(children: List.generate(3, (index) => UserProfileTile())),
       ],
     );
   }
 
-  Widget _buildDateTimeRow() {
+  Widget _buildDateTimeRow(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Event Date & Time',
+          loc.translate('eventDateTime'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -301,7 +295,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
           children: [
             Expanded(
               child: _buildDateField(
-                label: 'Starting Date',
+                label: loc.translate('startingDate'),
                 date: _startingDate,
                 onTap: () => _selectDate(
                   context: context,
@@ -312,7 +306,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: _buildTimeField(
-                label: 'Starting Time',
+                label: loc.translate('startingTime'),
                 time: _startingTime,
                 onTap: () =>
                     _showTimePicker(context, (time) => _startingTime = time),
@@ -325,7 +319,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
           children: [
             Expanded(
               child: _buildDateField(
-                label: 'Ending Date',
+                label: loc.translate('endingDate'),
                 date: _endingDate,
                 onTap: () => _selectDate(
                   context: context,
@@ -336,7 +330,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
             const SizedBox(width: 12),
             Expanded(
               child: _buildTimeField(
-                label: 'Ending Time',
+                label: loc.translate('endingTime'),
                 time: _endingTime,
                 onTap: () =>
                     _showTimePicker(context, (time) => _endingTime = time),
@@ -384,7 +378,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 const SizedBox(width: 12),
                 Text(
                   date == null
-                      ? 'Select'
+                      ? AppLocalizations.of(context).translate('select')
                       : '${date.day}/${date.month}/${date.year}',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -434,7 +428,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 ),
                 const SizedBox(width: 12),
                 Text(
-                  time == null ? 'Select' : time.format(context),
+                  time == null
+                      ? AppLocalizations.of(context).translate('select')
+                      : time.format(context),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                     fontSize: 14,
@@ -462,12 +458,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Widget _buildEventCategory() {
+  Widget _buildEventCategory(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Event Category',
+          loc.translate('eventCategoryLabel'),
           style: TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w500,
@@ -489,13 +485,11 @@ class _EditEventScreenState extends State<EditEventScreen> {
 
               return Column(
                 children: [
-                  // Parent
                   GestureDetector(
                     onTap: () => eventController.toggleExpand(group.parent),
                     child: newMethod(isSelected, isPartial, group, isExpanded),
                   ),
 
-                  // Subcategories
                   SizedBox(
                     width: double.infinity,
                     child: AnimatedSize(
@@ -552,7 +546,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                   child: GestureDetector(
                                     onTap: () {
                                       _activeParentForSub = group.parent;
-                                      _showAddCategoryDialog();
+                                      _showAddCategoryDialog(loc);
                                     },
                                     child: Container(
                                       decoration: BoxDecoration(
@@ -590,7 +584,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
         }),
         GestureDetector(
           onTap: () {
-            _buildNewCategoryDialog();
+            _buildNewCategoryDialog(loc);
           },
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 0.w, vertical: 12.h),
@@ -601,7 +595,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
             ),
             child: Center(
               child: Text(
-                "Add New Category",
+                loc.translate('newCategory'),
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
@@ -615,12 +609,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Widget _buildSelectLocation() {
+  Widget _buildSelectLocation(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Select Location',
+          loc.translate('selectLocation'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -647,7 +641,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 Expanded(
                   child: Text(
                     _locationController.text.isEmpty
-                        ? 'Select address'
+                        ? loc.translate('selectAddress')
                         : _locationController.text,
                     style: TextStyle(
                       color: _locationController.text.isEmpty
@@ -666,7 +660,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
   }
 
   Future<void> _selectLocation(BuildContext context) async {
-    // Set initial position if available
     LatLng? initialPosition;
     if (_selectedLatitude != null && _selectedLongitude != null) {
       initialPosition = LatLng(_selectedLatitude!, _selectedLongitude!);
@@ -690,12 +683,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Widget _buildEventTitle() {
+  Widget _buildEventTitle(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Event Title',
+          loc.translate('eventTitle'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -727,7 +720,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Widget _buildImageUploadSection(BuildContext context) {
+  Widget _buildImageUploadSection(BuildContext context, loc) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(8.r),
       child: Stack(
@@ -784,7 +777,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   });
                 } else {
                   AppSnackbar.show(
-                    message: 'Failed to pick image',
+                    message: loc.translate('failedToPickImage'),
                     type: SnackType.warning,
                   );
                 }
@@ -803,7 +796,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   const Icon(Icons.photo_camera_rounded, color: Colors.white),
                   const SizedBox(width: 8),
                   Text(
-                    'Change',
+                    loc.translate('changePhoto'),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -819,7 +812,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Widget _buildAdminCard() {
+  Widget _buildAdminCard(loc) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
@@ -840,7 +833,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
             ),
           ),
           Text(
-            "You are an Admin",
+            loc.translate('youAreAdmin'),
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w500,
@@ -882,7 +875,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Future<dynamic> _buildNewCategoryDialog() {
+  Future<dynamic> _buildNewCategoryDialog(loc) {
     return showDialog(
       context: context,
       builder: (context) {
@@ -892,14 +885,14 @@ class _EditEventScreenState extends State<EditEventScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            'Add New Category',
+            loc.translate('newCategory'),
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           content: TextField(
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Enter category name',
+              hintText: loc.translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -924,7 +917,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Cancel',
+                loc.translate('cancel'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -949,8 +942,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Add',
+                child: Text(
+                  loc.translate('addCategory'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -965,7 +958,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  void _showAddCategoryDialog() {
+  void _showAddCategoryDialog(loc) {
     showDialog(
       context: context,
       builder: (context) {
@@ -975,14 +968,14 @@ class _EditEventScreenState extends State<EditEventScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            'Add Sub Category',
+            loc.translate('addSubCategory'),
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           content: TextField(
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Enter category name',
+              hintText: loc.translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -1007,7 +1000,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Cancel',
+                loc.translate('cancel'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -1035,8 +1028,8 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Add',
+                child: Text(
+                  loc.translate('addCategory'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -1051,12 +1044,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Widget _buildMaxAttendees() {
+  Widget _buildMaxAttendees(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Max Attendees',
+          loc.translate('maxAttendees'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -1084,64 +1077,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  // Widget _buildActionButtons() {
-  //   return Row(
-  //     children: [
-  //       Expanded(
-  //         child: Container(
-  //           decoration: BoxDecoration(
-  //             gradient: AppColors.primaryGradientRotated,
-  //             borderRadius: BorderRadius.circular(30),
-  //           ),
-  //           child: ElevatedButton(
-  //             onPressed: () {
-  //               // final event ={
-  //               //   'title': _titleController.text,
-  //               //   'description': _descriptionController.text,
-  //               //   'location': _locationController.text,
-  //               //   'date': _selectedDate,
-  //               //   'time': _selectedTime,
-  //               //   'maxAttendees': int.parse(_maxAttendeesController.text),
-  //               //   'category': selectedCategories,
-  //               //   'acessibility': _accessType,
-  //               // };
-  //               // Navigator.pop(context);
-  //               showDialog(
-  //                 context: context,
-  //                 builder: (context) {
-  //                   return ConfirmationDialog(
-  //                     title:
-  //                         'Updating it will notify all meeting participants.\nAre you sure?',
-  //                     confirmBtnText: 'Yes',
-  //                     onConfirm: () {},
-  //                   );
-  //                 },
-  //               );
-  //             },
-  //             style: ElevatedButton.styleFrom(
-  //               backgroundColor: Colors.transparent,
-  //               shadowColor: Colors.transparent,
-  //               padding: const EdgeInsets.symmetric(vertical: 16),
-  //               shape: RoundedRectangleBorder(
-  //                 borderRadius: BorderRadius.circular(30),
-  //               ),
-  //             ),
-  //             child: const Text(
-  //               'Update',
-  //               style: TextStyle(
-  //                 color: Colors.white,
-  //                 fontSize: 15,
-  //                 fontWeight: FontWeight.w600,
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
-  void _showUpdateConfirmationDialog() {
+  void _showUpdateConfirmationDialog(loc) {
     showDialog(
       context: context,
       builder: (dialogContext) {
@@ -1159,7 +1095,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Updating it will notify all meeting participants.\nAre you sure?',
+                      loc.translate('updateEventConfirm'),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 14.sp,
@@ -1173,7 +1109,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                         Expanded(
                           child: CustomElevatedButton(
                             onTap: () => Navigator.pop(dialogContext),
-                            buttonText: "Cancel",
+                            buttonText: loc.translate('cancel'),
                             btnColor: Theme.of(
                               context,
                             ).colorScheme.surfaceVariant,
@@ -1190,9 +1126,9 @@ class _EditEventScreenState extends State<EditEventScreen> {
                                   ? () {}
                                   : () {
                                       Navigator.pop(dialogContext);
-                                      _updateEvent();
+                                      _updateEvent(loc);
                                     },
-                              text: "Yes",
+                              text: loc.translate('yes'),
                               isLoading: eventController.isLoading.value,
                             ),
                           ),
@@ -1209,7 +1145,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
   }
 
-  Future<void> _updateEvent() async {
+  Future<void> _updateEvent(loc) async {
     if (_titleController.text.trim().isEmpty) {
       AppSnackbar.show(
         message: 'Please enter event title',
@@ -1255,7 +1191,6 @@ class _EditEventScreenState extends State<EditEventScreen> {
       return;
     }
 
-    // Build categories JSON
     final categoryJson = <Map<String, dynamic>>[];
     for (final group in eventController.categoryGroups) {
       final selectedSubs = group.children
@@ -1290,16 +1225,12 @@ class _EditEventScreenState extends State<EditEventScreen> {
 
     if (success && mounted) {
       AppSnackbar.show(
-        message: 'Event updated successfully',
+        message: loc.translate('eventUpdated'),
         type: SnackType.info,
       );
-      // Go back to previous screens
       Navigator.pop(context);
-      // Navigator.pop(context);
-      // Navigator.pop(context);
     } else {
       AppSnackbar.show(message: 'Failed to update event', type: SnackType.info);
-      // Don't pop - stay on screen
     }
   }
 }

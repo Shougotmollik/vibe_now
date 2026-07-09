@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 
 class PaymentSuccess extends StatefulWidget {
   const PaymentSuccess({super.key});
@@ -53,6 +54,7 @@ class _PaymentSuccessState extends State<PaymentSuccess>
   }
 
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
@@ -84,7 +86,7 @@ class _PaymentSuccessState extends State<PaymentSuccess>
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 30.w),
                 child: Text(
-                  "Your payment has been successfully done",
+                  loc.translate('yourPaymentSuccessful'),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 24.sp,
@@ -107,7 +109,7 @@ class _PaymentSuccessState extends State<PaymentSuccess>
                 onPressed: () {
                   context.pushNamed(RouteNames.mainNavBar);
                 },
-                text: "Home",
+                text: loc.translate('home'),
               ),
             ),
           ),

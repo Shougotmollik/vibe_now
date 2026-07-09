@@ -5,6 +5,7 @@ import 'package:vibe_now/controller/community_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/community_member.dart';
 import 'package:vibe_now/utils.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
@@ -22,9 +23,9 @@ class CommunityMemberScreen extends StatefulWidget {
 class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
   final CommunityController _controller = Get.find<CommunityController>();
 
-  final List<_TabConfig> _tabs = const [
-    _TabConfig(label: 'Active', apiTab: 'joined'),
-    _TabConfig(label: 'Requested', apiTab: 'requested'),
+  final List<_TabConfig> _tabs = [
+    _TabConfig(labelKey: 'activeTab', apiTab: 'joined'),
+    _TabConfig(labelKey: 'requestedTab', apiTab: 'requested'),
   ];
 
   String _selectedTab = 'joined';
@@ -44,18 +45,20 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
   }
 
   String get _emptyMessage {
+    final loc = AppLocalizations.of(context);
     switch (_selectedTab) {
       case 'joined':
-        return 'No active members yet';
+        return loc.translate('noActiveMembers');
       case 'requested':
-        return 'No pending requests';
+        return loc.translate('noPendingRequests');
       default:
-        return 'No members found';
+        return loc.translate('noMembersFound');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -66,7 +69,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomAppBar(title: "Manage Request"),
+                  CustomAppBar(title: loc.translate('manageRequest')),
                   GestureDetector(
                     onTap: () async {
                       await Navigator.push(
@@ -89,7 +92,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       child: Text(
-                        "Manage",
+                        loc.translate('manage'),
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
@@ -172,7 +175,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
           ),
           subtitle: Text(
             // member.requestedAt?.timeAgo,
-            timeAgo(DateTime.parse(member.requestedAt!)),
+            timeAgo(DateTime.parse(member.requestedAt!), context: context),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -208,7 +211,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
             ),
           ),
           subtitle: Text(
-            'Requested to join',
+            AppLocalizations.of(context).translate('requestedToJoin'),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
@@ -235,11 +238,10 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                               borderRadius: BorderRadius.circular(20.r),
                             ),
                             elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            child: AnimatedDialogContent(
+                            backgroundColor: Colors.transparent,                              child: AnimatedDialogContent(
                               content: success
-                                  ? 'You have accepted ${member.user.fullName}\'s community join request.'
-                                  : 'Failed to accept request.',
+                                  ? '${AppLocalizations.of(context).translate('youHaveAcceptedJoinRequest')}${member.user.fullName}${AppLocalizations.of(context).translate('sJoinRequest')}'
+                                  : AppLocalizations.of(context).translate('failedToAccept'),
                               accept: success,
                             ),
                           ),
@@ -271,11 +273,10 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                               borderRadius: BorderRadius.circular(20.r),
                             ),
                             elevation: 0,
-                            backgroundColor: Colors.transparent,
-                            child: AnimatedDialogContent(
+                            backgroundColor: Colors.transparent,                              child: AnimatedDialogContent(
                               content: success
-                                  ? 'You have rejected ${member.user.fullName}\'s community join request.'
-                                  : 'Failed to reject request.',
+                                  ? '${AppLocalizations.of(context).translate('youHaveRejectedJoinRequest')}${member.user.fullName}${AppLocalizations.of(context).translate('sJoinRequestRejected')}'
+                                  : AppLocalizations.of(context).translate('failedToReject'),
                               accept: success,
                             ),
                           ),
@@ -295,6 +296,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
   }
 
   Widget _buildTabTrigger(_TabConfig tab) {
+    final loc = AppLocalizations.of(context);
     bool isActive = _selectedTab == tab.apiTab;
     return GestureDetector(
       onTap: () {
@@ -303,7 +305,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
         });
         _fetchMembers();
       },
-      child: _buildStatusTab(tab.label, isActive),
+      child: _buildStatusTab(loc.translate(tab.labelKey), isActive),
     );
   }
 
@@ -334,8 +336,8 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
 }
 
 class _TabConfig {
-  final String label;
+  final String labelKey;
   final String apiTab;
 
-  const _TabConfig({required this.label, required this.apiTab});
+  const _TabConfig({required this.labelKey, required this.apiTab});
 }

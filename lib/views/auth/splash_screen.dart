@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/views/auth/widgets/animated_value.dart';
 import 'package:vibe_now/views/auth/widgets/animated_ball.dart';
@@ -62,6 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     AnimationConfig.enabled = true;
     AnimationConfig.speedMultiplier = 2.0;
     return Scaffold(
@@ -107,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
           AnimatedFadeUpText(
             delay: 2200,
-            text: "We believe in real-life encounters",
+            text: loc.translate('welcomeTo'),
             fontSize: 14.sp,
           ),
 
@@ -131,9 +133,9 @@ class _SplashScreenState extends State<SplashScreen> {
                     padding: EdgeInsets.all(16.w),
                     child: PrimaryButton.text(
                       onPressed: () {
-                        context.pushNamed(RouteNames.introScreen);
+                        context.pushNamed(RouteNames.chooseLanguageScreen);
                       },
-                      text: 'Get Started',
+                      text: loc.translate('getStarted'),
                     ),
                   ),
                 ),

@@ -10,6 +10,7 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/helper/helper.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
@@ -29,8 +30,10 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
   String _selectedDuration = '2h';
 
   File? _selectedImage;
+
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -41,11 +44,9 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                 child: Column(
                   spacing: 16.h,
                   children: [
-                    _buildVibeHeaderSection(),
-
-                    _buildImageUploadSection(),
-
-                    _buildVibeTitle(),
+                    _buildVibeHeaderSection(loc),
+                    _buildImageUploadSection(loc),
+                    _buildVibeTitle(loc),
                     VibeDurationSelector(
                       onDurationChanged: (duration) {
                         setState(() {
@@ -55,11 +56,10 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                     ),
                     _buildInfoCard(
                       icons: Assets.icons.lock,
-                      title: "Privacy First",
-                      subtitle:
-                          "Your exact location is only shared with people you wave to and accept",
+                      title: loc.translate('privacyFirst'),
+                      subtitle: loc.translate('privacyFirstDesc'),
                     ),
-                    _buildActionButtons(),
+                    _buildActionButtons(loc),
                     SizedBox(height: 16.h),
                   ],
                 ),
@@ -71,14 +71,14 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
     );
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(AppLocalizations loc) {
     return Row(
       children: [
         Expanded(
           child: CustomElevatedButton(
             height: 55.h,
             onTap: () => Navigator.of(context).maybePop(),
-            buttonText: "Cancel",
+            buttonText: loc.translate('cancel'),
             textColor: Theme.of(context).colorScheme.onSurface,
             btnColor: Theme.of(context).colorScheme.surfaceVariant,
           ),
@@ -94,13 +94,13 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                     : () async {
                         if (_selectedImage == null) {
                           AppSnackbar.show(
-                            message: 'Please select cover image',
+                            message: loc.translate('uploadCoverImage'),
                           );
                           return;
                         }
 
                         if (_titleController.text.trim().isEmpty) {
-                          AppSnackbar.show(message: 'Please enter vibe title');
+                          AppSnackbar.show(message: loc.translate('vibeTitle'));
                           return;
                         }
                         final success = await controller.createVibe(
@@ -121,7 +121,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                                   elevation: 0,
                                   backgroundColor: Colors.transparent,
                                   child: VibeAnimatedDialog(
-                                    content: "Your Vibe is now live.",
+                                    content: loc.translate('vibeCreated'),
                                   ),
                                 ),
                               );
@@ -130,61 +130,13 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                           Navigator.of(context).maybePop();
                         }
                       },
-                text: "Create",
+                text: loc.translate('create'),
                 radius: 30.r,
                 isLoading: controller.isLoading.value,
               ),
             ),
           ),
         ),
-        // Expanded(
-        //   child: Container(
-        //     decoration: BoxDecoration(
-        //       gradient: AppColors.primaryGradient,
-
-        //       borderRadius: BorderRadius.circular(30),
-        //     ),
-        //     child: ElevatedButton(
-        //       onPressed: () {
-        //         // Navigator.pop(context);
-        //         showDialog(
-        //           context: context,
-        //           barrierDismissible: true,
-        //           builder: (context) {
-        //             return Center(
-        //               child: Dialog(
-        //                 shape: RoundedRectangleBorder(
-        //                   borderRadius: BorderRadius.circular(20.r),
-        //                 ),
-        //                 elevation: 0,
-        //                 backgroundColor: Colors.transparent,
-        //                 child: VibeAnimatedDialog(
-        //                   content: "Your Vibe is now live.",
-        //                 ),
-        //               ),
-        //             );
-        //           },
-        //         );
-        //       },
-        //       style: ElevatedButton.styleFrom(
-        //         backgroundColor: Colors.transparent,
-        //         shadowColor: Colors.transparent,
-        //         padding: const EdgeInsets.symmetric(vertical: 16),
-        //         shape: RoundedRectangleBorder(
-        //           borderRadius: BorderRadius.circular(30),
-        //         ),
-        //       ),
-        //       child: const Text(
-        //         'Create',
-        //         style: TextStyle(
-        //           color: Colors.white,
-        //           fontSize: 15,
-        //           fontWeight: FontWeight.w600,
-        //         ),
-        //       ),
-        //     ),
-        //   ),
-        // ),
       ],
     );
   }
@@ -204,7 +156,6 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
           width: 1.w,
         ),
       ),
-
       child: Column(
         spacing: 8.h,
         children: [
@@ -212,7 +163,6 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
             spacing: 5.w,
             children: [
               icons.svg(width: 24.w, height: 24.h),
-
               Text(
                 title,
                 style: TextStyle(
@@ -223,7 +173,6 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
               ),
             ],
           ),
-
           Text(
             subtitle,
             style: TextStyle(
@@ -237,12 +186,12 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
     );
   }
 
-  Widget _buildVibeTitle() {
+  Widget _buildVibeTitle(AppLocalizations loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Vibe Title',
+          loc.translate('vibeTitle'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -257,7 +206,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
             fontSize: 14.sp,
           ),
           decoration: InputDecoration(
-            hintText: 'e.g. Sunday coffee vibes — who’s in? 🌞',
+            hintText: 'e.g. Sunday coffee vibes \u2014 who\u2019s in? \u2600\ufe0f',
             hintStyle: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
               fontSize: 14.sp,
@@ -278,7 +227,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
     );
   }
 
-  Widget _buildImageUploadSection() {
+  Widget _buildImageUploadSection(AppLocalizations loc) {
     return GestureDetector(
       onTap: () async {
         utils.showImagePickerOptions(context, (imageSource) async {
@@ -286,13 +235,12 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
             context: context,
             source: imageSource,
           );
-
           if (image != null) {
             setState(() {
               _selectedImage = image;
             });
           } else {
-            AppSnackbar.show(message: 'Failed to pick image');
+            AppSnackbar.show(message: loc.translate('uploadCoverImage'));
           }
         });
       },
@@ -304,12 +252,8 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Theme.of(
-                context,
-              ).colorScheme.primaryContainer.withValues(alpha: 0.1),
-              Theme.of(
-                context,
-              ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+              Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.1),
+              Theme.of(context).colorScheme.secondaryContainer.withValues(alpha: 0.1),
             ],
           ),
           borderRadius: BorderRadius.circular(14.r),
@@ -365,9 +309,8 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                       ),
                     ),
                     SizedBox(height: 8.h),
-
                     Text(
-                      "Upload Cover Image",
+                      loc.translate('uploadCoverImage'),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
@@ -375,7 +318,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                       ),
                     ),
                     Text(
-                      "Click to browse",
+                      loc.translate('clickToBrowse'),
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w400,
@@ -389,7 +332,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
     );
   }
 
-  Widget _buildVibeHeaderSection() {
+  Widget _buildVibeHeaderSection(AppLocalizations loc) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -397,12 +340,8 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Theme.of(
-              context,
-            ).colorScheme.primaryContainer.withValues(alpha: 0.1),
-            Theme.of(
-              context,
-            ).colorScheme.secondaryContainer.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.secondaryContainer.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(14.r),
@@ -422,7 +361,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
                 ),
               ),
               Text(
-                "Create Vibe",
+                loc.translate('createVibe'),
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.w400,
@@ -432,7 +371,7 @@ class _CreateVibeScreenState extends State<CreateVibeScreen> {
             ],
           ),
           Text(
-            "Real-life first connections start here. Find real people in real places.",
+            loc.translate('privacyFirstDesc'),
             style: TextStyle(
               fontSize: 12.sp,
               fontWeight: FontWeight.w400,
@@ -462,16 +401,11 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
   @override
   void initState() {
     super.initState();
-    // Notify initial duration
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.onDurationChanged(_durations[_selectedIndex]);
     });
   }
 
-  // Colors
-  // static const _activeGradientStart = Color(0xFF818CF8);
-  // static const _activeGradientEnd = Color(0xFFA855F7);
-  static const _inactiveColor = Color(0xFFF3F4F6);
   static const _connectorColor = Color(0xFFE5E7EB);
 
   @override
@@ -485,13 +419,6 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
           color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
           width: 1.w,
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.07),
-            blurRadius: 16,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -508,12 +435,10 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
                   fontSize: 15.sp,
                   fontWeight: FontWeight.w600,
                   color: Theme.of(context).colorScheme.onSurface,
-                  letterSpacing: -0.2,
                 ),
               ),
             ],
           ),
-
           const SizedBox(height: 16),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -533,13 +458,10 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
                   connectorBuilder: (context, index, type) => SizedBox(
                     width: 8,
                     child: SolidLineConnector(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                       thickness: 2,
                     ),
                   ),
-
                   indicatorBuilder: (context, index) {
                     final isSelected = index == _selectedIndex;
                     return GestureDetector(
@@ -577,10 +499,7 @@ class _VibeDurationSelectorState extends State<VibeDurationSelector> {
                                 : FontWeight.w500,
                             color: isSelected
                                 ? Colors.white
-                                : Theme.of(
-                                    context,
-                                  ).colorScheme.onSurfaceVariant,
-                            letterSpacing: -0.1,
+                                : Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                           child: Text(_durations[index]),
                         ),

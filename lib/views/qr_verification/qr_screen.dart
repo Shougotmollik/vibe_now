@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/chat/chat_inbox_screen.dart';
 import 'package:vibe_now/views/community/community_welcome_screen.dart';
@@ -94,21 +95,22 @@ class _QrScreenState extends State<QrScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     String instructionText;
     switch (widget.qrContext) {
       case QRContext.chats:
-        instructionText = "Scan a chat QR code to connect";
+        instructionText = loc.translate('scanChatQR');
         break;
       case QRContext.community:
-        instructionText = "Scan a community QR code to join";
+        instructionText = loc.translate('scanCommunityQR');
         break;
       case QRContext.event:
-        instructionText = "Scan event QR code to check in";
+        instructionText = loc.translate('scanEventQR');
         break;
     }
 
     return Scaffold(
-      appBar: AppBar(title: Text('Scan ${widget.qrContext.name}')),
+      appBar: AppBar(title: Text('${loc.translate('scanName')} ${widget.qrContext.name}')),
       body: Stack(
         children: [
           QRView(

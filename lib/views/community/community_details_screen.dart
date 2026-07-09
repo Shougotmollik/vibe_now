@@ -12,6 +12,7 @@ import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/community.dart';
 import 'package:vibe_now/model/meetup.dart';
 import 'package:vibe_now/services/local_storage.dart';
@@ -68,6 +69,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Obx(() {
       if (_communityController.isLoading.value) {
         return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -109,7 +111,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
             DraggableScrollableSheet(
               initialChildSize: 0.75,
               minChildSize: 0.65,
-              // maxChildSize: 0.9,
               builder: (context, scrollController) {
                 return ClipRRect(
                   borderRadius: const BorderRadius.vertical(
@@ -138,7 +139,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                         padding: EdgeInsets.all(16.w),
 
                         children: [
-                          // Handle
                           Center(
                             child: Container(
                               width: 40,
@@ -275,7 +275,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                   );
                                 },
                                 child: Text(
-                                  "View all",
+                                  loc.translate('viewAll'),
                                   style: TextStyle(
                                     color: Theme.of(
                                       context,
@@ -308,13 +308,12 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                         ),
                                       );
                                     },
-                                    text: "Plan meetup",
+                                    text: loc.translate('planMeetup'),
                                   ),
                                 ),
                               ),
                               SizedBox(width: 12.w),
 
-                              // If creator: show QR code button
                               if (isMyCommunity &&
                                   (community.qrCodeImage != null ||
                                       community.qrCodeValue != null))
@@ -348,7 +347,6 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                       community.qrCodeValue != null))
                                 SizedBox(width: 12.w),
 
-                              // If not creator: show PopupMenuButton
                               if (!isMyCommunity)
                                 Container(
                                   decoration: BoxDecoration(
@@ -381,7 +379,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                             ),
                                             SizedBox(width: 8.w),
                                             Text(
-                                              "Leave",
+                                              loc.translate('leave'),
                                               style: TextStyle(
                                                 fontSize: 14.sp,
                                                 fontWeight: FontWeight.w400,
@@ -400,9 +398,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                           ),
                           SizedBox(height: 20.h),
 
-                          // About Event
                           Text(
-                            'About Community',
+                            loc.translate('aboutCommunity'),
                             style: TextStyle(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
@@ -420,11 +417,10 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                               height: 1.5,
                             ),
                           ),
-                          // Community Rules
                           if ((community.rules ?? '').isNotEmpty) ...[
                             SizedBox(height: 20.h),
                             Text(
-                              'Community Rules',
+                              loc.translate('communityRules'),
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.w500,
@@ -445,9 +441,8 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                           ],
                           SizedBox(height: 20.h),
 
-                          // Upcoming Events
                           Text(
-                            'Planed Meetup',
+                            loc.translate('planedMeetup'),
                             style: TextStyle(
                               fontSize: 18.sp,
                               fontWeight: FontWeight.bold,
@@ -472,7 +467,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                 child: Padding(
                                   padding: EdgeInsets.all(20),
                                   child: Text(
-                                    'No meetups planned yet',
+                                    loc.translate('noMeetupsPlanned'),
                                     style: TextStyle(
                                       color: Theme.of(context)
                                           .colorScheme

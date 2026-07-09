@@ -8,6 +8,7 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
@@ -47,9 +48,9 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     super.dispose();
   }
 
-  bool _validate() {
+  bool _validate(loc) {
     if (_selectedImage == null) {
-      AppSnackbar.show(message: 'Please select cover image');
+      AppSnackbar.show(message: loc.translate('uploadCoverImage'));
       return false;
     }
     if (_titleController.text.trim().isEmpty) {
@@ -75,8 +76,8 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     return true;
   }
 
-  Future<void> _createMeetup() async {
-    if (!_validate()) return;
+  Future<void> _createMeetup(loc) async {
+    if (!_validate(loc)) return;
 
     final meetupId = await _controller.createMeetupPlan(
       communityId: widget.communityId,
@@ -111,27 +112,28 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w),
           child: Column(
             children: [
-              CustomAppBar(title: "Plan a Meetup", canBack: true),
+              CustomAppBar(title: loc.translate('planMeetup'), canBack: true),
               SizedBox(height: 24.h),
-              _buildImageUploadSection(),
+              _buildImageUploadSection(loc),
               SizedBox(height: 24.h),
-              _buildMeetupTitle(),
+              _buildMeetupTitle(loc),
               SizedBox(height: 24.h),
-              _buildMeetupPlanDescription(),
+              _buildMeetupPlanDescription(loc),
               SizedBox(height: 24.h),
-              _buildSelectLocation(),
+              _buildSelectLocation(loc),
               SizedBox(height: 24.h),
-              _buildDateTimeRow(),
+              _buildDateTimeRow(loc),
               SizedBox(height: 24.h),
-              _buildMaxAttendees(),
+              _buildMaxAttendees(loc),
               SizedBox(height: 48.h),
-              Obx(() => _buildActionButtonSection(context)),
+              Obx(() => _buildActionButtonSection(context, loc)),
               SizedBox(height: 24.h),
             ],
           ),
@@ -140,7 +142,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     );
   }
 
-  Widget _buildActionButtonSection(BuildContext context) {
+  Widget _buildActionButtonSection(BuildContext context, loc) {
     return Row(
       spacing: 18.w,
       children: [
@@ -155,7 +157,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
               side: BorderSide(color: Theme.of(context).dividerColor),
             ),
             child: Text(
-              'Cancel',
+              loc.translate('cancel'),
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 15,
@@ -169,8 +171,8 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
             height: 55.h,
             child: PrimaryButton.text(
               radius: 30.r,
-              onPressed: _createMeetup,
-              text: "Create",
+              onPressed: () => _createMeetup(loc),
+              text: loc.translate('create'),
               isLoading: _controller.isLoading.value,
             ),
           ),
@@ -179,7 +181,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     );
   }
 
-  Widget _buildImageUploadSection() {
+  Widget _buildImageUploadSection(loc) {
     return GestureDetector(
       onTap: () async {
         utils.showImagePickerOptions(context, (imageSource) async {
@@ -193,7 +195,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
               _selectedImage = image;
             });
           } else {
-            AppSnackbar.show(message: 'Failed to pick image');
+            AppSnackbar.show(message: loc.translate('failedToPickImage'));
           }
         });
       },
@@ -261,7 +263,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                     SizedBox(height: 8.h),
 
                     Text(
-                      "Upload Cover Image",
+                      loc.translate('uploadCoverImage'),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
@@ -269,7 +271,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                       ),
                     ),
                     Text(
-                      "Click to browse",
+                      loc.translate('clickToBrowse'),
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w400,
@@ -283,12 +285,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     );
   }
 
-  Widget _buildMeetupTitle() {
+  Widget _buildMeetupTitle(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          ' Name',
+          loc.translate('meetupTitle'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -320,12 +322,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     );
   }
 
-  Widget _buildMeetupPlanDescription() {
+  Widget _buildMeetupPlanDescription(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Description',
+          loc.translate('meetupDescription'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -371,12 +373,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     );
   }
 
-  Widget _buildSelectLocation() {
+  Widget _buildSelectLocation(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Select Location',
+          loc.translate('selectLocation'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -419,7 +421,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                 Expanded(
                   child: Text(
                     _locationController.text.isEmpty
-                        ? 'Select address'
+                        ? loc.translate('selectAddress')
                         : _locationController.text,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -435,7 +437,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     );
   }
 
-  Widget _buildDateTimeRow() {
+  Widget _buildDateTimeRow(loc) {
     return Row(
       children: [
         Expanded(
@@ -443,7 +445,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Date',
+                loc.translate('communityDate'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -472,7 +474,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                       const SizedBox(width: 12),
                       Text(
                         _selectedDate == null
-                            ? 'Select'
+                            ? loc.translate('select')
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -492,7 +494,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Time',
+                loc.translate('communityTime'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -521,7 +523,7 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
                       const SizedBox(width: 12),
                       Text(
                         _selectedTime == null
-                            ? 'Select'
+                            ? loc.translate('select')
                             : _selectedTime!.format(context),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -567,12 +569,12 @@ class _CommunityPlanMeetupScreenState extends State<CommunityPlanMeetupScreen> {
     );
   }
 
-  Widget _buildMaxAttendees() {
+  Widget _buildMaxAttendees(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Max Attendees',
+          loc.translate('maxAttendees'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,

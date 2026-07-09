@@ -6,6 +6,7 @@ import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
@@ -44,6 +45,7 @@ class _EventRequestScreenState extends State<EventRequestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Stack(
@@ -54,7 +56,7 @@ class _EventRequestScreenState extends State<EventRequestScreen> {
               children: [
                 SafeArea(
                   child: CustomAppBar(
-                    title: "Event Request Sent",
+                    title: loc.translate('eventRequestSent'),
                     canBack: true,
                   ),
                 ),
@@ -89,7 +91,7 @@ class _EventRequestScreenState extends State<EventRequestScreen> {
                 ),
                 Spacer(),
                 Text(
-                  "Your request has been sent!",
+                  loc.translate('yourRequestHasBeenSent'),
                   style: TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 14.sp,
@@ -108,12 +110,12 @@ class _EventRequestScreenState extends State<EventRequestScreen> {
                     // );
                     Navigator.of(context).pop();
                   },
-                  text: "OK",
+                  text: loc.translate('ok'),
                 ),
                 SizedBox(height: 12.h),
                 CancelButton(
                   onTap: _isWithdrawing ? null : () => _withdrawRequest(),
-                  btnText: _isWithdrawing ? "Withdrawing..." : "Withdraw Request",
+                  btnText: _isWithdrawing ? loc.translate('withdrawing') : loc.translate('withdrawRequest'),
                 ),
 
                 SizedBox(height: 48.h),

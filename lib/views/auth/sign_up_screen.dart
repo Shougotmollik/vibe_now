@@ -8,10 +8,10 @@ import 'package:vibe_now/core/routes/routes.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/auth/widgets/auth_title.dart';
 import 'package:vibe_now/views/auth/widgets/custom_social_button.dart';
 import 'package:vibe_now/views/auth/widgets/custom_text_form_field.dart';
-import 'package:vibe_now/views/auth/widgets/notification_permission_dialog.dart';
 import 'package:vibe_now/utils.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -24,7 +24,6 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  // bool _isFieldsFilled = true;
   bool _isFieldsValid = false;
   final AuthController controller = Get.find<AuthController>();
 
@@ -57,6 +56,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
       body: SingleChildScrollView(
@@ -68,20 +68,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(height: 58.h),
-                  const AuthTitle(
-                    title: 'Sign Up',
-                    subtitle: 'Create your account',
+                  AuthTitle(
+                    title: loc.translate('signUp'),
+                    subtitle: loc.translate('createAccount'),
                   ),
                   SizedBox(height: 36.h),
                   CustomTextFormField(
                     controller: _emailController,
-                    hintText: 'Enter your email',
+                    hintText: loc.translate('enterEmail'),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your email';
+                        return loc.translate('pleaseEnterEmail');
                       }
                       if (!isValidEmail(value)) {
-                        return 'Please enter a valid email';
+                        return loc.translate('pleaseEnterValidEmail');
                       }
                       return null;
                     },
@@ -89,13 +89,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   SizedBox(height: 18.h),
                   CustomTextFormField(
                     controller: _passwordController,
-                    hintText: 'Enter your password',
+                    hintText: loc.translate('enterPassword'),
                     isPassword: true,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return 'Please enter your password';
+                        return loc.translate('pleaseEnterPassword');
                       } else if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                        return loc.translate('passwordMinLength');
                       }
                       return null;
                     },
@@ -119,14 +119,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 );
                               }
                             },
-                      text: 'Get Started',
+                      text: loc.translate('getStarted'),
                       isEnabled: _isFieldsValid,
                       isLoading: controller.isLoading.value,
                     ),
                   ),
                   SizedBox(height: 24.h),
                   Text(
-                    "By signing up or creating an account, you agree to our Terms and Event. Learn more about how we process your data in our privacy and Cookies Policy",
+                    loc.translate('createAccount'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 12.sp,
@@ -157,7 +157,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Already have an account?',
+                        loc.translate('alreadyHaveAccount'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -168,7 +168,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           context.pushNamed(RouteNames.signInScreen);
                         },
                         child: Text(
-                          'Sign In',
+                          loc.translate('signIn'),
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
@@ -186,23 +186,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
       ),
     );
   }
-
-  // Future<dynamic> _buildDialogSection(BuildContext context) {
-  //   return showDialog(
-  //     context: context,
-  //     barrierDismissible: true,
-  //     builder: (_) {
-  //       return Center(
-  //         child: Dialog(
-  //           shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(20.r),
-  //           ),
-  //           elevation: 0,
-  //           backgroundColor: Colors.transparent,
-  //           child: NotificationPermissionDialog(parentContext: context),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 }

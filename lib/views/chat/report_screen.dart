@@ -6,6 +6,7 @@ import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
@@ -99,7 +100,7 @@ class ReportScreen extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          CustomAppBar(title: 'What happened?'),
+          CustomAppBar(title: AppLocalizations.of(context).translate('whatHappened')),
           GestureDetector(
             onTap: () async {
               await showDialog(

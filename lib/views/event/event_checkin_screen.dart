@@ -7,6 +7,7 @@ import 'package:lottie/lottie.dart' hide Marker;
 import 'package:vibe_now/controller/event_controller.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/event/event_check_out_screen.dart';
 
@@ -33,6 +34,7 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
+      final loc = AppLocalizations.of(context);
       final event = eventController.qrEventDetails.value;
 
       if (event == null) {
@@ -44,7 +46,7 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                 const CircularProgressIndicator(),
                 SizedBox(height: 16.h),
                 Text(
-                  "Loading event...",
+                  loc.translate('loadingEvent'),
                   style: TextStyle(
                     fontSize: 16.sp,
                     color: Theme.of(context).colorScheme.onSurface,
@@ -72,8 +74,8 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                       horizontal: 20.w,
                       vertical: 20.h,
                     ),
-                    child: const CustomAppBar(
-                      title: "Event Zone",
+                    child: CustomAppBar(
+                      title: loc.translate('eventZone'),
                       canBack: true,
                     ),
                   ),
@@ -113,7 +115,7 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                                         markerId: const MarkerId('event'),
                                         position: eventLocation,
                                         infoWindow: InfoWindow(
-                                          title: event.title ?? 'Event',
+                                          title: event.title ?? loc.translate('eventOption'),
                                           snippet: event.address,
                                         ),
                                       ),
@@ -137,7 +139,7 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                                           ),
                                           SizedBox(height: 8.h),
                                           Text(
-                                            "Location not available",
+                                            loc.translate('locationNotAvailable'),
                                             style: TextStyle(
                                               color: Colors.grey,
                                               fontSize: 14.sp,
@@ -197,7 +199,7 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                       children: [
                         Expanded(
                           child: Text(
-                            event.title ?? "Event Zone",
+                            event.title ?? loc.translate('eventZone'),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.onSurface,
                               fontSize: 24.sp,
@@ -249,7 +251,7 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                   // ],
                   SizedBox(height: 16.h),
                   Text(
-                    "You are Inside the event",
+                    loc.translate('youAreInsideEvent'),
                     style: TextStyle(
                       color: Theme.of(
                         context,
@@ -274,7 +276,7 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                     spacing: 4.w,
                     children: [
                       Text(
-                        "Enjoy the moment!",
+                        loc.translate('enjoyTheMoment'),
                         style: TextStyle(
                           color: Theme.of(
                             context,
@@ -301,7 +303,7 @@ class _EventCheckinScreenState extends State<EventCheckinScreen> {
                           ),
                         );
                       },
-                      text: "Leave Event Zone",
+                      text: loc.translate('leaveEventZone'),
                       gradient: AppColors.primaryGradientRotated,
                     ),
                   ),

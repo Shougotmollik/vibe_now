@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/custom_time_picker.dart';
@@ -33,21 +34,22 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: Column(
           children: [
             SafeArea(
-              child: CustomAppBar(title: 'Reshedule Meetup', canBack: true),
+              child: CustomAppBar(title: loc.translate('rescheduleMeetup'), canBack: true),
             ),
             SizedBox(height: 38.h),
 
-            _buildSelectLocation(),
+            _buildSelectLocation(loc),
             const SizedBox(height: 16),
-            _buildDateTimeRow(),
+            _buildDateTimeRow(loc),
 
-            Spacer(),
+            const Spacer(),
             Row(
               spacing: 8.w,
               children: [
@@ -57,7 +59,7 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
                       AppSnackbar.show(message: "You reschedule the meetup");
                       Navigator.pop(context);
                     },
-                    text: 'Reschedule',
+                    text: loc.translate('rescheduleMeetup'),
                   ),
                 ),
                 Expanded(
@@ -70,7 +72,7 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
                         ),
                       );
                     },
-                    buttonText: "Cancel",
+                    buttonText: loc.translate('cancel'),
                     btnColor: Theme.of(context).colorScheme.surfaceVariant,
                     textColor: Theme.of(context).colorScheme.onSurface,
                   ),
@@ -84,12 +86,12 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
     );
   }
 
-  Widget _buildSelectLocation() {
+  Widget _buildSelectLocation(loc) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Select Location',
+          loc.translate('selectLocation'),
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
@@ -112,7 +114,7 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
               ),
               const SizedBox(width: 12),
               Text(
-                'Select address',
+                loc.translate('selectAddress'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 14,
@@ -125,7 +127,7 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
     );
   }
 
-  Widget _buildDateTimeRow() {
+  Widget _buildDateTimeRow(loc) {
     return Row(
       children: [
         Expanded(
@@ -133,7 +135,7 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Date',
+                loc.translate('communityDate'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -162,7 +164,7 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
                       const SizedBox(width: 12),
                       Text(
                         _selectedDate == null
-                            ? 'Select'
+                            ? loc.translate('select')
                             : '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,
@@ -182,7 +184,7 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Time',
+                loc.translate('communityTime'),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w500,
@@ -211,7 +213,7 @@ class _ResheduleMeetupScreenState extends State<ResheduleMeetupScreen> {
                       const SizedBox(width: 12),
                       Text(
                         _selectedTime == null
-                            ? 'Select'
+                            ? loc.translate('select')
                             : _selectedTime!.format(context),
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurface,

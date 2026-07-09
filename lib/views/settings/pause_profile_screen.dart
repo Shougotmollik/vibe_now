@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/settings/delete_reason_screen.dart';
 
@@ -17,7 +18,7 @@ class PauseProfileScreen extends StatelessWidget {
           padding: EdgeInsets.all(16.w),
           child: Column(
             children: [
-              CustomAppBar(title: "Pause"),
+              CustomAppBar(title: AppLocalizations.of(context).translate('pauseProfile')),
 
               SizedBox(height: 14.h),
 
@@ -32,7 +33,7 @@ class PauseProfileScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     _buildOptionTile(
-                      title: "Pause Account",
+                      title: AppLocalizations.of(context).translate('pauseProfile'),
                       context: context,
                       onTap: () {
                         context.pushNamed(RouteNames.reasonScreen);
@@ -40,7 +41,7 @@ class PauseProfileScreen extends StatelessWidget {
                     ),
                     Divider(height: 1.h, color: Theme.of(context).dividerColor),
                     _buildOptionTile(
-                      title: "Delete Account",
+                      title: AppLocalizations.of(context).translate('deleteAccount'),
                       context: context,
                       onTap: () {
                         showDialog(

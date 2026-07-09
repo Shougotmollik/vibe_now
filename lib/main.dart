@@ -3,6 +3,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/routes.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
+import 'package:vibe_now/localization/language_controller.dart';
 
 import 'package:get/get.dart';
 import 'package:vibe_now/controller/theme_controller.dart';
@@ -24,6 +26,9 @@ void main() async {
   final accessToken = await LocalStorage.access_token.get();
   setupRouter(accessToken != null);
 
+  // Load saved language preference
+  await Get.find<LanguageController>().loadSavedLanguage();
+
   runApp(const MyApp());
 }
 
@@ -33,6 +38,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find<ThemeController>();
+    final LanguageController languageController = Get.find<LanguageController>();
 
     return ScreenUtilInit(
       designSize: const Size(375, 812),
@@ -41,6 +47,9 @@ class MyApp extends StatelessWidget {
           () => MaterialApp.router(
             debugShowCheckedModeBanner: false,
             title: 'Vybin',
+            locale: languageController.locale,
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
             scaffoldMessengerKey: rootScaffoldMessengerKey,
             theme: AppTheme.light(),
             darkTheme: AppTheme.dark(),

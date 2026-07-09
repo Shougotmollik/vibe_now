@@ -6,6 +6,7 @@ import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/qr_verification/qr_screen.dart';
 
 class QRVerificationScreen extends StatefulWidget {
@@ -43,46 +44,50 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
     }
   }
   String get infoText {
+    final loc = AppLocalizations.of(context);
     switch (widget.qrContext) {
       case QRContext.community:
-        return 'Scan this QR code to join a community or connect with other members.';
+        return loc.translate('qrInfoCommunity');
       case QRContext.event:
-        return 'Scan this QR code for event access or verification.';
+        return loc.translate('qrInfoEvent');
       case QRContext.chats:
-        return 'Scan this QR code to create a direct personal connection.';
+        return loc.translate('qrInfoChats');
     }
   }
 
   String get titleText {
+    final loc = AppLocalizations.of(context);
     switch (widget.qrContext) {
       case QRContext.community:
-        return 'Join a Community';
+        return loc.translate('qrTitleCommunity');
       case QRContext.event:
-        return 'Event Access & Verification';
+        return loc.translate('qrTitleEvent');
       case QRContext.chats:
-        return 'Connect with Chats';
+        return loc.translate('qrTitleChats');
     }
   }
 
   String get subtitleText {
+    final loc = AppLocalizations.of(context);
     switch (widget.qrContext) {
       case QRContext.community:
-        return 'Let others scan this code to join the community';
+        return loc.translate('qrSubtitleCommunity');
       case QRContext.event:
-        return 'Present this code for event entry or verification';
+        return loc.translate('qrSubtitleEvent');
       case QRContext.chats:
-        return 'Let them scan to connect with you instantly';
+        return loc.translate('qrSubtitleChats');
     }
   }
 
   String get scanMessage {
+    final loc = AppLocalizations.of(context);
     switch (widget.qrContext) {
       case QRContext.community:
-        return 'Scan the QR code to join the community and start connecting.';
+        return loc.translate('qrScanCommunity');
       case QRContext.event:
-        return 'Scan the QR code to securely access the event.';
+        return loc.translate('qrScanEvent');
       case QRContext.chats:
-        return 'Scan the QR code to connect instantly through chat.';
+        return loc.translate('qrScanChats');
     }
   }
 
@@ -104,7 +109,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
           },
         ),
         title: Text(
-          widget.showScanOnly ? 'Scan Event QR' : 'QR Verification',
+          widget.showScanOnly ? AppLocalizations.of(context).translate('scanEventQR') : AppLocalizations.of(context).translate('qrVerification'),
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontSize: 18.sp,
@@ -139,7 +144,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
           Expanded(
             child: _buildTab(
               icon: Icons.qr_code,
-              label: 'QR Code',
+              label: AppLocalizations.of(context).translate('qrTab'),
               isSelected: isQRCodeTab,
               onTap: () => setState(() => isQRCodeTab = true),
             ),
@@ -148,7 +153,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
           Expanded(
             child: _buildTab(
               icon: Icons.qr_code_scanner,
-              label: 'Scan',
+              label: AppLocalizations.of(context).translate('scanTab'),
               isSelected: !isQRCodeTab,
               onTap: () => setState(() => isQRCodeTab = false),
             ),
@@ -323,7 +328,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'This code is unique for this connection',
+              AppLocalizations.of(context).translate('uniqueQRCode'),
               style: TextStyle(color: Colors.grey[500], fontSize: 13),
             ),
           ],
@@ -383,7 +388,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             ),
             const SizedBox(height: 32),
             Text(
-              'Scan Their QR Code',
+              AppLocalizations.of(context).translate('scanTheirQRCode'),
               style: TextStyle(
                 fontSize: 20.sp,
                 fontWeight: FontWeight.w600,
@@ -392,7 +397,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              'Align the QR code in the frame',
+              AppLocalizations.of(context).translate('alignQRCode'),
               style: TextStyle(
                 color: Theme.of(
                   context,
@@ -464,7 +469,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
             ),
             const SizedBox(height: 16),
             Text(
-              'Camera permission required',
+              AppLocalizations.of(context).translate('cameraPermissionRequired'),
               style: TextStyle(color: Colors.grey[400], fontSize: 13.sp),
             ),
           ],

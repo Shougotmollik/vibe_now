@@ -8,6 +8,7 @@ import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/event.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_search_bar.dart';
@@ -22,8 +23,7 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-  final List<String> tabs = ['All', 'Joined', 'Organized', 'Interested'];
-  final selectedTab = 'All'.obs;
+  final selectedTab = 'all'.obs;
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
 
@@ -44,6 +44,7 @@ class _EventScreenState extends State<EventScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -67,7 +68,7 @@ class _EventScreenState extends State<EventScreen> {
                         context: context,
                         builder: (context) => const EventFilterDialog(),
                       ),
-                      hintText: 'Search for events',
+                      hintText: loc.translate('searchForEvents'),
                       onChanged: (query) {
                         _debounce?.cancel();
                         _debounce = Timer(const Duration(milliseconds: 500), () {
@@ -85,46 +86,12 @@ class _EventScreenState extends State<EventScreen> {
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: tabs.map((tab) {
-                          final isSelected = selectedTab.value == tab;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: GestureDetector(
-                              onTap: () async {
-                                selectedTab.value = tab;
-                                await eventController.getEvents(
-                                  tab: tab.toLowerCase(),
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 20.w,
-                                  vertical: 8.w,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: isSelected
-                                      ? AppColors.primaryGradientRotated
-                                      : null,
-                                  color: isSelected
-                                      ? null
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainerHighest,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  tab,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Theme.of(context).colorScheme.onSurface,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                        children: [
+                          _buildTab(context, 'all', loc.translate('all')),
+                          _buildTab(context, 'joined', loc.translate('joined')),
+                          _buildTab(context, 'organized', loc.translate('organized')),
+                          _buildTab(context, 'interested', loc.translate('interested')),
+                        ],
                       ),
                     ),
 
@@ -188,9 +155,10 @@ class _EventScreenState extends State<EventScreen> {
 
   // Custom AppBar with QR and Add buttons
   Row _buildAppBar(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Row(
       children: [
-        CustomAppBar(title: 'Events'),
+        CustomAppBar(title: loc.translate('events')),
         const Spacer(),
         GestureDetector(
           onTap: () => context.pushNamed(
@@ -227,26 +195,57 @@ class _EventScreenState extends State<EventScreen> {
     );
   }
 
+  Widget _buildTab(BuildContext context, String tabKey, String label) {
+    final isSelected = selectedTab.value == tabKey;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: GestureDetector(
+        onTap: () async {
+          selectedTab.value = tabKey;
+          await eventController.getEvents(tab: tabKey);
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.w),
+          decoration: BoxDecoration(
+            gradient: isSelected ? AppColors.primaryGradientRotated : null,
+            color: isSelected
+                ? null
+                : Theme.of(context).colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context, String tab) {
+    final loc = AppLocalizations.of(context);
     String message;
     String subMessage;
 
     switch (tab) {
-      case 'Joined':
-        message = 'No events joined yet';
-        subMessage = 'Browse & join events';
+      case 'joined':
+        message = loc.translate('noEvents');
+        subMessage = loc.translate('events');
         break;
-      case 'Organized':
-        message = 'No events organized yet';
-        subMessage = 'Create your first event';
+      case 'organized':
+        message = loc.translate('noEvents');
+        subMessage = loc.translate('createEvent');
         break;
-      case 'Interested':
-        message = 'No interested events yet';
-        subMessage = 'Browse & mark your interest';
+      case 'interested':
+        message = loc.translate('noEvents');
+        subMessage = loc.translate('events');
         break;
       default:
-        message = 'No events available';
-        subMessage = 'Check back later or create a new event';
+        message = loc.translate('noEvents');
+        subMessage = loc.translate('discover');
     }
 
     return Center(

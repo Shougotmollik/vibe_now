@@ -5,12 +5,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/home/widgets/google_map.dart';
 import 'package:vibe_now/views/home/widgets/map_search_screen.dart';
 import 'package:vibe_now/views/vibe/meet_confirm_screen.dart';
-import 'package:vibe_now/views/vibe/reshedule_meetup_screen.dart'; // Assuming your AppColors/Buttons are here
+import 'package:vibe_now/views/vibe/reshedule_meetup_screen.dart';
 
 class MeetLocationSuggestionScreen extends StatefulWidget {
   const MeetLocationSuggestionScreen({super.key});
@@ -22,7 +23,6 @@ class MeetLocationSuggestionScreen extends StatefulWidget {
 
 class _MeetLocationSuggestionScreenState
     extends State<MeetLocationSuggestionScreen> {
-  // Mock coordinates for the map preview
   static const LatLng _userPos = LatLng(50.937, 6.953);
   static const LatLng _friendPos = LatLng(50.938, 6.958);
   String? _darkMapStyle;
@@ -41,8 +41,8 @@ class _MeetLocationSuggestionScreenState
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
-      // backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         elevation: 0,
@@ -54,7 +54,7 @@ class _MeetLocationSuggestionScreenState
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Define Meetup",
+          loc.translate('confirmMeetup'),
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontSize: 22.sp,
@@ -172,8 +172,8 @@ class _MeetLocationSuggestionScreenState
                   },
                   child: _buildLocationOption(
                     icon: Assets.icons.home,
-                    title: "Meet at my location",
-                    subtitle: "Here and now",
+                    title: loc.translate('meetAtMyLocation'),
+                    subtitle: loc.translate('hereAndNow'),
                   ),
                 ),
 
@@ -192,8 +192,8 @@ class _MeetLocationSuggestionScreenState
                   },
                   child: _buildLocationOption(
                     icon: Assets.icons.locationColor,
-                    title: "Suggest midpoint",
-                    subtitle: "Pick location on map",
+                    title: loc.translate('suggestMidpoint'),
+                    subtitle: loc.translate('pickLocationOnMap'),
                   ),
                 ),
 
@@ -202,7 +202,6 @@ class _MeetLocationSuggestionScreenState
             ),
           ),
 
-          // --- Bottom Action Buttons ---
           Padding(
             padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 40.h),
             child: Row(
@@ -217,7 +216,7 @@ class _MeetLocationSuggestionScreenState
                         ),
                       );
                     },
-                    text: "Meet Now",
+                    text: loc.translate('meetNow'),
                   ),
                 ),
                 SizedBox(width: 15.w),
@@ -231,7 +230,7 @@ class _MeetLocationSuggestionScreenState
                         ),
                       );
                     },
-                    buttonText: "Later",
+                    buttonText: loc.translate('later'),
                     btnColor: Theme.of(context).colorScheme.surfaceVariant,
                     textColor: Theme.of(context).colorScheme.onSurface,
                   ),
@@ -259,7 +258,6 @@ class _MeetLocationSuggestionScreenState
             shape: BoxShape.circle,
           ),
           child: icon.svg(width: 24.w, height: 24.h),
-          // child: Icon(icon, color: iconColor, size: 24.sp),
         ),
         SizedBox(width: 16.w),
         Column(

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
+import 'package:vibe_now/localization/language_controller.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 
 class LanguageScreen extends StatefulWidget {
@@ -11,30 +14,41 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  //! Language data list
+  final LanguageController _langController = Get.find<LanguageController>();
+
+  late int selectedIndex;
+
   List<LanguageModel> languages = [
-    LanguageModel(name: "English", flag: Assets.flags.unitedKingdom),
-    LanguageModel(name: "German", flag: Assets.flags.germany),
+    LanguageModel(name: "English", flag: Assets.flags.unitedKingdom, code: 'en'),
+    LanguageModel(name: "Deutsch", flag: Assets.flags.germany, code: 'de'),
   ];
 
-  int selectedIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    selectedIndex = languages.indexWhere(
+      (l) => l.code == _langController.currentLanguageCode,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16.w),
           child: Column(
             children: [
-              CustomAppBar(title: "Language"),
+              CustomAppBar(title: loc.translate('language')),
 
               SizedBox(height: 20.h),
 
               ListView.builder(
                 shrinkWrap: true,
                 itemCount: languages.length,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return _buildLanguageTile(languages[index], index);
                 },
@@ -52,6 +66,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
         setState(() {
           selectedIndex = index;
         });
+        _langController.changeLanguage(Locale(lang.code));
       },
       behavior: HitTestBehavior.translucent,
       child: Container(
@@ -71,7 +86,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
               ),
             ),
 
-            Spacer(),
+            const Spacer(),
 
             selectedIndex == index ? _selectedCircle() : _unselectedCircle(),
           ],
@@ -103,6 +118,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
 class LanguageModel {
   final String name;
   final SvgGenImage flag;
+  final String code;
 
-  LanguageModel({required this.name, required this.flag});
+  LanguageModel({required this.name, required this.flag, required this.code});
 }

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 
 class DeleteConfirmScreen extends StatefulWidget {
   const DeleteConfirmScreen({super.key, this.isPaused});
@@ -70,10 +71,9 @@ class _DeleteConfirmScreenState extends State<DeleteConfirmScreen>
 
   @override
   Widget build(BuildContext context) {
-    const deleteMsg =
-        "Your account has been deleted. We're sorry to see you go.";
-    const pauseMsg =
-        "Your account is paused, you can reactivate it at any time.";
+    final loc = AppLocalizations.of(context);
+    final deleteMsg = loc.translate('accountDeleted');
+    final pauseMsg = loc.translate('profilePaused');
 
     return Scaffold(
       body: Padding(

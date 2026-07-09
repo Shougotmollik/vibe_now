@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:vibe_now/controller/theme_controller.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
+import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/gradient_switch.dart';
 
@@ -19,7 +20,7 @@ class ThemeSelectionScreen extends StatelessWidget {
           padding: EdgeInsets.all(16.w),
           child: Column(
             children: [
-              const CustomAppBar(title: "Mode"),
+              CustomAppBar(title: AppLocalizations.of(context).translate('themeMode')),
               SizedBox(height: 20.h),
               Obx(() => Container(
                     padding: EdgeInsets.symmetric(vertical: 8.h),
