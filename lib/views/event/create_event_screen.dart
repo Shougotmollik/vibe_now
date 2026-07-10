@@ -482,8 +482,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 Expanded(
                   child: Text(
                     locationController.text.isEmpty
-                        ? 'Select address'
-                        : locationController.text,
+                    ? AppLocalizations.of(context).translate('selectAddress')
+                    : locationController.text,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 14,
@@ -596,7 +596,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 const SizedBox(width: 12),
                 Text(
                   date == null
-                      ? 'Select'
+                      ? AppLocalizations.of(context).translate('select')
                       : '${date.day}/${date.month}/${date.year}',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -647,7 +647,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 const SizedBox(width: 12),
                 Text(
                   time == null
-                      ? 'Select'
+                      ? AppLocalizations.of(context).translate('select')
                       : time.format(context),
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -702,7 +702,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           child: CustomElevatedButton(
             height: 48.h,
             onTap: () => Navigator.of(context).maybePop(),
-            buttonText: "Cancel",
+            buttonText: AppLocalizations.of(context).translate('cancel'),
             textColor: Theme.of(context).colorScheme.onSurface,
             btnColor: Theme.of(context).colorScheme.surfaceVariant,
           ),
@@ -712,7 +712,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           () => Expanded(
             child: PrimaryButton.text(
               onPressed: onCreate,
-              text: 'Create',
+              text: AppLocalizations.of(context).translate('create'),
               isLoading: eventController.isLoading.value,
             ),
           ),
@@ -962,7 +962,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Enter category name',
+              hintText: AppLocalizations.of(context).translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -987,7 +987,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Cancel',
+                AppLocalizations.of(context).translate('cancel'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -1012,8 +1012,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Add',
+                child: Text(
+                  AppLocalizations.of(context).translate('addCategory'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -1074,7 +1074,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: 'Enter category name',
+              hintText: AppLocalizations.of(context).translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -1099,7 +1099,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 Navigator.pop(context);
               },
               child: Text(
-                'Cancel',
+                AppLocalizations.of(context).translate('cancel'),
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 14,
@@ -1127,8 +1127,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Add',
+                child: Text(
+                  AppLocalizations.of(context).translate('addCategory'),
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,

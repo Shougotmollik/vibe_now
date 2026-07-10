@@ -250,7 +250,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
                       _handleUpdate(loc);
                     }
                   },
-                  text: communityController.isLoading.value ? loc.translate('updating') : loc.translate('update'),
+                  text: communityController.isLoading.value ? 'Updating...' : 'Update',
                 )),
                 SizedBox(height: 24.h),
               ],
@@ -735,7 +735,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
             ),
             child: Center(
               child: Text(
-                loc.translate('addNewCategory'),
+                "Add New Category",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,

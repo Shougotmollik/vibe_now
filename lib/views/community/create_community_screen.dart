@@ -704,7 +704,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
             ),
             child: Center(
               child: Text(
-                loc.translate('addNewCategory'),
+                "Add New Category",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,

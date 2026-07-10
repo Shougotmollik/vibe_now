@@ -38,7 +38,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeController themeController = Get.find<ThemeController>();
-    final LanguageController languageController = Get.find<LanguageController>();
+    final LanguageController languageController =
+        Get.find<LanguageController>();
 
     return ScreenUtilInit(
       designSize: const Size(375, 812),

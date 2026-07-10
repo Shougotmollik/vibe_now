@@ -250,7 +250,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
                       : () {
                           _showUpdateConfirmationDialog(loc);
                         },
-                  text: loc.translate('update'),
+                  text: 'Update',
                 ),
               ),
               const SizedBox(height: 32),
@@ -595,7 +595,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
             ),
             child: Center(
               child: Text(
-                loc.translate('newCategory'),
+                "Add New Category",
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
@@ -885,7 +885,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
           ),
           backgroundColor: Theme.of(context).colorScheme.surface,
           title: Text(
-            loc.translate('newCategory'),
+            loc.translate('addNewCategory'),
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
           ),
           content: TextField(
