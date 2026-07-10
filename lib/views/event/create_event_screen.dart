@@ -172,8 +172,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: Text(
             _accessType == EventAccessType.public
-                ? 'Anyone can discover and join this event instantly without approval.'
-                : 'People will need your approval before they can join this event.',
+                ? AppLocalizations.of(context).translate('eventPublicDesc')
+                : AppLocalizations.of(context).translate('eventPrivateDesc'),
             textAlign: TextAlign.start,
             style: TextStyle(
               fontSize: 14.sp,
@@ -272,7 +272,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              'Build a space where people with shared interests can connect and grow together',
+              AppLocalizations.of(context).translate('communityOptionDesc'),
               style: TextStyle(
                 fontSize: 13,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -299,7 +299,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               _selectedImage = image;
             });
           } else {
-            AppSnackbar.show(message: 'Failed to pick image');
+            AppSnackbar.show(message: AppLocalizations.of(context).translate('failedToPickImage'));
           }
         });
       },
@@ -367,7 +367,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     SizedBox(height: 8.h),
 
                     Text(
-                      "Upload Cover Image",
+                      AppLocalizations.of(context).translate('uploadCoverImage'),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
@@ -375,7 +375,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                       ),
                     ),
                     Text(
-                      "Click to browse",
+                      AppLocalizations.of(context).translate('clickToBrowse'),
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w400,

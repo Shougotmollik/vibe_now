@@ -159,7 +159,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                             onTap: () {
                                               Navigator.pop(context);
                                             },
-                                            buttonText: 'Cancel',
+                                            buttonText: AppLocalizations.of(context).translate('cancel'),
                                           ),
                                         ),
                                       ),
@@ -196,7 +196,7 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                                             // // Navigator.pop(context);
                                             _passwordTEController.clear();
                                           },
-                                          text: 'Confirm',
+                                          text: AppLocalizations.of(context).translate('confirm'),
                                         ),
                                       ),
                                     ],

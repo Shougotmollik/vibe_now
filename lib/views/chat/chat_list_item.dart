@@ -144,6 +144,7 @@ Future<dynamic> _buildMoreOption(
   required VoidCallback onDelete,
   required VoidCallback onBlockUser,
 }) {
+  final loc = AppLocalizations.of(context);
   return showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
@@ -181,7 +182,7 @@ Future<dynamic> _buildMoreOption(
                         color: AppColors.primary,
                       ),
                       Text(
-                        'Mute',
+                        loc.translate('mute'),
                         style: TextStyle(
                           fontSize: 16.sp,
                           color: AppColors.primary,
@@ -213,7 +214,7 @@ Future<dynamic> _buildMoreOption(
                         // color: Colors.red,
                       ),
                       Text(
-                        'Delete Chat',
+                        loc.translate('deleteChat'),
                         style: TextStyle(
                           fontSize: 16.sp,
                           color: AppColors.primary,
@@ -246,7 +247,7 @@ Future<dynamic> _buildMoreOption(
                         color: AppColors.primary,
                       ),
                       Text(
-                        'Block User',
+                        loc.translate('blockUser'),
                         style: TextStyle(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w500,

@@ -10,7 +10,6 @@ import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/community.dart';
-import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/common/custom_search_bar.dart';
 import 'package:vibe_now/views/community/widgets/community_card.dart';
 import 'package:vibe_now/views/community/widgets/community_filter.dart';
@@ -23,8 +22,7 @@ class CommunityScreen extends StatefulWidget {
 }
 
 class _CommunityScreenState extends State<CommunityScreen> {
-  final List<String> tabs = ['All', 'Joined', 'Organized', 'Interested'];
-  final selectedTab = 'All'.obs;
+  final selectedTab = 'all'.obs;
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
 
@@ -52,7 +50,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
           child: RefreshIndicator(
             onRefresh: () => communityController.getCommunities(
-              tab: selectedTab.value.toLowerCase(),
+              tab: selectedTab.value,
             ),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
@@ -85,46 +83,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
                     SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
-                        children: tabs.map((tab) {
-                          final isSelected = selectedTab.value == tab;
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8),
-                            child: GestureDetector(
-                              onTap: () async {
-                                selectedTab.value = tab;
-                                await communityController.getCommunities(
-                                  tab: tab.toLowerCase(),
-                                );
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 20.w,
-                                  vertical: 8.w,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: isSelected
-                                      ? AppColors.primaryGradientRotated
-                                      : null,
-                                  color: isSelected
-                                      ? null
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .surfaceContainerHighest,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Text(
-                                  tab,
-                                  style: TextStyle(
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Theme.of(context).colorScheme.onSurface,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
+                        children: [
+                          _buildTab(context, 'all', loc.translate('all')),
+                          _buildTab(context, 'joined', loc.translate('joined')),
+                          _buildTab(context, 'organized', loc.translate('organized')),
+                          _buildTab(context, 'interested', loc.translate('interested')),
+                        ],
                       ),
                     ),
 
@@ -191,8 +155,30 @@ class _CommunityScreenState extends State<CommunityScreen> {
   Row _buildAppBar(BuildContext context, AppLocalizations loc) {
     return Row(
       children: [
-        CustomAppBar(title: loc.translate('communities')),
-        const Spacer(),
+        GestureDetector(
+          onTap: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.goNamed(RouteNames.mainNavBar);
+            }
+          },
+          child: Icon(Icons.arrow_back_ios,
+              color: Theme.of(context).colorScheme.onSurface),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: Text(
+            loc.translate('communities'),
+            style: TextStyle(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
         GestureDetector(
           onTap: () => context.pushNamed(
             RouteNames.qrVerificationScreen,
@@ -228,20 +214,61 @@ class _CommunityScreenState extends State<CommunityScreen> {
     );
   }
 
+  Widget _buildTab(BuildContext context, String tabKey, String label) {
+    final isSelected = selectedTab.value == tabKey;
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: GestureDetector(
+        onTap: () async {
+          selectedTab.value = tabKey;
+          await communityController.getCommunities(
+            tab: tabKey,
+          );
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: 20.w,
+            vertical: 8.w,
+          ),
+          decoration: BoxDecoration(
+            gradient: isSelected
+                ? AppColors.primaryGradientRotated
+                : null,
+            color: isSelected
+                ? null
+                : Theme.of(context)
+                    .colorScheme
+                    .surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: isSelected
+                  ? Colors.white
+                  : Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyState(BuildContext context, String tab, AppLocalizations loc) {
     String message;
     String subMessage;
 
     switch (tab) {
-      case 'Joined':
+      case 'joined':
         message = loc.translate('noCommunities');
         subMessage = loc.translate('communities');
         break;
-      case 'Organized':
+      case 'organized':
         message = loc.translate('noCommunities');
         subMessage = loc.translate('createCommunity');
         break;
-      case 'Interested':
+      case 'interested':
         message = loc.translate('noCommunities');
         subMessage = loc.translate('communities');
         break;

@@ -6,12 +6,6 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Vybin</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Vybin needs access to location to connect you with nearby events.</string>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Vybin needs access to location to connect you with nearby events.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>Vybin needs access to microphone to record voice messages.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -34,13 +28,21 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<!-- Required for location permissions -->
+	<!-- Camera and Photo Library Permissions -->
+	<key>NSCameraUsageDescription</key>
+	<string>Vybin needs camera access to take photos for your vibe covers and event images.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Vybin needs access to your photo library to select images for vibe covers and event posts.</string>
+	<!-- Location Permissions -->
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app needs access to your location to show local housing data and maps.</string>
+	<string>Vybin needs access to your location to connect you with nearby events and meetups.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>This app needs access to your location even in the background to track your routes.</string>
+	<string>Vybin needs background location access to keep you updated on nearby events.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>This app needs access to your location in the background.</string>
+	<string>Vybin needs background location access to keep you updated on nearby events.</string>
+	<!-- Microphone Permission -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Vybin needs access to microphone to record voice messages in chats.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

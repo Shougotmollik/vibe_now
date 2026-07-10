@@ -43,7 +43,8 @@ class AppLocalizationsDe {
     'endingTime': 'Endzeit',
     'selectedLocation': 'Ausgewählter Ort',
     'privacyFirst': 'Datenschutz zuerst',
-    'privacyFirstDesc': 'Ihr genauer Standort wird nur mit Personen geteilt, denen Sie zuwinken und die Sie akzeptieren',
+    'privacyFirstDesc':
+        'Ihr genauer Standort wird nur mit Personen geteilt, denen Sie zuwinken und die Sie akzeptieren',
     'organized': 'Organisiert',
     'close': 'Schließen',
     'back': 'Zurück',
@@ -66,7 +67,8 @@ class AppLocalizationsDe {
     'warning': 'Warnung',
     'info': 'Info',
     'networkError': 'Netzwerkfehler. Bitte versuchen Sie es erneut.',
-    'somethingWentWrong': 'Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.',
+    'somethingWentWrong':
+        'Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.',
     'pleaseWait': 'Bitte warten...',
 
     // ──── AUTH ────
@@ -130,7 +132,8 @@ class AppLocalizationsDe {
     'stepLocation': 'Standort festlegen',
     'stepGender': 'Geschlecht auswählen',
     'stepBirthday': 'Wann ist Ihr Geburtstag?',
-    'stepBirthdaySubtitle': 'Ihr Profil zeigt nur Ihr Alter, nie Ihr volles Geburtsdatum.',
+    'stepBirthdaySubtitle':
+        'Ihr Profil zeigt nur Ihr Alter, nie Ihr volles Geburtsdatum.',
     'stepLookingFor': 'Was suchen Sie?',
     'male': 'Männlich',
     'female': 'Weiblich',
@@ -342,11 +345,11 @@ class AppLocalizationsDe {
     'language': 'Sprache',
     'english': 'English',
     'german': 'Deutsch',
-    'theme': 'Design',
+    'theme': 'thema',
     'light': 'Hell',
     'dark': 'Dunkel',
     'system': 'System',
-    'themeMode': 'Design-Modus',
+    'themeMode': 'thema Modus',
     'notifications': 'Benachrichtigungen',
     'privacy': 'Datenschutz',
     'termsOfService': 'Nutzungsbedingungen',
@@ -400,7 +403,8 @@ class AppLocalizationsDe {
     'enjoyTheMoment': 'Genießen Sie den Moment!',
     'leaveEventZone': 'Veranstaltungszone verlassen',
     'leftEventZone': 'Veranstaltungszone verlassen',
-    'leftEventDesc': 'Sie haben die Veranstaltungszone verlassen. Rückkehr zur Karte...',
+    'leftEventDesc':
+        'Sie haben die Veranstaltungszone verlassen. Rückkehr zur Karte...',
     'loadingEvent': 'Veranstaltung wird geladen...',
     'locationNotAvailable': 'Standort nicht verfügbar',
     'eventZone': 'Veranstaltungszone',
@@ -443,17 +447,21 @@ class AppLocalizationsDe {
     'pickLocationOnMap': 'Ort auf Karte auswählen',
     'later': 'Später',
     'scheduleMeetupConfirm': 'Vereinbaren Sie ein Treffen zur Verifizierung',
-    'scheduleQRDesc': 'Sie müssen Ihren QR-Code scannen, um der Community beizutreten.',
-    'qrMustBeScanned': 'QR-Code muss persönlich gescannt werden, um Mitglied zu werden',
+    'scheduleQRDesc':
+        'Sie müssen Ihren QR-Code scannen, um der Community beizutreten.',
+    'qrMustBeScanned':
+        'QR-Code muss persönlich gescannt werden, um Mitglied zu werden',
     'cancelMeetupAnytime': 'Sie können dieses Treffen jederzeit absagen',
     'youreOfficialMember': 'Sie sind jetzt offizielles Mitglied,',
     'feelFreeToSayHi': 'Sagen Sie gerne Hallo in der Gruppe',
     'enterCommunity': 'Community betreten',
     'members': 'Mitglieder',
-    'pendingMeetupsNote': 'Nicht abgeschlossene Treffen können Ihren Respekt-Score beeinflussen.',
+    'pendingMeetupsNote':
+        'Nicht abgeschlossene Treffen können Ihren Respekt-Score beeinflussen.',
     'trustEcosystem': 'Dies verbindet Communities mit Ihrem Trust-Ökosystem.',
     'unblock': 'Entblocken',
-    'areYouSureUnblock': 'Sind Sie sicher, dass Sie diese Person entblocken möchten?',
+    'areYouSureUnblock':
+        'Sind Sie sicher, dass Sie diese Person entblocken möchten?',
     'whatHappened': 'Was ist passiert?',
     'explainHere': 'Hier erklären...',
     'activeMembers': 'Aktive Mitglieder',
@@ -466,23 +474,28 @@ class AppLocalizationsDe {
     'sentAFile': 'Hat eine Datei gesendet',
     'addACaption': 'Bildunterschrift hinzufügen...',
     'wantsToMeetYou': 'möchte Sie treffen.',
-    'acceptToSuggest': 'Akzeptieren, um einen Ort und Zeit für ein kurzes Treffen vorzuschlagen',
+    'acceptToSuggest':
+        'Akzeptieren, um einen Ort und Zeit für ein kurzes Treffen vorzuschlagen',
     'youHaveRejected': 'Sie haben',
     'waveRequest': 'Wellenanfrage abgelehnt.',
     'youHaveReported': 'Sie haben',
-    'youWillNotReceive': 'Sie werden keine Benachrichtigungen von diesem Benutzer erhalten.',
+    'youWillNotReceive':
+        'Sie werden keine Benachrichtigungen von diesem Benutzer erhalten.',
     'youHaveBlocked': 'Sie haben',
     'awaitingQR': 'Warten auf QR',
     'hasBeenApproved': 'wurde genehmigt!',
-    'confirmPasswordToProceed': 'Aus Sicherheitsgründen bestätigen Sie bitte Ihr Passwort.',
-    'giveReason': 'Geben Sie uns einen Grund, warum Sie das Konto pausieren möchten',
+    'confirmPasswordToProceed':
+        'Aus Sicherheitsgründen bestätigen Sie bitte Ihr Passwort.',
+    'giveReason':
+        'Geben Sie uns einen Grund, warum Sie das Konto pausieren möchten',
     'reason': 'Grund',
     'accountInformation': 'Kontoinformationen',
     'changeYourPassword': 'Passwort ändern',
     'pauseYourAccount': 'Konto pausieren',
     'deleteYourAccount': 'Konto löschen',
     'deleteConfirmation': 'Löschbestätigung',
-    'deleteAccountDesc': 'Sie können Ihr Konto löschen, aber der Vorgang kann einige Zeit dauern. Nach dem Löschen kann es nicht wiederhergestellt werden.',
+    'deleteAccountDesc':
+        'Sie können Ihr Konto löschen, aber der Vorgang kann einige Zeit dauern. Nach dem Löschen kann es nicht wiederhergestellt werden.',
     'profileCompletion': 'Profilvollständigkeit',
     'selectUpTo5': 'Interessen (maximal 5 auswählen)',
     'max5Interests': 'Sie können maximal 5 Interessen auswählen',
@@ -495,33 +508,40 @@ class AppLocalizationsDe {
     'enterCategoryName': 'Kategoriename eingeben',
     'membersCount': 'Mitglieder (24)',
     'youAreAdmin': 'Sie sind ein Admin',
-    'pendingMeetups': 'Nicht abgeschlossene Treffen können Ihren Respekt-Score beeinflussen. Dies verbindet Communities mit Ihrem Trust-Ökosystem.',
+    'pendingMeetups':
+        'Nicht abgeschlossene Treffen können Ihren Respekt-Score beeinflussen. Dies verbindet Communities mit Ihrem Trust-Ökosystem.',
     'eventRequestSent': 'Anfrage gesendet',
     'yourRequestHasBeenSent': 'Ihre Anfrage wurde gesendet!',
     'withdrawing': 'Wird zurückgezogen...',
     'eventAccessGranted': 'Zugriff gewährt',
-    'qrCodeDescription': 'Denken Sie daran, bei der Ankunft den QR-Code zu scannen',
+    'qrCodeDescription':
+        'Denken Sie daran, bei der Ankunft den QR-Code zu scannen',
     'createSomethingNew': 'Etwas Neues erstellen',
-    'startEventOrCommunity': 'Starten Sie eine Veranstaltung oder bauen Sie eine Community auf.',
+    'startEventOrCommunity':
+        'Starten Sie eine Veranstaltung oder bauen Sie eine Community auf.',
     'eventCategoryLabel': 'Veranstaltungskategorie',
     'communityCategoryLabel': 'Community-Kategorie',
     'selectLocation': 'Standort auswählen',
     'profileCompletionLabel': 'Profilvollständigkeit',
     'noBioYet': 'Noch keine Bio',
     'locationNotSet': 'Standort nicht festgelegt',
-    'enterYourBio': 'Geben Sie hier Ihre Bio ein. Sie wird für Ihre Freunde sichtbar sein.',
+    'enterYourBio':
+        'Geben Sie hier Ihre Bio ein. Sie wird für Ihre Freunde sichtbar sein.',
     'addInterestCategory': 'Interessenkategorie hinzufügen',
     'enterInterestName': 'Interessenname eingeben',
     'addSubInterest': 'Unterinteresse hinzufügen',
     'areYouSureDeletePhoto': 'Möchten Sie dieses Foto wirklich löschen?',
     'photoAdded': 'Foto erfolgreich hinzugefügt',
-    'failedToUpload': 'Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.',
+    'failedToUpload':
+        'Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.',
     'profilePhotoUpdated': 'Profilfoto aktualisiert',
-    'failedToUpdatePhoto': 'Profilfoto konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.',
+    'failedToUpdatePhoto':
+        'Profilfoto konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.',
     'changePhoto': 'Ändern',
     'failedToPickImage': 'Bild konnte nicht ausgewählt werden',
     'updateEvent': 'Aktualisieren',
-    'updateEventConfirm': 'Die Aktualisierung benachrichtigt alle Teilnehmer.\\nSind Sie sicher?',
+    'updateEventConfirm':
+        'Die Aktualisierung benachrichtigt alle Teilnehmer.\\nSind Sie sicher?',
     'deleteEventConfirm': 'Möchten Sie es wirklich löschen?',
     'archiveConfirm': 'Möchten Sie es wirklich archivieren?',
     'yes': 'Ja',
@@ -538,7 +558,8 @@ class AppLocalizationsDe {
     'failedToUpdateCommunity': 'Community konnte nicht aktualisiert werden',
     'sundayCoffeeVibes': 'Sonntag Kaffee Vibes',
     'termsAndPrivacy': 'Nutzungsbedingungen und Datenschutz',
-    'passwordMinLengthError': 'Das Passwort muss mindestens 6 Zeichen lang sein',
+    'passwordMinLengthError':
+        'Das Passwort muss mindestens 6 Zeichen lang sein',
     'passwordsDoNotMatchError': 'Passwörter stimmen nicht überein',
 
     // ──── NEW KEYS ────
@@ -561,6 +582,7 @@ class AppLocalizationsDe {
     'getStartedWithLocalDiscovery': 'Starten Sie mit lokaler Erkundung',
     'forActiveMembers': 'Für aktive Community-Mitglieder',
     'forOrganizers': 'Für Organisatoren und Power-User',
+    'private_tab': 'Privat',
     'wavesPerDay': 'Wellen / Tag',
     'unlimitedVibes': 'Unbegrenzte Vibes',
     'joinUpTo': 'Treten Sie bis zu',
@@ -569,11 +591,13 @@ class AppLocalizationsDe {
     'membersPerCommunity': 'Mitglieder / Community',
     'eventsPerMonth': 'Veranstaltungen / Monat',
     'participantsPerEvent': 'Teilnehmer / Veranstaltung',
+    'wavedAt': 'Welle gesendet bei',
     'unlimitedWaves': 'Unbegrenzte Wellen',
     'unlimitedCommunities': 'Unbegrenzte Communities',
     'createUpToCommunities': 'Erstellen Sie bis zu',
     'unlimitedMembers': 'Unbegrenzte Mitglieder',
-    'joinEventsNoLimit': 'Nehmen Sie an Veranstaltungen ohne Entfernungsbegrenzung teil',
+    'joinEventsNoLimit':
+        'Nehmen Sie an Veranstaltungen ohne Entfernungsbegrenzung teil',
     'createUnlimitedEvents': 'Erstellen Sie unbegrenzte Veranstaltungen',
     'unlimitedParticipants': 'Unbegrenzte Teilnehmer',
     'maxImages': 'Maximale Anzahl an Bildern',
@@ -586,9 +610,12 @@ class AppLocalizationsDe {
     'gotIt': 'Verstanden!',
     'eventOption': 'Veranstaltung',
     'communityOption': 'Community',
-    'eventOptionDesc': 'Organisieren Sie Treffen oder besondere Anlässe, die Menschen zusammenbringen',
-    'communityOptionDesc': 'Schaffen Sie einen Raum, in dem Menschen mit gemeinsamen Interessen sich vernetzen und wachsen können',
-    'proTipDesc': 'Communities sind für langfristige Verbindungen, Events für bestimmte Anlässe und Vibes für flüchtige Momente.',
+    'eventOptionDesc':
+        'Organisieren Sie Treffen oder besondere Anlässe, die Menschen zusammenbringen',
+    'communityOptionDesc':
+        'Schaffen Sie einen Raum, in dem Menschen mit gemeinsamen Interessen sich vernetzen und wachsen können',
+    'proTipDesc':
+        'Communities sind für langfristige Verbindungen, Events für bestimmte Anlässe und Vibes für flüchtige Momente.',
 
     // ──── TIME / DATE ────
     'jan': 'Jan',
@@ -648,10 +675,12 @@ class AppLocalizationsDe {
     'planPlusParticipantsPerEvent': 'Bis zu 100 Teilnehmer / Event',
     'planPremiumUnlimitedWaves': 'Unbegrenzte Wellen',
     'planPremiumUnlimitedVibes': 'Unbegrenzte Vibes',
-    'planPremiumJoinUnlimitedCommunities': 'Treten Sie unbegrenzten Communities bei',
+    'planPremiumJoinUnlimitedCommunities':
+        'Treten Sie unbegrenzten Communities bei',
     'planPremiumCreateCommunities': 'Erstellen Sie bis zu 6 Communities',
     'planPremiumUnlimitedMembers': 'Unbegrenzte Mitglieder / Community',
-    'planPremiumJoinEventsNoLimit': 'Nehmen Sie an Events ohne Entfernungsbegrenzung teil',
+    'planPremiumJoinEventsNoLimit':
+        'Nehmen Sie an Events ohne Entfernungsbegrenzung teil',
     'planPremiumCreateUnlimitedEvents': 'Erstellen Sie unbegrenzte Events',
     'planPremiumUnlimitedParticipants': 'Unbegrenzte Teilnehmer / Event',
 
@@ -668,7 +697,8 @@ class AppLocalizationsDe {
     'interestPhotography': 'Fotografie',
 
     // ──── PROFILE ────
-    'defaultBio': 'Kaffeeliebhaber. Musikliebhaber. Vielreisender. Feinschmecker.',
+    'defaultBio':
+        'Kaffeeliebhaber. Musikliebhaber. Vielreisender. Feinschmecker.',
 
     // ──── MISSING KEYS ────
     'youLeft': 'Sie haben ',
@@ -686,20 +716,24 @@ class AppLocalizationsDe {
     'notNow': 'Jetzt nicht',
     'allow': 'Erlauben',
     'locationAccess': 'Standortzugriff',
-    'locationAccessDesc': 'Wird verwendet, um Sie mit dem zu verbinden, was in der Nähe ist.',
+    'locationAccessDesc':
+        'Wird verwendet, um Sie mit dem zu verbinden, was in der Nähe ist.',
     'locationAccessSubtitle': 'Nur während der Nutzung der App.',
     'sendInvitation': 'Einladung senden',
     'inviteMembersToMeetup': 'Mitglieder zum Treffen einladen',
-    'selectedMembersWillReceive': 'Ausgewählte Mitglieder erhalten eine Einladung zur Teilnahme.',
+    'selectedMembersWillReceive':
+        'Ausgewählte Mitglieder erhalten eine Einladung zur Teilnahme.',
     'invitedAll': 'Alle eingeladen',
     'member': 'Mitglied',
     'awaiting': 'Wartend',
     'scheduledMeetup': 'Geplantes Treffen',
     'location': 'Standort',
     'statusPendingApproval': 'Status: Ausstehende Genehmigung',
-    'invitedToRealLifeMeetup': 'Sie werden zu einem persönlichen Treffen eingeladen, bevor Sie Mitglied werden.',
+    'invitedToRealLifeMeetup':
+        'Sie werden zu einem persönlichen Treffen eingeladen, bevor Sie Mitglied werden.',
     'youJoinedTheMeetup': 'Sie sind dem Treffen beigetreten!',
     'communityNotifications': 'Community-Benachrichtigungen',
+    'event_tab': 'Event',
     'eventNotifications': 'Veranstaltungsbenachrichtigungen',
     'qrVerification': 'QR-Verifizierung',
     'qrTab': 'QR-Code',
@@ -708,25 +742,35 @@ class AppLocalizationsDe {
     'alignQRCode': 'QR-Code im Rahmen ausrichten',
     'cameraPermissionRequired': 'Kameraerlaubnis erforderlich',
     'uniqueQRCode': 'Dieser Code ist für diese Verbindung einzigartig',
-    'qrInfoCommunity': 'Scannen Sie diesen QR-Code, um einer Community beizutreten oder sich mit anderen Mitgliedern zu verbinden.',
-    'qrInfoEvent': 'Scannen Sie diesen QR-Code für Veranstaltungszugang oder -verifizierung.',
-    'qrInfoChats': 'Scannen Sie diesen QR-Code, um eine direkte persönliche Verbindung herzustellen.',
+    'qrInfoCommunity':
+        'Scannen Sie diesen QR-Code, um einer Community beizutreten oder sich mit anderen Mitgliedern zu verbinden.',
+    'qrInfoEvent':
+        'Scannen Sie diesen QR-Code für Veranstaltungszugang oder -verifizierung.',
+    'qrInfoChats':
+        'Scannen Sie diesen QR-Code, um eine direkte persönliche Verbindung herzustellen.',
     'qrTitleCommunity': 'Einer Community beitreten',
     'qrTitleEvent': 'Veranstaltungszugang & Verifizierung',
     'qrTitleChats': 'Mit Chats verbinden',
-    'qrSubtitleCommunity': 'Lassen Sie andere diesen Code scannen, um der Community beizutreten',
-    'qrSubtitleEvent': 'Zeigen Sie diesen Code für den Veranstaltungseintritt vor',
+    'qrSubtitleCommunity':
+        'Lassen Sie andere diesen Code scannen, um der Community beizutreten',
+    'qrSubtitleEvent':
+        'Zeigen Sie diesen Code für den Veranstaltungseintritt vor',
     'qrSubtitleChats': 'Lassen Sie sie scannen, um sich sofort zu verbinden',
     'qrScanCommunity': 'Scannen Sie den QR-Code, um der Community beizutreten.',
-    'qrScanEvent': 'Scannen Sie den QR-Code, um sicher auf die Veranstaltung zuzugreifen.',
-    'qrScanChats': 'Scannen Sie den QR-Code, um sich sofort über den Chat zu verbinden.',
+    'qrScanEvent':
+        'Scannen Sie den QR-Code, um sicher auf die Veranstaltung zuzugreifen.',
+    'qrScanChats':
+        'Scannen Sie den QR-Code, um sich sofort über den Chat zu verbinden.',
     'history': 'Verlauf',
     'clearAll': 'Alle löschen',
+    'eventPublicDesc': 'Jeder kann diese Veranstaltung entdecken und ohne Genehmigung sofort beitreten.',
+    'eventPrivateDesc': 'Personen benötigen Ihre Genehmigung, bevor sie dieser Veranstaltung beitreten können.',
     'respectScore': 'Respekt-Score',
     'trusted': 'Vertrauenswürdig',
     'noRealLifeMeets': 'Noch keine persönlichen Treffen',
     'basedOnMeets': 'Basierend auf ',
     'realLifeMeets': 'persönlichen Treffen',
-    'youHaveAcceptedRequestDesc': 'Sie haben die Community-Beitrittsanfrage angenommen.',
+    'youHaveAcceptedRequestDesc':
+        'Sie haben die Community-Beitrittsanfrage angenommen.',
   };
 }

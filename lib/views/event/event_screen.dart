@@ -158,8 +158,30 @@ class _EventScreenState extends State<EventScreen> {
     final loc = AppLocalizations.of(context);
     return Row(
       children: [
-        CustomAppBar(title: loc.translate('events')),
-        const Spacer(),
+        GestureDetector(
+          onTap: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.goNamed(RouteNames.mainNavBar);
+            }
+          },
+          child: Icon(Icons.arrow_back_ios,
+              color: Theme.of(context).colorScheme.onSurface),
+        ),
+        SizedBox(width: 8.w),
+        Expanded(
+          child: Text(
+            loc.translate('events'),
+            style: TextStyle(
+              fontSize: 20.sp,
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
+        ),
         GestureDetector(
           onTap: () => context.pushNamed(
             RouteNames.qrVerificationScreen,

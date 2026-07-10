@@ -30,8 +30,17 @@ class _ChatScreenState extends State<ChatScreen> {
   final ChatController _chatController = Get.find<ChatController>();
 
   int _selectedTabIndex = 0;
-  static const _tabs = ['Waves', 'Private', 'Event', 'Community'];
   static const _tabKeys = ['waves', 'private', 'event', 'community'];
+
+  String _tabLabel(AppLocalizations loc, int index) {
+    switch (index) {
+      case 0: return loc.translate('waves');
+      case 1: return loc.translate('private_tab');
+      case 2: return loc.translate('event_tab');
+      case 3: return loc.translate('community');
+      default: return '';
+    }
+  }
 
   @override
   void initState() {
@@ -93,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
               const SizedBox(height: 12),
               _buildSearchBar(loc),
               const SizedBox(height: 12),
-              _buildTabBar(),
+              _buildTabBar(loc),
               const SizedBox(height: 12),
               Expanded(child: _buildTabContent(loc)),
             ],
@@ -207,11 +216,11 @@ class _ChatScreenState extends State<ChatScreen> {
     ),
   ];
 
-  Widget _buildTabBar() {
+  Widget _buildTabBar(AppLocalizations loc) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: List.generate(_tabs.length, (index) {
+        children: List.generate(_tabKeys.length, (index) {
           final isSelected = _selectedTabIndex == index;
           return Padding(
             padding: const EdgeInsets.only(right: 8),
@@ -239,7 +248,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   children: [
                     isSelected ? _tabIcons[index] : const SizedBox.shrink(),
                     Text(
-                      _tabs[index],
+                      _tabLabel(loc, index),
                       style: TextStyle(
                         color: isSelected
                             ? Colors.black87
@@ -344,13 +353,13 @@ class _ChatScreenState extends State<ChatScreen> {
               context,
             ).colorScheme.onSurface.withValues(alpha: 0.08),
           ),
-          itemBuilder: (context, index) => _buildWaveItem(list[index]),
+          itemBuilder: (context, index) => _buildWaveItem(list[index], loc),
         );
       }),
     );
   }
 
-  Widget _buildWaveItem(IncomingWave wave) {
+  Widget _buildWaveItem(IncomingWave wave, AppLocalizations loc) {
     final theme = Theme.of(context);
     return InkWell(
       onTap: () {
@@ -415,7 +424,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                       SizedBox(width: 4.w),
                       Text(
-                        'Waved at ${wave.vibe.title}',
+                        '${loc.translate('wavedAt')} ${wave.vibe.title}',
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: theme.colorScheme.onSurfaceVariant,

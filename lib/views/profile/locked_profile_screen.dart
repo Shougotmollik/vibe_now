@@ -144,7 +144,7 @@ class LockedProfileScreen extends StatelessWidget {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            'Wave',
+                                            AppLocalizations.of(context).translate('wave'),
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 18,

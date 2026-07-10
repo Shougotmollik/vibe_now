@@ -34,10 +34,13 @@ class TrustScoreCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              runSpacing: 8,
               children: [
                 Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(Icons.star, color: Colors.amber, size: 20.sp),
                     const SizedBox(width: 8),
@@ -71,6 +74,7 @@ class TrustScoreCard extends StatelessWidget {
                     gradient: AppColors.primaryGradient,
                   ),
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(Icons.star, color: Colors.amber, size: 20.sp),
                       const SizedBox(width: 6),

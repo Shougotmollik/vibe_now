@@ -27,8 +27,16 @@ class NotificationScreen extends StatefulWidget {
 class _NotificationScreenState extends State<NotificationScreen> {
   final NotificationController _controller = Get.find<NotificationController>();
   int _selectedTabIndex = 0;
-  final List<String> _tabs = ['Waves', 'Events', 'Community'];
   final List<String> _tabKeys = ['vibes', 'events', 'communities'];
+
+  String _tabLabel(AppLocalizations loc, int index) {
+    switch (index) {
+      case 0: return loc.translate('waves');
+      case 1: return loc.translate('events');
+      case 2: return loc.translate('community');
+      default: return '';
+    }
+  }
 
   @override
   void initState() {
@@ -99,7 +107,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
-        children: List.generate(_tabs.length, (index) {
+        children: List.generate(_tabKeys.length, (index) {
           final isSelected = _selectedTabIndex == index;
           final count = switch (index) {
             0 => _controller.unreadCounts.value.vibes,
@@ -136,7 +144,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       children: [
                         isSelected ? _tabIcons[index] : const SizedBox.shrink(),
                         Text(
-                          _tabs[index],
+                          _tabLabel(loc, index),
                           style: TextStyle(
                             color: isSelected ? Colors.black87 : Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w500,

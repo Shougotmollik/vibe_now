@@ -105,7 +105,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
                   children: [
                     CustomAppBar(title: loc.translate('createCommunity')),
                     SizedBox(height: 16.h),
-                    _buildCommunityHeaderSection(),
+                    _buildCommunityHeaderSection(loc),
                     SizedBox(height: 16.h),
                     _buildImageUploadSection(loc),
                     SizedBox(height: 24.h),
@@ -1113,7 +1113,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
   }
 
-  Widget _buildCommunityHeaderSection() {
+  Widget _buildCommunityHeaderSection(loc) {
     return Container(
       padding: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
@@ -1121,8 +1121,8 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Theme.of(context).colorScheme.primaryContainer.withOpacity(0.1),
-            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.1),
+            Theme.of(context).colorScheme.primaryContainer.withValues(alpha: 0.1),
+            Theme.of(context).colorScheme.secondaryContainer.withValues(alpha: 0.1),
           ],
         ),
         borderRadius: BorderRadius.circular(14.r),
@@ -1137,7 +1137,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
               Assets.icons.community.svg(width: 24.w, height: 24.h),
               Expanded(
                 child: Text(
-                  "Build a space where people with shared interests can connect and grow together",
+                  loc.translate('communityOptionDesc'),
                   style: TextStyle(
                     fontSize: 12.sp,
                     fontWeight: FontWeight.w400,
