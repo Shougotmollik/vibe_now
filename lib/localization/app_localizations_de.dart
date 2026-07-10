@@ -112,8 +112,14 @@ class AppLocalizationsDe {
     'preferNotToSay': 'Keine Angabe',
     'setPassword': 'Passwort festlegen',
 
-    // ──── ONBOARDING ────
+    // ──── ONBOARDING / INTRO ────
     'getStarted': 'Loslegen',
+    'letsVibeTogether': 'Lass uns zusammen viben',
+    'discoverVibesDesc': 'Entdecke Vibes in deiner Nähe',
+    'spontaneousConnections': 'Knüpfe spontane echte Kontakte',
+    'createOwnEvents': 'Erstelle deine eigenen Events',
+    'createOwnCommunities': 'Erstelle deine eigenen Communities',
+    'safePrivacyFirst': 'Sicher & datenschutzorientiert gestaltet',
     'letsConnect': 'Verbinden wir uns',
     'continueText': 'Weiter',
     'chooseLanguage': 'Sprache wählen',

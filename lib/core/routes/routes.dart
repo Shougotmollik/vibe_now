@@ -118,7 +118,9 @@ void setupRouter(bool hasToken) {
       GoRoute(
         path: '/member-screen',
         name: RouteNames.communityMemberScreen,
-        builder: (context, state) => const CommunityMembersScreen(),
+        builder: (context, state) => CommunityMemberScreen(
+          communityId: state.extra as int,
+        ),
       ),
 
       GoRoute(

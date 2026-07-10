@@ -28,11 +28,7 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen>
       flag: Assets.flags.unitedKingdom,
       code: 'en',
     ),
-    _LanguageOption(
-      name: 'Deutsch',
-      flag: Assets.flags.germany,
-      code: 'de',
-    ),
+    _LanguageOption(name: 'Deutsch', flag: Assets.flags.germany, code: 'de'),
   ];
 
   late AnimationController _fadeController;
@@ -56,13 +52,10 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen>
       curve: Curves.easeOut,
     );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.4),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeOutCubic,
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero).animate(
+          CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
+        );
 
     _fadeController.forward();
   }
@@ -97,13 +90,12 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen>
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Column(
                 children: [
-                  const Spacer(flex: 2),
-
-                  // Branding — Vybin logo text (matching splash screen style)
+                  Spacer(flex: 1),
                   ShaderMask(
-                    shaderCallback: (bounds) => AppColors.primaryGradient.createShader(
-                      Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                    ),
+                    shaderCallback: (bounds) =>
+                        AppColors.primaryGradient.createShader(
+                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                        ),
                     child: Text(
                       'vybin',
                       style: TextStyle(
@@ -134,9 +126,7 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen>
                     final lang = _languages[index];
                     final isSelected = _selectedIndex == index;
                     return Padding(
-                      padding: EdgeInsets.only(
-                        bottom: 16.h,
-                      ),
+                      padding: EdgeInsets.only(bottom: 16.h),
                       child: GestureDetector(
                         onTap: () => _onLanguageSelected(index),
                         child: AnimatedContainer(
@@ -186,9 +176,9 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen>
                                     fontWeight: isSelected
                                         ? FontWeight.w600
                                         : FontWeight.w400,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurface,
                                   ),
                                 ),
                               ),
@@ -205,9 +195,7 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen>
                                       : null,
                                   color: isSelected
                                       ? null
-                                      : Theme.of(context)
-                                          .colorScheme
-                                          .surface,
+                                      : Theme.of(context).colorScheme.surface,
                                   border: isSelected
                                       ? null
                                       : Border.all(
@@ -234,21 +222,24 @@ class _ChooseLanguageScreenState extends State<ChooseLanguageScreen>
 
                   // Continue button
                   SlideTransition(
-                    position: Tween<Offset>(
-                      begin: const Offset(0, 1),
-                      end: Offset.zero,
-                    ).animate(
-                      CurvedAnimation(
-                        parent: _fadeController,
-                        curve: const Interval(0.4, 0.8,
-                            curve: Curves.easeOutCubic),
-                      ),
-                    ),
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(0, 1),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: _fadeController,
+                            curve: const Interval(
+                              0.4,
+                              0.8,
+                              curve: Curves.easeOutCubic,
+                            ),
+                          ),
+                        ),
                     child: FadeTransition(
                       opacity: CurvedAnimation(
                         parent: _fadeController,
-                        curve: const Interval(0.4, 0.8,
-                            curve: Curves.easeOut),
+                        curve: const Interval(0.4, 0.8, curve: Curves.easeOut),
                       ),
                       child: PrimaryButton.text(
                         onPressed: _onContinue,

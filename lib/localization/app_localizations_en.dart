@@ -113,8 +113,14 @@ class AppLocalizationsEn {
     'preferNotToSay': 'Prefer not to say',
     'setPassword': 'Set Password',
 
-    // ──── ONBOARDING ────
+    // ──── ONBOARDING / INTRO ────
     'getStarted': 'Get Started',
+    'letsVibeTogether': "Let's vibe together",
+    'discoverVibesDesc': 'Discover vibes happening around you',
+    'spontaneousConnections': 'Make spontaneous real-life connections',
+    'createOwnEvents': 'Create your own events',
+    'createOwnCommunities': "Create your own communities",
+    'safePrivacyFirst': 'Safe & privacy-first by design',
     'letsConnect': "Let's Connect",
     'continueText': 'Continue',
     'chooseLanguage': 'Choose Your Language',

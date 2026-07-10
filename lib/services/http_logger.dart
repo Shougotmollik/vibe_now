@@ -1,12 +1,24 @@
 import 'dart:convert';
+import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 
 /// ════════════════════════════════════════════════════════════
-///  📡  HTTP LOGGER  v7.0  —  Clean + Fun Emoji Edition
-///  ✔ Colored Headers Only
-///  ✔ All Content White
-///  ✔ Fun + Readable Logs
+///  📡  HTTP LOGGER  v7.1  —  Clean ANSI-safe Logger
+///
+///  • Colored headers on desktop (macOS, Linux, Windows)
+///  • Clean emoji-only output on mobile (iOS, Android)
+///    where ANSI escapes get mangled by the log pipeline
 /// ════════════════════════════════════════════════════════════
+
+/// True on desktop platforms where ANSI escape codes render correctly.
+/// False on mobile (iOS/Android) so raw escape codes don't leak into logs.
+bool get _supportsAnsi {
+  try {
+    return !Platform.isIOS && !Platform.isAndroid;
+  } catch (_) {
+    return false;
+  }
+}
 
 class HttpLoggerConfig {
   bool showEmoji = true;
@@ -26,6 +38,18 @@ class HttpLogger {
 
   static final HttpLoggerConfig config = HttpLoggerConfig();
   static final Map<String, DateTime> _timings = {};
+
+  /// Width for band-line fill calculations.
+  static const int _boxWidth = 62;
+
+  /// Build a full-width double-line band with embedded text.
+  /// Used on non-ANSI platforms to simulate a header background.
+  static String _bandLine(String text) {
+    final prefix = '  ══ $text  ';
+    final fillLen = _boxWidth - prefix.length;
+    if (fillLen <= 0) return prefix;
+    return '$prefix${'═' * fillLen}';
+  }
 
   static void _print(String message) {
     if (kDebugMode) debugPrint(message);
@@ -50,9 +74,11 @@ class HttpLogger {
     final lines = <String>[];
 
     // 🔥 ORANGE HEADER
-    lines.add(
-      '\n${_Ansi.bgOrange}${_Ansi.white}  🚀 OUTGOING REQUEST ➤ $method  ${_Ansi.reset}',
-    );
+    if (_supportsAnsi) {
+      lines.add('\n${_Ansi.bgOrange}${_Ansi.white}  🚀 OUTGOING REQUEST ➤ $method  ${_Ansi.reset}');
+    } else {
+      lines.add('\n${_bandLine('🚀 OUTGOING REQUEST ➤ $method')}');
+    }
 
     lines.add(_row('URL   ', url, emoji: '🔗'));
     if (config.showRequestId) {
@@ -96,9 +122,12 @@ class HttpLogger {
     final lines = <String>[];
 
     // 🎯 STATUS HEADER
-    lines.add(
-      '\n$bgColor${_Ansi.white}  ${_tierEmoji(tier)} ${_tierLabel(tier)} · $statusCode · ⏱ $elapsed  ${_Ansi.reset}',
-    );
+    final headerText = '${_tierEmoji(tier)} ${_tierLabel(tier)} · $statusCode · ⏱ $elapsed';
+    if (_supportsAnsi) {
+      lines.add('\n$bgColor${_Ansi.white}  $headerText  ${_Ansi.reset}');
+    } else {
+      lines.add('\n${_bandLine(headerText)}');
+    }
 
     lines.add(_row('URL   ', url, emoji: '🔗'));
 
@@ -134,9 +163,11 @@ class HttpLogger {
     final lines = <String>[];
 
     // 🔥 RED HEADER
-    lines.add(
-      '\n${_Ansi.bgRed}${_Ansi.white}  💥 HTTP ERROR EXCEPTION  ${_Ansi.reset}',
-    );
+    if (_supportsAnsi) {
+      lines.add('\n${_Ansi.bgRed}${_Ansi.white}  💥 HTTP ERROR EXCEPTION  ${_Ansi.reset}');
+    } else {
+      lines.add('\n${_bandLine('💥 HTTP ERROR EXCEPTION')}');
+    }
 
     lines.add(_row('URL   ', url, emoji: '🔗'));
     lines.add(_row('ERROR ', error.toString(), emoji: '💬'));
@@ -242,21 +273,19 @@ class HttpLogger {
 }
 
 // ═══════════════════════════════════════════
-//  🎨 ANSI COLORS
+//  🎨 ANSI COLORS  (empty strings on mobile)
 // ═══════════════════════════════════════════
 
 class _Ansi {
-  static const reset = '\x1B[0m';
-  static const bold = '\x1B[1m';
-  static const white = '\x1B[37m';
+  static String get reset    => _supportsAnsi ? '\x1B[0m' : '';
+  static String get bold     => _supportsAnsi ? '\x1B[1m' : '';
+  static String get white    => _supportsAnsi ? '\x1B[37m' : '';
 
-  // 🎯 Custom Orange (256 color)
-  static const bgOrange = '\x1B[48;5;208m';
-
-  static const bgGreen = '\x1B[42m';
-  static const bgYellow = '\x1B[43m';
-  static const bgRed = '\x1B[41m';
-  static const bgCyan = '\x1B[46m';
+  static String get bgOrange => _supportsAnsi ? '\x1B[48;5;208m' : '';
+  static String get bgGreen  => _supportsAnsi ? '\x1B[42m' : '';
+  static String get bgYellow => _supportsAnsi ? '\x1B[43m' : '';
+  static String get bgRed    => _supportsAnsi ? '\x1B[41m' : '';
+  static String get bgCyan   => _supportsAnsi ? '\x1B[46m' : '';
 }
 
 enum _Tier { success, redirect, clientErr, serverErr }

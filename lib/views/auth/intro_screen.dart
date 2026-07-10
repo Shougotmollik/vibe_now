@@ -6,15 +6,17 @@ import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 
-class IntroTileModel {
-  final String title;
+class _IntroTileData {
+  final String key;
   final SvgGenImage icon;
-  final Color iconColor;
 
-  IntroTileModel({
-    required this.title,
+  static const Color _defaultIconColor = Color(0xff4DBEFF);
+
+  Color get iconColor => _defaultIconColor;
+
+  _IntroTileData({
+    required this.key,
     required this.icon,
-    this.iconColor = const Color(0xff4DBEFF),
   });
 }
 
@@ -39,28 +41,16 @@ class _IntroScreenState extends State<IntroScreen>
   late Animation<Offset> _titleSlideAnimation;
   late Animation<double> _titleFadeAnimation;
 
-  List<IntroTileModel> get introItems => [
-    IntroTileModel(
-      title: "Discover vibes happening around you",
-      icon: Assets.icons.location,
-    ),
-    IntroTileModel(
-      title: "Make spontaneous real-life connections",
-      icon: Assets.icons.user,
-    ),
-    IntroTileModel(
-      title: "Create your own events",
-      icon: Assets.icons.calender,
-    ),
-    IntroTileModel(
-      title: "Create your own community's",
-      icon: Assets.icons.usersColor,
-    ),
-    IntroTileModel(
-      title: "Safe & privacy-first by design",
-      icon: Assets.icons.shieldColor,
-    ),
+  List<_IntroTileData> get _tileData => [
+    _IntroTileData(key: 'discoverVibesDesc', icon: Assets.icons.location),
+    _IntroTileData(key: 'spontaneousConnections', icon: Assets.icons.user),
+    _IntroTileData(key: 'createOwnEvents', icon: Assets.icons.calender),
+    _IntroTileData(key: 'createOwnCommunities', icon: Assets.icons.usersColor),
+    _IntroTileData(key: 'safePrivacyFirst', icon: Assets.icons.shieldColor),
   ];
+
+  // Kept for controller count used in initState
+  int get _tileCount => _tileData.length;
 
   @override
   void initState() {
@@ -84,7 +74,7 @@ class _IntroScreenState extends State<IntroScreen>
 
     //Tile animations
     _controllers = List.generate(
-      introItems.length,
+      _tileCount,
       (_) => AnimationController(
         duration: const Duration(milliseconds: 1000),
         vsync: this,
@@ -183,7 +173,7 @@ class _IntroScreenState extends State<IntroScreen>
                 child: FadeTransition(
                   opacity: _titleFadeAnimation,
                   child: Text(
-                    "Let\u2019s vibe together",
+                    loc.translate('letsVibeTogether'),
                     style: TextStyle(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.w500,
@@ -198,14 +188,14 @@ class _IntroScreenState extends State<IntroScreen>
               // Intro tiles
               Column(
                 children: List.generate(
-                  introItems.length,
+                  _tileData.length,
                   (index) => Padding(
                     padding: EdgeInsets.only(bottom: 12.h),
                     child: SlideTransition(
                       position: _slideAnimations[index],
                       child: FadeTransition(
                         opacity: _fadeAnimations[index],
-                        child: buildIntroTile(introItems[index]),
+                        child: _buildIntroTile(loc, _tileData[index]),
                       ),
                     ),
                   ),
@@ -234,7 +224,7 @@ class _IntroScreenState extends State<IntroScreen>
     );
   }
 
-  Widget buildIntroTile(IntroTileModel model) {
+  Widget _buildIntroTile(AppLocalizations loc, _IntroTileData data) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 16.h),
       decoration: BoxDecoration(
@@ -251,16 +241,16 @@ class _IntroScreenState extends State<IntroScreen>
               ).colorScheme.primary.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(50.r),
             ),
-            child: model.icon.svg(
+            child: data.icon.svg(
               width: 24.w,
               height: 24.h,
-              color: model.iconColor,
+              color: data.iconColor,
             ),
           ),
           SizedBox(width: 8.w),
           Expanded(
             child: Text(
-              model.title,
+              loc.translate(data.key),
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w500,

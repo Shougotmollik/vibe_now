@@ -1,72 +1,147 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:vibe_now/controller/community_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
+import 'package:vibe_now/model/community_member.dart';
+import 'package:vibe_now/utils.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/community/community_manage_member_screen.dart';
+import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
-class CommunityMembersScreen extends StatefulWidget {
-  const CommunityMembersScreen({super.key});
+class CommunityMemberScreen extends StatefulWidget {
+  const CommunityMemberScreen({super.key, required this.communityId});
+  final int communityId;
 
   @override
-  State<CommunityMembersScreen> createState() => _CommunityMembersScreenState();
+  State<CommunityMemberScreen> createState() => _CommunityMemberScreenState();
 }
 
-class _CommunityMembersScreenState extends State<CommunityMembersScreen> {
-  int selectedIndex = 1;
+class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
+  final CommunityController _controller = Get.find<CommunityController>();
+
+  final List<_TabConfig> _tabs = [
+    _TabConfig(labelKey: 'activeTab', apiTab: 'joined'),
+    _TabConfig(labelKey: 'requestedTab', apiTab: 'requested'),
+  ];
+
+  String _selectedTab = 'joined';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _fetchMembers());
+  }
+
+  void _fetchMembers({bool showLoading = true}) {
+    _controller.manageCommunityMembers(
+      id: widget.communityId,
+      tab: _selectedTab,
+      showLoading: showLoading,
+    );
+  }
+
+  String get _emptyMessage {
+    final loc = AppLocalizations.of(context);
+    switch (_selectedTab) {
+      case 'joined':
+        return loc.translate('noActiveMembers');
+      case 'requested':
+        return loc.translate('noPendingRequests');
+      default:
+        return loc.translate('noMembersFound');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomAppBar(title: AppLocalizations.of(context).translate('members'), canBack: true),
-                  // GestureDetector(
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) =>
-                  //             const CommunityManageMemberScreen(),
-                  //       ),
-                  //     );
-                  //   },
-                  //   child: Container(
-                  //     padding: EdgeInsets.symmetric(
-                  //       vertical: 6.h,
-                  //       horizontal: 12.w,
-                  //     ),
-                  //     decoration: BoxDecoration(
-                  //       borderRadius: BorderRadius.circular(40),
-                  //       gradient: AppColors.primaryGradientRotated,
-                  //     ),
-                  //     child: Text(
-                  //       "Manage",
-                  //       style: TextStyle(
-                  //         fontSize: 14.sp,
-                  //         fontWeight: FontWeight.w600,
-                  //         color: Colors.white,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
+                  CustomAppBar(title: loc.translate('manageRequest')),
+                  GestureDetector(
+                    onTap: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CommunityManageMemberScreen(
+                            communityId: widget.communityId,
+                          ),
+                        ),
+                      );
+                      _fetchMembers(showLoading: false);
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 16,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: Text(
+                        loc.translate('manage'),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-            SizedBox(height: 12.h),
-            _buildTabs(),
-            Expanded(
-              child: IndexedStack(
-                index: selectedIndex,
-                children: [_buildActiveList(), _buildInvitedList()],
+            const SizedBox(height: 16),
+
+            // Tabs
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                children: _tabs.map((tab) {
+                  return Padding(
+                    padding: EdgeInsets.only(right: 12.w),
+                    child: _buildTabTrigger(tab),
+                  );
+                }).toList(),
               ),
+            ),
+            const SizedBox(height: 20),
+
+            Expanded(
+              child: Obx(() {
+                if (_controller.isManageMembersLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final members = _controller.manageMembers;
+                if (members.isEmpty) {
+                  return Center(
+                    child: Text(
+                      _emptyMessage,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  );
+                }
+
+                return _selectedTab == 'joined'
+                    ? _buildMemberList(members)
+                    : _buildRequestList(members);
+              }),
             ),
           ],
         ),
@@ -74,138 +149,195 @@ class _CommunityMembersScreenState extends State<CommunityMembersScreen> {
     );
   }
 
-  Widget _buildTabs() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-      child: Row(
-        children: [
-          _tabButton(label: AppLocalizations.of(context).translate('activeMembers'), index: 0),
-          SizedBox(width: 10.w),
-          _tabButton(label: AppLocalizations.of(context).translate('invitedMembers'), index: 1),
-        ],
+  Widget _buildMemberList(List<CommunityMember> members) {
+    return ListView.separated(
+      itemCount: members.length,
+      separatorBuilder: (context, index) => Divider(
+        indent: 20,
+        endIndent: 20,
+        color: Theme.of(context).dividerColor,
       ),
-    );
-  }
-
-  Widget _tabButton({required String label, required int index}) {
-    bool isSelected = selectedIndex == index;
-
-    return GestureDetector(
-      onTap: () => setState(() => selectedIndex = index),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          gradient: isSelected ? AppColors.primaryGradient : null,
-          borderRadius: BorderRadius.circular(20.r),
-          border: isSelected
-              ? null
-              : Border.all(color: Theme.of(context).dividerColor),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            color: isSelected
-                ? Colors.white
-                : Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w500,
-            fontSize: 14.sp,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildActiveList() {
-    return ListView(
-      children: const [
-        MemberTile(name: "Jenny smith", status: "Accepted"),
-        MemberTile(name: "Jenny smith", status: "Accepted"),
-      ],
-    );
-  }
-
-  Widget _buildInvitedList() {
-    return ListView(
-      children: const [
-        MemberTile(name: "Jenny smith", status: "Invited"),
-        MemberTile(name: "Jenny smith", status: "Rejected"),
-        MemberTile(name: "Jenny smith", status: "Accepted"),
-        MemberTile(name: "Jenny smith", status: "Rejected"),
-      ],
-    );
-  }
-}
-
-class MemberTile extends StatelessWidget {
-  final String name;
-  final String status;
-
-  const MemberTile({super.key, required this.name, required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ListTile(
-          contentPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 8,
-          ),
-          leading: const CircleAvatar(
-            radius: 30,
-            backgroundImage: NetworkImage('https://i.pravatar.cc/300?img=10'),
+      itemBuilder: (context, index) {
+        final member = members[index];
+        return ListTile(
+          leading: CircleAvatar(
+            radius: 28,
+            backgroundImage: NetworkImage(
+              AppCredentials.fixurl(member.user.avatar),
+            ),
           ),
           title: Text(
-            name,
+            member.user.fullName,
             style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
               color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           subtitle: Text(
-            "Open for small talk",
+            // member.requestedAt?.timeAgo,
+            timeAgo(DateTime.parse(member.requestedAt!), context: context),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w500,
             ),
           ),
-          trailing: _buildStatusLabel(status),
-        ),
-        Divider(
-          indent: 16,
-          endIndent: 16,
-          height: 1,
-          color: Theme.of(context).dividerColor,
-        ),
-      ],
+          onTap: () {},
+        );
+      },
     );
   }
 
-  Widget _buildStatusLabel(String status) {
-    if (status == "Invited") {
-      return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          gradient: AppColors.primaryGradient,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          status,
-          style: TextStyle(color: Colors.white, fontSize: 12),
-        ),
-      );
-    }
+  Widget _buildRequestList(List<CommunityMember> members) {
+    return ListView.separated(
+      itemCount: members.length,
+      separatorBuilder: (context, index) => Divider(
+        indent: 20,
+        endIndent: 20,
+        color: Theme.of(context).dividerColor,
+      ),
+      itemBuilder: (context, index) {
+        final member = members[index];
+        return ListTile(
+          leading: CircleAvatar(
+            radius: 28,
+            backgroundImage: NetworkImage(
+              AppCredentials.fixurl(member.user.avatar),
+            ),
+          ),
+          title: Text(
+            member.user.fullName,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
+          subtitle: Text(
+            AppLocalizations.of(context).translate('requestedToJoin'),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          trailing: SizedBox(
+            width: 60.w,
+            child: Row(
+              spacing: 8.w,
+              children: [
+                GestureDetector(
+                  onTap: () async {
+                    final success = await _controller.joinRequestManage(
+                      memberId: member.memberId,
+                      action: 'approve',
+                    );
+                    if (!context.mounted) return;
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (context) {
+                        return Center(
+                          child: Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,                              child: AnimatedDialogContent(
+                              content: success
+                                  ? '${AppLocalizations.of(context).translate('youHaveAcceptedJoinRequest')}${member.user.fullName}${AppLocalizations.of(context).translate('sJoinRequest')}'
+                                  : AppLocalizations.of(context).translate('failedToAccept'),
+                              accept: success,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                    if (success) _fetchMembers(showLoading: false);
+                  },
+                  child: Assets.icons.accept.svg(
+                    width: 20.w,
+                    height: 20.h,
+                    color: AppColors.primary,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () async {
+                    final success = await _controller.joinRequestManage(
+                      memberId: member.memberId,
+                      action: 'reject',
+                    );
+                    if (!context.mounted) return;
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (context) {
+                        return Center(
+                          child: Dialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            elevation: 0,
+                            backgroundColor: Colors.transparent,                              child: AnimatedDialogContent(
+                              content: success
+                                  ? '${AppLocalizations.of(context).translate('youHaveRejectedJoinRequest')}${member.user.fullName}${AppLocalizations.of(context).translate('sJoinRequestRejected')}'
+                                  : AppLocalizations.of(context).translate('failedToReject'),
+                              accept: success,
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                    if (success) _fetchMembers(showLoading: false);
+                  },
+                  child: Assets.icons.decline.svg(width: 22.w, height: 22.h),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
-    Color textColor = status == "Rejected" ? Colors.red : Colors.lightBlue;
-    return Text(
-      status,
-      style: TextStyle(
-        color: textColor,
-        fontWeight: FontWeight.w500,
-        fontSize: 12.sp,
+  Widget _buildTabTrigger(_TabConfig tab) {
+    final loc = AppLocalizations.of(context);
+    bool isActive = _selectedTab == tab.apiTab;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedTab = tab.apiTab;
+        });
+        _fetchMembers();
+      },
+      child: _buildStatusTab(loc.translate(tab.labelKey), isActive),
+    );
+  }
+
+  Widget _buildStatusTab(String label, bool isActive) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+        gradient: isActive ? AppColors.primaryGradient : null,
+        border: isActive
+            ? null
+            : Border.all(color: Theme.of(context).dividerColor),
+        color: isActive
+            ? null
+            : Theme.of(context).colorScheme.surfaceContainerHighest,
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: isActive
+              ? Colors.white
+              : Theme.of(context).colorScheme.onSurfaceVariant,
+          fontWeight: FontWeight.w500,
+        ),
       ),
     );
   }
+}
+
+class _TabConfig {
+  final String labelKey;
+  final String apiTab;
+
+  const _TabConfig({required this.labelKey, required this.apiTab});
 }
