@@ -291,7 +291,16 @@ void setupRouter(bool hasToken) {
       GoRoute(
         path: '/block-screen',
         name: RouteNames.blockScreen,
-        builder: (context, state) => const BlockScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Map) {
+            return BlockScreen(
+              userId: extra['userId'] as String?,
+              userName: extra['userName'] as String?,
+            );
+          }
+          return const BlockScreen();
+        },
       ),
       GoRoute(
         path: '/profile-screen',

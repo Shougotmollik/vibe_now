@@ -28,7 +28,13 @@ class ChatListItem extends StatelessWidget {
       onLongPress: () => _buildMoreOption(
         context,
         onDelete: () => Navigator.pop(context),
-        onBlockUser: () => context.pushNamed(RouteNames.blockScreen),
+        onBlockUser: () => context.pushNamed(
+              RouteNames.blockScreen,
+              extra: {
+                'userId': chat.otherMember?.id,
+                'userName': chat.otherMember?.fullName ?? chat.name,
+              },
+            ),
       ),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),

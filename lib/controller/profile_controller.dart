@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
+import 'package:vibe_now/model/blocked_user.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/interest_model.dart';
 import 'package:vibe_now/model/profile_model.dart';
@@ -213,6 +214,85 @@ class ProfileController extends GetxController {
       return false;
     } finally {
       isLoading(false);
+    }
+  }
+
+  // block  user
+  Future<bool> blockUser({
+    required String userId,
+    required String reason,
+  }) async {
+    try {
+      isLoading.value = true;
+      final response = await CustomHttp.post(
+        endpoint: ApiConstant.blockUser,
+        need_auth: true,
+        body: {"target_user_id": userId, "reason": reason},
+      );
+      if (response.ok) {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('ProfileController.blockUser error: $e');
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // blocked user
+  final RxList<BlockedUser> blockedUsers = <BlockedUser>[].obs;
+  final blockedUsersLoading = false.obs;
+  final unblockingUserId = Rxn<int>();
+
+  Future<void> fetchBlockedUsers({int page = 1, int pageSize = 10}) async {
+    try {
+      blockedUsersLoading.value = true;
+      final response = await CustomHttp.get(
+        endpoint: ApiConstant.blockUserList,
+        need_auth: true,
+        queries: {'page': page.toString(), 'page_size': pageSize.toString()},
+      );
+      if (response.ok) {
+        final data = response.data['data'];
+        if (data != null) {
+          final results = data['results'] as List? ?? [];
+          blockedUsers.value = results
+              .map((e) => BlockedUser.fromJson(e))
+              .toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('ProfileController.fetchBlockedUsers error: $e');
+    } finally {
+      blockedUsersLoading.value = false;
+    }
+  }
+
+  /// Unblock a user by their block record ID.
+  Future<bool> unblockUser({
+    required String targetUserId,
+    required int blockRecordId,
+  }) async {
+    try {
+      unblockingUserId.value = blockRecordId;
+      final response = await CustomHttp.post(
+        endpoint: ApiConstant.unblockUser,
+        need_auth: true,
+        show_floating_error: false,
+        body: {"target_user_id": targetUserId},
+      );
+      if (response.ok) {
+        blockedUsers.removeWhere((u) => u.id == blockRecordId);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      debugPrint('ProfileController.unblockUser error: $e');
+      return false;
+    } finally {
+      unblockingUserId.value = null;
     }
   }
 }

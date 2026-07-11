@@ -176,11 +176,14 @@ class _EventOrCommunityScreenState extends State<EventOrCommunityScreen> {
                     SizedBox(height: 12),
 
                     // Title
-                    Text(
-                      loc.translate('startEventOrCommunity'),
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        color: Theme.of(context).colorScheme.onSurface,
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Text(
+                        loc.translate('startEventOrCommunity'),
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     ),
                     // Text(

@@ -728,7 +728,13 @@ class _ChatInboxScreenState extends State<ChatInboxScreen>
               ),
               onTap: () => Future.delayed(
                 Duration.zero,
-                () => context.pushNamed(RouteNames.blockScreen),
+                () => context.pushNamed(
+                  RouteNames.blockScreen,
+                  extra: {
+                    'userId': _chat?.otherMember?.id,
+                    'userName': _chat?.otherMember?.fullName ?? _chat?.name,
+                  },
+                ),
               ),
             ),
             PopupMenuItem<String>(

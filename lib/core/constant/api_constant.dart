@@ -8,6 +8,9 @@ class ApiConstant {
   static const String forgetOtpVerification = "/auth/verify-reset-code";
   static const String resetPassword = "/auth/reset-password";
   static const String changePassword = "/auth/change-password";
+  static const String blockUser = "/auth/block-user";
+  static const String blockUserList = "/auth/block-user-list";
+  static const String unblockUser = "/auth/unblock-user";
 
   static const String onboarding = "/onboarding/complete";
   static const String onboardingImage = "/onboarding/upload-photos";
