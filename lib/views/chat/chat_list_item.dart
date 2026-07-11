@@ -1,12 +1,17 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:vibe_now/core/constant/credential.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/chat_controller.dart';
+import 'package:vibe_now/controller/profile_controller.dart';
+import 'package:vibe_now/core/constant/credential.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/views/chat/chat_screen.dart';
 
@@ -27,14 +32,8 @@ class ChatListItem extends StatelessWidget {
       onTap: onTap,
       onLongPress: () => _buildMoreOption(
         context,
+        chat: chat,
         onDelete: () => Navigator.pop(context),
-        onBlockUser: () => context.pushNamed(
-              RouteNames.blockScreen,
-              extra: {
-                'userId': chat.otherMember?.id,
-                'userName': chat.otherMember?.fullName ?? chat.name,
-              },
-            ),
       ),
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -147,20 +146,27 @@ class ChatListItem extends StatelessWidget {
 
 Future<dynamic> _buildMoreOption(
   BuildContext context, {
+  required Chat chat,
   required VoidCallback onDelete,
-  required VoidCallback onBlockUser,
 }) {
   final loc = AppLocalizations.of(context);
+  final isPrivate = chat.type == ChatType.private;
+  final isBlocked = chat.canMessage == false;
+
+  // For private chats that are blocked, show unblock option.
+  // For private chats not blocked, show block option.
+  // For event/community chats, no block/unblock option.
+
   return showModalBottomSheet(
     context: context,
     backgroundColor: Colors.transparent,
-    builder: (context) {
+    builder: (ctx) {
       return SafeArea(
         child: Container(
           margin: const EdgeInsets.all(16),
           padding: const EdgeInsets.symmetric(vertical: 16),
           decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.surface,
+            color: Theme.of(ctx).colorScheme.surface,
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(color: Colors.black12, blurRadius: 10, spreadRadius: 2),
@@ -169,8 +175,12 @@ Future<dynamic> _buildMoreOption(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Mute
               InkWell(
-                onTap: onDelete,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  onDelete();
+                },
                 splashColor: Colors.transparent,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -201,8 +211,13 @@ Future<dynamic> _buildMoreOption(
               ),
 
               Divider(height: 1.5.h),
+
+              // Delete Chat
               InkWell(
-                onTap: onDelete,
+                onTap: () {
+                  Navigator.pop(ctx);
+                  onDelete();
+                },
                 splashColor: Colors.transparent,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -217,7 +232,6 @@ Future<dynamic> _buildMoreOption(
                       Assets.icons.trash.svg(
                         width: 20.w,
                         height: 20.h,
-                        // color: Colors.red,
                       ),
                       Text(
                         loc.translate('deleteChat'),
@@ -232,37 +246,140 @@ Future<dynamic> _buildMoreOption(
                 ),
               ),
 
-              Divider(height: 1.h),
+              // Block / Unblock — only for private chats
+              if (isPrivate) ...[                Divider(height: 1.h),
 
-              InkWell(
-                onTap: onBlockUser,
-                splashColor: Colors.transparent,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 12,
-                    horizontal: 16,
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    spacing: 4.w,
-                    children: [
-                      Assets.icons.block.svg(
-                        width: 20.w,
-                        height: 20.w,
-                        color: AppColors.primary,
-                      ),
-                      Text(
-                        loc.translate('blockUser'),
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
+                InkWell(
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    if (isBlocked) {
+                      _showUnblockDialog(context, chat);
+                    } else {
+                      context.pushNamed(
+                        RouteNames.blockScreen,
+                        extra: {
+                          'userId': chat.otherMember?.id,
+                          'userName':
+                              chat.otherMember?.fullName ?? chat.name,
+                        },
+                      );
+                    }
+                  },
+                  splashColor: Colors.transparent,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      spacing: 4.w,
+                      children: [
+                        Assets.icons.block.svg(
+                          width: 20.w,
+                          height: 20.w,
                           color: AppColors.primary,
                         ),
-                      ),
-                    ],
+                        Text(
+                          isBlocked
+                              ? loc.translate('unblock')
+                              : loc.translate('blockUser'),
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
+              ],
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
+void _showUnblockDialog(BuildContext context, Chat chat) {
+  final loc = AppLocalizations.of(context);
+  final displayName = chat.otherMember?.fullName ??
+      chat.name ??
+      loc.translate('defaultUserName');
+  final targetUserId = chat.otherMember?.id;
+
+  if (targetUserId == null || targetUserId.isEmpty) return;
+
+  showDialog(
+    context: context,
+    builder: (dialogContext) {
+      return Dialog(
+        insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Container(
+          padding: EdgeInsets.all(20.w),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                loc.translate('areYouSureUnblock')
+                    .replaceFirst('{userName}', displayName),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomElevatedButton(
+                      onTap: () => Navigator.pop(dialogContext),
+                      buttonText: loc.translate('cancel'),
+                      btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                      textColor: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: CustomElevatedButton(
+                      onTap: () async {
+                        Navigator.pop(dialogContext);
+                        final success = await Get.find<ProfileController>()
+                            .unblockUser(
+                          targetUserId: targetUserId,
+                          blockRecordId: 0,
+                        );
+                        if (!context.mounted) return;
+                        AppSnackbar.show(
+                          message: success
+                              ? loc.translate('unblockSuccess')
+                              : loc.translate('unblockFailed'),
+                          type: success ? SnackType.info : SnackType.error,
+                        );
+                        if (success && context.mounted) {
+                          // Refresh the private chat list
+                          Get.find<ChatController>().getChatList(
+                            type: 'private',
+                            refresh: true,
+                          );
+                        }
+                      },
+                      buttonText: loc.translate('unblock'),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
