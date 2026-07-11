@@ -98,6 +98,9 @@ class Chat {
   final int? eventId;
   final String? eventImage;
 
+  final bool canMessage;
+  final String? blockBy;
+
   // Derived helpers used by existing list item UI
   final String message;
   final String time;
@@ -118,6 +121,8 @@ class Chat {
     this.meetup,
     this.eventId,
     this.eventImage,
+    this.canMessage = true,
+    this.blockBy,
     this.message = '',
     this.time = '',
     this.lastMessageAt,
@@ -158,6 +163,9 @@ class Chat {
         ? (eventJson['id'] is int ? eventJson['id'] : int.tryParse(eventJson['id']?.toString() ?? ''))
         : (json['event'] is int ? json['event'] : int.tryParse(json['event']?.toString() ?? ''));
 
+    final canMessage = json['can_message'] as bool? ?? true;
+    final blockBy = json['block_by']?.toString();
+
     final avatars = <String>[];
     
     // For community or event, prioritize their image
@@ -192,6 +200,8 @@ class Chat {
       meetup: meetup,
       eventId: eventId,
       eventImage: eventImage,
+      canMessage: canMessage,
+      blockBy: blockBy,
       message: lastMessage?.content ?? 'No messages yet',
       time: _formatTime(lastMessage?.createdAt),
       lastMessageAt: lastMessage?.createdAt,

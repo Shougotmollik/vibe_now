@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:vibe_now/controller/chat_controller.dart';
 import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
@@ -183,7 +184,8 @@ class _BlockedAccountsScreenState extends State<BlockedAccountsScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  '${loc.translate('areYouSureUnblock')} $displayName?',
+                  loc.translate('areYouSureUnblock')
+                      .replaceFirst('{userName}', displayName),
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14.sp,
@@ -212,6 +214,14 @@ class _BlockedAccountsScreenState extends State<BlockedAccountsScreen> {
                             blockRecordId: blockedUser.id,
                           );
                           if (context.mounted) {
+                            if (success) {
+                              // Refresh the private chat list so can_message
+                              // updates when returning to the chat.
+                              Get.find<ChatController>().getChatList(
+                                type: 'private',
+                                refresh: true,
+                              );
+                            }
                             AppSnackbar.show(
                               message: success
                                   ? loc.translate('unblockSuccess')

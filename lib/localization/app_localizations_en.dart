@@ -456,7 +456,7 @@ class AppLocalizationsEn {
     'unblock': 'Unblock',
     'unblockSuccess': 'User unblocked successfully',
     'unblockFailed': 'Failed to unblock user. Please try again.',
-    'areYouSureUnblock': 'Are you sure you want to Unblock this person?',
+    'areYouSureUnblock': 'Are you sure you want to unblock {userName}?',
     'whatHappened': 'What happened?',
     'blockDescription': 'Tell us why you want to block this user. They will not be notified.',
     'blockSuccess': 'You have blocked {userName}. You will not receive any notifications from this user.',
@@ -739,5 +739,9 @@ class AppLocalizationsEn {
     'basedOnMeets': 'Based on ',
     'realLifeMeets': 'real-life meets',
     'youHaveAcceptedRequestDesc': 'You have accepted the community join request.',
+
+    // ──── BLOCKED CHAT ────
+    'youBlockedThisUser': 'You blocked this user. Unblock to send messages.',
+    'youHaveBeenBlocked': 'You have been blocked by this user.',
   };
 }

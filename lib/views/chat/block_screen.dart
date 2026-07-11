@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/chat_controller.dart';
 import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
@@ -57,6 +58,13 @@ class _BlockScreenState extends State<BlockScreen> {
     setState(() => _isBlocking = false);
 
     if (success) {
+      // Refresh the private chat list so the can_message update
+      // is reflected when returning to the chat list screen.
+      Get.find<ChatController>().getChatList(
+        type: 'private',
+        refresh: true,
+      );
+
       final displayName = widget.userName ?? loc.translate('defaultUserName');
       final blockSuccess = loc.translate('blockSuccess')
           .replaceFirst('{userName}', displayName);

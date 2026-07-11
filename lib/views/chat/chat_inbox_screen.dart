@@ -9,6 +9,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/controller/chat_controller.dart';
+import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
@@ -23,7 +24,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:audio_waveforms/audio_waveforms.dart' as aw;
 import 'package:http/http.dart' as http;
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 
 enum MessageType { text, image, audio, mixed, deleted }
 
@@ -79,7 +82,10 @@ class _ChatInboxScreenState extends State<ChatInboxScreen>
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final ChatController _chatController = Get.find<ChatController>();
+  final ProfileController _profileController = Get.find<ProfileController>();
   final FocusNode _textFocusNode = FocusNode();
+
+  bool _canMessage = true;
 
   OverlayEntry? _overlayEntry;
 
@@ -170,6 +176,14 @@ class _ChatInboxScreenState extends State<ChatInboxScreen>
 
     _messageController.addListener(_onMessageChanged);
     _loadInitialData();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // GoRouterState depends on InheritedWidget, so it must be accessed
+    // after initState, during or after the first build.
+    _canMessage = _chat?.canMessage ?? true;
   }
 
   Future<void> _loadInitialData() async {
@@ -895,7 +909,188 @@ class _ChatInboxScreenState extends State<ChatInboxScreen>
     _scrollToBottom();
   }
 
+  void _showUnblockDialog(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+    final displayName = _chat?.otherMember?.fullName ??
+        _chat?.name ??
+        loc.translate('defaultUserName');
+    final targetUserId = _chat?.otherMember?.id;
+
+    if (targetUserId == null || targetUserId.isEmpty) return;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return Dialog(
+          insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(20.w),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  loc.translate('areYouSureUnblock')
+                      .replaceFirst('{userName}', displayName),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w400,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+                SizedBox(height: 20.h),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomElevatedButton(
+                        onTap: () => Navigator.pop(dialogContext),
+                        buttonText: loc.translate('cancel'),
+                        btnColor: Theme.of(context).colorScheme.surfaceVariant,
+                        textColor: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: CustomElevatedButton(
+                        onTap: () async {
+                          Navigator.pop(dialogContext);
+                          final success = await _profileController.unblockUser(
+                            targetUserId: targetUserId,
+                            blockRecordId: 0,
+                          );
+                          if (!context.mounted) return;
+                          if (success) {
+                            setState(() => _canMessage = true);
+                            // Refresh the private chat list so the can_message update
+                            // is reflected when returning to the chat list screen.
+                            _chatController.getChatList(
+                              type: 'private',
+                              refresh: true,
+                            );
+                          }
+                          AppSnackbar.show(
+                            message: success
+                                ? loc.translate('unblockSuccess')
+                                : loc.translate('unblockFailed'),
+                            type: success ? SnackType.info : SnackType.error,
+                          );
+                        },
+                        buttonText: loc.translate('unblock'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildInputArea() {
+    final chat = _chat;
+
+    // If messaging is blocked (can_message is false), show a blocked banner
+    if (!_canMessage) {
+      final loc = AppLocalizations.of(context);
+      // During initial load, _currentUserId may not be available yet.
+      // Show a generic message until we can determine who blocked whom.
+      final iBlocked = _currentUserId != null && chat?.blockBy == _currentUserId;
+      final blockMessage = _currentUserId == null
+          ? loc.translate('youHaveBeenBlocked')
+          : (iBlocked
+              ? loc.translate('youBlockedThisUser')
+              : loc.translate('youHaveBeenBlocked'));
+
+      return SafeArea(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            boxShadow: [
+              BoxShadow(
+                color: Theme.of(context)
+                    .colorScheme
+                    .shadow
+                    .withValues(alpha: 0.1),
+                blurRadius: 5,
+                offset: const Offset(0, -1),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.block,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  size: 20.w,
+                ),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: Text(
+                    blockMessage,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                if (iBlocked) ...[  // Only show unblock button if current user initiated the block
+                  SizedBox(width: 10.w),
+                  GestureDetector(
+                    onTap: () => _showUnblockDialog(context),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 14.w,
+                        vertical: 7.h,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Obx(() {
+                        final isUnblocking = _profileController
+                                .unblockingUserId.value !=
+                            null;
+                        return isUnblocking
+                            ? SizedBox(
+                                width: 14.w,
+                                height: 14.h,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor:
+                                      AlwaysStoppedAnimation<Color>(Colors.white),
+                                ),
+                              )
+                            : Text(
+                                loc.translate('unblock'),
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              );
+                      }),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     final canSend = (_isRecorded || _hasText) && !_isRecording && !_isSending;
 
     return SafeArea(

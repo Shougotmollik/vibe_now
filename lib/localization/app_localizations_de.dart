@@ -463,7 +463,7 @@ class AppLocalizationsDe {
     'unblockSuccess': 'Benutzer erfolgreich entblockt',
     'unblockFailed': 'Entblocken fehlgeschlagen. Bitte versuchen Sie es erneut.',
     'areYouSureUnblock':
-        'Sind Sie sicher, dass Sie diese Person entblocken möchten?',
+        'Sind Sie sicher, dass Sie {userName} entblocken möchten?',
     'whatHappened': 'Was ist passiert?',
     'blockDescription': 'Teilen Sie uns mit, warum Sie diesen Benutzer blockieren möchten. Er wird nicht benachrichtigt.',
     'blockSuccess': 'Sie haben {userName} blockiert. Sie werden keine Benachrichtigungen von diesem Benutzer erhalten.',
@@ -774,8 +774,10 @@ class AppLocalizationsDe {
     'trusted': 'Vertrauenswürdig',
     'noRealLifeMeets': 'Noch keine persönlichen Treffen',
     'basedOnMeets': 'Basierend auf ',
-    'realLifeMeets': 'persönlichen Treffen',
-    'youHaveAcceptedRequestDesc':
-        'Sie haben die Community-Beitrittsanfrage angenommen.',
+    'realLifeMeets': 'persönlichen Treffen',    'youHaveAcceptedRequestDesc': 'Sie haben die Community-Beitrittsanfrage angenommen.',
+
+    // ──── BLOCKED CHAT ────
+    'youBlockedThisUser': 'Sie haben diesen Benutzer blockiert. Entblocken Sie ihn, um Nachrichten zu senden.',
+    'youHaveBeenBlocked': 'Sie wurden von diesem Benutzer blockiert.',
   };
 }
