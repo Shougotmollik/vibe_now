@@ -144,12 +144,15 @@ class ProfileController extends GetxController {
   }
 
   // fetch profile data
-  Future<void> fetchProfile() async {
+  Future<void> fetchProfile({String? targetUserId}) async {
     try {
       isLoading.value = true;
+      final Map<String, dynamic>? queries =
+          targetUserId != null ? {'target_user_id': targetUserId} : null;
       final response = await CustomHttp.get(
         endpoint: ApiConstant.profile,
         need_auth: true,
+        queries: queries,
       );
       if (response.ok) {
         final data = response.data['data'];

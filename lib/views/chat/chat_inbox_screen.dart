@@ -649,7 +649,10 @@ class _ChatInboxScreenState extends State<ChatInboxScreen>
       title: Row(
         children: [
           GestureDetector(
-            onTap: () => context.pushNamed(RouteNames.profileScreen),
+            onTap: () => context.pushNamed(
+              RouteNames.profileScreen,
+              extra: _chat?.otherMember?.id,
+            ),
             behavior: HitTestBehavior.translucent,
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20.r),
@@ -691,33 +694,39 @@ class _ChatInboxScreenState extends State<ChatInboxScreen>
           ),
           SizedBox(width: 12.w),
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  name,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                Obx(
-                  () => Text(
-                    _chatController.isOtherUserOnline.value
-                        ? 'Online'
-                        : 'Offline',
+            child: GestureDetector(
+              onTap: () => context.pushNamed(
+                RouteNames.profileScreen,
+                extra: _chat?.otherMember?.id,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    name,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
-                      color: _chatController.isOtherUserOnline.value
-                          ? const Color(0xFF34C759)
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 11.sp,
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                ),
-              ],
+                  Obx(
+                    () => Text(
+                      _chatController.isOtherUserOnline.value
+                          ? 'Online'
+                          : 'Offline',
+                      style: TextStyle(
+                        color: _chatController.isOtherUserOnline.value
+                            ? const Color(0xFF34C759)
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],

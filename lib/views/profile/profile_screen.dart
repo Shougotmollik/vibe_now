@@ -26,9 +26,10 @@ import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/settings/widget/respect_score_card.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key, this.isMyProfile = true});
+  const ProfileScreen({super.key, this.isMyProfile = true, this.userId});
 
   final bool isMyProfile;
+  final String? userId;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -90,7 +91,10 @@ class _ProfileScreenState extends State<ProfileScreen>
   @override
   void initState() {
     super.initState();
-    profileController.fetchProfile();
+    // Pass targetUserId when viewing another user's profile.
+    profileController.fetchProfile(
+      targetUserId: widget.isMyProfile ? null : widget.userId,
+    );
   }
 
   @override

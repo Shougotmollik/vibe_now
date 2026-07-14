@@ -305,7 +305,10 @@ void setupRouter(bool hasToken) {
       GoRoute(
         path: '/profile-screen',
         name: RouteNames.profileScreen,
-        builder: (context, state) => const ProfileScreen(isMyProfile: false),
+        builder: (context, state) => ProfileScreen(
+          isMyProfile: false,
+          userId: state.extra as String?,
+        ),
       ),
       GoRoute(
         path: '/locked-profile-screen',

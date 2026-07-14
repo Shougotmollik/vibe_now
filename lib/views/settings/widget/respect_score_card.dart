@@ -4,11 +4,7 @@ import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 
 class TrustScoreCard extends StatelessWidget {
-  const TrustScoreCard({
-    super.key,
-    this.score = 0.0,
-    this.meetsCount = 0,
-  });
+  const TrustScoreCard({super.key, this.score = 0.0, this.meetsCount = 0});
 
   final double score;
   final int meetsCount;
@@ -17,8 +13,8 @@ class TrustScoreCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final clampedScore = score.clamp(0.0, 5.0);
     final fullStars = clampedScore.floor();
-    final hasHalf = (clampedScore - fullStars) >= 0.25 &&
-        (clampedScore - fullStars) < 0.75;
+    final hasHalf =
+        (clampedScore - fullStars) >= 0.25 && (clampedScore - fullStars) < 0.75;
     final extraFull = (clampedScore - fullStars) >= 0.75 ? 1 : 0;
     final filledCount = (fullStars + extraFull).clamp(0, 5);
 
@@ -64,6 +60,7 @@ class TrustScoreCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                SizedBox(width: 40.w),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,

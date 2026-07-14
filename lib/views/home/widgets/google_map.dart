@@ -921,7 +921,10 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                           ? () => _openFullImage(user.imageUrl, context)
                           : () {
                               if (user.isWaved == true) {
-                                context.pushNamed(RouteNames.profileScreen);
+                                context.pushNamed(
+                                  RouteNames.profileScreen,
+                                  extra: user.id,
+                                );
                               } else {
                                 context.pushNamed(
                                   RouteNames.lockedProfileScreen,
