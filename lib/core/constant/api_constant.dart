@@ -28,6 +28,8 @@ class ApiConstant {
   static const String waves = "/vibes/wave-list";
   static String waveOperation({required int waveId}) =>
       "/vibes/wave/$waveId/moderate";
+  static String waveMeetup({required int waveId}) =>
+      "/vibes/wave/$waveId/suggest-meetup";
 
   static const String vibe = "/vibes";
   static String wave({required int vibeId}) => "/vibes/$vibeId/send-wave";

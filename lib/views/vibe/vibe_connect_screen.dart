@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
-import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
-import 'package:vibe_now/model/chat.dart';
+import 'package:vibe_now/model/incoming_wave.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/vibe/meet_location_suggestion.dart';
 
 class VibeConnectScreen extends StatelessWidget {
-  const VibeConnectScreen({super.key});
+  final IncomingWave wave;
+
+  const VibeConnectScreen({super.key, required this.wave});
 
   @override
   Widget build(BuildContext context) {
     final loc = AppLocalizations.of(context);
+    final sender = wave.sender;
+    final distanceText = wave.distanceText ?? '';
+
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
@@ -68,15 +72,27 @@ class VibeConnectScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 40),
 
-                const CircleAvatar(
-                  radius: 55,
-                  backgroundImage: NetworkImage(
-                    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-                  ),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(55.r),
+                  child: sender.avatar.isNotEmpty
+                      ? Image.network(
+                          AppCredentials.fixurl(sender.avatar),
+                          width: 110.w,
+                          height: 110.w,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => CircleAvatar(
+                            radius: 55.r,
+                            child: Icon(Icons.person, size: 44.w),
+                          ),
+                        )
+                      : CircleAvatar(
+                          radius: 55.r,
+                          child: Icon(Icons.person, size: 44.w),
+                        ),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  "Jhon Gomes",
+                  sender.fullName,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -84,27 +100,28 @@ class VibeConnectScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.location_on_outlined,
-                      size: 18,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.7),
-                    ),
-                    Text(
-                      " 300m away",
-                      style: TextStyle(
-                        fontSize: 16,
+                if (distanceText.isNotEmpty)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.location_on_outlined,
+                        size: 18,
                         color: Theme.of(
                           context,
                         ).colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
-                    ),
-                  ],
-                ),
+                      Text(
+                        ' $distanceText',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
+                      ),
+                    ],
+                  ),
 
                 const Spacer(flex: 3),
 
@@ -112,7 +129,8 @@ class VibeConnectScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => MeetLocationSuggestionScreen(),
+                        builder: (context) =>
+                            MeetLocationSuggestionScreen(wave: wave),
                       ),
                     );
                   },

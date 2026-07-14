@@ -740,6 +740,21 @@ class AppLocalizationsEn {
     'realLifeMeets': 'real-life meets',
     'youHaveAcceptedRequestDesc': 'You have accepted the community join request.',
 
+    // ──── MEETUP / WAVE FLOW ────
+    'locationSelected': '✓ Selected',
+    'midpoint': 'Midpoint',
+    'failedToSuggestMeetup': 'Failed to suggest meetup',
+    'pleaseSelectDateAndTime': 'Please select date and time',
+    'pleaseSelectLocation': 'Please select a location',
+    'meetupRescheduled': 'Meetup rescheduled successfully',
+    'failedToReschedule': 'Failed to reschedule',
+    'failedToAcceptWave': 'Failed to accept wave request',
+    'youHaveRejectedWave': 'You have rejected {name} wave request.',
+    'invalidWaveData': 'Invalid wave data',
+    'seeYouAt': 'See you at {address}',
+    'seeYouSoon': 'See you soon!',
+    'scheduledAt': 'Scheduled at',
+
     // ──── BLOCKED CHAT ────
     'youBlockedThisUser': 'You blocked this user. Unblock to send messages.',
     'youHaveBeenBlocked': 'You have been blocked by this user.',

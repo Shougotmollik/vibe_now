@@ -4,7 +4,10 @@ class IncomingWave {
   final String createdAt;
   final WaveVibe vibe;
   final WaveSender sender;
-  final dynamic meetup;
+  final WaveSender? receiver;
+  final int? distanceInMeters;
+  final String? distanceText;
+  final WaveMeetup? meetup;
 
   IncomingWave({
     required this.waveId,
@@ -12,6 +15,9 @@ class IncomingWave {
     required this.createdAt,
     required this.vibe,
     required this.sender,
+    this.receiver,
+    this.distanceInMeters,
+    this.distanceText,
     this.meetup,
   });
 
@@ -21,7 +27,14 @@ class IncomingWave {
         createdAt: json['created_at'] ?? '',
         vibe: WaveVibe.fromJson(json['vibe']),
         sender: WaveSender.fromJson(json['sender']),
-        meetup: json['meetup'],
+        receiver: json['receiver'] != null
+            ? WaveSender.fromJson(json['receiver'])
+            : null,
+        distanceInMeters: json['distance_in_meters'],
+        distanceText: json['distance_text'],
+        meetup: json['meetup'] != null
+            ? WaveMeetup.fromJson(json['meetup'])
+            : null,
       );
 }
 
@@ -49,17 +62,37 @@ class WaveVibe {
       );
 }
 
+class WaveLocation {
+  final double? latitude;
+  final double? longitude;
+  final String? locationName;
+
+  WaveLocation({this.latitude, this.longitude, this.locationName});
+
+  factory WaveLocation.fromJson(Map<String, dynamic> json) => WaveLocation(
+        latitude: (json['latitude'] as num?)?.toDouble(),
+        longitude: (json['longitude'] as num?)?.toDouble(),
+        locationName: json['location_name'],
+      );
+}
+
 class WaveSender {
   final String id;
   final String email;
   final String fullName;
   final String avatar;
+  final WaveLocation? currentLocation;
+  final int? toMeetupDistanceInMeters;
+  final String? toMeetupDistanceText;
 
   WaveSender({
     required this.id,
     required this.email,
     required this.fullName,
     required this.avatar,
+    this.currentLocation,
+    this.toMeetupDistanceInMeters,
+    this.toMeetupDistanceText,
   });
 
   factory WaveSender.fromJson(Map<String, dynamic> json) => WaveSender(
@@ -67,5 +100,46 @@ class WaveSender {
         email: json['email'] ?? '',
         fullName: json['full_name'] ?? '',
         avatar: json['avatar'] ?? '',
+        currentLocation: json['current_location'] != null
+            ? WaveLocation.fromJson(json['current_location'])
+            : null,
+        toMeetupDistanceInMeters: json['to_meetup_distance_in_meters'],
+        toMeetupDistanceText: json['to_meetup_distance_text'],
+      );
+}
+
+class WaveMeetup {
+  final int? id;
+  final String? meetupType;
+  final String? locationType;
+  final double? latitude;
+  final double? longitude;
+  final String? address;
+  final String? scheduledAt;
+  final String? status;
+  final String? createdAt;
+
+  WaveMeetup({
+    this.id,
+    this.meetupType,
+    this.locationType,
+    this.latitude,
+    this.longitude,
+    this.address,
+    this.scheduledAt,
+    this.status,
+    this.createdAt,
+  });
+
+  factory WaveMeetup.fromJson(Map<String, dynamic> json) => WaveMeetup(
+        id: json['id'],
+        meetupType: json['meetup_type'],
+        locationType: json['location_type'],
+        latitude: (json['latitude'] as num?)?.toDouble(),
+        longitude: (json['longitude'] as num?)?.toDouble(),
+        address: json['address'],
+        scheduledAt: json['scheduled_at'],
+        status: json['status'],
+        createdAt: json['created_at'],
       );
 }

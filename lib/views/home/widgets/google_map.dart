@@ -22,24 +22,16 @@ import 'package:vibe_now/model/nearby_user.dart';
 import 'package:vibe_now/utils.dart' as utils;
 import 'package:vibe_now/views/community/widgets/community_card.dart';
 import 'package:vibe_now/views/vibe/my_vibe_screen.dart';
-import 'package:vibe_now/views/vibe/user_vibe_screen.dart';
 import 'package:vibe_now/views/event/widgets/event_card.dart';
 import 'package:vibe_now/views/home/widgets/community_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/event_location_pin.dart';
-import 'package:vibe_now/views/home/widgets/filter_dialog.dart';
+import 'package:vibe_now/model/google_map_location.dart';
 import 'package:vibe_now/views/home/widgets/map_search_screen.dart';
 import 'package:vibe_now/views/home/widgets/user_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/wave_animated_dialog.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 // import 'package:voice_vive/utils.dart' as utils;
 // import 'package:voice_vive/utils/app_colors.dart';
-
-class GoogleMapSearchModel {
-  String description;
-  String placeId;
-
-  GoogleMapSearchModel({required this.description, required this.placeId});
-}
 
 class GoogleMapLocation {
   String name;
@@ -60,6 +52,7 @@ class GoogleMapScreen extends StatefulWidget {
   final bool withScaffold;
   final String apiKey;
   final bool canSelectLocation;
+  final bool showDemoMarkers;
   final void Function(GoogleMapLocation)? onLocationSelect;
 
   const GoogleMapScreen({
@@ -69,6 +62,7 @@ class GoogleMapScreen extends StatefulWidget {
     this.withScaffold = true,
     this.onLocationSelect,
     this.canSelectLocation = true,
+    this.showDemoMarkers = true,
   });
 
   @override
@@ -95,7 +89,6 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     return LatLng(center.latitude + latOffset, center.longitude + lngOffset);
   }
 
-  final Set<Marker> _markers = {};
   late CameraPosition _initialPosition;
 
   @override
@@ -113,7 +106,9 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       _initialPosition = CameraPosition(target: _currentLocation, zoom: 14);
     }
 
-    _loadMarkers();
+    if (widget.showDemoMarkers) {
+      _loadMarkers();
+    }
 
     // WidgetsBinding.instance.addPostFrameCallback((_) {
     //   showUserVibeDialog(context: context, user: someNearbyUser, hasVibe: true);
@@ -371,7 +366,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
           spacing: 12.w,
           children: [
             GestureDetector(
-              onTap: () => context.pushNamed(RouteNames.notificationScreen),
+              onTap: () => Navigator.of(context).pop(),
               child: Container(
                 padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
@@ -385,96 +380,70 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                     ),
                   ],
                 ),
-                child: Assets.icons.notification.svg(
-                  width: 20.w,
-                  height: 20.h,
+                child: Icon(
+                  Icons.arrow_back,
+                  size: 20.w,
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
             ),
 
-            GestureDetector(
-              onTap: () {
-                // Navigator.of(context).push(
-                //   MaterialPageRoute(
-                //     builder: (_) {
-                //       return MapSearchScreen(
-                //         apiKey: widget.apiKey,
-                //         onSearchSelect: _handleSearchSelect,
-                //       );
-                //     },
-                //   ),
-                // );
-              },
-              child: Container(
-                height: 40.h,
-                width: 1.sw - 72.w - 36.w - 24.w,
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(24.r),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Theme.of(context).shadowColor.withOpacity(0.1),
-                      blurRadius: 4,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SvgPicture.string(
-                      _searchIcon(),
-                      width: 20.w,
-                      height: 20.w,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                    SizedBox(width: 12.w),
-                    Text(
-                      'Search ...',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 14.sp,
+            Expanded(
+              child: GestureDetector(
+                onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) {
+                      return MapSearchScreen(
+                        apiKey: widget.apiKey,
+                        onSearchSelect: (item) {
+                          _handleSearchSelect(item);
+                        },
+                      );
+                    },
+                  ),
+                );
+                },
+                child: Container(
+                  height: 40.h,
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+                    borderRadius: BorderRadius.circular(24.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Theme.of(context).shadowColor.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      SvgPicture.string(
+                        _searchIcon(),
+                        width: 20.w,
+                        height: 20.w,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      SizedBox(width: 12.w),
+                      Text(
+                        'Search ...',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 14.sp,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-            // GestureDetector(
-            //   onTap: _getCurrentLocation,
-            //   child: _blurBgWrapper(
-            //     width: 36.w,
-            //     height: 36.w,
-            //     child: Center(
-            //       child: _gettingMyLocation
-            //           ? SizedBox(
-            //               width: 20.w,
-            //               height: 20.w,
-            //               child: const CircularProgressIndicator(
-            //                 color: Colors.white,
-            //                 strokeWidth: 1,
-            //               ),
-            //             )
-            //           : SvgPicture.string(
-            //               _gpsIcon(),
-            //               width: 20.w,
-            //               height: 20.w,
-            //               color: Colors.white,
-            //             ),
-            //     ),
-            //   ),
-            // ),
             GestureDetector(
-              onTap: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => const FilterDialog(),
-                );
-              },
+              onTap: _getCurrentLocation,
               child: Container(
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.all(10.w),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: Theme.of(context).colorScheme.surface,
@@ -486,13 +455,50 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                     ),
                   ],
                 ),
-                child: Assets.icons.filter.svg(
-                  width: 16.w,
-                  height: 16.h,
-                  color: Theme.of(context).colorScheme.onSurface,
-                ),
+                child: _gettingMyLocation
+                    ? SizedBox(
+                        width: 20.w,
+                        height: 20.w,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      )
+                    : SvgPicture.string(
+                        _gpsIcon(),
+                        width: 20.w,
+                        height: 20.w,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
               ),
             ),
+            // GestureDetector(
+            //   onTap: () {
+            //     showDialog(
+            //       context: context,
+            //       builder: (context) => const FilterDialog(),
+            //     );
+            //   },
+            //   child: Container(
+            //     padding: EdgeInsets.all(12.w),
+            //     decoration: BoxDecoration(
+            //       shape: BoxShape.circle,
+            //       color: Theme.of(context).colorScheme.surface,
+            //       boxShadow: [
+            //         BoxShadow(
+            //           color: Theme.of(context).shadowColor.withOpacity(0.1),
+            //           blurRadius: 4,
+            //           offset: const Offset(0, 2),
+            //         ),
+            //       ],
+            //     ),
+            //     child: Assets.icons.filter.svg(
+            //       width: 16.w,
+            //       height: 16.h,
+            //       color: Theme.of(context).colorScheme.onSurface,
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -669,73 +675,74 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                     ),
                   ),
                 SizedBox(height: 24.h),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.end,
-                //   spacing: 12.w,
-                //   children: [
-                //     GestureDetector(
-                //       onTap: () {
-                //         setState(() {
-                //           _selectedPlaceDetails = null;
-                //         });
-                //       },
-                //       child: Container(
-                //         padding: EdgeInsets.symmetric(
-                //           horizontal: 12.w,
-                //           vertical: 8.h,
-                //         ),
-                //         decoration: BoxDecoration(
-                //           color: AppColors.backgroundVariant,
-                //           borderRadius: BorderRadius.circular(24.r),
-                //         ),
-                //         child: Text(
-                //           'Cancel',
-                //           style: TextStyle(
-                //             fontSize: 14.sp,
-                //             color: Colors.black.withValues(alpha: 0.8),
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //     if (widget.canSelectLocation)
-                //       GestureDetector(
-                //         onTap: () {
-                //           widget.onLocationSelect?.call(
-                //             GoogleMapLocation(
-                //               position: _selectedPosition!,
-                //               name: _selectedPlaceDetails!['address_components']
-                //                   .map((e) => e['long_name'])
-                //                   .join(', '),
-                //               placeId: _selectedPlaceDetails!['place_id'],
-                //             ),
-                //           );
-                //           print(
-                //             "selected location ${_selectedPlaceDetails!['place_id']} location name ===>${_selectedPlaceDetails!['address_components'].map((e) => e['long_name']).join(', ')}",
-                //           );
-
-                //           // get back with address
-                //           Navigator.of(context).pop();
-                //         },
-                //         child: Container(
-                //           padding: EdgeInsets.symmetric(
-                //             horizontal: 12.w,
-                //             vertical: 8.h,
-                //           ),
-                //           decoration: BoxDecoration(
-                //             color: AppColors.backgroundVariant,
-                //             borderRadius: BorderRadius.circular(24.r),
-                //           ),
-                //           child: Text(
-                //             'Select',
-                //             style: TextStyle(
-                //               color: AppColors.primary,
-                //               fontSize: 14.sp,
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //   ],
-                // ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  spacing: 12.w,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedPlaceDetails = null;
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.backgroundVariant,
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.black.withValues(alpha: 0.8),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (widget.canSelectLocation)
+                      GestureDetector(
+                        onTap: () {
+                          if (_selectedPosition == null ||
+                              _selectedPlaceDetails == null) return;
+                          widget.onLocationSelect?.call(
+                            GoogleMapLocation(
+                              position: _selectedPosition!,
+                              name: _selectedPlaceDetails!['address_components']
+                                  .map((e) => e['long_name'])
+                                  .join(', '),
+                              placeId: _selectedPlaceDetails!['place_id'],
+                            ),
+                          );
+                          debugPrint(
+                            "selected location ${_selectedPlaceDetails!['place_id']} location name ===>${_selectedPlaceDetails!['address_components'].map((e) => e['long_name']).join(', ')}",
+                          );
+                          // get back with address
+                          Navigator.of(context).pop();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.backgroundVariant,
+                            borderRadius: BorderRadius.circular(24.r),
+                          ),
+                          child: Text(
+                            'Select',
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -754,7 +761,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
           GoogleMap(
             // style: jsonEncode(mapStyle),
             onTap: _handleTap,
-            markers: _markers,
+            markers: markers,
             compassEnabled: true,
             buildingsEnabled: true,
             mapToolbarEnabled: true,
@@ -767,7 +774,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
           ),
           _searchWidget(),
           if (_selectedPlaceDetails != null) _selectedPositionDetailsWidget(),
-          _buildAllVibeButton(),
+          // _buildAllVibeButton(),
         ],
       ),
     );
@@ -779,40 +786,40 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     }
   }
 
-  Widget _buildAllVibeButton() {
-    return Positioned(
-      bottom: 120.h,
-      right: 20.w,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (context) => UserVibeScreen()));
-        },
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-          decoration: BoxDecoration(
-            color: AppColors.background,
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Row(
-            spacing: 5.w,
-            children: [
-              Assets.icons.creationStar.svg(width: 18.w, height: 18.h),
-              Text(
-                "All Vibes",
-                style: TextStyle(
-                  color: AppColors.primaryText,
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget _buildAllVibeButton() {
+  //   return Positioned(
+  //     bottom: 120.h,
+  //     right: 20.w,
+  //     child: GestureDetector(
+  //       onTap: () {
+  //         Navigator.of(
+  //           context,
+  //         ).push(MaterialPageRoute(builder: (context) => UserVibeScreen()));
+  //       },
+  //       child: Container(
+  //         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+  //         decoration: BoxDecoration(
+  //           color: AppColors.background,
+  //           borderRadius: BorderRadius.circular(12.r),
+  //         ),
+  //         child: Row(
+  //           spacing: 5.w,
+  //           children: [
+  //             Assets.icons.creationStar.svg(width: 18.w, height: 18.h),
+  //             Text(
+  //               "All Vibes",
+  //               style: TextStyle(
+  //                 color: AppColors.primaryText,
+  //                 fontSize: 14.sp,
+  //                 fontWeight: FontWeight.w500,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   void showUserVibeDialog({
     required BuildContext context,
@@ -1160,7 +1167,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
   }
 
   _loadMarkers() async {
-    _markers.add(
+    markers.add(
       Marker(
         markerId: MarkerId('0'),
         position: _currentLocation,
@@ -1182,7 +1189,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       ),
     );
     setState(() {});
-    _markers.add(
+    markers.add(
       Marker(
         markerId: const MarkerId("1"),
         position: _offsetToLatLng(_currentLocation, -60, 80),
@@ -1210,7 +1217,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       ),
     );
     setState(() {});
-    _markers.add(
+    markers.add(
       Marker(
         markerId: const MarkerId("2"),
         position: _offsetToLatLng(_currentLocation, 70, 90),
@@ -1225,7 +1232,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       ),
     );
     setState(() {});
-    _markers.add(
+    markers.add(
       Marker(
         markerId: const MarkerId("3"),
         position: _offsetToLatLng(_currentLocation, 90, -20),
@@ -1247,7 +1254,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       ),
     );
     setState(() {});
-    _markers.add(
+    markers.add(
       Marker(
         markerId: const MarkerId("4"),
 
@@ -1277,7 +1284,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
       ),
     );
 
-    _markers.add(
+    markers.add(
       Marker(
         markerId: const MarkerId("5"),
         position: _offsetToLatLng(_currentLocation, -140, 10),

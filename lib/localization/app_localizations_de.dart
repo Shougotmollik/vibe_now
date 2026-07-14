@@ -776,6 +776,21 @@ class AppLocalizationsDe {
     'basedOnMeets': 'Basierend auf ',
     'realLifeMeets': 'persönlichen Treffen',    'youHaveAcceptedRequestDesc': 'Sie haben die Community-Beitrittsanfrage angenommen.',
 
+    // ──── MEETUP / WAVE FLOW ────
+    'locationSelected': '✓ Ausgewählt',
+    'midpoint': 'Mittelpunkt',
+    'failedToSuggestMeetup': 'Treffen konnte nicht vorgeschlagen werden',
+    'pleaseSelectDateAndTime': 'Bitte Datum und Uhrzeit auswählen',
+    'pleaseSelectLocation': 'Bitte wählen Sie einen Ort',
+    'meetupRescheduled': 'Treffen erfolgreich verschoben',
+    'failedToReschedule': 'Verschieben fehlgeschlagen',
+    'failedToAcceptWave': 'Wellenanfrage konnte nicht angenommen werden',
+    'youHaveRejectedWave': 'Sie haben {name} Wellenanfrage abgelehnt.',
+    'invalidWaveData': 'Ungültige Wellendaten',
+    'seeYouAt': 'Wir sehen uns bei {address}',
+    'seeYouSoon': 'Bis bald!',
+    'scheduledAt': 'Geplant für',
+
     // ──── BLOCKED CHAT ────
     'youBlockedThisUser': 'Sie haben diesen Benutzer blockiert. Entblocken Sie ihn, um Nachrichten zu senden.',
     'youHaveBeenBlocked': 'Sie wurden von diesem Benutzer blockiert.',

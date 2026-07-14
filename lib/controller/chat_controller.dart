@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/model/chat_message.dart';
-import 'package:vibe_now/model/incoming_wave.dart';
 import 'package:vibe_now/services/custom_http.dart';
 import 'package:vibe_now/services/local_storage.dart';
 import 'package:vibe_now/services/web_socket_registry.dart';
@@ -25,7 +24,6 @@ class ChatController extends GetxController {
   final RxList<Chat> communityChats = <Chat>[].obs;
   final RxList<Chat> privateChats = <Chat>[].obs;
   final RxList<Chat> wavesChats = <Chat>[].obs;
-  final RxList<IncomingWave> incomingWaves = <IncomingWave>[].obs;
 
   final RxList<ChatMessage> chatMessages = <ChatMessage>[].obs;
 
@@ -95,28 +93,6 @@ class ChatController extends GetxController {
       debugPrint('Error fetching chat list ($type): ${response.error}');
     }
     loadingTabs[type] = false;
-  }
-
-  // ── Incoming waves ──────────────────────────
-
-  Future<void> getWaves() async {
-    loadingTabs['waves'] = true;
-    final response = await CustomHttp.get(
-      need_auth: true,
-      endpoint: ApiConstant.waves,
-      queries: {'status': 'pending'},
-    );
-
-    if (response.ok) {
-      final data = response.data['data'];
-      final results = data['results'] as List? ?? [];
-      incomingWaves.assignAll(
-        results.map((e) => IncomingWave.fromJson(e as Map<String, dynamic>)),
-      );
-    } else {
-      debugPrint('Error fetching waves: ${response.error}');
-    }
-    loadingTabs['waves'] = false;
   }
 
   // ── Message history ──────────────────────────

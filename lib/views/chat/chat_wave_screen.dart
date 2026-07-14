@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:vibe_now/controller/wave_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
-import 'package:vibe_now/gen/assets.gen.dart';
-import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
+import 'package:vibe_now/model/incoming_wave.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 import 'package:vibe_now/views/vibe/vibe_connect_screen.dart';
@@ -19,12 +21,79 @@ class ChatWaveScreen extends StatefulWidget {
 }
 
 class _ChatWaveScreenState extends State<ChatWaveScreen> {
+  final WaveController _waveController = Get.find<WaveController>();
+  bool _isProcessing = false;
+
+  Future<void> _handleAccept(IncomingWave wave, BuildContext context) async {
+    if (_isProcessing) return;
+    setState(() => _isProcessing = true);
+
+    final success = await _waveController.waveAction(
+      waveId: wave.waveId,
+      action: 'accept',
+    );
+
+    if (!mounted) return;
+    setState(() => _isProcessing = false);
+
+    if (success) {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => VibeConnectScreen(wave: wave)),
+      );
+    } else {
+      AppSnackbar.show(
+        message: AppLocalizations.of(context).translate('failedToAcceptWave'),
+        type: SnackType.error,
+      );
+    }
+  }
+
+  Future<void> _handleReject(IncomingWave wave) async {
+    if (_isProcessing) return;
+    setState(() => _isProcessing = true);
+
+    await _waveController.waveAction(waveId: wave.waveId, action: 'reject');
+
+    if (!mounted) return;
+    setState(() => _isProcessing = false);
+
+    Navigator.pop(context);
+
+    // Use Get.dialog to avoid context-after-pop issues
+    Get.dialog(
+      Center(
+        child: Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          elevation: 0,
+          backgroundColor: Colors.transparent,
+          child: AnimatedDialogContent(
+            content: AppLocalizations.of(context)
+                .translate('youHaveRejectedWave')
+                .replaceFirst('{name}', wave.sender.fullName),
+            accept: false,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final extra = GoRouterState.of(context).extra as Chat;
-    final name = extra.name;
-    final vibeTitle = extra.message;
-    final avatar = extra.avatars.isNotEmpty ? extra.avatars.first : '';
+    final loc = AppLocalizations.of(context);
+    final extra = GoRouterState.of(context).extra;
+    final IncomingWave wave;
+    if (extra is IncomingWave) {
+      wave = extra;
+    } else {
+      return Scaffold(
+        body: Center(child: Text(loc.translate('invalidWaveData'))),
+      );
+    }
+
+    final name = wave.sender.fullName;
+    final avatar = wave.sender.avatar;
 
     return Scaffold(
       body: SafeArea(
@@ -104,7 +173,7 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                       ),
                       SizedBox(height: 8.h),
                       Text(
-                        '$name wants to meet you.',
+                        '$name ${loc.translate('wantsToMeetYou')}',
                         style: TextStyle(
                           fontSize: 18.sp,
                           fontWeight: FontWeight.w600,
@@ -114,7 +183,7 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                       ),
                       SizedBox(height: 8.h),
                       Text(
-                        'Accept to suggest a time and place for a quick meetup',
+                        loc.translate('acceptToSuggest'),
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: Theme.of(
@@ -128,15 +197,10 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                         spacing: 12.w,
                         children: [
                           PrimaryButton.text(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const VibeConnectScreen(),
-                                ),
-                              );
-                            },
-                            text: AppLocalizations.of(context).translate('accept'),
+                            onPressed: () => _handleAccept(wave, context),
+                            isEnabled: !_isProcessing,
+                            isLoading: _isProcessing,
+                            text: loc.translate('accept'),
                           ),
                           Container(
                             decoration: BoxDecoration(
@@ -149,32 +213,10 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
                               ),
                             ),
                             child: CustomElevatedButton(
-                              onTap: () {
-                                Navigator.pop(context);
-                                showDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (context) {
-                                    return Center(
-                                      child: Dialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            20.r,
-                                          ),
-                                        ),
-                                        elevation: 0,
-                                        backgroundColor: Colors.transparent,
-                                        child: AnimatedDialogContent(
-                                          content:
-                                              'You have rejected $name wave request.',
-                                          accept: false,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              buttonText: AppLocalizations.of(context).translate('rejectWave'),
+                              onTap: _isProcessing
+                                  ? () {}
+                                  : () => _handleReject(wave),
+                              buttonText: loc.translate('rejectWave'),
                               btnColor: Theme.of(context).colorScheme.surface,
                               textColor: Theme.of(
                                 context,

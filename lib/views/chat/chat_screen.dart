@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:vibe_now/controller/chat_controller.dart';
+import 'package:vibe_now/controller/wave_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
@@ -17,6 +18,8 @@ import 'package:vibe_now/views/chat/chat_list_item.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
 import 'package:vibe_now/views/notification/widgets/notification_shimmer.dart';
 import 'package:vibe_now/views/qr_verification/qr_verification_screen.dart';
+import 'package:vibe_now/views/vibe/meet_confirm_screen.dart';
+import 'package:vibe_now/views/vibe/vibe_connect_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -28,6 +31,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ChatController _chatController = Get.find<ChatController>();
+  final WaveController _waveController = Get.find<WaveController>();
 
   int _selectedTabIndex = 0;
   static const _tabKeys = ['waves', 'private', 'event', 'community'];
@@ -45,7 +49,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    _chatController.getWaves();
+    _waveController.getWaves();
   }
 
   @override
@@ -58,7 +62,7 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() => _selectedTabIndex = index);
     final tab = _tabKeys[index];
     if (tab == 'waves') {
-      _chatController.getWaves();
+      _waveController.getWaves();
     } else {
       _chatController.getChatList(type: tab);
     }
@@ -67,7 +71,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Future<void> _onRefresh() {
     final tab = _tabKeys[_selectedTabIndex];
     if (tab == 'waves') {
-      return _chatController.getWaves();
+      return _waveController.getWaves();
     }
     return _chatController.getChatList(type: tab);
   }
@@ -319,8 +323,8 @@ class _ChatScreenState extends State<ChatScreen> {
     return RefreshIndicator(
       onRefresh: _onRefresh,
       child: Obx(() {
-        final list = _chatController.incomingWaves;
-        final isLoading = _chatController.isLoadingTab('waves') && list.isEmpty;
+        final list = _waveController.incomingWaves;
+        final isLoading = _waveController.isWavesLoading.value && list.isEmpty;
 
         if (isLoading) {
           return const NotificationShimmer();
@@ -363,13 +367,31 @@ class _ChatScreenState extends State<ChatScreen> {
     final theme = Theme.of(context);
     return InkWell(
       onTap: () {
-        final chat = Chat(
-          id: wave.waveId.toString(),
-          name: wave.sender.fullName,
-          message: wave.vibe.title,
-          avatars: [wave.sender.avatar],
-        );
-        context.pushNamed(RouteNames.waveScreen, extra: chat);
+        if (wave.meetup != null) {
+          // meetup already exists — go directly to confirmation screen
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => MeetupConfirmationScreen(
+                wave: wave,
+                locationType: wave.meetup?.locationType,
+                latitude: wave.meetup?.latitude,
+                longitude: wave.meetup?.longitude,
+                address: wave.meetup?.address,
+                scheduledAt: wave.meetup?.scheduledAt,
+              ),
+            ),
+          );
+        } else if (wave.status == 'accepted') {
+          // Already accepted — go to VibeConnectScreen to suggest meeting spot
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => VibeConnectScreen(wave: wave),
+            ),
+          );
+        } else {
+          // Pending — go to accept/reject screen
+          context.pushNamed(RouteNames.waveScreen, extra: wave);
+        }
       },
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -423,14 +445,16 @@ class _ChatScreenState extends State<ChatScreen> {
                         color: AppColors.primary,
                       ),
                       SizedBox(width: 4.w),
-                      Text(
-                        '${loc.translate('wavedAt')} ${wave.vibe.title}',
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: theme.colorScheme.onSurfaceVariant,
+                      Flexible(
+                        child: Text(
+                          '${loc.translate('wavedAt')} ${wave.vibe.title}',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
