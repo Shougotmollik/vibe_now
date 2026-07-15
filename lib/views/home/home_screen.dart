@@ -159,7 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
       // If position is null → GPS failed, stay at stored (or default if no stored)
     });
 
-    notifController.getNotifications('vibes');
+    // Silently refresh notifications (all unread counts come with 'vibes' tab)
+    notifController.getNotifications('vibes', forceRefresh: true);
   }
 
   @override

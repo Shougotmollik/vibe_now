@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/notification_controller.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/env.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -93,7 +95,14 @@ class _MainNavBarScreenState extends State<MainNavBarScreen> {
           currentIndex: selectedIndex,
           colorIcons: colorIcons,
           grayIcons: grayIcons,
-          onTap: (index) => setState(() => selectedIndex = index),
+          onTap: (index) {
+            setState(() => selectedIndex = index);
+            // Silently refresh notifications when coming to home screen
+            if (index == 0) {
+              final notifController = Get.find<NotificationController>();
+              notifController.getNotifications('vibes', forceRefresh: true);
+            }
+          },
         ),
       ),
     );
