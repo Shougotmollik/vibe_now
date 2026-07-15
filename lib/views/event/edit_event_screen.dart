@@ -1224,6 +1224,7 @@ class _EditEventScreenState extends State<EditEventScreen> {
     );
 
     if (success && mounted) {
+      eventController.getEvents(tab: 'all');
       AppSnackbar.show(
         message: loc.translate('eventUpdated'),
         type: SnackType.info,

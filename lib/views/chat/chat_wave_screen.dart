@@ -37,9 +37,12 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
     setState(() => _isProcessing = false);
 
     if (success) {
-      Navigator.of(context).push(
+      await Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => VibeConnectScreen(wave: wave)),
       );
+      if (!mounted) return;
+      // Silently refresh the waves list when coming back from VibeConnectScreen
+      _waveController.getWaves();
     } else {
       AppSnackbar.show(
         message: AppLocalizations.of(context).translate('failedToAcceptWave'),
@@ -57,9 +60,10 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
     if (!mounted) return;
     setState(() => _isProcessing = false);
 
-    Navigator.pop(context);
+    // Silently refresh the waves list so it's up-to-date on return
+    _waveController.getWaves();
 
-    // Use Get.dialog to avoid context-after-pop issues
+    // Show dialog on the overlay FIRST (context still valid)
     Get.dialog(
       Center(
         child: Dialog(
@@ -77,6 +81,10 @@ class _ChatWaveScreenState extends State<ChatWaveScreen> {
         ),
       ),
     );
+
+    // Then pop the screen - the overlay dialog survives because
+    // Get's overlay context is attached to MaterialApp, not the route
+    Navigator.pop(context);
   }
 
   @override

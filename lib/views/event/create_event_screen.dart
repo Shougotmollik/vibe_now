@@ -1213,6 +1213,7 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
     );
 
     if (success && mounted) {
+      eventController.getEvents(tab: 'all');
       Navigator.pop(context);
 
       showDialog(

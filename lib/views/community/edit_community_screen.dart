@@ -345,6 +345,7 @@ class _EditCommunityScreenState extends State<EditCommunityScreen> {
     );
 
     if (success && mounted) {
+      communityController.getCommunities(tab: 'all');
       AppSnackbar.show(
         message: loc.translate('communityUpdatedSuccess'),
         type: SnackType.success,

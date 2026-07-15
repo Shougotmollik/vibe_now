@@ -177,17 +177,30 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
         _selectedPosition = LatLng(position.latitude, position.longitude);
       });
 
-      //Get the place id
+      // Try to get place ID from lat/lng (may fail if API key is restricted)
       final placeId = await getPlaceIdFromLatLng(
         position.latitude,
         position.longitude,
       );
 
-      if (placeId == null) return;
+      Map<String, dynamic>? details;
+      if (placeId != null) {
+        details = await getPlaceDetails(placeId);
+      }
 
-      //Get the place details
-      final details = await getPlaceDetails(placeId);
-      if (details == null) return;
+      // Fallback: if API calls failed, create a location from coordinates
+      if (details == null) {
+        final latStr = position.latitude.toStringAsFixed(6);
+        final lngStr = position.longitude.toStringAsFixed(6);
+        details = {
+          'address_components': [
+            {'long_name': latStr},
+            {'long_name': lngStr},
+          ],
+          'place_id': '$latStr,$lngStr',
+          'formatted_address': '$latStr, $lngStr',
+        };
+      }
 
       setState(() {
         _selectedPlaceDetails = details;
@@ -220,8 +233,9 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
           ),
           position: tappedPoint,
           infoWindow: InfoWindow(
-          title: AppLocalizations.of(context).translate('selectedLocation'),
-          snippet: '${tappedPoint.latitude}, ${tappedPoint.longitude}',
+            title:
+                AppLocalizations.of(context).translate('selectedLocation'),
+            snippet: '${tappedPoint.latitude}, ${tappedPoint.longitude}',
           ),
         ),
       );
@@ -233,21 +247,33 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
       _selectedPosition = LatLng(tappedPoint.latitude, tappedPoint.longitude);
     });
 
-    //Get the place id
+    // Try to get place ID from lat/lng (may fail if API key is restricted)
     final placeId = await getPlaceIdFromLatLng(
       tappedPoint.latitude,
       tappedPoint.longitude,
     );
 
-    if (placeId == null) {
-      _handlingTap = false;
-      return;
+    Map<String, dynamic>? details;
+    if (placeId != null) {
+      details = await getPlaceDetails(placeId);
     }
 
-    //Get the place details
-    final details = await getPlaceDetails(placeId);
     _handlingTap = false;
-    if (details == null || !mounted) return;
+    if (!mounted) return;
+
+    // Fallback: if API calls failed, create a location from coordinates
+    if (details == null) {
+      final latStr = tappedPoint.latitude.toStringAsFixed(6);
+      final lngStr = tappedPoint.longitude.toStringAsFixed(6);
+      details = {
+        'address_components': [
+          {'long_name': latStr},
+          {'long_name': lngStr},
+        ],
+        'place_id': '$latStr,$lngStr',
+        'formatted_address': '$latStr, $lngStr',
+      };
+    }
 
     setState(() {
       _selectedPlaceDetails = details;

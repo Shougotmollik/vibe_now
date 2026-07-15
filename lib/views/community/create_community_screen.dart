@@ -271,6 +271,7 @@ class _CreateCommunityScreenState extends State<CreateCommunityScreen> {
     );
 
     if (success && mounted) {
+      communityController.getCommunities(tab: 'all');
       Navigator.pop(context);
 
       showDialog(
