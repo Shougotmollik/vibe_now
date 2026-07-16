@@ -974,6 +974,41 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  /// Builds a contextual subtitle summarizing what types are grouped at this location.
+  /// e.g. "2 Communities & 1 User" or "3 Vibes"
+  String _buildTypeSummary(Map<String, int> typeCounts) {
+    final typeLabels = {
+      'vibe': 'Vibe',
+      'event': 'Event',
+      'community': 'Community',
+      'availableUser': 'User',
+    };
+    final pluralLabels = {
+      'vibe': 'Vibes',
+      'event': 'Events',
+      'community': 'Communities',
+      'availableUser': 'Users',
+    };
+
+    final parts = <String>[];
+    final entries = typeCounts.entries.toList();
+
+    for (int i = 0; i < entries.length; i++) {
+      final entry = entries[i];
+      final count = entry.value;
+      final label = count == 1
+          ? (typeLabels[entry.key] ?? entry.key)
+          : (pluralLabels[entry.key] ?? '${entry.key}s');
+      parts.add('$count $label');
+    }
+
+    if (parts.length == 1) return parts.first;
+    if (parts.length == 2) return '${parts[0]} & ${parts[1]}';
+
+    // Join all but the last with commas, then add "& last"
+    return '${parts.sublist(0, parts.length - 1).join(", ")} & ${parts.last}';
+  }
+
   void _showGroupedItemsDialog(List<MapItem> items) {
     // Count types for the header chips
     final typeCounts = <String, int>{};
@@ -1009,12 +1044,12 @@ class _HomeScreenState extends State<HomeScreen> {
               return Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(28.r)),
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Drag handle
+                    // --- Header area ---
                     Padding(
                       padding: EdgeInsets.only(top: 10.h),
                       child: Container(
@@ -1026,45 +1061,37 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ),
-
-                    // Header
+                    SizedBox(height: 14.h),
+                    // Title + close
                     Padding(
-                      padding: EdgeInsets.fromLTRB(20.w, 16.h, 16.w, 0),
+                      padding: EdgeInsets.symmetric(horizontal: 20.w),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Gradient accent bar
-                          Container(
-                            width: 4.w,
-                            height: 36.h,
-                            margin: EdgeInsets.only(top: 2.h),
-                            decoration: BoxDecoration(
-                              gradient: AppColors.primaryGradient,
-                              borderRadius: BorderRadius.circular(2.r),
-                            ),
-                          ),
-                          SizedBox(width: 14.w),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  '${items.length} ${items.length == 1 ? 'place' : 'places'}',
+                                  'Nearby',
                                   style: TextStyle(
-                                    fontSize: 22.sp,
-                                    fontWeight: FontWeight.w700,
+                                    fontSize: 24.sp,
+                                    fontWeight: FontWeight.w800,
                                     color: Theme.of(context).colorScheme.onSurface,
                                     height: 1.1,
+                                    letterSpacing: -0.3,
                                   ),
                                 ),
                                 SizedBox(height: 3.h),
                                 Text(
-                                  'In this area',
+                                  _buildTypeSummary(typeCounts),
                                   style: TextStyle(
                                     fontSize: 13.sp,
                                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w400,
                                   ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ],
                             ),
@@ -1076,12 +1103,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               width: 34.w,
                               height: 34.w,
                               decoration: BoxDecoration(
-                                color: Theme.of(context).colorScheme.surfaceVariant,
+                                color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.6),
                                 shape: BoxShape.circle,
                               ),
                               child: Icon(
                                 Icons.close_rounded,
-                                size: 18.w,
+                                size: 20.w,
                                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
                             ),
@@ -1090,39 +1117,18 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
 
-                    // Type chips
-                    if (typeCounts.length > 1)
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 0),
-                        child: SizedBox(
-                          height: 30.h,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: typeCounts.entries.length,
-                            separatorBuilder: (_, __) => SizedBox(width: 8.w),
-                            itemBuilder: (_, idx) {
-                              final entry = typeCounts.entries.elementAt(idx);
-                              return _typeChip(entry.key, entry.value);
-                            },
-                          ),
-                        ),
-                      ),
-
-                    SizedBox(height: typeCounts.length > 1 ? 10.h : 14.h),
-
-                    // Divider
+                    SizedBox(height: 12.h),
+                    // Divider line
                     Container(
-                      height: 0.5,
-                      margin: EdgeInsets.symmetric(horizontal: 20.w),
-                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.4),
+                      height: 1,
+                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.3),
                     ),
-                    SizedBox(height: 4.h),
 
                     // Items list
                     Expanded(
                       child: ListView.builder(
                         controller: scrollController,
-                        padding: EdgeInsets.only(bottom: 16.h),
+                        padding: EdgeInsets.only(top: 4.h, bottom: 16.h),
                         itemCount: items.length,
                         itemBuilder: (_, index) => _buildGroupedItemTile(items[index], ctx),
                       ),
@@ -1137,68 +1143,45 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _typeChip(String typeName, int count) {
-    Color chipColor;
-    IconData chipIcon;
-    String label;
-    switch (typeName) {
-      case 'vibe':
-        chipColor = const Color(0xFF7C4DFF);
-        chipIcon = Icons.waving_hand_rounded;
-        label = 'Vibes';
-        break;
-      case 'event':
-        chipColor = const Color(0xFFFF6B6B);
-        chipIcon = Icons.event_rounded;
-        label = 'Events';
-        break;
-      case 'community':
-        chipColor = const Color(0xFF4ECDC4);
-        chipIcon = Icons.groups_rounded;
-        label = 'Communities';
-        break;
-      case 'availableUser':
-        chipColor = const Color(0xFF45B7D1);
-        chipIcon = Icons.person_rounded;
-        label = 'Users';
-        break;
-      default:
-        chipColor = AppColors.primary;
-        chipIcon = Icons.place_rounded;
-        label = typeName;
+  /// Returns a SweepGradient ring using the same gradient colors as the chat screen tab gradients.
+  /// vibe → waves tab [#8663F6, #C470F5, #57C2FF], event → event tab [#fbadd8, #deb5fe],
+  /// community → community tab [#99e2f1, #aaccff], user → private tab [#f5a0d6, #d494f7]
+  SweepGradient _typeRingGradient(MapItemType type) {
+    switch (type) {
+      case MapItemType.vibe:
+        return SweepGradient(
+          colors: [
+            const Color(0xFF8663F6),
+            const Color(0xFFC470F5),
+            const Color(0xFF57C2FF),
+            const Color(0xFF8663F6),
+          ],
+        );
+      case MapItemType.event:
+        return SweepGradient(
+          colors: [
+            const Color(0xfffbadd8),
+            const Color(0xffdeb5fe),
+            const Color(0xfffbadd8),
+          ],
+        );
+      case MapItemType.community:
+        return SweepGradient(
+          colors: [
+            const Color(0xff99e2f1),
+            const Color(0xffaaccff),
+            const Color(0xff99e2f1),
+          ],
+        );
+      case MapItemType.availableUser:
+        return SweepGradient(
+          colors: [
+            const Color(0xfff5a0d6),
+            const Color(0xffd494f7),
+            const Color(0xfff5a0d6),
+          ],
+        );
     }
-
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w),
-      decoration: BoxDecoration(
-        color: chipColor.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(chipIcon, size: 13.w, color: chipColor),
-          SizedBox(width: 4.w),
-          Text(
-            '$count',
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w700,
-              color: chipColor,
-            ),
-          ),
-          SizedBox(width: 2.w),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11.sp,
-              fontWeight: FontWeight.w500,
-              color: chipColor.withValues(alpha: 0.8),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildGroupedItemTile(MapItem item, BuildContext dialogContext) {
@@ -1209,7 +1192,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     switch (item.type) {
       case MapItemType.vibe:
-        accentColor = const Color(0xFF7C4DFF);
+        accentColor = const Color(0xFF8663F6);
         label = 'Vibe';
         typeIcon = Icons.waving_hand_rounded;
         imageUrl = item.createdBy?.avatarUrl;
@@ -1227,7 +1210,7 @@ class _HomeScreenState extends State<HomeScreen> {
         imageUrl = item.coverImageUrl;
         break;
       case MapItemType.availableUser:
-        accentColor = const Color(0xFF45B7D1);
+        accentColor = const Color(0xffd494f7);
         label = 'User';
         typeIcon = Icons.person_rounded;
         imageUrl = item.userAvatar != null
@@ -1252,23 +1235,17 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         borderRadius: BorderRadius.circular(16.r),
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
           child: Row(
             children: [
-              // Avatar with accent ring
+              // Avatar with type-specific gradient ring
               Container(
-                width: 48.w,
-                height: 48.w,
-                padding: EdgeInsets.all(2.w),
+                width: 54.w,
+                height: 54.w,
+                padding: EdgeInsets.all(2.5.w),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: SweepGradient(
-                    colors: [
-                      accentColor,
-                      accentColor.withValues(alpha: 0.4),
-                      accentColor,
-                    ],
-                  ),
+                  gradient: _typeRingGradient(item.type),
                 ),
                 child: Container(
                   decoration: BoxDecoration(
@@ -1280,8 +1257,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: hasImage
                         ? CachedNetworkImage(
                             imageUrl: imageUrl,
-                            width: 48.w,
-                            height: 48.w,
+                            width: 54.w,
+                            height: 54.w,
                             fit: BoxFit.cover,
                             placeholder: (_, __) => _tileAvatarFallback(accentColor, typeIcon),
                             errorWidget: (_, __, ___) => _tileAvatarFallback(accentColor, typeIcon),
@@ -1291,61 +1268,63 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(width: 14.w),
-              // Name + subtitle
+              // Name + metadata
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       displayName,
                       style: TextStyle(
-                        fontSize: 15.sp,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
                         color: Theme.of(context).colorScheme.onSurface,
+                        height: 1.2,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    SizedBox(height: 5.h),
+                    SizedBox(height: 6.h),
                     Row(
                       children: [
-                        // Type label chip
+                        // Solid type badge
                         Container(
-                          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                          padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.h),
                           decoration: BoxDecoration(
-                            color: accentColor.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(4.r),
+                            color: accentColor.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(6.r),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Icon(typeIcon, size: 10.w, color: accentColor),
+                              Icon(typeIcon, size: 11.w, color: accentColor),
                               SizedBox(width: 3.w),
                               Text(
                                 label,
                                 style: TextStyle(
                                   fontSize: 10.sp,
                                   color: accentColor,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(width: 8.w),
+                        SizedBox(width: 10.w),
                         // Distance
                         Icon(
                           Icons.near_me_rounded,
-                          size: 11.w,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          size: 12.w,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                         ),
-                        SizedBox(width: 2.w),
+                        SizedBox(width: 3.w),
                         Text(
                           distText,
                           style: TextStyle(
-                            fontSize: 11.sp,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w500,
+                            fontSize: 12.sp,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ],
@@ -1353,18 +1332,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-              // Arrow indicator
+              // Solid arrow circle
               Container(
-                width: 28.w,
-                height: 28.w,
+                width: 30.w,
+                height: 30.w,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.6),
+                  color: accentColor.withValues(alpha: 0.12),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.arrow_forward_ios_rounded,
-                  size: 12.w,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                  size: 14.w,
+                  color: accentColor,
                 ),
               ),
             ],
@@ -1377,7 +1356,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _tileAvatarFallback(Color accentColor, IconData icon) {
     return Container(
       color: accentColor.withValues(alpha: 0.1),
-      child: Icon(icon, color: accentColor, size: 22.w),
+      child: Icon(icon, color: accentColor, size: 24.w),
     );
   }
 
