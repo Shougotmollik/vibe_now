@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:vibe_now/controller/vibe_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
+import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/tokens/tokens.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/vibe_model.dart';
@@ -68,9 +70,9 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => MyVibeScreen(
-                                vibe: _vibeController.ownVibe.value,
-                              )),
+                        builder: (context) =>
+                            MyVibeScreen(vibe: _vibeController.ownVibe.value),
+                      ),
                     ),
                     child: VibeCard(vibe: _vibeController.ownVibe.value!),
                   );
@@ -78,8 +80,10 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
                 SizedBox(height: 12.h),
                 Text(
                   loc.translate('otherVibes'),
-                  style:
-                      TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 SizedBox(height: 12.h),
                 Obx(() {
@@ -87,7 +91,10 @@ class _UserVibeScreenState extends State<UserVibeScreen> {
                       _vibeController.othersVibe.isEmpty) {
                     return Column(
                       spacing: 12.h,
-                      children: List.generate(4, (index) => const OtherVibeShimmer()),
+                      children: List.generate(
+                        4,
+                        (index) => const OtherVibeShimmer(),
+                      ),
                     );
                   }
                   if (_vibeController.othersVibe.isEmpty) {
@@ -144,8 +151,7 @@ class _UserVibeCardState extends State<UserVibeCard> {
     _waveStatus = widget.vibe.waveStatus;
   }
 
-  bool get _showWaveButton =>
-      _waveStatus == null || _waveStatus == 'pending';
+  bool get _showWaveButton => _waveStatus == null || _waveStatus == 'pending';
 
   Future<void> _sendWave() async {
     if (_isSending || widget.vibe.id == null) return;
@@ -220,27 +226,35 @@ class _UserVibeCardState extends State<UserVibeCard> {
       child: Row(
         spacing: 8.w,
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(50.r),
-            child: widget.vibe.createdBy?.avatar != null
-                ? Image.network(
-                    AppCredentials.fixurl(widget.vibe.createdBy!.avatar),
-                    width: 50.w,
-                    height: 50.w,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Image.asset(
+          GestureDetector(
+            onTap: () {
+              context.pushNamed(
+                RouteNames.profileScreen,
+                extra: widget.vibe.createdBy?.id.toString(),
+              );
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(50.r),
+              child: widget.vibe.createdBy?.avatar != null
+                  ? Image.network(
+                      AppCredentials.fixurl(widget.vibe.createdBy!.avatar),
+                      width: 50.w,
+                      height: 50.w,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Image.asset(
+                        "assets/images/profile_picture.jpg",
+                        width: 50.w,
+                        height: 50.w,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Image.asset(
                       "assets/images/profile_picture.jpg",
                       width: 50.w,
                       height: 50.w,
                       fit: BoxFit.cover,
                     ),
-                  )
-                : Image.asset(
-                    "assets/images/profile_picture.jpg",
-                    width: 50.w,
-                    height: 50.w,
-                    fit: BoxFit.cover,
-                  ),
+            ),
           ),
           Expanded(
             child: Column(
@@ -287,8 +301,8 @@ class _UserVibeCardState extends State<UserVibeCard> {
                   gradient: _hasWaved
                       ? AppColors.primaryGradientRotated.withOpacity(0.5)
                       : _isSending
-                          ? AppColors.primaryGradientRotated.withOpacity(0.7)
-                          : AppColors.primaryGradientRotated,
+                      ? AppColors.primaryGradientRotated.withOpacity(0.7)
+                      : AppColors.primaryGradientRotated,
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: _isSending
@@ -301,7 +315,9 @@ class _UserVibeCardState extends State<UserVibeCard> {
                         ),
                       )
                     : Text(
-                        _hasWaved ? loc.translate('waved') : loc.translate('wave'),
+                        _hasWaved
+                            ? loc.translate('waved')
+                            : loc.translate('wave'),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w600,

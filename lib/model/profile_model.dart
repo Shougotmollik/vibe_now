@@ -117,6 +117,7 @@ class UserAccount {
   final String role;
   final bool isVerified;
   final bool isActive;
+  final String? chatId;
   final UserProfile profile;
 
   UserAccount({
@@ -125,6 +126,7 @@ class UserAccount {
     required this.role,
     required this.isVerified,
     required this.isActive,
+    this.chatId,
     required this.profile,
   });
 
@@ -135,6 +137,7 @@ class UserAccount {
       role: json['role'] ?? '',
       isVerified: json['is_verified'] ?? false,
       isActive: json['is_active'] ?? false,
+      chatId: json['chat_id'],
       profile: UserProfile.fromJson(json['profile'] ?? {}),
     );
   }

@@ -8,6 +8,8 @@ class NearbyUser {
   final double lat;
   final double lng;
   bool? isWaved;
+  bool? hasSentWave;
+  bool? isLocked;
 
   NearbyUser({
     required this.id,
@@ -19,5 +21,7 @@ class NearbyUser {
     required this.lat,
     required this.lng,
     this.isWaved,
+    this.hasSentWave,
+    this.isLocked,
   });
 }

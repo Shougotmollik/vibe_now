@@ -304,6 +304,7 @@ class AppLocalizationsEn {
     'vibeCreated': 'Vibe created',
     'sendWave': 'Send Wave',
     'waveSent': 'Wave sent!',
+    'waveSendFailed': 'Failed to send wave',
     'acceptWave': 'Accept',
     'rejectWave': 'Decline',
     'waveAccepted': 'Wave accepted!',

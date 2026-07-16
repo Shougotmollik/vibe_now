@@ -32,7 +32,7 @@ class ApiConstant {
       "/vibes/wave/$waveId/suggest-meetup";
 
   static const String vibe = "/vibes";
-  static String wave({required int vibeId}) => "/vibes/$vibeId/send-wave";
+  static const String wave = "/vibes/send-wave";
 
   static const String notification = "/notifications";
   static const String markNotificationAsRead = "/notifications/mark-as-read";

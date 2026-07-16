@@ -16,6 +16,8 @@ import 'package:recase/recase.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibe_now/controller/home_controller.dart';
 import 'package:vibe_now/controller/notification_controller.dart';
+import 'package:vibe_now/controller/vibe_controller.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/services/local_storage.dart';
@@ -955,23 +957,24 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showAvailableUserDialog(MapItem item) {
-    final isLocked = item.isLocked ?? true;
+    final nearbyUser = NearbyUser(
+      id: item.userId ?? '',
+      name: item.userFullName ?? item.title ?? '',
+      imageUrl: item.displayAvatarUrl,
+      bio: item.bio ?? '',
+      interest: '',
+      distanceKm: item.distance ?? 0.0,
+      lat: item.latitude ?? 0,
+      lng: item.longitude ?? 0,
+    );
 
-    if (isLocked) {
-      context.pushNamed(
-        RouteNames.lockedProfileScreen,
-        extra: {
-          'userName': item.userFullName ?? item.title,
-          'avatarUrl': item.userAvatar,
-          'distanceKm': item.distance,
-        },
-      );
-    } else {
-      context.pushNamed(
-        RouteNames.profileScreen,
-        extra: item.userId,
-      );
-    }
+    showUserProfileDialog(
+      context,
+      nearbyUser,
+      hasVibe: false,
+      isLocked: item.isLocked ?? true,
+      hasSentWave: item.hasSentWave ?? false,
+    );
   }
 
   /// Builds a contextual subtitle summarizing what types are grouped at this location.
@@ -1460,6 +1463,8 @@ class _HomeScreenState extends State<HomeScreen> {
     BuildContext context,
     NearbyUser user, {
     bool hasVibe = false,
+    bool isLocked = false,
+    bool hasSentWave = false,
   }) {
     showDialog(
       context: context,
@@ -1489,14 +1494,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       onTap: hasVibe
                           ? () => _openFullImage(user.imageUrl, context)
                           : () {
-                              if (user.isWaved == true) {
+                              Navigator.of(context).pop();
+                              if (isLocked) {
                                 context.pushNamed(
-                                  RouteNames.profileScreen,
-                                  extra: user.id,
+                                  RouteNames.lockedProfileScreen,
+                                  extra: {
+                                    'userId': user.id,
+                                    'userName': user.name,
+                                    'avatarUrl': user.imageUrl,
+                                    'distanceKm': user.distanceKm,
+                                    'hasSentWave': user.isWaved == true || hasSentWave,
+                                  },
                                 );
                               } else {
                                 context.pushNamed(
-                                  RouteNames.lockedProfileScreen,
+                                  RouteNames.profileScreen,
+                                  extra: user.id,
                                 );
                               }
                             },
@@ -1515,7 +1528,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ],
                                 ),
                               )
-                            : null,
+                            : isLocked
+                                ? BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    gradient: _typeRingGradient(MapItemType.availableUser),
+                                  )
+                                : null,
                         child: Container(
                           padding: EdgeInsets.all(2.w),
                           decoration: BoxDecoration(
@@ -1598,65 +1616,76 @@ class _HomeScreenState extends State<HomeScreen> {
                       )
                     : Container(),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          if (user.isWaved == true) return;
-                          setState(() {
-                            user.isWaved = true;
-                          });
-                          Navigator.of(context).pop();
-                          showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (context) => WaveAnimatedDialog(
-                              content: '${AppLocalizations.of(context).translate('waveSent')} ${user.name}',
+                if (isLocked)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () async {
+                            if (user.isWaved == true || hasSentWave) return;
+                            final vibeCtrl = Get.find<VibeController>();
+                            final success = await vibeCtrl.sendWave(
+                              userId: user.id.isNotEmpty ? user.id : null,
+                            );
+                            if (!mounted) return;
+                            if (success) {
+                              setState(() => user.isWaved = true);
+                              Navigator.of(context).pop();
+                              showDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (context) => WaveAnimatedDialog(
+                                  content: '${AppLocalizations.of(context).translate('waveSent')} ${user.name}',
+                                ),
+                              );
+                            } else {
+                              AppSnackbar.show(
+                                message: AppLocalizations.of(context).translate('waveSendFailed'),
+                                type: SnackType.error,
+                              );
+                            }
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              gradient: (user.isWaved == true || hasSentWave)
+                                  ? AppColors.primaryGradient.withOpacity(0.5)
+                                  : AppColors.primaryGradientRotated,
                             ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            gradient: user.isWaved == true
-                                ? AppColors.primaryGradient.withOpacity(0.5)
-                                : AppColors.primaryGradientRotated,
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              spacing: 4.w,
-                              children: [
-                                Text(
-                                  user.isWaved == true
-                                      ? AppLocalizations.of(
-                                          context,
-                                        ).translate('waved')
-                                      : AppLocalizations.of(
-                                          context,
-                                        ).translate('wave'),
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                spacing: 4.w,
+                                children: [
+                                  Text(
+                                    (user.isWaved == true || hasSentWave)
+                                        ? AppLocalizations.of(
+                                            context,
+                                          ).translate('waved')
+                                        : AppLocalizations.of(
+                                            context,
+                                          ).translate('wave'),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
-                                ),
-                                Assets.icons.handWave.svg(
-                                  width: 14.w,
-                                  height: 14.h,
-                                  color: AppColors.onPrimary,
-                                ),
-                              ],
+                                  Assets.icons.handWave.svg(
+                                    width: 14.w,
+                                    height: 14.h,
+                                    color: AppColors.onPrimary,
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
                 const SizedBox(height: 12),
               ],
             ),

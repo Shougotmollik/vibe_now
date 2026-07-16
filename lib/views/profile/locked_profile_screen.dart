@@ -1,34 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/controller/vibe_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
+import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
 
-class LockedProfileScreen extends StatelessWidget {
+class LockedProfileScreen extends StatefulWidget {
   const LockedProfileScreen({
     super.key,
+    this.userId,
     this.userName,
     this.avatarUrl,
     this.distanceKm,
+    this.hasSentWave = false,
   });
 
+  final String? userId;
   final String? userName;
   final String? avatarUrl;
   final double? distanceKm;
+  final bool hasSentWave;
+
+  @override
+  State<LockedProfileScreen> createState() => _LockedProfileScreenState();
+}
+
+class _LockedProfileScreenState extends State<LockedProfileScreen> {
+  bool _isSendingWave = false;
+  late bool _hasSentWave;
+
+  @override
+  void initState() {
+    super.initState();
+    _hasSentWave = widget.hasSentWave;
+  }
+
+  Future<void> _sendWave() async {
+    if (_isSendingWave || _hasSentWave) return;
+    setState(() => _isSendingWave = true);
+
+    try {
+      final success = await Get.find<VibeController>().sendWave(
+        userId: widget.userId,
+      );
+      if (!mounted) return;
+      if (success) {
+        setState(() => _hasSentWave = true);
+        AppSnackbar.show(
+          message: AppLocalizations.of(context).translate('waveSent'),
+          type: SnackType.success,
+        );
+      } else {
+        AppSnackbar.show(
+          message: AppLocalizations.of(context).translate('waveSendFailed'),
+          type: SnackType.error,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isSendingWave = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final resolvedAvatar = avatarUrl != null && avatarUrl!.isNotEmpty
-        ? AppCredentials.fixurl(avatarUrl!)
+    final resolvedAvatar = widget.avatarUrl != null && widget.avatarUrl!.isNotEmpty
+        ? AppCredentials.fixurl(widget.avatarUrl!)
         : null;
-    final dist = distanceKm ?? 0.0;
+    final dist = widget.distanceKm ?? 0.0;
     final distText = dist < 1
         ? 'Approximate ${(dist * 1000).toStringAsFixed(0)} m'
         : 'Approximate ${dist.toStringAsFixed(1)} km';
-    final displayName = userName?.isNotEmpty == true ? userName! : 'Jenny Gomes 23';
+    final displayName = widget.userName?.isNotEmpty == true ? widget.userName! : 'Jenny Gomes 23';
 
     return Scaffold(
       body: SafeArea(
@@ -138,7 +185,12 @@ class LockedProfileScreen extends StatelessWidget {
 
                                   // Wave Button
                                   PrimaryButton(
-                                    onPressed: () {},
+                                    onPressed: _sendWave,
+                                    isEnabled: !_isSendingWave && !_hasSentWave,
+                                    isLoading: _isSendingWave,
+                                    gradient: _hasSentWave
+                                        ? AppColors.primaryGradient.withOpacity(0.5)
+                                        : null,
                                     child: Center(
                                       child: Row(
                                         mainAxisAlignment:
@@ -150,7 +202,9 @@ class LockedProfileScreen extends StatelessWidget {
                                           ),
                                           SizedBox(width: 8),
                                           Text(
-                                            AppLocalizations.of(context).translate('wave'),
+                                            _hasSentWave
+                                                ? AppLocalizations.of(context).translate('waved')
+                                                : AppLocalizations.of(context).translate('wave'),
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 18,
@@ -306,21 +360,22 @@ class LockedProfileScreen extends StatelessWidget {
               ),
               onTap: () => Navigator.pop(context),
             ),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Theme.of(context).colorScheme.surface,
-                boxShadow: [
-                  BoxShadow(
-                    color: Theme.of(context).shadowColor.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              ),
-              child: Assets.icons.chatting.svg(),
-            ),
+            // Chat icon commented out — locked users have no chat
+            // Container(
+            //   padding: const EdgeInsets.all(8),
+            //   decoration: BoxDecoration(
+            //     shape: BoxShape.circle,
+            //     color: Theme.of(context).colorScheme.surface,
+            //     boxShadow: [
+            //       BoxShadow(
+            //         color: Theme.of(context).shadowColor.withOpacity(0.1),
+            //         blurRadius: 10,
+            //         offset: const Offset(0, 4),
+            //       ),
+            //     ],
+            //   ),
+            //   child: Assets.icons.chatting.svg(),
+            // ),
           ],
         ),
       ),

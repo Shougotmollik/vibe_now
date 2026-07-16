@@ -18,6 +18,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/category.dart';
 import 'package:vibe_now/model/interest_model.dart';
+import 'package:vibe_now/model/chat.dart';
 import 'package:vibe_now/model/profile_model.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
@@ -137,7 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           child: Column(
             children: [
               SafeArea(bottom: false, child: SizedBox(height: 12.h)),
-              _buildAppBar(context, widget.isMyProfile),
+              _buildAppBar(context, widget.isMyProfile, account: account),
               _buildProfileHeader(
                 fullName: fullName,
                 age: age,
@@ -173,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
-  PreferredSize _buildAppBar(BuildContext context, bool isMyProfile) {
+  PreferredSize _buildAppBar(BuildContext context, bool isMyProfile, {UserAccount? account}) {
     final loc = AppLocalizations.of(context);
     return PreferredSize(
       preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -194,7 +195,29 @@ class _ProfileScreenState extends State<ProfileScreen>
             GestureDetector(
               onTap: () {
                 if (isMyProfile != true) {
-                  context.pushNamed(RouteNames.chatScreen);
+                  final chatId = account?.chatId;
+                  if (chatId != null && chatId.isNotEmpty) {
+                    // Navigate directly to chat inbox with the existing chat
+                    final profile = account?.profile;
+                    final avatarUrl = profile?.primaryPhoto?.fullUrl ?? '';
+                    context.pushNamed(
+                      RouteNames.chatInboxScreen,
+                      extra: Chat(
+                        id: chatId,
+                        name: (profile?.fullName ?? '').isNotEmpty
+                            ? utils.titleCase(profile!.fullName)
+                            : loc.translate('defaultUserName'),
+                        avatars: avatarUrl.isNotEmpty ? [avatarUrl] : [],
+                        otherMember: OtherMember(
+                          id: account?.id,
+                          fullName: profile?.fullName,
+                          avatar: profile?.primaryPhoto?.image,
+                        ),
+                      ),
+                    );
+                  } else {
+                    context.pushNamed(RouteNames.chatScreen);
+                  }
                 } else {
                   context.pushNamed(RouteNames.settingsScreen);
                 }

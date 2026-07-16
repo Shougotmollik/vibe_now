@@ -894,6 +894,8 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
     BuildContext context,
     NearbyUser user, {
     bool hasVibe = false,
+    bool isLocked = false,
+    bool hasSentWave = false,
   }) {
     showDialog(
       context: context,
@@ -1063,37 +1065,38 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                 const SizedBox(height: 16),
 
                 // action buttons
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          if (user.isWaved == true) return;
+                if (isLocked)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            if (user.isWaved == true || hasSentWave) return;
 
-                          setState(() {
-                            user.isWaved = true;
-                          });
+                            setState(() {
+                              user.isWaved = true;
+                            });
 
-                          Navigator.of(context).pop();
-                          showDialog(
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (context) => WaveAnimatedDialog(
-                              content: 'You have wave to ${user.name}',
+                            Navigator.of(context).pop();
+                            showDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (context) => WaveAnimatedDialog(
+                                content: 'You have wave to ${user.name}',
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(14),
+                              // color: user.isWaved == true
+                              //     ? Color(0xffC4A8FF)
+                              //     : null,
+                              gradient: (user.isWaved == true || hasSentWave)
+                                  ? AppColors.primaryGradient.withOpacity(0.5)
+                                  : AppColors.primaryGradientRotated,
                             ),
-                          );
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(14),
-                            // color: user.isWaved == true
-                            //     ? Color(0xffC4A8FF)
-                            //     : null,
-                            gradient: user.isWaved == true
-                                ? AppColors.primaryGradient.withOpacity(0.5)
-                                : AppColors.primaryGradientRotated,
-                          ),
                           child: Center(
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -1102,7 +1105,7 @@ class _GoogleMapScreenState extends State<GoogleMapScreen> {
                               spacing: 4.w,
                               children: [
                                 Text(
-                                  user.isWaved == true ? 'Waved' : 'Wave',
+                                  (user.isWaved == true || hasSentWave) ? 'Waved' : 'Wave',
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,

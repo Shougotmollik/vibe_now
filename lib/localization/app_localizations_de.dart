@@ -306,6 +306,7 @@ class AppLocalizationsDe {
     'vibeCreated': 'Vibe erstellt',
     'sendWave': 'Welle senden',
     'waveSent': 'Welle gesendet!',
+    'waveSendFailed': 'Welle konnte nicht gesendet werden',
     'acceptWave': 'Akzeptieren',
     'rejectWave': 'Ablehnen',
     'waveAccepted': 'Welle akzeptiert!',

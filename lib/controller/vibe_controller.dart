@@ -20,8 +20,8 @@ class VibeController extends GetxController {
 
   @override
   void onInit() {
-    super.onInit();
     getVibes();
+    super.onInit();
   }
 
   // Create vibe
@@ -119,11 +119,13 @@ class VibeController extends GetxController {
   }
 
   // send wave
-  Future<bool> sendWave({required int vibeId}) async {
+  Future<bool> sendWave({int? vibeId, String? userId}) async {
     try {
       isLoading(true);
+      var body = vibeId != null ? {"vibe_id": vibeId} : {"user_id": userId};
       final response = await CustomHttp.post(
-        endpoint: ApiConstant.wave(vibeId: vibeId),
+        endpoint: ApiConstant.wave,
+        body: body,
       );
       if (response.ok) {
         return true;

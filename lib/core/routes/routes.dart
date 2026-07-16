@@ -317,9 +317,11 @@ void setupRouter(bool hasToken) {
           final extra = state.extra;
           if (extra is Map) {
             return LockedProfileScreen(
+              userId: extra['userId'] as String?,
               userName: extra['userName'] as String?,
               avatarUrl: extra['avatarUrl'] as String?,
               distanceKm: (extra['distanceKm'] as num?)?.toDouble(),
+              hasSentWave: extra['hasSentWave'] as bool? ?? false,
             );
           }
           return const LockedProfileScreen();
