@@ -1,6 +1,6 @@
 import 'package:vibe_now/core/constant/credential.dart';
 
-enum MapItemType { vibe, event, community }
+enum MapItemType { vibe, event, community, availableUser }
 
 MapItemType _parseType(String? raw) {
   switch (raw?.toLowerCase()) {
@@ -10,6 +10,8 @@ MapItemType _parseType(String? raw) {
       return MapItemType.event;
     case 'community':
       return MapItemType.community;
+    case 'available_user':
+      return MapItemType.availableUser;
     default:
       return MapItemType.vibe;
   }
@@ -47,6 +49,14 @@ class MapItem {
   final MapItemCreatedBy? createdBy;
   final Map<String, dynamic> raw;
 
+  /// Available-user-specific fields (populated from the 'user' object)
+  final String? userId;
+  final String? userFullName;
+  final String? userAvatar;
+  final String? locationName;
+  final String? bio;
+  final bool? isLocked;
+
   MapItem({
     required this.id,
     required this.type,
@@ -57,13 +67,43 @@ class MapItem {
     this.distance,
     this.createdBy,
     this.raw = const {},
+    this.userId,
+    this.userFullName,
+    this.userAvatar,
+    this.locationName,
+    this.bio,
+    this.isLocked,
   });
 
   factory MapItem.fromJson(Map<String, dynamic> json) {
     final rawType = json['type']?.toString() ?? 'vibe';
+    final type = _parseType(rawType);
+
+    if (type == MapItemType.availableUser) {
+      final user = json['user'] as Map<String, dynamic>? ?? {};
+      final location =
+          json['current_location'] as Map<String, dynamic>? ?? {};
+      return MapItem(
+        id: 0,
+        type: type,
+        title: user['full_name'] as String?,
+        coverImage: user['avatar'] as String?,
+        userId: json['id'] as String?,
+        userFullName: user['full_name'] as String?,
+        userAvatar: user['avatar'] as String?,
+        latitude: (location['latitude'] as num?)?.toDouble(),
+        longitude: (location['longitude'] as num?)?.toDouble(),
+        locationName: location['location_name'] as String?,
+        distance: (json['distance'] as num?)?.toDouble(),
+        bio: json['bio'] as String?,
+        isLocked: json['is_locked'] as bool?,
+        raw: json,
+      );
+    }
+
     return MapItem(
       id: json['id'] ?? 0,
-      type: _parseType(rawType),
+      type: type,
       title: json['title'],
       coverImage: json['cover_image'],
       latitude: (json['latitude'] as num?)?.toDouble(),
@@ -104,6 +144,13 @@ class MapItem {
   String? get rules => raw['rules'];
   String? get communityDate => raw['community_date'];
   String? get communityTime => raw['community_time'];
+
+  /// Unique identifier for markers (handles both numeric and string IDs)
+  String get markerId => userId ?? id.toString();
+
+  /// Resolved avatar URL (from userAvatar for available_user, or createdBy for others)
+  String get displayAvatarUrl =>
+      AppCredentials.fixurl(userAvatar ?? createdBy?.avatar);
 }
 
 class MapItemsResponse {

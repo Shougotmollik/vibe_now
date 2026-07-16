@@ -313,7 +313,17 @@ void setupRouter(bool hasToken) {
       GoRoute(
         path: '/locked-profile-screen',
         name: RouteNames.lockedProfileScreen,
-        builder: (context, state) => const LockedProfileScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Map) {
+            return LockedProfileScreen(
+              userName: extra['userName'] as String?,
+              avatarUrl: extra['avatarUrl'] as String?,
+              distanceKm: (extra['distanceKm'] as num?)?.toDouble(),
+            );
+          }
+          return const LockedProfileScreen();
+        },
       ),
       GoRoute(
         path: '/like-screen',

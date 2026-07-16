@@ -33,6 +33,7 @@ import 'package:vibe_now/views/vibe/user_vibe_screen.dart';
 import 'package:vibe_now/views/event/widgets/event_card.dart';
 import 'package:vibe_now/views/home/widgets/community_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/event_location_pin.dart';
+import 'package:vibe_now/views/home/widgets/grouped_location_pin.dart';
 import 'package:vibe_now/views/home/widgets/filter_dialog.dart';
 import 'package:vibe_now/views/home/widgets/map_search_screen.dart';
 import 'package:vibe_now/views/home/widgets/user_location_pin.dart';
@@ -566,68 +567,207 @@ class _HomeScreenState extends State<HomeScreen> {
       return;
     }
 
-    // Pre-cache images via CachedNetworkImageProvider so the
-    // CachedNetworkImage widgets in the pins reuse the same cache.
-    await Future.wait(
-      items.map((item) {
-        final urls = <String>[];
-        if (item.type == MapItemType.vibe) {
-          // Pre-cache vibe cover for the dialog
-          if ((item.coverImageUrl).isNotEmpty) {
-            urls.add(item.coverImageUrl);
-          }
-          // Pre-cache creator avatar for the marker pin
-          if ((item.createdBy?.avatarUrl ?? '').isNotEmpty) {
-            urls.add(AppCredentials.fixurl(item.createdBy!.avatarUrl));
-          }
-        } else {
-          if ((item.coverImageUrl).isNotEmpty) {
-            urls.add(item.coverImageUrl);
-          }
-        }
-        return Future.wait(
-          urls.map(
-            (url) => precacheImage(CachedNetworkImageProvider(url), context),
-          ),
+    try {
+      // Pre-cache images via CachedNetworkImageProvider so the
+      // CachedNetworkImage widgets in the pins reuse the same cache.
+      try {
+        await Future.wait(
+          items.map((item) {
+            final urls = <String>[];
+            if (item.type == MapItemType.vibe) {
+              if ((item.coverImageUrl).isNotEmpty) {
+                urls.add(item.coverImageUrl);
+              }
+              if ((item.createdBy?.avatarUrl ?? '').isNotEmpty) {
+                urls.add(AppCredentials.fixurl(item.createdBy!.avatarUrl));
+              }
+            } else if (item.type == MapItemType.availableUser) {
+              if ((item.displayAvatarUrl).isNotEmpty) {
+                urls.add(item.displayAvatarUrl);
+              }
+            } else {
+              if ((item.coverImageUrl).isNotEmpty) {
+                urls.add(item.coverImageUrl);
+              }
+            }
+            if (urls.isEmpty) return Future.value(null);
+            return Future.wait(
+              urls.map(
+                (url) => precacheImage(CachedNetworkImageProvider(url), context),
+              ),
+            );
+          }),
         );
-      }),
-    );
+      } catch (_) {
+        // Pre-cache errors are non-fatal, continue to build markers
+      }
 
-    // Build all marker bitmaps in parallel
-    final markerFutures = <Future<Marker?>>[];
+      debugPrint('🔍 _buildDynamicMarkers: processing ${items.length} items: ${items.map((i) => '${i.type.name}:${i.title ?? i.userFullName ?? "?"}@(${i.latitude?.toStringAsFixed(4)},${i.longitude?.toStringAsFixed(4)})').toList()}');
 
-    for (final item in items) {
-      if (item.latitude == null || item.longitude == null) continue;
+      // Group items by position so overlapping items render a single pin
+      final Map<String, List<MapItem>> positionGroups = {};
+      for (final item in items) {
+        if (item.latitude == null || item.longitude == null) continue;
+        final key = '${item.latitude!.toStringAsFixed(6)}_${item.longitude!.toStringAsFixed(6)}';
+        positionGroups.putIfAbsent(key, () => []);
+        positionGroups[key]!.add(item);
+      }
+      debugPrint('🔍 _buildDynamicMarkers: grouped into ${positionGroups.length} positions: ${positionGroups.entries.map((e) => '${e.key}=${e.value.length}').toList()}');
 
-      final position = LatLng(item.latitude!, item.longitude!);
-      final markerId = MarkerId('map_${item.type.name}_${item.id}');
+      // Build markers in parallel
+      final markerFutures = <Future<Marker?>>[];
 
-      markerFutures.add(
-        _buildMarkerBitmap(item)
-            .then((icon) {
-              if (icon == null) return null;
-              return Marker(
+      for (final entry in positionGroups.entries) {
+        final groupItems = entry.value;
+        final firstItem = groupItems.first;
+        final position = LatLng(firstItem.latitude!, firstItem.longitude!);
+        final key = entry.key;
+
+        if (groupItems.length == 1) {
+          // Single item at this position — normal marker
+          final item = groupItems.first;
+          final markerId = MarkerId('map_${item.type.name}_${item.markerId}');
+          markerFutures.add(
+            _buildMarkerBitmap(item)
+                .then((icon) {
+                  if (icon == null) return null;
+                  return Marker(
+                    markerId: markerId,
+                    position: position,
+                    icon: icon,
+                    onTap: () => _onMarkerTap(item),
+                  );
+                })
+                .catchError((e) {
+                  debugPrint('Error creating marker for $markerId: $e');
+                  return null;
+                }),
+          );
+        } else {
+          // Multiple items at the same position — grouped marker
+          final markerId = MarkerId('map_grouped_$key');
+          final itemsCopy = List<MapItem>.from(groupItems);
+          final count = groupItems.length;
+
+          // Build keyframe bitmaps at different scales for a pop-in animation
+          final scales = [0.4, 0.65, 0.9, 1.0];
+          markerFutures.add(
+            (() async {
+              // Build all scaled bitmaps in parallel
+              final bitmaps = await Future.wait(
+                scales.map((s) => _buildGroupedMarkerBitmap(count, scale: s)),
+              );
+
+              final firstIcon = bitmaps.isNotEmpty ? bitmaps.first : null;
+              if (firstIcon == null) return null;
+
+              final marker = Marker(
                 markerId: markerId,
                 position: position,
-                icon: icon,
-                onTap: () => _onMarkerTap(item),
+                icon: firstIcon,
+                onTap: () => _showGroupedItemsDialog(itemsCopy),
               );
-            })
-            .catchError((e) {
-              debugPrint('Error creating marker for $markerId: $e');
-              return null;
-            }),
+
+              // Animate through remaining keyframes with delays
+              _animateMarkerPopIn(
+                markerId: markerId,
+                position: position,
+                bitmaps: bitmaps,
+                onTap: () => _showGroupedItemsDialog(itemsCopy),
+              );
+
+              return marker;
+            })(),
+          );
+        }
+      }
+
+      final results = await Future.wait(markerFutures);
+      final builtCount = results.whereType<Marker>().length;
+      debugPrint('🔍 _buildDynamicMarkers: built $builtCount markers out of ${markerFutures.length} attempts');
+
+      if (mounted) {
+        setState(() {
+          _markers.clear();
+          _markers.addAll(results.whereType<Marker>());
+          _markersBuilt = true;
+          _isBuildingMarkers = false;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error building markers: $e');
+      if (mounted) {
+        setState(() {
+          _isBuildingMarkers = false;
+        });
+      }
+    }
+  }
+
+  Future<BitmapDescriptor?> _buildGroupedMarkerBitmap(int count, {double scale = 1.0}) async {
+    try {
+      final baseSize = 300.0 * scale;
+      return GroupedLocationPin(count: count).toBitmapDescriptor(
+        logicalSize: Size(baseSize, baseSize),
+        imageSize: Size(baseSize, baseSize),
       );
+    } catch (e) {
+      debugPrint('Error rendering grouped pin bitmap: $e');
+      return null;
+    }
+  }
+
+  /// Animates a grouped marker through progressive bitmap scales for a pop-in effect.
+  void _animateMarkerPopIn({
+    required MarkerId markerId,
+    required LatLng position,
+    required List<BitmapDescriptor?> bitmaps,
+    required VoidCallback onTap,
+  }) {
+    if (bitmaps.length < 2) return;
+
+    Future.delayed(const Duration(milliseconds: 60), () {
+      if (!mounted) return;
+      _updateMarkerBitmap(markerId, position, bitmaps, 1, onTap);
+    });
+  }
+
+  /// Recursively replaces a marker's icon with the next keyframe bitmap.
+  void _updateMarkerBitmap(
+    MarkerId markerId,
+    LatLng position,
+    List<BitmapDescriptor?> bitmaps,
+    int index,
+    VoidCallback onTap,
+  ) {
+    if (index >= bitmaps.length || !mounted) return;
+
+    final icon = bitmaps[index];
+    if (icon == null) {
+      // Skip null bitmap, try next
+      _updateMarkerBitmap(markerId, position, bitmaps, index + 1, onTap);
+      return;
     }
 
-    final results = await Future.wait(markerFutures);
+    final delay = index == bitmaps.length - 1
+        ? const Duration(milliseconds: 80)  // linger on final frame
+        : const Duration(milliseconds: 50);
 
-    if (mounted) {
-      setState(() {
-        _markers.clear();
-        _markers.addAll(results.whereType<Marker>());
-        _markersBuilt = true;
-        _isBuildingMarkers = false;
+    setState(() {
+      _markers.removeWhere((m) => m.markerId == markerId);
+      _markers.add(Marker(
+        markerId: markerId,
+        position: position,
+        icon: icon,
+        onTap: onTap,
+      ));
+    });
+
+    if (index < bitmaps.length - 1) {
+      Future.delayed(delay, () {
+        if (mounted) {
+          _updateMarkerBitmap(markerId, position, bitmaps, index + 1, onTap);
+        }
       });
     }
   }
@@ -658,6 +798,16 @@ class _HomeScreenState extends State<HomeScreen> {
             logicalSize: const Size(300, 300),
             imageSize: const Size(300, 300),
           );
+        case MapItemType.availableUser:
+          return UserLocationPin(
+            imagePath: item.userAvatar != null
+                ? AppCredentials.fixurl(item.userAvatar)
+                : '',
+            hasVibe: false,
+          ).toBitmapDescriptor(
+            logicalSize: const Size(300, 300),
+            imageSize: const Size(300, 300),
+          );
       }
     } catch (e) {
       debugPrint('Error rendering pin bitmap for ${item.type}: $e');
@@ -675,6 +825,9 @@ class _HomeScreenState extends State<HomeScreen> {
         break;
       case MapItemType.community:
         _showCommunityPopup(item);
+        break;
+      case MapItemType.availableUser:
+        _showAvailableUserDialog(item);
         break;
     }
   }
@@ -800,6 +953,435 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+  void _showAvailableUserDialog(MapItem item) {
+    final isLocked = item.isLocked ?? true;
+
+    if (isLocked) {
+      context.pushNamed(
+        RouteNames.lockedProfileScreen,
+        extra: {
+          'userName': item.userFullName ?? item.title,
+          'avatarUrl': item.userAvatar,
+          'distanceKm': item.distance,
+        },
+      );
+    } else {
+      context.pushNamed(
+        RouteNames.profileScreen,
+        extra: item.userId,
+      );
+    }
+  }
+
+  void _showGroupedItemsDialog(List<MapItem> items) {
+    // Count types for the header chips
+    final typeCounts = <String, int>{};
+    for (final item in items) {
+      final key = item.type.name;
+      typeCounts[key] = (typeCounts[key] ?? 0) + 1;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          builder: (_, value, child) {
+            return Opacity(
+              opacity: value,
+              child: Transform.translate(
+                offset: Offset(0, 30 * (1 - value)),
+                child: child,
+              ),
+            );
+          },
+          child: DraggableScrollableSheet(
+            initialChildSize: 0.5,
+            minChildSize: 0.3,
+            maxChildSize: 0.7,
+            expand: false,
+            builder: (_, scrollController) {
+              return Container(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(24.r)),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Drag handle
+                    Padding(
+                      padding: EdgeInsets.only(top: 10.h),
+                      child: Container(
+                        width: 36.w,
+                        height: 4.h,
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.25),
+                          borderRadius: BorderRadius.circular(2.r),
+                        ),
+                      ),
+                    ),
+
+                    // Header
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(20.w, 16.h, 16.w, 0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Gradient accent bar
+                          Container(
+                            width: 4.w,
+                            height: 36.h,
+                            margin: EdgeInsets.only(top: 2.h),
+                            decoration: BoxDecoration(
+                              gradient: AppColors.primaryGradient,
+                              borderRadius: BorderRadius.circular(2.r),
+                            ),
+                          ),
+                          SizedBox(width: 14.w),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '${items.length} ${items.length == 1 ? 'place' : 'places'}',
+                                  style: TextStyle(
+                                    fontSize: 22.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: Theme.of(context).colorScheme.onSurface,
+                                    height: 1.1,
+                                  ),
+                                ),
+                                SizedBox(height: 3.h),
+                                Text(
+                                  'In this area',
+                                  style: TextStyle(
+                                    fontSize: 13.sp,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Close button
+                          GestureDetector(
+                            onTap: () => Navigator.pop(ctx),
+                            child: Container(
+                              width: 34.w,
+                              height: 34.w,
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.surfaceVariant,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Icon(
+                                Icons.close_rounded,
+                                size: 18.w,
+                                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Type chips
+                    if (typeCounts.length > 1)
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(20.w, 14.h, 20.w, 0),
+                        child: SizedBox(
+                          height: 30.h,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: typeCounts.entries.length,
+                            separatorBuilder: (_, __) => SizedBox(width: 8.w),
+                            itemBuilder: (_, idx) {
+                              final entry = typeCounts.entries.elementAt(idx);
+                              return _typeChip(entry.key, entry.value);
+                            },
+                          ),
+                        ),
+                      ),
+
+                    SizedBox(height: typeCounts.length > 1 ? 10.h : 14.h),
+
+                    // Divider
+                    Container(
+                      height: 0.5,
+                      margin: EdgeInsets.symmetric(horizontal: 20.w),
+                      color: Theme.of(context).colorScheme.outlineVariant.withValues(alpha: 0.4),
+                    ),
+                    SizedBox(height: 4.h),
+
+                    // Items list
+                    Expanded(
+                      child: ListView.builder(
+                        controller: scrollController,
+                        padding: EdgeInsets.only(bottom: 16.h),
+                        itemCount: items.length,
+                        itemBuilder: (_, index) => _buildGroupedItemTile(items[index], ctx),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _typeChip(String typeName, int count) {
+    Color chipColor;
+    IconData chipIcon;
+    String label;
+    switch (typeName) {
+      case 'vibe':
+        chipColor = const Color(0xFF7C4DFF);
+        chipIcon = Icons.waving_hand_rounded;
+        label = 'Vibes';
+        break;
+      case 'event':
+        chipColor = const Color(0xFFFF6B6B);
+        chipIcon = Icons.event_rounded;
+        label = 'Events';
+        break;
+      case 'community':
+        chipColor = const Color(0xFF4ECDC4);
+        chipIcon = Icons.groups_rounded;
+        label = 'Communities';
+        break;
+      case 'availableUser':
+        chipColor = const Color(0xFF45B7D1);
+        chipIcon = Icons.person_rounded;
+        label = 'Users';
+        break;
+      default:
+        chipColor = AppColors.primary;
+        chipIcon = Icons.place_rounded;
+        label = typeName;
+    }
+
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w),
+      decoration: BoxDecoration(
+        color: chipColor.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(chipIcon, size: 13.w, color: chipColor),
+          SizedBox(width: 4.w),
+          Text(
+            '$count',
+            style: TextStyle(
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w700,
+              color: chipColor,
+            ),
+          ),
+          SizedBox(width: 2.w),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11.sp,
+              fontWeight: FontWeight.w500,
+              color: chipColor.withValues(alpha: 0.8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGroupedItemTile(MapItem item, BuildContext dialogContext) {
+    Color accentColor;
+    String label;
+    IconData typeIcon;
+    String? imageUrl;
+
+    switch (item.type) {
+      case MapItemType.vibe:
+        accentColor = const Color(0xFF7C4DFF);
+        label = 'Vibe';
+        typeIcon = Icons.waving_hand_rounded;
+        imageUrl = item.createdBy?.avatarUrl;
+        break;
+      case MapItemType.event:
+        accentColor = const Color(0xFFFF6B6B);
+        label = 'Event';
+        typeIcon = Icons.event_rounded;
+        imageUrl = item.coverImageUrl;
+        break;
+      case MapItemType.community:
+        accentColor = const Color(0xFF4ECDC4);
+        label = 'Community';
+        typeIcon = Icons.groups_rounded;
+        imageUrl = item.coverImageUrl;
+        break;
+      case MapItemType.availableUser:
+        accentColor = const Color(0xFF45B7D1);
+        label = 'User';
+        typeIcon = Icons.person_rounded;
+        imageUrl = item.userAvatar != null
+            ? AppCredentials.fixurl(item.userAvatar)
+            : null;
+        break;
+    }
+
+    final hasImage = imageUrl != null && imageUrl.isNotEmpty;
+    final displayName = item.title ?? item.userFullName ?? '';
+    final dist = item.distance ?? 0.0;
+    final distText = dist < 1
+        ? '${(dist * 1000).toStringAsFixed(0)} m'
+        : '${dist.toStringAsFixed(1)} km';
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: () {
+          Navigator.pop(dialogContext);
+          _onMarkerTap(item);
+        },
+        borderRadius: BorderRadius.circular(16.r),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+          child: Row(
+            children: [
+              // Avatar with accent ring
+              Container(
+                width: 48.w,
+                height: 48.w,
+                padding: EdgeInsets.all(2.w),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: SweepGradient(
+                    colors: [
+                      accentColor,
+                      accentColor.withValues(alpha: 0.4),
+                      accentColor,
+                    ],
+                  ),
+                ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Theme.of(context).colorScheme.surface,
+                  ),
+                  padding: EdgeInsets.all(1.5.w),
+                  child: ClipOval(
+                    child: hasImage
+                        ? CachedNetworkImage(
+                            imageUrl: imageUrl,
+                            width: 48.w,
+                            height: 48.w,
+                            fit: BoxFit.cover,
+                            placeholder: (_, __) => _tileAvatarFallback(accentColor, typeIcon),
+                            errorWidget: (_, __, ___) => _tileAvatarFallback(accentColor, typeIcon),
+                          )
+                        : _tileAvatarFallback(accentColor, typeIcon),
+                  ),
+                ),
+              ),
+              SizedBox(width: 14.w),
+              // Name + subtitle
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      displayName,
+                      style: TextStyle(
+                        fontSize: 15.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    SizedBox(height: 5.h),
+                    Row(
+                      children: [
+                        // Type label chip
+                        Container(
+                          padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                          decoration: BoxDecoration(
+                            color: accentColor.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(typeIcon, size: 10.w, color: accentColor),
+                              SizedBox(width: 3.w),
+                              Text(
+                                label,
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                  color: accentColor,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        // Distance
+                        Icon(
+                          Icons.near_me_rounded,
+                          size: 11.w,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        SizedBox(width: 2.w),
+                        Text(
+                          distText,
+                          style: TextStyle(
+                            fontSize: 11.sp,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              // Arrow indicator
+              Container(
+                width: 28.w,
+                height: 28.w,
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceVariant.withValues(alpha: 0.6),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 12.w,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _tileAvatarFallback(Color accentColor, IconData icon) {
+    return Container(
+      color: accentColor.withValues(alpha: 0.1),
+      child: Icon(icon, color: accentColor, size: 22.w),
+    );
+  }
+
+
 
   // ─── Existing Dialogs ─────────────────────────────────────────
 
@@ -970,22 +1552,23 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ],
                 ),
-                SizedBox(height: 12.h),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    vertical: 12.w,
-                    horizontal: 18.w,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade200,
-                    borderRadius: BorderRadius.circular(24.r),
-                  ),
-                  child: Text(
-                    AppLocalizations.of(context).translate('sundayCoffeeVibes'),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 13, color: Colors.black),
-                  ),
-                ),
+                // --- Mood badge removed per user request ---
+                // SizedBox(height: 12.h),
+                // Container(
+                //   padding: EdgeInsets.symmetric(
+                //     vertical: 12.w,
+                //     horizontal: 18.w,
+                //   ),
+                //   decoration: BoxDecoration(
+                //     color: Colors.grey.shade200,
+                //     borderRadius: BorderRadius.circular(24.r),
+                //   ),
+                //   child: Text(
+                //     AppLocalizations.of(context).translate('sundayCoffeeVibes'),
+                //     textAlign: TextAlign.center,
+                //     style: const TextStyle(fontSize: 13, color: Colors.black),
+                //   ),
+                // ),
                 const SizedBox(height: 12),
                 Text(
                   user.name,

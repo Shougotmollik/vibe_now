@@ -1,33 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/interest_chip.dart';
 
 class LockedProfileScreen extends StatelessWidget {
-  const LockedProfileScreen({super.key});
+  const LockedProfileScreen({
+    super.key,
+    this.userName,
+    this.avatarUrl,
+    this.distanceKm,
+  });
+
+  final String? userName;
+  final String? avatarUrl;
+  final double? distanceKm;
 
   @override
   Widget build(BuildContext context) {
+    final resolvedAvatar = avatarUrl != null && avatarUrl!.isNotEmpty
+        ? AppCredentials.fixurl(avatarUrl!)
+        : null;
+    final dist = distanceKm ?? 0.0;
+    final distText = dist < 1
+        ? 'Approximate ${(dist * 1000).toStringAsFixed(0)} m'
+        : 'Approximate ${dist.toStringAsFixed(1)} km';
+    final displayName = userName?.isNotEmpty == true ? userName! : 'Jenny Gomes 23';
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
-            // // Back Button
-            // Padding(
-            //   padding: const EdgeInsets.all(16.0),
-            //   child: Align(
-            //     alignment: Alignment.centerLeft,
-            //     child: IconButton(
-            //       icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
-            //       onPressed: () {
-            //         context.pop();
-            //       },
-            //     ),
-            //   ),
-            // ),
             _buildAppBar(context),
 
             // Scrollable Content
@@ -59,9 +65,9 @@ class LockedProfileScreen extends StatelessWidget {
                               child: Column(
                                 children: [
                                   SizedBox(height: 56.h),
-                                  // Name and Age
+                                  // Name
                                   Text(
-                                    'Jenny Gomes 23',
+                                    displayName,
                                     style: TextStyle(
                                       fontSize: 24.sp,
                                       fontWeight: FontWeight.bold,
@@ -72,7 +78,7 @@ class LockedProfileScreen extends StatelessWidget {
                                   ),
                                   const SizedBox(height: 8),
 
-                                  // Location
+                                  // Distance
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -85,7 +91,7 @@ class LockedProfileScreen extends StatelessWidget {
                                       ),
                                       SizedBox(width: 4),
                                       Text(
-                                        'Approximate 400 km',
+                                        distText,
                                         style: TextStyle(
                                           fontSize: 14.sp,
                                           color: Theme.of(
@@ -173,7 +179,6 @@ class LockedProfileScreen extends StatelessWidget {
                               height: 130,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                // Border color
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.15),
@@ -182,39 +187,51 @@ class LockedProfileScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              padding: const EdgeInsets.all(
-                                4,
-                              ), // Border thickness
+                              padding: const EdgeInsets.all(4),
                               child: ClipOval(
-                                child: Image.network(
-                                  'https://images.unsplash.com/photo-1500648767791-00dcc994a43e',
-                                  fit: BoxFit.cover,
-                                  loadingBuilder:
-                                      (context, child, loadingProgress) {
-                                        if (loadingProgress == null) {
-                                          return child;
-                                        }
-                                        return const Center(
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                          ),
-                                        );
-                                      },
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.surfaceVariant,
-                                      child: Icon(
-                                        Icons.person,
-                                        size: 60,
-                                        color: Theme.of(
-                                          context,
-                                        ).colorScheme.onSurfaceVariant,
+                                child: resolvedAvatar != null
+                                    ? Image.network(
+                                        resolvedAvatar,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                          if (loadingProgress == null) {
+                                            return child;
+                                          }
+                                          return const Center(
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
+                                          );
+                                        },
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                          return Container(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .surfaceVariant,
+                                            child: Icon(
+                                              Icons.person,
+                                              size: 60,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                            ),
+                                          );
+                                        },
+                                      )
+                                    : Container(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .surfaceVariant,
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 60,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                        ),
                                       ),
-                                    );
-                                  },
-                                ),
                               ),
                             ),
                           ),
@@ -276,7 +293,7 @@ class LockedProfileScreen extends StatelessWidget {
 
   PreferredSize _buildAppBar(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(56), // AppBar height
+      preferredSize: const Size.fromHeight(56),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Row(
