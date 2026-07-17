@@ -38,11 +38,16 @@ class _ChatScreenState extends State<ChatScreen> {
 
   String _tabLabel(AppLocalizations loc, int index) {
     switch (index) {
-      case 0: return loc.translate('waves');
-      case 1: return loc.translate('private_tab');
-      case 2: return loc.translate('event_tab');
-      case 3: return loc.translate('community');
-      default: return '';
+      case 0:
+        return loc.translate('waves');
+      case 1:
+        return loc.translate('private_tab');
+      case 2:
+        return loc.translate('event_tab');
+      case 3:
+        return loc.translate('community');
+      default:
+        return '';
     }
   }
 
@@ -447,7 +452,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       SizedBox(width: 4.w),
                       Flexible(
                         child: Text(
-                          '${loc.translate('wavedAt')} ${wave.vibe.title}',
+                          wave.vibe?.title != null
+                              ? '${loc.translate('wavedAt')} ${wave.vibe!.title}'
+                              : loc.translate('wavedYou'),
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: theme.colorScheme.onSurfaceVariant,

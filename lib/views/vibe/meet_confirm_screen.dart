@@ -4,12 +4,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:vibe_now/core/constant/credential.dart';
+import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/incoming_wave.dart';
 import 'package:vibe_now/views/common/cancel_button.dart';
 import 'package:vibe_now/views/common/custom_elevated_button.dart';
+import 'package:vibe_now/views/qr_verification/qr_verification_screen.dart';
 
 class MeetupConfirmationScreen extends StatefulWidget {
   final IncomingWave wave;
@@ -203,24 +205,15 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
                 onMapCreated: (controller) {
                   final s = _senderPos;
                   final m = _meetupPos;
-                  if (s.latitude != m.latitude ||
-                      s.longitude != m.longitude) {
+                  if (s.latitude != m.latitude || s.longitude != m.longitude) {
                     final bounds = LatLngBounds(
                       southwest: LatLng(
-                        s.latitude < m.latitude
-                            ? s.latitude
-                            : m.latitude,
-                        s.longitude < m.longitude
-                            ? s.longitude
-                            : m.longitude,
+                        s.latitude < m.latitude ? s.latitude : m.latitude,
+                        s.longitude < m.longitude ? s.longitude : m.longitude,
                       ),
                       northeast: LatLng(
-                        s.latitude > m.latitude
-                            ? s.latitude
-                            : m.latitude,
-                        s.longitude > m.longitude
-                            ? s.longitude
-                            : m.longitude,
+                        s.latitude > m.latitude ? s.latitude : m.latitude,
+                        s.longitude > m.longitude ? s.longitude : m.longitude,
                       ),
                     );
                     controller.animateCamera(
@@ -237,24 +230,16 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
               width: double.infinity,
               padding: EdgeInsets.all(20.w),
               decoration: BoxDecoration(
-                gradient: AppColors.primaryGradientRotated.withOpacity(
-                  0.08,
-                ),
+                gradient: AppColors.primaryGradientRotated.withOpacity(0.08),
                 borderRadius: BorderRadius.circular(16.r),
               ),
               child: Column(
                 children: [
                   if (distanceText.isNotEmpty)
-                    _buildInfoRow(
-                      Assets.icons.calendarColor,
-                      distanceText,
-                    ),
+                    _buildInfoRow(Assets.icons.calendarColor, distanceText),
                   if (meetupAddress.isNotEmpty) ...[
                     SizedBox(height: 12.h),
-                    _buildInfoRow(
-                      Assets.icons.locationColor,
-                      meetupAddress,
-                    ),
+                    _buildInfoRow(Assets.icons.locationColor, meetupAddress),
                   ],
                   if (scheduledAtText.isNotEmpty) ...[
                     SizedBox(height: 12.h),
@@ -266,6 +251,61 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
                 ],
               ),
             ),
+
+            SizedBox(height: 20.h),
+
+            // Show QR code button — uses the dedicated QR screen
+            if (widget.wave.vibe?.qrCodeImage != null ||
+                widget.wave.qrCodeImage != null ||
+                widget.wave.qrCodeValue != null)
+              Padding(
+                padding: EdgeInsets.only(bottom: 24.h),
+                child: Column(
+                  children: [
+                    // Hint text above the button
+                    Text(
+                      loc.translate('showQRToVerify'),
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    SizedBox(height: 12.h),
+                    // Gradient button
+                    GestureDetector(
+                      onTap: () => _showQRFullScreen(context),
+                      child: Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradientRotated,
+                          borderRadius: BorderRadius.circular(24.r),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.qr_code_2_rounded,
+                              color: Colors.white,
+                              size: 20.sp,
+                            ),
+                            SizedBox(width: 8.w),
+                            Text(
+                              loc.translate('showQRCode'),
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
             SizedBox(height: 30.h),
 
@@ -295,6 +335,23 @@ class _MeetupConfirmationScreenState extends State<MeetupConfirmationScreen> {
             ),
             SizedBox(height: 40.h),
           ],
+        ),
+      ),
+    );
+  }
+
+  void _showQRFullScreen(BuildContext context) {
+    final qrUrl = widget.wave.vibe?.qrCodeImage ?? widget.wave.qrCodeImage;
+    final qrValue = widget.wave.qrCodeValue;
+    if (qrUrl == null && qrValue == null) return;
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => QRVerificationScreen(
+          qrContext: QRContext.chats,
+          showQRCodeOnly: true,
+          qrCodeUrl: qrUrl,
+          qrCodeValue: qrValue,
         ),
       ),
     );

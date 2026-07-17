@@ -541,7 +541,9 @@ class AppLocalizationsDe {
     'areYouSureDeletePhoto': 'Möchten Sie dieses Foto wirklich löschen?',
     'photoAdded': 'Foto erfolgreich hinzugefügt',
     'failedToUpload':
-        'Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.',    'enterYourLocation': 'Standort eingeben',
+        'Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.',    'showQRCode': 'QR-Code anzeigen',
+    'showQRToVerify': 'Zeigen Sie diesen QR-Code zur Verifikation des Treffens',
+    'enterYourLocation': 'Standort eingeben',
     'searchInterestHint': 'Tippen, um weitere Interessen zu finden\u2026',
     'noInterestAddedYet': 'Noch keine Interessen hinzugefügt',
     'noResultsFound': 'Keine Ergebnisse gefunden',
@@ -604,6 +606,7 @@ class AppLocalizationsDe {
     'membersPerCommunity': 'Mitglieder / Community',
     'eventsPerMonth': 'Veranstaltungen / Monat',
     'participantsPerEvent': 'Teilnehmer / Veranstaltung',
+    'wavedYou': 'Hat dir gewunken',
     'wavedAt': 'Welle gesendet bei',
     'unlimitedWaves': 'Unbegrenzte Wellen',
     'unlimitedCommunities': 'Unbegrenzte Communities',

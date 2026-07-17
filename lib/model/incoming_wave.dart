@@ -1,31 +1,40 @@
 class IncomingWave {
   final int waveId;
+  final String waveType;
   final String status;
   final String createdAt;
-  final WaveVibe vibe;
+  final WaveVibe? vibe;
   final WaveSender sender;
   final WaveSender? receiver;
   final int? distanceInMeters;
   final String? distanceText;
   final WaveMeetup? meetup;
+  final String? qrCodeValue;
+  final String? qrCodeImage;
 
   IncomingWave({
     required this.waveId,
+    required this.waveType,
     required this.status,
     required this.createdAt,
-    required this.vibe,
+    this.vibe,
     required this.sender,
     this.receiver,
     this.distanceInMeters,
     this.distanceText,
     this.meetup,
+    this.qrCodeValue,
+    this.qrCodeImage,
   });
 
   factory IncomingWave.fromJson(Map<String, dynamic> json) => IncomingWave(
         waveId: json['wave_id'],
+        waveType: json['wave_type'] ?? '',
         status: json['status'] ?? '',
         createdAt: json['created_at'] ?? '',
-        vibe: WaveVibe.fromJson(json['vibe']),
+        vibe: json['vibe'] != null
+            ? WaveVibe.fromJson(json['vibe'])
+            : null,
         sender: WaveSender.fromJson(json['sender']),
         receiver: json['receiver'] != null
             ? WaveSender.fromJson(json['receiver'])
@@ -35,19 +44,21 @@ class IncomingWave {
         meetup: json['meetup'] != null
             ? WaveMeetup.fromJson(json['meetup'])
             : null,
+        qrCodeValue: json['qr_code_value'],
+        qrCodeImage: json['qr_code_image'],
       );
 }
 
 class WaveVibe {
   final int id;
-  final String title;
+  final String? title;
   final String status;
   final String? qrCodeValue;
   final String? qrCodeImage;
 
   WaveVibe({
     required this.id,
-    required this.title,
+    this.title,
     required this.status,
     this.qrCodeValue,
     this.qrCodeImage,
@@ -55,7 +66,7 @@ class WaveVibe {
 
   factory WaveVibe.fromJson(Map<String, dynamic> json) => WaveVibe(
         id: json['id'],
-        title: json['title'] ?? '',
+        title: json['title'],
         status: json['status'] ?? '',
         qrCodeValue: json['qr_code_value'],
         qrCodeImage: json['qr_code_image'],
