@@ -1,3 +1,5 @@
+import 'package:vibe_now/model/incoming_wave.dart';
+
 class Actor {
   final String id;
   final String fullName;
@@ -41,23 +43,92 @@ class RelatedObject {
   final Location? location;
   final double? distanceKm;
 
+  // Wave-specific fields (for wave-type related objects)
+  final int? waveId;
+  final String? waveType;
+  final String? waveStatus;
+  final String? waveCreatedAt;
+  final Map<String, dynamic>? waveSenderRaw;
+  final Map<String, dynamic>? waveReceiverRaw;
+  final int? distanceInMeters;
+  final String? distanceText;
+  final Map<String, dynamic>? waveMeetupRaw;
+  final Map<String, dynamic>? waveVibeRaw;
+  final String? qrCodeValue;
+  final String? qrCodeImage;
+
   RelatedObject({
     required this.type,
     required this.id,
     this.title,
     this.location,
     this.distanceKm,
+    this.waveId,
+    this.waveType,
+    this.waveStatus,
+    this.waveCreatedAt,
+    this.waveSenderRaw,
+    this.waveReceiverRaw,
+    this.distanceInMeters,
+    this.distanceText,
+    this.waveMeetupRaw,
+    this.waveVibeRaw,
+    this.qrCodeValue,
+    this.qrCodeImage,
   });
 
   factory RelatedObject.fromJson(Map<String, dynamic> json) {
+    // For wave-type related objects, the wave_id is used instead of id
+    final waveId = json['wave_id'] as int?;
+    final objId = json['id'] ?? 0;
+
     return RelatedObject(
       type: json['type'] ?? '',
-      id: json['id'] ?? 0,
+      id: waveId ?? objId,
       title: json['title'],
       location: json['location'] != null
           ? Location.fromJson(json['location'])
           : null,
       distanceKm: (json['distance_km'] as num?)?.toDouble(),
+      waveId: waveId,
+      waveType: json['wave_type'],
+      waveStatus: json['status'],
+      waveCreatedAt: json['created_at'],
+      waveSenderRaw: json['sender'] as Map<String, dynamic>?,
+      waveReceiverRaw: json['receiver'] as Map<String, dynamic>?,
+      distanceInMeters: (json['distance_in_meters'] as num?)?.toInt(),
+      distanceText: json['distance_text'],
+      waveMeetupRaw: json['meetup'] as Map<String, dynamic>?,
+      waveVibeRaw: json['vibe'] as Map<String, dynamic>?,
+      qrCodeValue: json['qr_code_value'],
+      qrCodeImage: json['qr_code_image'],
+    );
+  }
+
+  /// Converts this RelatedObject to an IncomingWave (for wave-type notifications)
+  IncomingWave toIncomingWave() {
+    return IncomingWave(
+      waveId: waveId ?? id,
+      waveType: waveType ?? '',
+      status: waveStatus ?? '',
+      createdAt: waveCreatedAt ?? '',
+      sender: waveSenderRaw != null
+          ? WaveSender.fromJson(waveSenderRaw!)
+          : WaveSender(
+              id: '', email: '', fullName: 'Unknown', avatar: ''),
+      receiver: waveReceiverRaw != null
+          ? WaveSender.fromJson(waveReceiverRaw!)
+          : null,
+      distanceInMeters: distanceInMeters,
+      distanceText: distanceText,
+      meetup: waveMeetupRaw != null
+          ? WaveMeetup.fromJson(waveMeetupRaw!)
+          : null,
+      vibe: waveVibeRaw != null
+          ? WaveVibe.fromJson(waveVibeRaw!)
+          : null,
+      qrCodeValue: qrCodeValue,
+      qrCodeImage: qrCodeImage,
     );
   }
 }

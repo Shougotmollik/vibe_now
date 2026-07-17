@@ -9,13 +9,18 @@ import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/controller/notification_controller.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/community.dart';
+import 'package:vibe_now/model/incoming_wave.dart';
 import 'package:vibe_now/model/notification.dart';
+import 'package:vibe_now/views/chat/chat_wave_screen.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/notification/community_awaitting_details_screen.dart';
 import 'package:vibe_now/views/community/meetup_details_screen.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 import 'package:vibe_now/views/notification/widgets/community_notification_card.dart';
 import 'package:vibe_now/views/notification/widgets/event_notification_card.dart';
 import 'package:vibe_now/views/notification/widgets/notification_shimmer.dart';
+import 'package:vibe_now/views/vibe/meet_confirm_screen.dart';
+import 'package:vibe_now/views/vibe/vibe_connect_screen.dart';
 
 class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
@@ -217,11 +222,86 @@ class _NotificationScreenState extends State<NotificationScreen> {
     });
   }
 
+  void _navigateToWaveScreen(NotificationModel notification) {
+    final relObj = notification.relatedObject;
+    if (relObj == null) return;
+
+    // Build the IncomingWave from related_object data
+    final wave = relObj.toIncomingWave();
+    final notifType = notification.notificationType;
+
+    switch (notifType) {
+      case 'vibe_wave_received':
+        context.pushNamed(RouteNames.waveScreen, extra: wave);
+        break;
+      case 'vibe_wave_accepted':
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => VibeConnectScreen(wave: wave),
+          ),
+        );
+        break;
+      case 'vibe_meetup_suggested':
+        // Extract meetup details from the wave's meetup data
+        final meetup = wave.meetup;
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => MeetupConfirmationScreen(
+              wave: wave,
+              locationType: meetup?.locationType,
+              latitude: meetup?.latitude,
+              longitude: meetup?.longitude,
+              address: meetup?.address,
+              scheduledAt: meetup?.scheduledAt,
+            ),
+          ),
+        );
+        break;
+    }
+  }
+
+  void _navigateToEventScreen(NotificationModel notification) {
+    final relObj = notification.relatedObject;
+    if (relObj == null) return;
+
+    // Navigate to event details with the event ID from related_object
+    context.pushNamed(
+      RouteNames.eventDetailsScreen,
+      extra: relObj.id,
+    );
+  }
+
+  void _navigateToCommunityScreen(NotificationModel notification) {
+    final relObj = notification.relatedObject;
+    if (relObj == null) return;
+
+    // Navigate to the awaiting details screen which fetches data dynamically
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => CommunityAwaitingDetailsScreen(
+          communityId: relObj.id,
+        ),
+      ),
+    );
+  }
+
   Widget _buildNotificationCard(NotificationModel notification, int tabIndex) {
     return GestureDetector(
       onTap: () {
         if (!notification.isRead) {
           _controller.readNotificationById(ids: [notification.id]);
+        }
+        // Navigate to the appropriate screen based on tab
+        switch (tabIndex) {
+          case 0:
+            _navigateToWaveScreen(notification);
+            break;
+          case 1:
+            _navigateToEventScreen(notification);
+            break;
+          case 2:
+            _navigateToCommunityScreen(notification);
+            break;
         }
       },
       child: Container(
