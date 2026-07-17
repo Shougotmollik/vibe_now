@@ -66,6 +66,8 @@ class AppLocalizationsDe {
     'failed': 'Fehlgeschlagen',
     'warning': 'Warnung',
     'info': 'Info',
+    'saving': 'Speichern...',
+    'selectDate': 'Datum auswählen',
     'networkError': 'Netzwerkfehler. Bitte versuchen Sie es erneut.',
     'somethingWentWrong':
         'Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.',
@@ -539,10 +541,15 @@ class AppLocalizationsDe {
     'areYouSureDeletePhoto': 'Möchten Sie dieses Foto wirklich löschen?',
     'photoAdded': 'Foto erfolgreich hinzugefügt',
     'failedToUpload':
-        'Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.',
+        'Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.',    'enterYourLocation': 'Standort eingeben',
+    'searchInterestHint': 'Tippen, um weitere Interessen zu finden\u2026',
+    'noInterestAddedYet': 'Noch keine Interessen hinzugefügt',
+    'noResultsFound': 'Keine Ergebnisse gefunden',
+    'interestUpdateSuccess': 'Interessen erfolgreich aktualisiert',
+    'interestUpdateFailed': 'Interessen konnten nicht aktualisiert werden',
+    'maxInterestSelection': 'Sie können maximal {count} Interessen auswählen',
     'profilePhotoUpdated': 'Profilfoto aktualisiert',
-    'failedToUpdatePhoto':
-        'Profilfoto konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.',
+    'failedToUpdatePhoto': 'Profilfoto konnte nicht aktualisiert werden. Bitte versuchen Sie es erneut.',
     'changePhoto': 'Ändern',
     'failedToPickImage': 'Bild konnte nicht ausgewählt werden',
     'updateEvent': 'Aktualisieren',

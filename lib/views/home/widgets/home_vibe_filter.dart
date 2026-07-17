@@ -21,8 +21,15 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
   String selectedDate = 'Today';
   List<String> selectedCategories = [];
   String selectedGender = 'Women';
+  final RxSet<String> _selectedFilterInterests = <String>{}.obs;
 
-  final ProfileController profileController = Get.put(ProfileController());
+  final ProfileController profileController = Get.find<ProfileController>();
+
+  @override
+  void initState() {
+    super.initState();
+    profileController.fetchFlatInterests();
+  }
 
   // Options
   final List<String> lookingForOptions = [
@@ -46,6 +53,7 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
       selectedDate = 'Today';
       selectedCategories.clear();
     });
+    _selectedFilterInterests.clear();
   }
 
   @override
@@ -388,152 +396,85 @@ class _HomeVibeFilterState extends State<HomeVibeFilter> {
         Text(
           'Interests',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w500,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 12.h),
 
         Obx(() {
-          return Column(
-            children: profileController.interestGroups.map((group) {
-              final isExpanded = profileController.expandedParents.contains(
-                group.parent,
-              );
-              final isSelected = profileController.isParentSelected(group);
+          final all = profileController.flatInterests;
 
-              final isPartial = profileController.isParentPartiallySelected(
-                group,
-              );
+          if (profileController.isFlatInterestsLoading.value && all.isEmpty) {
+            return const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16),
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            );
+          }
 
-              return Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4.0),
-                child: Column(
-                  children: [
-                    // Parent
-                    GestureDetector(
-                      onTap: () => profileController.toggleExpand(group.parent),
-                      child: newMethod(
-                        isSelected,
-                        isPartial,
-                        group,
-                        isExpanded,
-                      ),
+          if (all.isEmpty) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Text(
+                'No interests available',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14.sp,
+                ),
+              ),
+            );
+          }
+
+          return Wrap(
+            spacing: 8.w,
+            runSpacing: 8.h,
+            children: all.map((interest) {
+              final selected =
+                  _selectedFilterInterests.contains(interest.name);
+              return GestureDetector(
+                onTap: () {
+                  if (selected) {
+                    _selectedFilterInterests.remove(interest.name);
+                  } else {
+                    _selectedFilterInterests.add(interest.name);
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: selected
+                        ? AppColors.primaryGradientRotated
+                        : null,
+                    color: selected
+                        ? null
+                        : Theme.of(context).colorScheme.surfaceVariant,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Text(
+                    interest.name,
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: selected
+                          ? Colors.white
+                          : Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant,
+                      fontWeight:
+                          selected ? FontWeight.w600 : FontWeight.w400,
                     ),
-
-                    // Subcategories
-                    SizedBox(
-                      width: double.infinity,
-                      child: AnimatedSize(
-                        duration: const Duration(milliseconds: 250),
-                        curve: Curves.easeInOut,
-                        child: isExpanded
-                            ? Wrap(
-                                alignment: WrapAlignment.start,
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: [
-                                  ...group.children.map((sub) {
-                                    final selected = profileController
-                                        .selectedSubcategories
-                                        .contains(sub.name);
-
-                                    return GestureDetector(
-                                      onTap: () =>
-                                          profileController.toggleSubcategory(
-                                            sub.name,
-                                            group.parent,
-                                          ),
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 12.w,
-                                          vertical: 8.h,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          gradient: selected
-                                              ? AppColors.primaryGradientRotated
-                                              : null,
-                                          color: selected
-                                              ? null
-                                              : Theme.of(
-                                                  context,
-                                                ).colorScheme.surfaceVariant,
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          spacing: 4.w,
-                                          children: [
-                                            sub.icon.svg(
-                                              height: 16.h,
-                                              width: 16.h,
-                                              color: selected
-                                                  ? Colors.white
-                                                  : Theme.of(context)
-                                                        .colorScheme
-                                                        .onSurfaceVariant,
-                                            ),
-                                            Text(
-                                              sub.name,
-                                              style: TextStyle(
-                                                fontSize: 13.sp,
-                                                color: selected
-                                                    ? Colors.white
-                                                    : Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurfaceVariant,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }).toList(),
-                                ],
-                              )
-                            : const SizedBox.shrink(),
-                      ),
-                    ),
-
-                    SizedBox(height: 12.h),
-                  ],
+                  ),
                 ),
               );
             }).toList(),
           );
         }),
       ],
-    );
-  }
-
-  Widget newMethod(
-    bool isSelected,
-    bool isPartial,
-    Interest group,
-    bool isExpanded,
-  ) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 8.h),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              group.parent,
-              style: TextStyle(
-                fontWeight: FontWeight.w500,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-          ),
-          Icon(
-            isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
-        ],
-      ),
     );
   }
 }

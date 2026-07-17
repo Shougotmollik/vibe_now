@@ -11,7 +11,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vibe_now/design_system/tokens/colors.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/utils.dart' as utils;
 
@@ -87,7 +86,11 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
         zoom: 14.4746,
       );
 
-      _handleTap(widget.initialPosition!);
+      // Defer _handleTap to after the first frame so that
+      // AppLocalizations.of(context) is available inside it.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _handleTap(widget.initialPosition!);
+      });
     } else {
       _initialPosition = CameraPosition(target: _kGooglePlex, zoom: 14.4746);
     }
@@ -162,15 +165,15 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
 
       markers.clear(); // If you want only one marker at a time
       markers.add(
-        Marker(
-          markerId: MarkerId(position.hashCode.toString()),
-          position: LatLng(position.latitude, position.longitude),
-          infoWindow: InfoWindow(
-          title: AppLocalizations.of(context).translate('selectedLocation'),
-          snippet: '${position.latitude}, ${position.longitude}',
-          ),
-        ),
-      );
+            Marker(
+              markerId: MarkerId(position.hashCode.toString()),
+              position: LatLng(position.latitude, position.longitude),
+              infoWindow: InfoWindow(
+                title: _markerTitle(),
+                snippet: '${position.latitude}, ${position.longitude}',
+              ),
+            ),
+          );
 
       setState(() {
         _selectedPlaceDetails = null;
@@ -220,6 +223,17 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
 
   bool _handlingTap = false;
 
+  /// Returns a localized title for the marker info window.
+  /// Uses a hardcoded fallback so it can be safely called from initState
+  /// when [AppLocalizations.of(context)] may not yet be available.
+  String _markerTitle() {
+    try {
+      return AppLocalizations.of(context).translate('selectedLocation');
+    } catch (_) {
+      return 'Selected Location';
+    }
+  }
+
   // This method handles the tap event on the map
   void _handleTap(LatLng tappedPoint) async {
     if (!mounted || _handlingTap) return;
@@ -233,8 +247,7 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
           ),
           position: tappedPoint,
           infoWindow: InfoWindow(
-            title:
-                AppLocalizations.of(context).translate('selectedLocation'),
+            title: _markerTitle(),
             snippet: '${tappedPoint.latitude}, ${tappedPoint.longitude}',
           ),
         ),
@@ -528,14 +541,15 @@ class _LocationSelectionScreenState extends State<LocationSelectionScreen> {
 
     markers.clear();
     markers.add(
-      Marker(
-        markerId: MarkerId(item.placeId),
-        position: LatLng(location['lat'], location['lng']),
-        infoWindow: InfoWindow(            title: AppLocalizations.of(context).translate('selectedLocation'),
+        Marker(
+          markerId: MarkerId(item.placeId),
+          position: LatLng(location['lat'], location['lng']),
+          infoWindow: InfoWindow(
+            title: _markerTitle(),
             snippet: '${location['lat']}, ${location['lng']}',
+          ),
         ),
-      ),
-    );
+      );
   }
 
   Widget _photoWidget({
