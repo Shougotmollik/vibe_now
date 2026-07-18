@@ -830,5 +830,8 @@ class AppLocalizationsEn {
     // ──── BLOCKED ACCOUNTS EMPTY STATE ────
     'noBlockedAccountsTitle': 'No blocked accounts',
     'noBlockedAccountsDesc': 'Users you block will appear here.',
+
+    // ──── REPORT ────
+    'selectReason': 'Please select a reason',
   };
 }

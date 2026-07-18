@@ -48,6 +48,8 @@ class ApiConstant {
   static const String scanWaveMeetupQR = "/vibes/scan-wave-meetup-qr";
 
 
+  static const String reportUser = "/auth/report-user";
+
   // WebSocket
   static const String chatSocket = "/ws/chat/";
   static const String chatListSocket = "/ws/chat/list/";

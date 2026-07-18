@@ -865,5 +865,8 @@ class AppLocalizationsDe {
     // ──── BLOCKED ACCOUNTS EMPTY STATE ────
     'noBlockedAccountsTitle': 'Keine blockierten Konten',
     'noBlockedAccountsDesc': 'Benutzer, die du blockierst, werden hier angezeigt.',
+
+    // ──── REPORT ────
+    'selectReason': 'Bitte wähle einen Grund aus',
   };
 }

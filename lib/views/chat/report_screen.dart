@@ -3,151 +3,273 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
-import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/controller/profile_controller.dart';
 import 'package:vibe_now/design_system/components/buttons/primary_button.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
+import 'package:vibe_now/views/common/custom_elevated_button.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
-class ReportScreen extends StatelessWidget {
-  const ReportScreen({super.key});
+class ReportScreen extends StatefulWidget {
+  final String? reportedUserId;
+
+  const ReportScreen({super.key, this.reportedUserId});
+
+  @override
+  State<ReportScreen> createState() => _ReportScreenState();
+}
+
+class _ReportScreenState extends State<ReportScreen> {
+  final List<String> _reasons = [
+    'Spam or Misinformation',
+    'Hate Speech or Violence',
+    'Threats or Harassment',
+    'Other',
+  ];
+
+  int _selectedIndex = -1;
+  final TextEditingController _detailsController = TextEditingController();
+  bool _isSubmitting = false;
+
+  @override
+  void dispose() {
+    _detailsController.dispose();
+    super.dispose();
+  }
+
+  String _getLocalizedReason(String reason, AppLocalizations loc) {
+    switch (reason) {
+      case 'Spam or Misinformation':
+        return loc.translate('reportSpam');
+      case 'Hate Speech or Violence':
+        return loc.translate('reportHateSpeech');
+      case 'Threats or Harassment':
+        return loc.translate('reportThreats');
+      case 'Other':
+        return loc.translate('others');
+      default:
+        return reason;
+    }
+  }
+
+  Future<void> _submitReport() async {
+    if (_selectedIndex < 0) {
+      AppSnackbar.show(
+        message: AppLocalizations.of(context).translate('selectReason'),
+        type: SnackType.info,
+      );
+      return;
+    }
+
+    if (widget.reportedUserId == null || widget.reportedUserId!.isEmpty) {
+      AppSnackbar.show(
+        message: AppLocalizations.of(context).translate('somethingWentWrong'),
+        type: SnackType.error,
+      );
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    final reason = _reasons[_selectedIndex];
+    final details = _detailsController.text.trim();
+
+    final profileController = Get.find<ProfileController>();
+    final success = await profileController.reportUser(
+      reportedUserId: widget.reportedUserId!,
+      reason: reason,
+      details: details.isNotEmpty ? details : reason,
+    );
+
+    if (!mounted) return;
+    setState(() => _isSubmitting = false);
+
+    if (success) {
+      final loc = AppLocalizations.of(context);
+      final reportMessage = '${loc.translate('youHaveReported')}\n\n${loc.translate('youWillNotReceive')}';
+
+      await showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (ctx) => Center(
+          child: Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            child: AnimatedDialogContent(
+              content: reportMessage,
+              accept: true,
+            ),
+          ),
+        ),
+      );
+      if (mounted) {
+        context.pop();
+      }
+    } else {
+      AppSnackbar.show(
+        message: AppLocalizations.of(context).translate('somethingWentWrong'),
+        type: SnackType.error,
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            _buildAppBar(context),
-
-            SizedBox(height: 32.h),
-
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  Text(
-                    'If you want to report something here you can explain',
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w400,
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.85),
-                    ),
+        child: Padding(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomAppBar(
+                title: loc.translate('report'),
+                canBack: true,
+              ),
+              SizedBox(height: 14.h),
+              Text(
+                loc.translate('whatHappened'),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                loc.translate('reportHint'),
+                style: TextStyle(
+                  fontSize: 12.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              SizedBox(height: 16.h),
+              // Reason list
+              Expanded(
+                child: ListView.builder(
+                  itemCount: _reasons.length,
+                  itemBuilder: (context, index) {
+                    return GestureDetector(
+                      onTap: () => setState(() => _selectedIndex = index),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10.w),
+                        child: Row(
+                          children: [
+                            _selectedIndex == index
+                                ? Assets.icons.checkboxGradient.svg(
+                                    width: 22.w,
+                                    height: 22.h,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(
+                                    width: 22.w,
+                                    height: 22.h,
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Theme.of(context).dividerColor,
+                                        width: 1.5,
+                                      ),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: Text(
+                                _getLocalizedReason(_reasons[index], loc),
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400,
+                                  color:
+                                      Theme.of(context).colorScheme.onSurface,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              // Details text field
+              if (_selectedIndex >= 0) ...[
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: const Color(0xffAEAEAE)),
+                    borderRadius: BorderRadius.circular(24.r),
                   ),
-                  SizedBox(height: 18.h),
-                  TextField(
-                    maxLines: 3,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
+                  child: TextFormField(
+                    controller: _detailsController,
+                    maxLines: 4,
                     decoration: InputDecoration(
-                      hintText: 'Explain here... ',
+                      hintText: loc.translate('reportHint'),
                       hintStyle: TextStyle(
                         fontSize: 14.sp,
-                        color: Color(0xffAEAEAE),
-                        fontWeight: FontWeight.w400,
+                        color:
+                            Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.12),
-                        ),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.12),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12.r),
-                        borderSide: BorderSide(
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.12),
-                        ),
-                      ),
-                      filled: true,
-                      fillColor: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.05),
                       contentPadding: EdgeInsets.symmetric(
-                        vertical: 16.h,
+                        vertical: 12.h,
                         horizontal: 16.w,
                       ),
-                      isDense: true,
+                      border: InputBorder.none,
                     ),
+                  ),
+                ),
+                SizedBox(height: 16.h),
+              ],
+              // Buttons
+              Row(
+                spacing: 8.w,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xffAEAEAE)),
+                        borderRadius: BorderRadius.circular(24.r),
+                      ),
+                      child: CustomElevatedButton(
+                        onTap: () {
+                          setState(() {
+                            _selectedIndex = -1;
+                            _detailsController.clear();
+                          });
+                        },
+                        buttonText: loc.translate('clear'),
+                        btnColor: Theme.of(context).colorScheme.surface,
+                        textColor: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: _isSubmitting
+                        ? Center(
+                            child: SizedBox(
+                              width: 24.w,
+                              height: 24.h,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColors.primary,
+                              ),
+                            ),
+                          )
+                        : PrimaryButton.text(
+                            onPressed: _submitReport,
+                            text: loc.translate('submit'),
+                          ),
                   ),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAppBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          CustomAppBar(title: AppLocalizations.of(context).translate('whatHappened')),
-          GestureDetector(
-            onTap: () async {
-              await showDialog(
-                context: context,
-                barrierDismissible: true,
-                builder: (context) {
-                  return Center(
-                    child: Dialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      elevation: 0,
-                      backgroundColor: Colors.transparent,
-                      child: AnimatedDialogContent(
-                        content:
-                            'You have reported Jenny Smith. You will not receive any notifications from this user.',
-                        accept: false,
-                      ),
-                    ),
-                  );
-                },
-              );
-              // context.pushNamed(RouteNames.chatScreen);
-              context.pop();
-              context.pop();
-            },
-            child: Container(
-              width: 80.w,
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(40.r),
-                shape: BoxShape.rectangle,
-                gradient: AppColors.primaryGradientRotated,
-              ),
-              child: Center(
-                child: Text(
-                  'Send',
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
+              SizedBox(height: 8.h),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }

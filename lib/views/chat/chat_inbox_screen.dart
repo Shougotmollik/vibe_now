@@ -769,10 +769,17 @@ class _ChatInboxScreenState extends State<ChatInboxScreen>
                   Text(AppLocalizations.of(context).translate('report')),
                 ],
               ),
-              onTap: () => Future.delayed(
-                Duration.zero,
-                () => context.pushNamed(RouteNames.reportScreen),
-              ),
+              onTap: () {
+                final goRouter = GoRouter.of(context);
+                final reportedUserId = _chat?.otherMember?.id;
+                Future.delayed(
+                  Duration.zero,
+                  () => goRouter.pushNamed(
+                    RouteNames.reportScreen,
+                    extra: {'reportedUserId': reportedUserId},
+                  ),
+                );
+              },
             ),
           ],
         ),

@@ -31,16 +31,17 @@ class ProfileController extends GetxController {
       final response = await CustomHttp.get(
         endpoint: ApiConstant.interest,
         need_auth: true,
-      );      if (response.ok) {
-                final data = response.data['data'] as List<dynamic>? ?? [];
-                flatInterests.value = data
-                    .map((e) => FlatInterest.fromJson(e as Map<String, dynamic>))
-                    .toList();
+      );
+      if (response.ok) {
+        final data = response.data['data'] as List<dynamic>? ?? [];
+        flatInterests.value = data
+            .map((e) => FlatInterest.fromJson(e as Map<String, dynamic>))
+            .toList();
 
-                // Seed selected set from current profile interests
-                final currentInterests = account.value?.profile.interests ?? [];
-                selectedInterestNames.assignAll(currentInterests.toSet());
-              }
+        // Seed selected set from current profile interests
+        final currentInterests = account.value?.profile.interests ?? [];
+        selectedInterestNames.assignAll(currentInterests.toSet());
+      }
     } catch (e) {
       debugPrint('ProfileController.fetchFlatInterests error: $e');
     } finally {
@@ -67,13 +68,10 @@ class ProfileController extends GetxController {
           : null;
       final msg = loc != null
           ? loc
-              .translate('maxInterestSelection')
-              .replaceFirst('{count}', maxInterestSelection.toString())
+                .translate('maxInterestSelection')
+                .replaceFirst('{count}', maxInterestSelection.toString())
           : 'You can select a maximum of $maxInterestSelection interests';
-      AppSnackbar.show(
-        message: msg,
-        type: SnackType.info,
-      );
+      AppSnackbar.show(message: msg, type: SnackType.info);
     } else {
       selectedInterestNames.add(name);
     }
@@ -133,8 +131,9 @@ class ProfileController extends GetxController {
   Future<void> fetchProfile({String? targetUserId}) async {
     try {
       isLoading.value = true;
-      final Map<String, dynamic>? queries =
-          targetUserId != null ? {'target_user_id': targetUserId} : null;
+      final Map<String, dynamic>? queries = targetUserId != null
+          ? {'target_user_id': targetUserId}
+          : null;
       final response = await CustomHttp.get(
         endpoint: ApiConstant.profile,
         need_auth: true,
@@ -259,7 +258,33 @@ class ProfileController extends GetxController {
     }
   }
 
-  /// Unblock a user by their block record ID.
+  // Report a user
+  Future<bool> reportUser({
+    required String reportedUserId,
+    required String reason,
+    required String details,
+  }) async {
+    try {
+      isLoading.value = true;
+      final response = await CustomHttp.post(
+        endpoint: ApiConstant.reportUser,
+        body: {
+          'reported_user_id': reportedUserId,
+          'reason': reason,
+          'details': details,
+        },
+        show_floating_error: false,
+      );
+      return response.ok;
+    } catch (e) {
+      debugPrint('ProfileController.reportUser error: $e');
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Unblock a user by their block record ID.
   Future<bool> unblockUser({
     required String targetUserId,
     required int blockRecordId,

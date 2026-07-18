@@ -286,7 +286,11 @@ void setupRouter(bool hasToken) {
       GoRoute(
         path: '/report-screen',
         name: RouteNames.reportScreen,
-        builder: (context, state) => const ReportScreen(),
+        builder: (context, state) {
+          final extra = state.extra;
+          final reportedUserId = extra is Map ? extra['reportedUserId'] as String? : null;
+          return ReportScreen(reportedUserId: reportedUserId);
+        },
       ),
       GoRoute(
         path: '/block-screen',

@@ -723,46 +723,7 @@ class _CommunityChatInboxScreenState extends State<CommunityChatInboxScreen>
           ),
         ],
       ),
-      actions: [
-        // PopupMenuButton<String>(
-        //   icon: Icon(
-        //     Icons.more_vert,
-        //     color: Theme.of(context).colorScheme.onSurface,
-        //   ),
-        //   offset: const Offset(0, 50),
-        //   color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        //   itemBuilder: (_) => [
-        //     PopupMenuItem<String>(
-        //       value: 'block',
-        //       child: Row(
-        //         children: [
-        //           Assets.icons.block.svg(width: 20.w, height: 20.h),
-        //           SizedBox(width: 8.w),
-        //           const Text('Block'),
-        //         ],
-        //       ),
-        //       onTap: () => Future.delayed(
-        //         Duration.zero,
-        //         () => context.pushNamed(RouteNames.blockScreen),
-        //       ),
-        //     ),
-        //     PopupMenuItem<String>(
-        //       value: 'report',
-        //       child: Row(
-        //         children: [
-        //           Assets.icons.report.svg(width: 20.w, height: 20.h),
-        //           SizedBox(width: 8.w),
-        //           const Text('Report'),
-        //         ],
-        //       ),
-        //       onTap: () => Future.delayed(
-        //         Duration.zero,
-        //         () => context.pushNamed(RouteNames.reportScreen),
-        //       ),
-        //     ),
-        //   ],
-        // ),
-      ],
+      actions: [],
     );
   }
 
