@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
+import 'package:get/get.dart';
+import 'package:vibe_now/controller/settings_controller.dart';
 import 'package:vibe_now/core/helper/app_snackbar.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
@@ -20,6 +21,8 @@ class DeleteReasonScreen extends StatefulWidget {
 }
 
 class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
+  final SettingsController settingsController = Get.find<SettingsController>();
+
   List<String> reasons = [
     "I need a short break",
     "I want to try something new",
@@ -31,25 +34,108 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
     "Other (please tell us more) — free text field",
   ];
   int selectedIndex = -1;
+  bool _isSubmitting = false;
 
   final TextEditingController _explainTEController = TextEditingController();
   final TextEditingController _passwordTEController = TextEditingController();
 
   @override
+  void dispose() {
+    _explainTEController.dispose();
+    _passwordTEController.dispose();
+    super.dispose();
+  }
+
+  String get _selectedReason {
+    if (selectedIndex >= 0 && selectedIndex < reasons.length) {
+      return reasons[selectedIndex];
+    }
+    return '';
+  }
+
+  String get _explanation => _explainTEController.text.trim();
+  String get _password => _passwordTEController.text.trim();
+
+  bool get _isPaused => widget.isPaused ?? false;
+
+  Future<void> _handleConfirm() async {
+    if (_password.isEmpty) {
+      AppSnackbar.show(
+        message: 'Please enter your password',
+        type: SnackType.info,
+      );
+      return;
+    }
+
+    if (_isSubmitting) return;
+    setState(() => _isSubmitting = true);
+
+    bool success;
+    if (_isPaused) {
+      success = await settingsController.accountPause(
+        reason: _selectedReason,
+        explanation: _explanation,
+        password: _password,
+      );
+    } else {
+      success = await settingsController.accountDelete(
+        reason: _selectedReason,
+        explanation: _explanation,
+        password: _password,
+      );
+    }
+
+    setState(() => _isSubmitting = false);
+    _passwordTEController.clear();
+
+    if (success && mounted) {
+      // Pop the password dialog
+      Navigator.of(context).pop();
+      // Navigate to the confirm/result screen
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => DeleteConfirmScreen(
+            isPaused: _isPaused,
+          ),
+        ),
+      );
+    } else if (mounted) {
+      AppSnackbar.show(
+        message: 'Failed to ${_isPaused ? "pause" : "delete"} account. Please try again.',
+        type: SnackType.info,
+      );
+    }
+  }
+
+  void _clearForm() {
+    setState(() {
+      selectedIndex = -1;
+    });
+    _explainTEController.clear();
+    _passwordTEController.clear();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final loc = AppLocalizations.of(context);
+
     return Scaffold(
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.all(16.w),
           child: Column(
             children: [
-              // _buildAppBar(),
-              CustomAppBar(title: AppLocalizations.of(context).translate('reason'), canBack: true),
+              CustomAppBar(
+                title: loc.translate('reason'),
+                canBack: true,
+              ),
 
               SizedBox(height: 14.h),
 
               Text(
-                "Give us a reason why you want to pause the account",
+                _isPaused
+                    ? "Give us a reason why you want to pause the account"
+                    : "Give us a reason why you want to delete the account",
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
@@ -74,8 +160,8 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                         borderRadius: BorderRadius.circular(24.r),
                       ),
                       child: CustomElevatedButton(
-                        onTap: () {},
-                        buttonText: AppLocalizations.of(context).translate('clear'),
+                        onTap: _clearForm,
+                        buttonText: loc.translate('clear'),
                         btnColor: Theme.of(context).colorScheme.surface,
                         textColor: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -83,137 +169,97 @@ class _DeleteReasonScreenState extends State<DeleteReasonScreen> {
                   ),
                   Expanded(
                     child: PrimaryButton.text(
-                      onPressed: () {
-                        // Navigator.pop(context);
-
-                        showDialog(
-                          context: context,
-                          builder: (context) => AlertDialog(
-                            backgroundColor: Theme.of(context).colorScheme.surface,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            contentPadding: EdgeInsets.all(16.w),
-                            content: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  "For security reasons, please confirm your password to proceed.",
-                                  style: TextStyle(
-                                    fontSize: 15.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: Theme.of(context).colorScheme.onSurface,
-                                  ),
-                                ),
-
-                                SizedBox(height: 24.h),
-
-                                TextFormField(
-                                  obscureText: true,
-                                  controller: _passwordTEController,
-                                  autofocus: true,
-                                  decoration: InputDecoration(
-                                    hintText: "Enter your password",
-                                    hintStyle: TextStyle(
-                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                                      fontSize: 14.sp,
-                                    ),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(12.r),
-                                      borderSide: BorderSide(
-                                        color: Theme.of(context).dividerColor,
-                                        width: 1.w,
-                                      ),
-                                    ),
-                                  ),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter your password';
-                                    } else if (value.length < 6) {
-                                      return 'Password must be at least 6 characters';
-                                    }
-                                    return null;
-                                  },
-                                ),
-
-                                SizedBox(height: 18.h),
-
-                                SizedBox(
-                                  height: 32.h,
-                                  child: Row(
-                                    spacing: 24.w,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Color(0xffAEAEAE),
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              24.r,
-                                            ),
-                                          ),
-                                          child: CustomElevatedButton(
-                                            btnColor: Theme.of(context).colorScheme.surface,
-                                            textColor: Theme.of(context).colorScheme.onSurface,
-                                            onTap: () {
-                                              Navigator.pop(context);
-                                            },
-                                            buttonText: AppLocalizations.of(context).translate('cancel'),
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: PrimaryButton.text(
-                                          onPressed: () {
-                                            if (_passwordTEController
-                                                .text
-                                                .isNotEmpty) {
-                                              // Navigator.pop(context);
-                                              // Navigator.pop(context);
-                                              // context.pushNamed(
-                                              //   RouteNames.deleteConfirmScreen,
-                                              //   extra: {
-                                              //     'isPaused': true,},
-                                              // );
-
-                                              Navigator.of(context).push(
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      DeleteConfirmScreen(
-                                                        isPaused:
-                                                            widget.isPaused,
-                                                      ),
-                                                ),
-                                              );
-                                            } else {
-                                              AppSnackbar.show(
-                                                message:
-                                                    'Please enter your password',
-                                                type: SnackType.info,
-                                              );
-                                            }
-                                            // // Navigator.pop(context);
-                                            _passwordTEController.clear();
-                                          },
-                                          text: AppLocalizations.of(context).translate('confirm'),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                      text: AppLocalizations.of(context).translate('save'),
+                      onPressed: () => _showPasswordDialog(context),
+                      isEnabled: !_isSubmitting,
+                      text: loc.translate('save'),
                     ),
                   ),
                 ],
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  void _showPasswordDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        contentPadding: EdgeInsets.all(16.w),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              "For security reasons, please confirm your password to proceed.",
+              style: TextStyle(
+                fontSize: 15.sp,
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+
+            SizedBox(height: 24.h),
+
+            TextFormField(
+              obscureText: true,
+              controller: _passwordTEController,
+              autofocus: true,
+              decoration: InputDecoration(
+                hintText: "Enter your password",
+                hintStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 14.sp,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: BorderSide(
+                    color: Theme.of(context).dividerColor,
+                    width: 1.w,
+                  ),
+                ),
+              ),
+            ),
+
+            SizedBox(height: 18.h),
+
+            SizedBox(
+              height: 32.h,
+              child: Row(
+                spacing: 24.w,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Color(0xffAEAEAE),
+                        ),
+                        borderRadius: BorderRadius.circular(24.r),
+                      ),
+                      child: CustomElevatedButton(
+                        btnColor: Theme.of(context).colorScheme.surface,
+                        textColor: Theme.of(context).colorScheme.onSurface,
+                        onTap: () => Navigator.pop(dialogContext),
+                        buttonText: AppLocalizations.of(context).translate('cancel'),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: PrimaryButton.text(
+                      onPressed: _handleConfirm,
+                      text: AppLocalizations.of(context).translate('confirm'),
+                      isLoading: _isSubmitting,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

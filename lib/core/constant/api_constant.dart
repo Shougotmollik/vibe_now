@@ -50,6 +50,8 @@ class ApiConstant {
   static const String reportUser = "/auth/report-user";
 
   static const String notificationSettings = "/notifications/settings";
+  static const String accountPause = "/auth/pause-account";
+  static const String accountDelete = "/auth/delete-account";
 
   // WebSocket
   static const String chatSocket = "/ws/chat/";

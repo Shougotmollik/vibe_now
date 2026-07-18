@@ -88,4 +88,54 @@ class SettingsController extends GetxController {
   void toggleLocationSharing(bool val) {
     locationSharing.value = val;
   }
+
+  // account pause
+  Future<bool> accountPause({
+    required String reason,
+    required String explanation,
+    required String password,
+  }) async {
+    try {
+      isLoading.value = true;
+      final response = await CustomHttp.post(
+        endpoint: ApiConstant.accountPause,
+        add_api_prefix: true,
+        body: {
+          "reason": reason,
+          "explanation": explanation,
+          "password": password,
+        },
+      );
+      return response.ok;
+    } catch (e) {
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // account delete
+  Future<bool> accountDelete({
+    required String reason,
+    required String explanation,
+    required String password,
+  }) async {
+    try {
+      isLoading.value = true;
+      final response = await CustomHttp.post(
+        endpoint: ApiConstant.accountDelete,
+        add_api_prefix: true,
+        body: {
+          "reason": reason,
+          "explanation": explanation,
+          "password": password,
+        },
+      );
+      return response.ok;
+    } catch (e) {
+      return false;
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

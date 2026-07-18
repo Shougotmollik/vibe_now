@@ -134,7 +134,10 @@ class _ProfileSettingScreenState extends State<ProfileSettingScreen> {
                   context,
                   title: loc.translate('deleteYourAccount'),
                   onTap: () {
-                    context.pushNamed(RouteNames.reasonScreen);
+                    context.pushNamed(
+                      RouteNames.reasonScreen,
+                      extra: false,
+                    );
                   },
                 ),
               ],

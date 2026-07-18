@@ -349,13 +349,17 @@ void setupRouter(bool hasToken) {
       GoRoute(
         path: '/reason-screen',
         name: RouteNames.reasonScreen,
-        builder: (context, state) => const DeleteReasonScreen(),
+        builder: (context, state) => DeleteReasonScreen(
+          isPaused: state.extra as bool?,
+        ),
       ),
 
       GoRoute(
         path: '/delete-confirm-screen',
         name: RouteNames.deleteConfirmScreen,
-        builder: (context, state) => const DeleteConfirmScreen(),
+        builder: (context, state) => DeleteConfirmScreen(
+          isPaused: state.extra as bool?,
+        ),
       ),
     ],
   );
