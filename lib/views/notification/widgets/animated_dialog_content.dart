@@ -66,7 +66,7 @@ class _AnimatedDialogContentState extends State<AnimatedDialogContent>
           width: 335.w,
           padding: EdgeInsets.all(20.w),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(20.r),
           ),
           child: Column(
@@ -90,7 +90,7 @@ class _AnimatedDialogContentState extends State<AnimatedDialogContent>
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w500,
-                  color: const Color(0xff555555),
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
                 textAlign: TextAlign.center,
               ),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/controller/auth_controller.dart';
 import 'package:vibe_now/controller/profile_controller.dart';
+import 'package:vibe_now/controller/settings_controller.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
@@ -28,14 +29,15 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool locationSharing = true;
-  bool waves = true;
-  bool communities = true;
-  bool messages = true;
-  bool events = true;
-
   final AuthController authController = Get.find<AuthController>();
   final ProfileController profileController = Get.find<ProfileController>();
+  final SettingsController settingsController = Get.find<SettingsController>();
+
+  @override
+  void initState() {
+    super.initState();
+    settingsController.getNotificationStatus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +48,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: CustomAppBar(title: loc.translate('settings'), canBack: true),
+              child: CustomAppBar(
+                title: loc.translate('settings'),
+                canBack: true,
+              ),
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -170,19 +175,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     SizedBox(height: 12.h),
 
-                    _buildSwitchItem(
-                      icon: Assets.icons.locationColor,
-                      iconColor: Colors.purple,
-                      title: loc.translate('locationSharing'),
-                      subtitle: loc.translate('locationSharingDesc'),
-                      value: locationSharing,
-                      isTopRound: true,
-                      onChanged: (val) {
-                        setState(() {
-                          locationSharing = val;
-                        });
-                      },
-                    ),
+                    Obx(() => _buildSwitchItem(
+                          icon: Assets.icons.locationColor,
+                          iconColor: Colors.purple,
+                          title: loc.translate('locationSharing'),
+                          subtitle: loc.translate('locationSharingDesc'),
+                          value: settingsController.locationSharing.value,
+                          isTopRound: true,
+                          onChanged: (val) {
+                            settingsController.toggleLocationSharing(val);
+                          },
+                        )),
 
                     _buildMenuItem(
                       icon: Assets.icons.shieldColor,
@@ -215,55 +218,54 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     SizedBox(height: 12.h),
 
-                    _buildSwitchItem(
-                      icon: Assets.icons.messageCircleColor,
-                      iconColor: Colors.purple,
-                      title: loc.translate('messages'),
-                      value: messages,
-                      isTopRound: true,
-                      onChanged: (val) {
-                        setState(() {
-                          messages = val;
-                        });
-                      },
-                    ),
+                    // Messages (chat notifications)
+                    Obx(() => _buildSwitchItem(
+                          icon: Assets.icons.messageCircleColor,
+                          iconColor: Colors.purple,
+                          title: loc.translate('messages'),
+                          value: settingsController.chatNotifications.value,
+                          isTopRound: true,
+                          onChanged: (val) {
+                            settingsController.toggleChatNotifications(val);
+                          },
+                        )),
 
-                    _buildSwitchItem(
-                      icon: Assets.icons.notificationColor,
-                      iconColor: Colors.purple,
-                      title: loc.translate('waves'),
-                      value: waves,
-                      onChanged: (val) {
-                        setState(() {
-                          waves = val;
-                        });
-                      },
-                    ),
+                    // Waves (vibe notifications)
+                    Obx(() => _buildSwitchItem(
+                          icon: Assets.icons.notificationColor,
+                          iconColor: Colors.purple,
+                          title: loc.translate('waves'),
+                          value: settingsController.vibeNotifications.value,
+                          onChanged: (val) {
+                            settingsController.toggleVibeNotifications(val);
+                          },
+                        )),
 
-                    _buildSwitchItem(
-                      icon: Assets.icons.communityColor,
-                      iconColor: Colors.purple,
-                      title: loc.translate('community'),
-                      value: communities,
-                      onChanged: (val) {
-                        setState(() {
-                          communities = val;
-                        });
-                      },
-                    ),
+                    // Community notifications
+                    Obx(() => _buildSwitchItem(
+                          icon: Assets.icons.communityColor,
+                          iconColor: Colors.purple,
+                          title: loc.translate('community'),
+                          value:
+                              settingsController.communityNotifications.value,
+                          onChanged: (val) {
+                            settingsController
+                                .toggleCommunityNotifications(val);
+                          },
+                        )),
 
-                    _buildSwitchItem(
-                      icon: Assets.icons.calendarColor,
-                      iconColor: Colors.purple,
-                      title: loc.translate('events'),
-                      value: events,
-                      isBottomRound: true,
-                      onChanged: (val) {
-                        setState(() {
-                          events = val;
-                        });
-                      },
-                    ),
+                    // Events notifications
+                    Obx(() => _buildSwitchItem(
+                          icon: Assets.icons.calendarColor,
+                          iconColor: Colors.purple,
+                          title: loc.translate('events'),
+                          value: settingsController.eventNotifications.value,
+                          isBottomRound: true,
+                          onChanged: (val) {
+                            settingsController
+                                .toggleEventNotifications(val);
+                          },
+                        )),
                     SizedBox(height: 24.h),
 
                     // App Setting Section
@@ -403,7 +405,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onTap: () {
                           Navigator.pop(context);
                         },
-                        buttonText: AppLocalizations.of(context).translate('cancel'),
+                        buttonText: AppLocalizations.of(
+                          context,
+                        ).translate('cancel'),
                         btnColor: Theme.of(context).colorScheme.surfaceVariant,
                         textColor: Theme.of(context).colorScheme.onSurface,
                       ),
@@ -414,7 +418,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onTap: () {
                           authController.logout();
                         },
-                        buttonText: AppLocalizations.of(context).translate('logOut'),
+                        buttonText: AppLocalizations.of(
+                          context,
+                        ).translate('logOut'),
                       ),
                     ),
                   ],
