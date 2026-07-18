@@ -295,16 +295,8 @@ class _ChatScreenState extends State<ChatScreen> {
           return ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             children: [
-              SizedBox(height: 80.h),
-              Center(
-                child: Text(
-                  _emptyMessage(tab, loc),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
+              SizedBox(height: 40.h),
+              _buildEmptyState(tab, loc),
             ],
           );
         }
@@ -342,16 +334,8 @@ class _ChatScreenState extends State<ChatScreen> {
           return ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             children: [
-              SizedBox(height: 80.h),
-              Center(
-                child: Text(
-                  _emptyMessage('waves', loc),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 14.sp,
-                  ),
-                ),
-              ),
+              SizedBox(height: 40.h),
+              _buildEmptyState('waves', loc),
             ],
           );
         }
@@ -496,19 +480,108 @@ class _ChatScreenState extends State<ChatScreen> {
     );
   }
 
-  String _emptyMessage(String tab, AppLocalizations loc) {
+  Widget _buildEmptyState(String tab, AppLocalizations loc) {
+    String titleKey;
+    String descKey;
+    Widget icon;
+    Color iconColor;
+
     switch (tab) {
       case 'waves':
-        return loc.translate('noVibes');
+        titleKey = 'noWavesChatTitle';
+        descKey = 'noWavesChatDesc';
+        icon = Assets.icons.handWave.svg(
+          width: 80.w,
+          height: 80.h,
+          colorFilter: const ColorFilter.mode(
+            AppColors.secondaryText,
+            BlendMode.srcIn,
+          ),
+        );
+        iconColor = const Color(0xFF8663F6);
+        break;
       case 'private':
-        return loc.translate('noMessages');
+        titleKey = 'noPrivateChatTitle';
+        descKey = 'noPrivateChatDesc';
+        icon = Assets.icons.chatting.svg(
+          width: 80.w,
+          height: 80.h,
+          colorFilter: const ColorFilter.mode(
+            AppColors.secondaryText,
+            BlendMode.srcIn,
+          ),
+        );
+        iconColor = const Color(0xfff5a0d6);
+        break;
       case 'event':
-        return loc.translate('noMessages');
+        titleKey = 'noEventChatTitle';
+        descKey = 'noEventChatDesc';
+        icon = Assets.icons.calender2.svg(
+          width: 80.w,
+          height: 80.h,
+          colorFilter: const ColorFilter.mode(
+            AppColors.secondaryText,
+            BlendMode.srcIn,
+          ),
+        );
+        iconColor = const Color(0xfffbadd8);
+        break;
       case 'community':
-        return loc.translate('noMessages');
       default:
-        return loc.translate('noMessages');
+        titleKey = 'noCommunityChatTitle';
+        descKey = 'noCommunityChatDesc';
+        icon = Assets.icons.community.svg(
+          width: 80.w,
+          height: 80.h,
+          colorFilter: const ColorFilter.mode(
+            AppColors.secondaryText,
+            BlendMode.srcIn,
+          ),
+        );
+        iconColor = const Color(0xff99e2f1);
+        break;
     }
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Decorative icon with tinted background circle
+            Container(
+              width: 120.w,
+              height: 120.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: iconColor.withValues(alpha: 0.1),
+              ),
+              child: Center(child: icon),
+            ),
+            SizedBox(height: 24.h),
+            Text(
+              loc.translate(titleKey),
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              loc.translate(descKey),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -249,56 +249,70 @@ class _EventScreenState extends State<EventScreen> {
 
   Widget _buildEmptyState(BuildContext context, String tab) {
     final loc = AppLocalizations.of(context);
-    String message;
-    String subMessage;
+    String titleKey;
+    String descKey;
 
     switch (tab) {
       case 'joined':
-        message = loc.translate('noEvents');
-        subMessage = loc.translate('events');
+        titleKey = 'noEventsJoinedTitle';
+        descKey = 'noEventsJoinedDesc';
         break;
       case 'organized':
-        message = loc.translate('noEvents');
-        subMessage = loc.translate('createEvent');
+        titleKey = 'noEventsOrganizedTitle';
+        descKey = 'noEventsOrganizedDesc';
         break;
       case 'interested':
-        message = loc.translate('noEvents');
-        subMessage = loc.translate('events');
+        titleKey = 'noEventsInterestedTitle';
+        descKey = 'noEventsInterestedDesc';
         break;
       default:
-        message = loc.translate('noEvents');
-        subMessage = loc.translate('discover');
+        titleKey = 'noEventsAllTitle';
+        descKey = 'noEventsAllDesc';
+        break;
     }
 
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 60.h),
+        padding: EdgeInsets.symmetric(vertical: 60.h, horizontal: 32.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Assets.icons.calender2.svg(
-              width: 80.w,
-              height: 80.h,
-              colorFilter: ColorFilter.mode(
-                AppColors.secondaryText,
-                BlendMode.srcIn,
+            Container(
+              width: 120.w,
+              height: 120.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.1),
+              ),
+              child: Center(
+                child: Assets.icons.calender2.svg(
+                  width: 80.w,
+                  height: 80.h,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.secondaryText,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 24.h),
             Text(
-              message,
-              style: AppTypography.textTheme.headlineMedium?.copyWith(
-                fontSize: 20.sp,
+              loc.translate(titleKey),
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8.h),
             Text(
-              subMessage,
-              style: AppTypography.textTheme.bodyMedium?.copyWith(
-                color: AppColors.secondaryText,
+              loc.translate(descKey),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                height: 1.4,
               ),
               textAlign: TextAlign.center,
             ),

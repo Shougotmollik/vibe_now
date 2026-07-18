@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:vibe_now/controller/meetup_controller.dart';
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/design_system/tokens/colors.dart';
+import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/meetup.dart';
 import 'package:vibe_now/utils.dart';
@@ -38,16 +39,74 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
     _controller.getMeetupMembers(meetupId: widget.meetupId, tab: _selectedTab);
   }
 
-  String get _emptyMessage {
+  Widget _buildEmptyState() {
     final loc = AppLocalizations.of(context);
+    String titleKey;
+    String descKey;
+
     switch (_selectedTab) {
       case 'joined':
-        return loc.translate('noParticipantsYet');
+        titleKey = 'noParticipantsTitle';
+        descKey = 'noParticipantsDesc';
+        break;
       case 'invited':
-        return loc.translate('noInvitedMembers');
+        titleKey = 'noInvitedMembersTitle';
+        descKey = 'noInvitedMembersDesc';
+        break;
       default:
-        return loc.translate('noMembersFound');
+        titleKey = 'noMembersFoundTitle';
+        descKey = 'noMembersFoundDesc';
+        break;
     }
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120.w,
+              height: 120.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.1),
+              ),
+              child: Center(
+                child: Assets.icons.users.svg(
+                  width: 80.w,
+                  height: 80.h,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.secondaryText,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 24.h),
+            Text(
+              loc.translate(titleKey),
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              loc.translate(descKey),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -84,14 +143,7 @@ class _MeetupMemberScreenState extends State<MeetupMemberScreen> {
 
                 final members = _controller.meetupMembers;
                 if (members.isEmpty) {
-                  return Center(
-                    child: Text(
-                      _emptyMessage,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  );
+                  return _buildEmptyState();
                 }
 
                 return ListView.separated(

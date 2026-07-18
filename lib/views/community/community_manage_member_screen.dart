@@ -120,17 +120,7 @@ class _CommunityManageMemberScreenState
               final member = members.isNotEmpty ? members.first : null;
 
               if (members.isEmpty) {
-                return Center(
-                  child: Text(
-                    _tab == 'pending'
-                        ? loc.translate('noPendingRequests')
-                        : loc.translate('noAwaitingMembers'),
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      fontSize: 16,
-                    ),
-                  ),
-                );
+                return _buildEmptyState(loc);
               }
 
               return SingleChildScrollView(
@@ -326,6 +316,60 @@ class _CommunityManageMemberScreenState
         const SizedBox(height: 40),
         _buildCancelButton(loc),
       ],
+    );
+  }
+
+  Widget _buildEmptyState(AppLocalizations loc) {
+    final titleKey = _tab == 'pending' ? 'noPendingRequestsTitle' : 'noAwaitingMembersTitle';
+    final descKey = _tab == 'pending' ? 'noPendingRequestsDesc' : 'noAwaitingMembersDesc';
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120.w,
+              height: 120.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.1),
+              ),
+              child: Center(
+                child: Assets.icons.users.svg(
+                  width: 80.w,
+                  height: 80.h,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.secondaryText,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 24.h),
+            Text(
+              loc.translate(titleKey),
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              loc.translate(descKey),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 

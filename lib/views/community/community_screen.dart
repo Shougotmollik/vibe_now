@@ -256,56 +256,70 @@ class _CommunityScreenState extends State<CommunityScreen> {
   }
 
   Widget _buildEmptyState(BuildContext context, String tab, AppLocalizations loc) {
-    String message;
-    String subMessage;
+    String titleKey;
+    String descKey;
 
     switch (tab) {
       case 'joined':
-        message = loc.translate('noCommunities');
-        subMessage = loc.translate('communities');
+        titleKey = 'noCommunitiesJoinedTitle';
+        descKey = 'noCommunitiesJoinedDesc';
         break;
       case 'organized':
-        message = loc.translate('noCommunities');
-        subMessage = loc.translate('createCommunity');
+        titleKey = 'noCommunitiesOrganizedTitle';
+        descKey = 'noCommunitiesOrganizedDesc';
         break;
       case 'interested':
-        message = loc.translate('noCommunities');
-        subMessage = loc.translate('communities');
+        titleKey = 'noCommunitiesInterestedTitle';
+        descKey = 'noCommunitiesInterestedDesc';
         break;
       default:
-        message = loc.translate('noCommunities');
-        subMessage = loc.translate('discover');
+        titleKey = 'noCommunitiesAllTitle';
+        descKey = 'noCommunitiesAllDesc';
+        break;
     }
 
     return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 60.h),
+        padding: EdgeInsets.symmetric(vertical: 60.h, horizontal: 32.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Assets.icons.community.svg(
-              width: 80.w,
-              height: 80.h,
-              colorFilter: ColorFilter.mode(
-                AppColors.secondaryText,
-                BlendMode.srcIn,
+            Container(
+              width: 120.w,
+              height: 120.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.1),
+              ),
+              child: Center(
+                child: Assets.icons.community.svg(
+                  width: 80.w,
+                  height: 80.h,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.secondaryText,
+                    BlendMode.srcIn,
+                  ),
+                ),
               ),
             ),
-            SizedBox(height: 16.h),
+            SizedBox(height: 24.h),
             Text(
-              message,
-              style: AppTypography.textTheme.headlineMedium?.copyWith(
-                fontSize: 20.sp,
+              loc.translate(titleKey),
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
                 color: Theme.of(context).colorScheme.onSurface,
               ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8.h),
             Text(
-              subMessage,
-              style: AppTypography.textTheme.bodyMedium?.copyWith(
-                color: AppColors.secondaryText,
+              loc.translate(descKey),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                height: 1.4,
               ),
               textAlign: TextAlign.center,
             ),

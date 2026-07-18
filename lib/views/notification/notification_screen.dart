@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/controller/notification_controller.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
@@ -36,10 +37,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   String _tabLabel(AppLocalizations loc, int index) {
     switch (index) {
-      case 0: return loc.translate('waves');
-      case 1: return loc.translate('events');
-      case 2: return loc.translate('community');
-      default: return '';
+      case 0:
+        return loc.translate('waves');
+      case 1:
+        return loc.translate('events');
+      case 2:
+        return loc.translate('community');
+      default:
+        return '';
     }
   }
 
@@ -130,17 +135,24 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 clipBehavior: Clip.none,
                 children: [
                   Container(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.w),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 8.w,
+                    ),
                     decoration: BoxDecoration(
                       gradient: isSelected ? _tabGradients[index] : null,
                       color: isSelected
                           ? null
-                          : Theme.of(context).colorScheme.surfaceContainerHighest,
+                          : Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                       borderRadius: BorderRadius.circular(20),
                       border: isSelected
                           ? null
                           : Border.all(
-                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.15),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.15),
                               width: 1,
                             ),
                     ),
@@ -151,7 +163,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         Text(
                           _tabLabel(loc, index),
                           style: TextStyle(
-                            color: isSelected ? Colors.black87 : Theme.of(context).colorScheme.onSurface,
+                            color: isSelected
+                                ? Colors.black87
+                                : Theme.of(context).colorScheme.onSurface,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -164,10 +178,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       right: -4,
                       child: Container(
                         padding: EdgeInsets.all(3.w),
-                        decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                        decoration: const BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
                         child: Text(
                           count.toString(),
-                          style: TextStyle(color: Colors.white, fontSize: 10.sp, fontWeight: FontWeight.w600),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 10.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),
@@ -193,21 +214,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
     }
   }
 
-  Widget _buildNotificationsList(RxList<NotificationModel> items, AppLocalizations loc, int tabIndex) {
+  Widget _buildNotificationsList(
+    RxList<NotificationModel> items,
+    AppLocalizations loc,
+    int tabIndex,
+  ) {
     return Obx(() {
       if (_controller.isLoading(_tabKeys[tabIndex]) && items.isEmpty) {
         return const NotificationShimmer();
       }
       if (items.isEmpty) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height - 200,
-          child: Center(
-            child: Text(
-              loc.translate('noItemsFound'),
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
-            ),
-          ),
-        );
+        return _buildEmptyState(loc, tabIndex);
       }
       return Container(
         decoration: BoxDecoration(
@@ -216,10 +233,106 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
-          children: List.generate(items.length, (index) => _buildNotificationCard(items[index], tabIndex)),
+          children: List.generate(
+            items.length,
+            (index) => _buildNotificationCard(items[index], tabIndex),
+          ),
         ),
       );
     });
+  }
+
+  Widget _buildEmptyState(AppLocalizations loc, int tabIndex) {
+    String titleKey;
+    String descKey;
+    Widget icon;
+    Color iconColor;
+
+    switch (tabIndex) {
+      case 0: // Vibes / Waves
+        titleKey = 'noWaveNotificationsTitle';
+        descKey = 'noWaveNotificationsDesc';
+        icon = Assets.icons.handWave.svg(
+          width: 80.w,
+          height: 80.h,
+          colorFilter: ColorFilter.mode(
+            AppColors.secondaryText,
+            BlendMode.srcIn,
+          ),
+        );
+        iconColor = const Color(0xFF8663F6);
+        break;
+      case 1: // Events
+        titleKey = 'noEventNotificationsTitle';
+        descKey = 'noEventNotificationsDesc';
+        icon = Assets.icons.calender2.svg(
+          width: 80.w,
+          height: 80.h,
+          colorFilter: ColorFilter.mode(
+            AppColors.secondaryText,
+            BlendMode.srcIn,
+          ),
+        );
+        iconColor = const Color(0xfffbadd8);
+        break;
+      case 2: // Communities
+      default:
+        titleKey = 'noCommunityNotificationsTitle';
+        descKey = 'noCommunityNotificationsDesc';
+        icon = Assets.icons.community.svg(
+          width: 80.w,
+          height: 80.h,
+          colorFilter: ColorFilter.mode(
+            AppColors.secondaryText,
+            BlendMode.srcIn,
+          ),
+        );
+        iconColor = const Color(0xff99e2f1);
+        break;
+    }
+
+    return SizedBox(
+      height: MediaQuery.of(context).size.height - 280,
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 32.w),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 120.w,
+                height: 120.h,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: iconColor.withValues(alpha: 0.1),
+                ),
+                child: Center(child: icon),
+              ),
+              SizedBox(height: 24.h),
+              Text(
+                loc.translate(titleKey),
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 8.h),
+              Text(
+                loc.translate(descKey),
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  height: 1.4,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   void _navigateToWaveScreen(NotificationModel notification) {
@@ -236,9 +349,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         break;
       case 'vibe_wave_accepted':
         Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => VibeConnectScreen(wave: wave),
-          ),
+          MaterialPageRoute(builder: (_) => VibeConnectScreen(wave: wave)),
         );
         break;
       case 'vibe_meetup_suggested':
@@ -265,10 +376,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     if (relObj == null) return;
 
     // Navigate to event details with the event ID from related_object
-    context.pushNamed(
-      RouteNames.eventDetailsScreen,
-      extra: relObj.id,
-    );
+    context.pushNamed(RouteNames.eventDetailsScreen, extra: relObj.id);
   }
 
   void _navigateToCommunityScreen(NotificationModel notification) {
@@ -278,9 +386,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     // Navigate to the awaiting details screen which fetches data dynamically
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (_) => CommunityAwaitingDetailsScreen(
-          communityId: relObj.id,
-        ),
+        builder: (_) => CommunityAwaitingDetailsScreen(communityId: relObj.id),
       ),
     );
   }
@@ -307,12 +413,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          gradient: !notification.isRead ? LinearGradient(
-            colors: _tabGradients[tabIndex].colors.map((c) => c.withValues(alpha: 0.08)).toList(),
-            stops: _tabGradients[tabIndex].stops,
-            begin: _tabGradients[tabIndex].begin,
-            end: _tabGradients[tabIndex].end,
-          ) : null,
+          gradient: !notification.isRead
+              ? LinearGradient(
+                  colors: _tabGradients[tabIndex].colors
+                      .map((c) => c.withValues(alpha: 0.08))
+                      .toList(),
+                  stops: _tabGradients[tabIndex].stops,
+                  begin: _tabGradients[tabIndex].begin,
+                  end: _tabGradients[tabIndex].end,
+                )
+              : null,
           color: Theme.of(context).colorScheme.surface,
         ),
         child: Row(
@@ -337,19 +447,31 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 children: [
                   Text(
                     notification.title,
-                    style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500, color: Theme.of(context).colorScheme.onSurface),
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                   SizedBox(height: 4.h),
                   Row(
                     children: [
                       Assets.icons.timeCircle.svg(
-                        width: 16.w, height: 16.h,
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8),
+                        width: 16.w,
+                        height: 16.h,
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.8),
                       ),
                       SizedBox(width: 4.w),
                       Text(
                         timeago.format(DateTime.parse(notification.createdAt)),
-                        style: TextStyle(fontSize: 12.sp, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.8),
+                        ),
                       ),
                     ],
                   ),
@@ -364,12 +486,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   Widget _defaultAvatar() {
     return Container(
-      width: 50.w, height: 50.w,
+      width: 50.w,
+      height: 50.w,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(50.r),
       ),
-      child: Icon(Icons.person, size: 24.w, color: Theme.of(context).colorScheme.onSurfaceVariant),
+      child: Icon(
+        Icons.person,
+        size: 24.w,
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      ),
     );
   }
 }

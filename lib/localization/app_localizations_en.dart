@@ -774,5 +774,61 @@ class AppLocalizationsEn {
     // ──── BLOCKED CHAT ────
     'youBlockedThisUser': 'You blocked this user. Unblock to send messages.',
     'youHaveBeenBlocked': 'You have been blocked by this user.',
+
+    // ──── NOTIFICATIONS EMPTY STATE ────
+    'noWaveNotificationsTitle': 'No wave activity yet',
+    'noWaveNotificationsDesc': 'When someone waves at you or responds, you\'ll see it here.',
+    'noEventNotificationsTitle': 'No event notifications yet',
+    'noEventNotificationsDesc': 'Event invites, updates, and check-in notifications will appear here.',
+    'noCommunityNotificationsTitle': 'No community notifications yet',
+    'noCommunityNotificationsDesc': 'Community invites, join requests, and updates will show up here.',
+
+    // ──── CHAT EMPTY STATE ────
+    'noWavesChatTitle': 'No waves yet',
+    'noWavesChatDesc': 'When someone waves at you or responds, it will appear here.',
+    'noPrivateChatTitle': 'No private chats yet',
+    'noPrivateChatDesc': 'Start chatting by sending a wave or scanning a QR code.',
+    'noEventChatTitle': 'No event chats yet',
+    'noEventChatDesc': 'Event announcements and updates from the organizer will appear here.',
+    'noCommunityChatTitle': 'No community chats yet',
+    'noCommunityChatDesc': 'Join communities to connect and chat with members.',
+
+    // ──── EVENTS EMPTY STATE ────
+    'noEventsAllTitle': 'No events found',
+    'noEventsAllDesc': 'Discover events happening near you and join the fun.',
+    'noEventsJoinedTitle': 'No joined events',
+    'noEventsJoinedDesc': 'Events you join will appear here. Start by discovering events nearby.',
+    'noEventsOrganizedTitle': 'No organized events',
+    'noEventsOrganizedDesc': 'Create your first event and bring people together.',
+    'noEventsInterestedTitle': 'No interested events',
+    'noEventsInterestedDesc': 'Events you\'re interested in will show up here.',
+
+    // ──── COMMUNITIES EMPTY STATE ────
+    'noCommunitiesAllTitle': 'No communities found',
+    'noCommunitiesAllDesc': 'Discover communities that match your interests.',
+    'noCommunitiesJoinedTitle': 'No joined communities',
+    'noCommunitiesJoinedDesc': 'Communities you join will appear here. Start exploring!',
+    'noCommunitiesOrganizedTitle': 'No organized communities',
+    'noCommunitiesOrganizedDesc': 'Create your first community and build a space for shared interests.',
+    'noCommunitiesInterestedTitle': 'No interested communities',
+    'noCommunitiesInterestedDesc': 'Communities you\'re interested in will show up here.',
+
+    // ──── MEMBER / PARTICIPANT EMPTY STATE ────
+    'noActiveMembersTitle': 'No active members yet',
+    'noActiveMembersDesc': 'Active members of this community will appear here.',
+    'noPendingRequestsTitle': 'No pending requests',
+    'noPendingRequestsDesc': 'Join requests will appear here once people request to join.',
+    'noParticipantsTitle': 'No participants yet',
+    'noParticipantsDesc': 'People who join will appear here.',
+    'noInvitedMembersTitle': 'No invited members',
+    'noInvitedMembersDesc': 'Invited members will appear here once they respond.',
+    'noAwaitingMembersTitle': 'No awaiting members',
+    'noAwaitingMembersDesc': 'Members waiting for their meetup confirmation will appear here.',
+    'noMembersFoundTitle': 'No members found',
+    'noMembersFoundDesc': 'No members to display at the moment.',
+
+    // ──── BLOCKED ACCOUNTS EMPTY STATE ────
+    'noBlockedAccountsTitle': 'No blocked accounts',
+    'noBlockedAccountsDesc': 'Users you block will appear here.',
   };
 }

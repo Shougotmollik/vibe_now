@@ -809,5 +809,61 @@ class AppLocalizationsDe {
     // ──── BLOCKED CHAT ────
     'youBlockedThisUser': 'Sie haben diesen Benutzer blockiert. Entblocken Sie ihn, um Nachrichten zu senden.',
     'youHaveBeenBlocked': 'Sie wurden von diesem Benutzer blockiert.',
+
+    // ──── NOTIFICATIONS EMPTY STATE ────
+    'noWaveNotificationsTitle': 'Noch keine Wellen-Aktivitäten',
+    'noWaveNotificationsDesc': 'Wenn dir jemand zuwinkt oder antwortet, siehst du es hier.',
+    'noEventNotificationsTitle': 'Noch keine Veranstaltungsbenachrichtigungen',
+    'noEventNotificationsDesc': 'Einladungen, Updates und Check-in-Benachrichtigungen erscheinen hier.',
+    'noCommunityNotificationsTitle': 'Noch keine Community-Benachrichtigungen',
+    'noCommunityNotificationsDesc': 'Community-Einladungen, Beitrittsanfragen und Updates werden hier angezeigt.',
+
+    // ──── CHAT EMPTY STATE ────
+    'noWavesChatTitle': 'Noch keine Wellen',
+    'noWavesChatDesc': 'Wenn dir jemand zuwinkt oder antwortet, wird es hier angezeigt.',
+    'noPrivateChatTitle': 'Noch keine privaten Chats',
+    'noPrivateChatDesc': 'Starte einen Chat, indem du eine Welle sendest oder einen QR-Code scannst.',
+    'noEventChatTitle': 'Noch keine Veranstaltungs-Chats',
+    'noEventChatDesc': 'Veranstaltungsankündigungen und Updates des Organisators erscheinen hier.',
+    'noCommunityChatTitle': 'Noch keine Community-Chats',
+    'noCommunityChatDesc': 'Tritt Communities bei, um dich mit Mitgliedern zu verbinden und zu chatten.',
+
+    // ──── EVENTS EMPTY STATE ────
+    'noEventsAllTitle': 'Keine Veranstaltungen gefunden',
+    'noEventsAllDesc': 'Entdecke Veranstaltungen in deiner Nähe und mach mit.',
+    'noEventsJoinedTitle': 'Keine teilgenommenen Veranstaltungen',
+    'noEventsJoinedDesc': 'Veranstaltungen, denen du beitrittst, erscheinen hier. Entdecke Veranstaltungen in deiner Nähe.',
+    'noEventsOrganizedTitle': 'Keine organisierten Veranstaltungen',
+    'noEventsOrganizedDesc': 'Erstelle deine erste Veranstaltung und bringe Menschen zusammen.',
+    'noEventsInterestedTitle': 'Keine interessanten Veranstaltungen',
+    'noEventsInterestedDesc': 'Veranstaltungen, die dich interessieren, werden hier angezeigt.',
+
+    // ──── COMMUNITIES EMPTY STATE ────
+    'noCommunitiesAllTitle': 'Keine Communities gefunden',
+    'noCommunitiesAllDesc': 'Entdecke Communities, die zu deinen Interessen passen.',
+    'noCommunitiesJoinedTitle': 'Keinen Communities beigetreten',
+    'noCommunitiesJoinedDesc': 'Communities, denen du beitrittst, erscheinen hier. Starte die Erkundung!',
+    'noCommunitiesOrganizedTitle': 'Keine organisierten Communities',
+    'noCommunitiesOrganizedDesc': 'Erstelle deine erste Community und schaffe einen Raum für gemeinsame Interessen.',
+    'noCommunitiesInterestedTitle': 'Keine interessanten Communities',
+    'noCommunitiesInterestedDesc': 'Communities, die dich interessieren, werden hier angezeigt.',
+
+    // ──── MEMBER / PARTICIPANT EMPTY STATE ────
+    'noActiveMembersTitle': 'Noch keine aktiven Mitglieder',
+    'noActiveMembersDesc': 'Aktive Mitglieder dieser Community werden hier angezeigt.',
+    'noPendingRequestsTitle': 'Keine ausstehenden Anfragen',
+    'noPendingRequestsDesc': 'Beitrittsanfragen werden hier angezeigt, sobald sie eingehen.',
+    'noParticipantsTitle': 'Noch keine Teilnehmer',
+    'noParticipantsDesc': 'Personen, die beitreten, werden hier angezeigt.',
+    'noInvitedMembersTitle': 'Keine eingeladenen Mitglieder',
+    'noInvitedMembersDesc': 'Eingeladene Mitglieder werden hier angezeigt, sobald sie antworten.',
+    'noAwaitingMembersTitle': 'Keine wartenden Mitglieder',
+    'noAwaitingMembersDesc': 'Mitglieder, die auf ihre Treffenbestätigung warten, werden hier angezeigt.',
+    'noMembersFoundTitle': 'Keine Mitglieder gefunden',
+    'noMembersFoundDesc': 'Momentan sind keine Mitglieder zum Anzeigen verfügbar.',
+
+    // ──── BLOCKED ACCOUNTS EMPTY STATE ────
+    'noBlockedAccountsTitle': 'Keine blockierten Konten',
+    'noBlockedAccountsDesc': 'Benutzer, die du blockierst, werden hier angezeigt.',
   };
 }

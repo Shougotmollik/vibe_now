@@ -129,14 +129,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
     final allParticipants = [...joined, ...requested];
 
     if (allParticipants.isEmpty) {
-      return Center(
-        child: Text(
-          loc.translate('noParticipants'),
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-      );
+      return _buildEmptyState(loc, 'participants');
     }
 
     return ListView.separated(
@@ -247,14 +240,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
   Widget _buildJoinedList(loc) {
     final participants = _eventController.joinedParticipants;
     if (participants.isEmpty) {
-      return Center(
-        child: Text(
-          loc.translate('noParticipants'),
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-      );
+      return _buildEmptyState(loc, 'participants');
     }
 
     return ListView.separated(
@@ -351,14 +337,7 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
     }
 
     if (participants.isEmpty) {
-      return Center(
-        child: Text(
-          loc.translate('noPendingRequests'),
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
-        ),
-      );
+      return _buildEmptyState(loc, 'requests');
     }
 
     return ListView.separated(
@@ -450,6 +429,60 @@ class _EventMemberScreenState extends State<EventMemberScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildEmptyState(AppLocalizations loc, String type) {
+    final titleKey = type == 'requests' ? 'noPendingRequestsTitle' : 'noParticipantsTitle';
+    final descKey = type == 'requests' ? 'noPendingRequestsDesc' : 'noParticipantsDesc';
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 32.w),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 120.w,
+              height: 120.h,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.1),
+              ),
+              child: Center(
+                child: Assets.icons.calender2.svg(
+                  width: 80.w,
+                  height: 80.h,
+                  colorFilter: const ColorFilter.mode(
+                    AppColors.secondaryText,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 24.h),
+            Text(
+              loc.translate(titleKey),
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 8.h),
+            Text(
+              loc.translate(descKey),
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
