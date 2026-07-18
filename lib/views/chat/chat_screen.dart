@@ -136,7 +136,10 @@ class _ChatScreenState extends State<ChatScreen> {
         GestureDetector(
           onTap: () => context.pushNamed(
             RouteNames.qrVerificationScreen,
-            extra: QRContext.chats,
+            extra: {
+              'qrContext': QRContext.chats,
+              'showScanOnly': true,
+            },
           ),
           child: Container(
             padding: EdgeInsets.all(8.w),

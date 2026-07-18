@@ -563,6 +563,9 @@ class AppLocalizationsEn {
     'defaultUserName': 'User',
     'myLocation': 'My Location',
     'scanChatQR': 'Scan a chat QR code to connect',
+    'qrScannedSuccess': 'You have successfully connected!',
+    'startChatting': 'Start Chatting',
+
     'scanCommunityQR': 'Scan a community QR code to join',
     'scanEventQR': 'Scan event QR code to check in',
     'scanName': 'Scan',

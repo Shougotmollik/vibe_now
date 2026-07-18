@@ -399,6 +399,8 @@ class AppLocalizationsDe {
     'scanToJoin': 'Scannen zum Beitreten',
     'invalidQR': 'Ungültiger QR-Code',
     'qrScanned': 'QR-Code gescannt',
+    'qrScannedSuccess': 'Sie haben sich erfolgreich verbunden!',
+    'startChatting': 'Chat starten',
 
     // ──── ADDITIONAL UI STRINGS ────
     'searchDot': 'Suchen ...',
@@ -541,7 +543,8 @@ class AppLocalizationsDe {
     'areYouSureDeletePhoto': 'Möchten Sie dieses Foto wirklich löschen?',
     'photoAdded': 'Foto erfolgreich hinzugefügt',
     'failedToUpload':
-        'Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.',    'showQRCode': 'QR-Code anzeigen',
+        'Foto konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.',
+    'showQRCode': 'QR-Code anzeigen',
     'showQRToVerify': 'Zeigen Sie diesen QR-Code zur Verifikation des Treffens',
     'enterYourLocation': 'Standort eingeben',
     'searchInterestHint': 'Tippen, um weitere Interessen zu finden\u2026',
@@ -785,7 +788,8 @@ class AppLocalizationsDe {
     'trusted': 'Vertrauenswürdig',
     'noRealLifeMeets': 'Noch keine persönlichen Treffen',
     'basedOnMeets': 'Basierend auf ',
-    'realLifeMeets': 'persönlichen Treffen',    'youHaveAcceptedRequestDesc': 'Sie haben die Community-Beitrittsanfrage angenommen.',
+    'realLifeMeets': 'persönlichen Treffen',
+    'youHaveAcceptedRequestDesc': 'Sie haben die Community-Beitrittsanfrage angenommen.',
 
     // ──── MEETUP / WAVE FLOW ────
     'locationSelected': '✓ Ausgewählt',

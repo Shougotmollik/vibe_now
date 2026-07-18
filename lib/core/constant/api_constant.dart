@@ -45,6 +45,8 @@ class ApiConstant {
   static const String updateProfileImage = "/onboarding/upload-profile-photo";
 
   static const String chat = "/chats";
+  static const String scanWaveMeetupQR = "/vibes/scan-wave-meetup-qr";
+
 
   // WebSocket
   static const String chatSocket = "/ws/chat/";

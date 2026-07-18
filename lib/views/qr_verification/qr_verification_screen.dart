@@ -109,7 +109,7 @@ class _QRVerificationScreenState extends State<QRVerificationScreen> {
           },
         ),
         title: Text(
-          widget.showScanOnly ? AppLocalizations.of(context).translate('scanEventQR') : AppLocalizations.of(context).translate('qrVerification'),
+          titleText,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
             fontSize: 18.sp,

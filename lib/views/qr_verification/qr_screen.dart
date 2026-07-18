@@ -2,13 +2,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_code_scanner_plus/qr_code_scanner_plus.dart';
+import 'package:vibe_now/core/constant/api_constant.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
 import 'package:vibe_now/localization/app_localizations.dart';
 import 'package:vibe_now/model/chat.dart';
+import 'package:vibe_now/model/scan_result.dart';
+import 'package:vibe_now/services/custom_http.dart';
 import 'package:vibe_now/views/chat/chat_inbox_screen.dart';
 import 'package:vibe_now/views/community/community_welcome_screen.dart';
 import 'package:vibe_now/views/event/event_checkin_screen.dart';
+import 'package:vibe_now/views/qr_verification/scan_success_screen.dart';
 
 class QrScreen extends StatefulWidget {
   const QrScreen({super.key, required this.qrContext});
@@ -32,18 +36,7 @@ class _QrScreenState extends State<QrScreen> {
 
     switch (widget.qrContext) {
       case QRContext.chats:
-        // Navigator.pop(context, code);
-        // Navigator.pop(context, code);
-        context.pushNamed(
-          RouteNames.chatInboxScreen,
-          extra: Chat(
-            avatars: ['https://randomuser.me/api/portraits/women/12.jpg'],
-            name: 'Sammy Smith',
-            message: 'Sent you a wave!',
-            time: '10:30 AM',
-            type: ChatType.private,
-          ),
-        );
+        _handleChatScan(code);
         break;
       case QRContext.community:
         Navigator.pushReplacement(
@@ -68,6 +61,26 @@ class _QrScreenState extends State<QrScreen> {
           }
         });
         break;
+    }
+  }
+
+  Future<void> _handleChatScan(String qrCode) async {
+    final result = await CustomHttp.post(
+      endpoint: ApiConstant.scanWaveMeetupQR,
+      body: {'qr_code_value': qrCode},
+    );
+
+    if (result.ok && result.data != null && mounted) {
+      final scanResult = ScanResult.fromJson(result.data['data'] as Map<String, dynamic>? ?? {});
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ScanSuccessScreen(scanResult: scanResult),
+        ),
+      );
+    } else if (mounted) {
+      setState(() => _hasRedirected = false);
+      controller?.resumeCamera();
     }
   }
 
