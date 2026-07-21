@@ -211,7 +211,7 @@ class NotificationModel {
 
     final actionStatus = json['action_status'];
     final notifType = json['notification_type'] ?? '';
-    final isInvitation = actionStatus == 'pending' && notifType.contains('request');
+    final isInvitation = actionStatus == 'pending' && (notifType.contains('request') || notifType.contains('invitation'));
 
     return NotificationModel(
       id: json['id'] ?? 0,
@@ -237,7 +237,7 @@ class NotificationModel {
   }) {
     final newActionStatus = actionStatus ?? this.actionStatus;
     final newInvitation =
-        newActionStatus == 'pending' && notificationType.contains('request');
+        newActionStatus == 'pending' && (notificationType.contains('request') || notificationType.contains('invitation'));
     return NotificationModel(
       id: id,
       notificationType: notificationType,

@@ -15,7 +15,6 @@ import 'package:vibe_now/model/incoming_wave.dart';
 import 'package:vibe_now/model/notification.dart';
 import 'package:vibe_now/views/chat/chat_wave_screen.dart';
 import 'package:vibe_now/views/common/custom_app_bar.dart';
-import 'package:vibe_now/views/notification/community_awaitting_details_screen.dart';
 import 'package:vibe_now/views/community/meetup_details_screen.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 import 'package:vibe_now/views/notification/widgets/community_notification_card.dart';
@@ -403,13 +402,15 @@ class _NotificationScreenState extends State<NotificationScreen> with RouteAware
 
   void _navigateToCommunityScreen(NotificationModel notification) {
     final relObj = notification.relatedObject;
-    if (relObj == null) return;
+    // Only navigate if the related object is actually a community
+    if (relObj == null || relObj.type != 'community') return;
 
-    // Navigate to the awaiting details screen which fetches data dynamically
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => CommunityAwaitingDetailsScreen(communityId: relObj.id),
-      ),
+    // Create a minimal Community with the ID — CommunityDetailsScreen
+    // fetches full community data from the API in initState
+    final community = Community(id: relObj.id);
+    context.pushNamed(
+      RouteNames.communityDetailsScreen,
+      extra: community,
     );
   }
 
@@ -448,7 +449,10 @@ class _NotificationScreenState extends State<NotificationScreen> with RouteAware
         action: 'approve',
       );
       // For community join requests, navigate to the manage member screen
-      if (tabIndex == 2 && mounted) {
+      // Skip navigation for meetup_invitation — just accept silently
+      if (tabIndex == 2 &&
+          mounted &&
+          notification.notificationType != 'meetup_invitation') {
         final relObj = notification.relatedObject;
         if (relObj != null) {
           context.pushNamed(
