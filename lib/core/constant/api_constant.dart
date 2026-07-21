@@ -52,6 +52,7 @@ class ApiConstant {
   static const String notificationSettings = "/notifications/settings";
   static const String accountPause = "/auth/pause-account";
   static const String accountDelete = "/auth/delete-account";
+  static const String privacyPolicy = "/settings/privacy-policy";
 
   // WebSocket
   static const String chatSocket = "/ws/chat/";

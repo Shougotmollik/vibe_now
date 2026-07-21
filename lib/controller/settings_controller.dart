@@ -89,6 +89,31 @@ class SettingsController extends GetxController {
     locationSharing.value = val;
   }
 
+  // Privacy policy
+  final privacyPolicyContent = ''.obs;
+  final privacyPolicyUpdatedAt = ''.obs;
+
+  Future<void> getPrivacyPolicy() async {
+    try {
+      isLoading.value = true;
+      final response = await CustomHttp.get(
+        endpoint: ApiConstant.privacyPolicy,
+      );
+
+      if (response.ok && response.data != null) {
+        final data = response.data['data'] as Map<String, dynamic>?;
+        if (data != null) {
+          privacyPolicyContent.value = data['privacy_policy'] ?? '';
+          privacyPolicyUpdatedAt.value = data['updated_at'] ?? '';
+        }
+      }
+    } catch (e) {
+      Get.log(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
   // account pause
   Future<bool> accountPause({
     required String reason,

@@ -91,7 +91,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomAppBar(title: AppLocalizations.of(context).translate('createEvent')),
+                CustomAppBar(
+                  title: AppLocalizations.of(context).translate('createEvent'),
+                ),
                 const SizedBox(height: 24),
                 _buildHeaderCard(),
                 const SizedBox(height: 24),
@@ -299,7 +301,11 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               _selectedImage = image;
             });
           } else {
-            AppSnackbar.show(message: AppLocalizations.of(context).translate('failedToPickImage'));
+            AppSnackbar.show(
+              message: AppLocalizations.of(
+                context,
+              ).translate('failedToPickImage'),
+            );
           }
         });
       },
@@ -367,7 +373,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                     SizedBox(height: 8.h),
 
                     Text(
-                      AppLocalizations.of(context).translate('uploadCoverImage'),
+                      AppLocalizations.of(
+                        context,
+                      ).translate('uploadCoverImage'),
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w400,
@@ -482,8 +490,10 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
                 Expanded(
                   child: Text(
                     locationController.text.isEmpty
-                    ? AppLocalizations.of(context).translate('selectAddress')
-                    : locationController.text,
+                        ? AppLocalizations.of(
+                            context,
+                          ).translate('selectAddress')
+                        : locationController.text,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 14,
@@ -528,7 +538,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               child: _buildTimeField(
                 label: AppLocalizations.of(context).translate('startingTime'),
                 time: _startingTime,
-                onTap: () => _showTimePicker(context, (time) => _startingTime = time),
+                onTap: () =>
+                    _showTimePicker(context, (time) => _startingTime = time),
               ),
             ),
           ],
@@ -551,7 +562,8 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               child: _buildTimeField(
                 label: AppLocalizations.of(context).translate('endingTime'),
                 time: _endingTime,
-                onTap: () => _showTimePicker(context, (time) => _endingTime = time),
+                onTap: () =>
+                    _showTimePicker(context, (time) => _endingTime = time),
               ),
             ),
           ],
@@ -962,7 +974,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context).translate('enterCategoryName'),
+              hintText: AppLocalizations.of(
+                context,
+              ).translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -1074,7 +1088,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
             controller: _categoryController,
             autofocus: true,
             decoration: InputDecoration(
-              hintText: AppLocalizations.of(context).translate('enterCategoryName'),
+              hintText: AppLocalizations.of(
+                context,
+              ).translate('enterCategoryName'),
               hintStyle: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
@@ -1145,12 +1161,16 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
   void onCreate() async {
     if (_selectedImage == null) {
-      AppSnackbar.show(message: AppLocalizations.of(context).translate('uploadCoverImage'));
+      AppSnackbar.show(
+        message: AppLocalizations.of(context).translate('uploadCoverImage'),
+      );
       return;
     }
 
     if (_titleController.text.trim().isEmpty) {
-      AppSnackbar.show(message: AppLocalizations.of(context).translate('eventTitle'));
+      AppSnackbar.show(
+        message: AppLocalizations.of(context).translate('eventTitle'),
+      );
       return;
     }
 
@@ -1204,7 +1224,9 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
       eventStartingDate: _startingDate != null
           ? "${_startingDate!.year}-${_startingDate!.month.toString().padLeft(2, '0')}-${_startingDate!.day.toString().padLeft(2, '0')}"
           : '',
-      eventStartingTime: _startingTime != null ? _startingTime!.format(context) : '',
+      eventStartingTime: _startingTime != null
+          ? _startingTime!.format(context)
+          : '',
       eventEndingDate: _endingDate != null
           ? "${_endingDate!.year}-${_endingDate!.month.toString().padLeft(2, '0')}-${_endingDate!.day.toString().padLeft(2, '0')}"
           : '',
@@ -1227,15 +1249,15 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
               ),
               elevation: 0,
               backgroundColor: Colors.transparent,
-              child: EventAnimatedDialog(
-                content: 'Your event is submitted for approval.',
-              ),
+              child: EventAnimatedDialog(content: 'Your event is now live'),
             ),
           );
         },
       );
     } else {
-      AppSnackbar.show(message: AppLocalizations.of(context).translate('failed'));
+      AppSnackbar.show(
+        message: AppLocalizations.of(context).translate('failed'),
+      );
     }
   }
 }
