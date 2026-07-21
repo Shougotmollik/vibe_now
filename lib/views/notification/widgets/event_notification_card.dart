@@ -14,7 +14,12 @@ class EventNotificationCard extends StatelessWidget {
     required this.notification,
     this.unreadGradient,
     this.onTap,
+    required this.acceptOnTap,
+    required this.rejectOnTap,
   });
+
+  final VoidCallback acceptOnTap;
+  final VoidCallback rejectOnTap;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +72,9 @@ class EventNotificationCard extends StatelessWidget {
                         ),
                         SizedBox(width: 4.w),
                         Text(
-                          timeago.format(DateTime.parse(notification.createdAt)),
+                          timeago.format(
+                            DateTime.parse(notification.createdAt),
+                          ),
                           style: TextStyle(
                             fontSize: 12.sp,
                             fontWeight: FontWeight.w400,
@@ -82,6 +89,30 @@ class EventNotificationCard extends StatelessWidget {
                 ],
               ),
             ),
+            notification.invitation
+                ? SizedBox(
+                    child: Row(
+                      spacing: 8.w,
+                      children: [
+                        GestureDetector(
+                          onTap: acceptOnTap,
+                          child: Assets.icons.accept.svg(
+                            width: 20.w,
+                            height: 20.h,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: rejectOnTap,
+                          child: Assets.icons.decline.svg(
+                            width: 22.w,
+                            height: 22.h,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                : SizedBox.shrink(),
           ],
         ),
       ),

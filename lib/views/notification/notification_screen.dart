@@ -392,96 +392,135 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget _buildNotificationCard(NotificationModel notification, int tabIndex) {
-    return GestureDetector(
-      onTap: () {
-        if (!notification.isRead) {
-          _controller.readNotificationById(ids: [notification.id]);
-        }
-        // Navigate to the appropriate screen based on tab
-        switch (tabIndex) {
-          case 0:
-            _navigateToWaveScreen(notification);
-            break;
-          case 1:
-            _navigateToEventScreen(notification);
-            break;
-          case 2:
-            _navigateToCommunityScreen(notification);
-            break;
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        decoration: BoxDecoration(
-          gradient: !notification.isRead
-              ? LinearGradient(
-                  colors: _tabGradients[tabIndex].colors
-                      .map((c) => c.withValues(alpha: 0.08))
-                      .toList(),
-                  stops: _tabGradients[tabIndex].stops,
-                  begin: _tabGradients[tabIndex].begin,
-                  end: _tabGradients[tabIndex].end,
-                )
-              : null,
-          color: Theme.of(context).colorScheme.surface,
-        ),
-        child: Row(
-          spacing: 8.w,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(50.r),
-              child: notification.actor.avatar != null
-                  ? Image.network(
-                      AppCredentials.fixurl(notification.actor.avatar!),
-                      width: 50.w,
-                      height: 50.w,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _defaultAvatar(),
-                    )
-                  : _defaultAvatar(),
+    final unreadGradient = !notification.isRead
+        ? LinearGradient(
+            colors: _tabGradients[tabIndex].colors
+                .map((c) => c.withValues(alpha: 0.08))
+                .toList(),
+            stops: _tabGradients[tabIndex].stops,
+            begin: _tabGradients[tabIndex].begin,
+            end: _tabGradients[tabIndex].end,
+          )
+        : null;
+
+    void handleTap() {
+      if (!notification.isRead) {
+        _controller.readNotificationById(ids: [notification.id]);
+      }
+      switch (tabIndex) {
+        case 0:
+          _navigateToWaveScreen(notification);
+          break;
+        case 1:
+          _navigateToEventScreen(notification);
+          break;
+        case 2:
+          _navigateToCommunityScreen(notification);
+          break;
+      }
+    }
+
+    Future<void> handleAccept() async {
+      await _controller.notificationAction(
+        notificationId: notification.id,
+        action: 'approve',
+      );
+    }
+
+    Future<void> handleReject() async {
+      await _controller.notificationAction(
+        notificationId: notification.id,
+        action: 'reject',
+      );
+    }
+
+    // Use specialized cards for events & communities tabs which have accept/reject buttons
+    switch (tabIndex) {
+      case 1:
+        return EventNotificationCard(
+          notification: notification,
+          unreadGradient: unreadGradient,
+          onTap: handleTap,
+          acceptOnTap: handleAccept,
+          rejectOnTap: handleReject,
+        );
+      case 2:
+        return CommunityNotificationCard(
+          notification: notification,
+          unreadGradient: unreadGradient,
+          onTap: handleTap,
+          acceptOnTap: handleAccept,
+          rejectOnTap: handleReject,
+        );
+      default:
+        return GestureDetector(
+          onTap: handleTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            decoration: BoxDecoration(
+              gradient: unreadGradient,
+              color: Theme.of(context).colorScheme.surface,
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    notification.title,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Row(
+            child: Row(
+              spacing: 8.w,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(50.r),
+                  child: notification.actor.avatar != null
+                      ? Image.network(
+                          AppCredentials.fixurl(notification.actor.avatar!),
+                          width: 50.w,
+                          height: 50.w,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _defaultAvatar(),
+                        )
+                      : _defaultAvatar(),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Assets.icons.timeCircle.svg(
-                        width: 16.w,
-                        height: 16.h,
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withValues(alpha: 0.8),
-                      ),
-                      SizedBox(width: 4.w),
                       Text(
-                        timeago.format(DateTime.parse(notification.createdAt)),
+                        notification.title,
                         style: TextStyle(
-                          fontSize: 12.sp,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.8),
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
+                      ),
+                      SizedBox(height: 4.h),
+                      Row(
+                        children: [
+                          Assets.icons.timeCircle.svg(
+                            width: 16.w,
+                            height: 16.h,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurface.withValues(alpha: 0.8),
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            timeago.format(
+                              DateTime.parse(notification.createdAt),
+                            ),
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.8),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
+    }
   }
 
   Widget _defaultAvatar() {

@@ -37,14 +37,25 @@ class _EventNotificationScreenState extends State<EventNotificationScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            SafeArea(child: CustomAppBar(title: AppLocalizations.of(context).translate('eventNotifications'))),
+            SafeArea(
+              child: CustomAppBar(
+                title: AppLocalizations.of(
+                  context,
+                ).translate('eventNotifications'),
+              ),
+            ),
             SizedBox(height: 18.h),
             Column(
               spacing: 8.h,
               children: [
                 ...List.generate(
                   3,
-                  (index) => EventNotificationCard(notification: events[index]),
+                  (index) => EventNotificationCard(
+                    notification: events[index],
+                    acceptOnTap: () {},
+
+                    rejectOnTap: () {},
+                  ),
                 ),
               ],
             ),
