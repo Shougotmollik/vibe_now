@@ -270,6 +270,7 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                       builder: (context) =>
                                           CommunityMemberScreen(
                                             communityId: community.id!,
+                                            isCreator: isMyCommunity,
                                           ),
                                     ),
                                   );

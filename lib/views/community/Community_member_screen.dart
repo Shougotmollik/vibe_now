@@ -13,8 +13,13 @@ import 'package:vibe_now/views/community/community_manage_member_screen.dart';
 import 'package:vibe_now/views/notification/widgets/animated_dialog_content.dart';
 
 class CommunityMemberScreen extends StatefulWidget {
-  const CommunityMemberScreen({super.key, required this.communityId});
+  const CommunityMemberScreen({
+    super.key,
+    required this.communityId,
+    this.isCreator = true,
+  });
   final int communityId;
+  final bool isCreator;
 
   @override
   State<CommunityMemberScreen> createState() => _CommunityMemberScreenState();
@@ -127,55 +132,61 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  CustomAppBar(title: loc.translate('manageRequest')),
-                  GestureDetector(
-                    onTap: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CommunityManageMemberScreen(
-                            communityId: widget.communityId,
+                  CustomAppBar(
+                    title: widget.isCreator
+                        ? loc.translate('manageRequest')
+                        : loc.translate('communityMembers'),
+                  ),
+                  if (widget.isCreator)
+                    GestureDetector(
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CommunityManageMemberScreen(
+                              communityId: widget.communityId,
+                            ),
                           ),
+                        );
+                        _fetchMembers(showLoading: false);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                          horizontal: 16,
                         ),
-                      );
-                      _fetchMembers(showLoading: false);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 16,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: AppColors.primaryGradient,
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: Text(
-                        loc.translate('manage'),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                        decoration: BoxDecoration(
+                          gradient: AppColors.primaryGradient,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Text(
+                          loc.translate('manage'),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
 
             // Tabs
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                children: _tabs.map((tab) {
-                  return Padding(
-                    padding: EdgeInsets.only(right: 12.w),
-                    child: _buildTabTrigger(tab),
-                  );
-                }).toList(),
+            if (widget.isCreator)
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Row(
+                  children: _tabs.map((tab) {
+                    return Padding(
+                      padding: EdgeInsets.only(right: 12.w),
+                      child: _buildTabTrigger(tab),
+                    );
+                  }).toList(),
+                ),
               ),
-            ),
             const SizedBox(height: 20),
 
             Expanded(
@@ -189,7 +200,7 @@ class _CommunityMemberScreenState extends State<CommunityMemberScreen> {
                   return _buildEmptyState();
                 }
 
-                return _selectedTab == 'joined'
+                return _selectedTab == 'joined' || !widget.isCreator
                     ? _buildMemberList(members)
                     : _buildRequestList(members);
               }),
