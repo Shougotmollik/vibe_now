@@ -286,116 +286,65 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                                 ),
                               ),
                             ],
-                          ),
-
-                          SizedBox(height: 20.h),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  height: 42.h,
-                                  child: PrimaryButton.text(
-                                    gradient: AppColors.primaryGradientRotated,
-                                    radius: 12.r,
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              CommunityPlanMeetupScreen(
-                                                communityId: community.id!
-                                                    .toString(),
-                                              ),
-                                        ),
-                                      );
-                                    },
-                                    text: loc.translate('planMeetup'),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12.w),
-
-                              if (isMyCommunity &&
-                                  (community.qrCodeImage != null ||
-                                      community.qrCodeValue != null))
-                                GestureDetector(
-                                  onTap: () {
-                                    context.pushNamed(
-                                      RouteNames.qrVerificationScreen,
-                                      extra: {
-                                        'qrContext': QRContext.community,
-                                        'showQRCodeOnly': true,
-                                        'qrCodeUrl': community.qrCodeImage,
-                                        'qrCodeValue': community.qrCodeValue,
+                          ),                          SizedBox(height: 20.h),
+                          if (isMyCommunity)
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    height: 42.h,
+                                    child: PrimaryButton.text(
+                                      gradient: AppColors.primaryGradientRotated,
+                                      radius: 12.r,
+                                      onPressed: () {
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                CommunityPlanMeetupScreen(
+                                                  communityId: community.id!
+                                                      .toString(),
+                                                ),
+                                          ),
+                                        );
                                       },
-                                    );
-                                  },
-                                  child: Container(
-                                    padding: EdgeInsets.all(10.w),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary.withAlpha(30),
-                                      borderRadius: BorderRadius.circular(12.r),
-                                    ),
-                                    child: Assets.icons.scanner.svg(
-                                      width: 24.w,
-                                      height: 24.h,
-                                      color: AppColors.primary,
+                                      text: loc.translate('planMeetup'),
                                     ),
                                   ),
                                 ),
-                              if (isMyCommunity &&
-                                  (community.qrCodeImage != null ||
-                                      community.qrCodeValue != null))
                                 SizedBox(width: 12.w),
 
-                              if (!isMyCommunity)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surfaceContainerHighest,
-                                  ),
-
-                                  child: PopupMenuButton(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surface,
-                                    iconColor: Theme.of(
-                                      context,
-                                    ).colorScheme.onSurfaceVariant,
-                                    itemBuilder: (context) => [
-                                      PopupMenuItem(
-                                        onTap: () {
-                                          context.pop();
+                                if (community.qrCodeImage != null ||
+                                    community.qrCodeValue != null)
+                                  GestureDetector(
+                                    onTap: () {
+                                      context.pushNamed(
+                                        RouteNames.qrVerificationScreen,
+                                        extra: {
+                                          'qrContext': QRContext.community,
+                                          'showQRCodeOnly': true,
+                                          'qrCodeUrl': community.qrCodeImage,
+                                          'qrCodeValue': community.qrCodeValue,
                                         },
-                                        child: Row(
-                                          children: [
-                                            Assets.icons.leave.svg(
-                                              width: 24.w,
-                                              height: 24.h,
-                                              color: Theme.of(
-                                                context,
-                                              ).colorScheme.primary,
-                                            ),
-                                            SizedBox(width: 8.w),
-                                            Text(
-                                              loc.translate('leave'),
-                                              style: TextStyle(
-                                                fontSize: 14.sp,
-                                                fontWeight: FontWeight.w400,
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.primary,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                      );
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.all(10.w),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary.withAlpha(30),
+                                        borderRadius: BorderRadius.circular(12.r),
                                       ),
-                                    ],
+                                      child: Assets.icons.scanner.svg(
+                                        width: 24.w,
+                                        height: 24.h,
+                                        color: AppColors.primary,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                            ],
-                          ),
+                                if (community.qrCodeImage != null ||
+                                    community.qrCodeValue != null)
+                                  SizedBox(width: 12.w),
+                              ],
+                            ),
                           SizedBox(height: 20.h),
 
                           Text(
@@ -508,35 +457,81 @@ class _CommunityDetailsScreenState extends State<CommunityDetailsScreen> {
                         color: Colors.white,
                       ),
                     ),
-                    if (isMyCommunity)
-                      GestureDetector(
-                        onTap: () async {
-                          await Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  EditCommunityScreen(community: community),
+                    isMyCommunity
+                        ? GestureDetector(
+                            onTap: () async {
+                              await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditCommunityScreen(community: community),
+                                ),
+                              );
+                              if (community.id != null) {
+                                _communityController.getCommunityDetails(
+                                  id: community.id!,
+                                );
+                                _communityController.getCommunities(tab: 'all');
+                              }
+                            },
+                            child: CircleAvatar(
+                              backgroundColor: Theme.of(
+                                context,
+                              ).colorScheme.surface,
+                              child: Assets.icons.edit.svg(
+                                color: Theme.of(context).colorScheme.onSurface,
+                                fit: BoxFit.cover,
+                                height: 24.w,
+                                width: 24.w,
+                              ),
                             ),
-                          );
-                          if (community.id != null) {
-                            _communityController.getCommunityDetails(
-                              id: community.id!,
-                            );
-                            _communityController.getCommunities(tab: 'all');
-                          }
-                        },
-                        child: CircleAvatar(
-                          backgroundColor: Theme.of(
-                            context,
-                          ).colorScheme.surface,
-                          child: Assets.icons.edit.svg(
-                            color: Theme.of(context).colorScheme.onSurface,
-                            fit: BoxFit.cover,
-                            height: 24.w,
-                            width: 24.w,
+                          )
+                        : CircleAvatar(
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surface,
+                            child: PopupMenuButton(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surface,
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface,
+                              ),
+                              iconSize: 24.w,
+                              itemBuilder: (context) => [
+                                PopupMenuItem(
+                                  onTap: () {
+                                    context.pop();
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Assets.icons.leave.svg(
+                                        width: 24.w,
+                                        height: 24.h,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.primary,
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        loc.translate('leave'),
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
                   ],
                 ),
               ),

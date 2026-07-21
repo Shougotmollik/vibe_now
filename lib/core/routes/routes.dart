@@ -3,6 +3,7 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vibe_now/core/constant/qrcontext_enum.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/core/routes/route_observer.dart';
 import 'package:vibe_now/env.dart';
 import 'package:vibe_now/localization/language_controller.dart';
 import 'package:vibe_now/model/chat.dart';
@@ -56,6 +57,7 @@ void setupRouter(bool hasToken) {
   appRouter = GoRouter(
     refreshListenable: LanguageController.localeNotifier,
     initialLocation: hasToken ? '/main-nav-bar' : '/',
+    observers: [routeObserver],
     routes: [
       GoRoute(
         path: '/',

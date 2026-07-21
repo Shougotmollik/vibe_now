@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:vibe_now/core/constant/credential.dart';
 import 'package:vibe_now/core/routes/route_names.dart';
+import 'package:vibe_now/core/routes/route_observer.dart';
 import 'package:vibe_now/design_system/design_system.dart';
 import 'package:vibe_now/gen/assets.gen.dart';
 import 'package:vibe_now/controller/notification_controller.dart';
@@ -30,7 +31,7 @@ class NotificationScreen extends StatefulWidget {
   State<NotificationScreen> createState() => _NotificationScreenState();
 }
 
-class _NotificationScreenState extends State<NotificationScreen> {
+class _NotificationScreenState extends State<NotificationScreen> with RouteAware {
   final NotificationController _controller = Get.find<NotificationController>();
   int _selectedTabIndex = 0;
   final List<String> _tabKeys = ['vibes', 'events', 'communities'];
@@ -51,7 +52,28 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   void initState() {
     super.initState();
-    _controller.getNotifications(_tabKeys[0]);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final route = ModalRoute.of(context);
+      if (route != null) {
+        routeObserver.subscribe(this, route as PageRoute<dynamic>);
+      }
+    });
+    _controller.getNotifications(_tabKeys[0], forceRefresh: true);
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    // Silently refresh the current tab when coming back from a child route
+    _controller.getNotifications(
+      _tabKeys[_selectedTabIndex],
+      forceRefresh: true,
+    );
   }
 
   @override
@@ -129,7 +151,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             child: GestureDetector(
               onTap: () {
                 setState(() => _selectedTabIndex = index);
-                _controller.getNotifications(_tabKeys[index]);
+                _controller.getNotifications(_tabKeys[index], forceRefresh: true);
               },
               child: Stack(
                 clipBehavior: Clip.none,
@@ -425,6 +447,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
         notificationId: notification.id,
         action: 'approve',
       );
+      // For community join requests, navigate to the manage member screen
+      if (tabIndex == 2 && mounted) {
+        final relObj = notification.relatedObject;
+        if (relObj != null) {
+          context.pushNamed(
+            RouteNames.communityManageMemberScreen,
+            extra: relObj.id,
+          );
+        }
+      }
     }
 
     Future<void> handleReject() async {

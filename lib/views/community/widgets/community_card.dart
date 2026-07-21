@@ -79,6 +79,7 @@ class _CommunityCardState extends State<CommunityCard> {
       widget.community.createdBy!.id == _currentUserId;
 
   bool get isPrivate => widget.community.isPrivate;
+  bool get isJoined => widget.community.isJoined ?? false;
   bool get isRequested => _localIsRequested;
   bool get isInterested => _localIsInterested;
 
@@ -541,6 +542,20 @@ class _CommunityCardState extends State<CommunityCard> {
   Widget _buildActionButton() {
     // My community - show View Details
     if (isMyCommunity) {
+      return PrimaryButton.text(
+        radius: 12.r,
+        onPressed: () {
+          context.pushNamed(
+            RouteNames.communityDetailsScreen,
+            extra: widget.community,
+          );
+        },
+        text: "View Details",
+      );
+    }
+
+    // Already joined — show View Details
+    if (isJoined) {
       return PrimaryButton.text(
         radius: 12.r,
         onPressed: () {
